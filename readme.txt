@@ -10,7 +10,7 @@ This plugin allows members to subscribe to groups to receive email notifications
 
 == Description ==
 
-This plugin is currently in early beta status. Please refrain from using on production websites. 
+This plugin is currently in early beta status. Please refrain from using on production websites. (It is here in the plugin directory so we can use the trac features.)
 
 This plugin allow group members to receive email updates about new forum topics, forum posts and group activity updates. In order to get updates, a user must either subscribe or super-subscribe to the group. Subscribed users will get all new forum topics, but not the subsequent comments (same with activity posts). If a user super-subscribes to the group, they will get an email will all new content.
 
