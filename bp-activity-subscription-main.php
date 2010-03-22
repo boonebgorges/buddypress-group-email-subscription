@@ -49,8 +49,8 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 		if ( groups_is_user_admin( $bp->loggedin_user->id , $bp->groups->current_group->id ) || groups_is_user_mod( $bp->loggedin_user->id , $bp->groups->current_group->id ) ) {
 			?>
-			Admin or moderator only: <a href="#">Send an email to everyone in the group</a>  {NEED TO ADD THIS BACK}
-			<!--
+			<!--Admin or moderator only: <a href="#">Send an email to everyone in the group</a>  {NEED TO ADD THIS BACK}
+			
 			// DW: this should be moved to a newly created group admin section
 			<h4 class="activity-subscription-settings-title">Send a Group Notification</h4>
 			<p>As a group admin or moderator you can use the form below to send a notice to all group members, no matter what their notification settings are.</p>
