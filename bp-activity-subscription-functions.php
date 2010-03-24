@@ -364,20 +364,23 @@ function ass_group_subscribe_settings ( $group = false ) {
 	
 	// only show the detailed options if they are subscribed
 	// this has been removed for a simpler approach all around
-/*	if ( $gsub_type ) {
+	if ( $gsub_type ) {
 	?>
 		<br><b><a class="ass-settings-advanced-link">Show advanced settings &#187;</a></b><br>
 		<div class="ass-settings-advanced">
 		<form action="<?php echo $bp->root_domain; ?>/?ass_form=1" id="activity-subscription-settings-form" name="activity-subscription-settings-form" method="post">
 			<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
-			<?php wp_nonce_field( 'ass_settings' ); ?>
-			<?php echo ass_group_notification_settings_fields(); ?>
+			<input type="hidden" name="ass_user_id" value="<?php echo $bp->loggedin_user->id; ?>"/>
+			<?php 
+				
+			?>
+			<?php wp_nonce_field( 'ass_form' ); ?>
+			<?php echo ass_digest_options_cron(); ?>
 			<br><input type="submit" name="submit" value="Save Changes" />
 		</form>
 		</div>
 	<?php
 	}
-*/	
 }
 
 
@@ -675,6 +678,10 @@ function ass_form_vars($public_query_vars) {
 	$public_query_vars[] = 'ass_registered_req';
 	$public_query_vars[] = 'ass_group_subscribe';
 	$public_query_vars[] = 'ass_subscribe_form';
+	
+	//Digest
+	$public_query_vars[] = 'ass_user_id';
+	$public_query_vars[] = 'ass_digest_scheduler';
 	
 	//foreach ( $ass_activities as $ass_activity ) {
 	//	$public_query_vars[] = $ass_activity['type'];
@@ -1139,5 +1146,71 @@ function ass_update_admin_settings() {
 }
 add_action('template_redirect', 'ass_update_admin_settings');  
 
+// Digest functions
+function ass_digest_options_cron($hook = '') {
+	
+	if($hook != '')
+		$schedule = wp_get_schedule( $hook );
+	else
+		$schedule = '';
+	$output .= '<table><th><h3>'.__('Digest Subscription','buddypress').'</h3></th>';
+	$output .= '<tr><td><input name="ass_digest_scheduler" type="radio" value="daily"  /><span>' . __( 'Daily', 'bp-ass' ) . '</span>';
+	$output .= '<input name="ass_digest_scheduler" type="radio" value="twicedaily"  /><span>' . __( 'Twicedaily', 'bp-ass' ) . '</span>';
+	$output .= '<input name="ass_digest_scheduler" type="radio" value="hourly"  /><span>' . __( 'Hourly', 'bp-ass' ) . '</span></td></tr></table>';
+	
+	return $output;
+}
+
+// if a user updates the digest settings from the group notification page, this gets called 
+function ass_digest_update_group_settings() {
+    global $bp, $ass_form_vars;
+            
+	ass_get_form_vars(); 
+	$group_id = $ass_form_vars[ 'ass_group_id' ];
+	$user_id = $ass_form_vars[ 'ass_user_id' ];
+	$action = $ass_form_vars[ 'ass_form' ];
+	$digest_scheduler = $ass_form_vars[ 'ass_digest_scheduler' ];
+	
+	if ( $action && $group_id && $user_id && $digest_scheduler) {
+	
+		if ( !groups_is_user_member( $user_id , $group_id ) )
+			return;
+			
+		wp_verify_nonce('ass_form');
+		
+		ass_digest_options_update_cron( $digest_scheduler, $hook ); // save the settings
+		
+		bp_core_add_message( __( $security.'You are now ' . $action . 'd for this group.', 'buddypress' ) );
+		bp_core_redirect( wp_get_referer() );
+	} 
+}
+add_action('template_redirect', 'ass_digest_update_group_settings');  
+
+
+function ass_digest_options_update_cron( $new_schedule = 'daily', $hook = '') {
+
+	if ( in_array( $new_schedule, array( 'daily', 'twicedaily', 'hourly' ) ) ) {
+		$old_schedule = wp_get_schedule( $hook );
+
+		if ( $new_schedule != $old_schedule ) {
+			wp_unschedule_event( wp_next_scheduled( $hook ), $hook );
+
+			wp_schedule_event( time(), $new_schedule, $hook );
+
+		}
+
+	}
+
+}
+
+function my_activation ( ) {
+wp_schedule_event ( time ( ) , 'hourly', 'my_hourly_event' ) ;
+wp_schedule_event(time(), 'daily', 'my_daily_event');
+wp_schedule_event(time(), 'weekly', 'my_weekly_event');
+}
+
+function do_this() {
+	// will check the groupmeta table looking for the meta_key=ass_digest_users and the users of the array hourly, daily or weekly, depends of $new_schedule
+}
 
 ?>

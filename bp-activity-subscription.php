@@ -4,7 +4,7 @@ Plugin Name: BuddyPress Group Email Subscription
 Plugin URI: http://www.namoo.co.uk
 Description: Allow BuddyPress members to get email updates for new forum topics, posts, activity updates and more with levels of control. 
 Author: David Cartwright, boonebgorges, Deryk Wenaus
-Revision Date: Mar 22, 2010
+Revision Date: Mar 24, 2010
 Version: 2.0b
 */
 
@@ -46,4 +46,15 @@ if ( defined( 'BP_VERSION' ) )
 else
 	add_action( 'bp_init', 'load_activity_subscription_plugin' );
 */
+
+/* DIGEST */
+/* To activate when all digest functions are finished
+register_activation_hook ( __FILE__ , 'my_activation' ) ;
+add_action ( Ô my_hourly_event Ô , 'do_this' );
+add_action ( Ô my_daily_event Ô , 'do_this' );
+add_action ( Ô my_weekly_event Ô , 'do_this' );
+
+*/
+
+
 ?>
