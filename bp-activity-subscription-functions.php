@@ -124,7 +124,7 @@ function ass_group_notification_new_forum_topic_post( $params ) {
 	$previous_posters = ass_get_previous_posters( $post->topic_id );	
 	$group = new BP_Groups_Group( $group_id, false, true );
 	$subject = "{$bp->loggedin_user->fullname} commented on the topic '{$topic->topic_title}' in {$group->name} [" . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . "]";
-	$content = strip_tags( stripslashes( $params[ 'content' ] ) );
+	$content = apply_filters( 'ass_forum_notification_content', strip_tags( stripslashes( $params[ 'content' ] ) ), $post );
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $group->slug . '/notifications/';
 	
 	$message = sprintf( __(
