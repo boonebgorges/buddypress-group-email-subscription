@@ -6,7 +6,7 @@ Requires at least: 2.9.1
 Tested up to: 2.9.2 BP 1.2.1
 Stable tag: 2.0b
 
-This plugin allows members to subscribe to groups to receive email notifications for forum topics and posts and activity updates. 
+This plugin allows members to subscribe to groups to receive email notifications for forum topics and posts and activity updates.  
 
 == Description ==
 
