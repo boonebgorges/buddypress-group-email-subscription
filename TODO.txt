@@ -1,0 +1,15 @@
+TODO
+- add ability for group admin to change default subscription settings. (announce groups should be subscribe)
+  - if default is subscribed or supersub then let the user know when they join!
+  
+- add bp_before_topic_posts and bp_after_topic_posts in topic.php request into trac
+- clean up the Email Options page so it's not yellow. make the 'you are subscribed' notice yellow. (maybe put the info back under Leave Group)
+
+- maybe create a way for users to GLOBALY set their preference for super/sub/unsub for the misc activity types
+- maybe create global setting whether you want to hear about new group members joining
+
+- add help text for subscribe/super subscribe - maybe a question mark roll over or tooltip help
+
+- add back Email everyone in the group and clean up that code (maybe make an admin option to allow this? default to not allow.)
+
+
