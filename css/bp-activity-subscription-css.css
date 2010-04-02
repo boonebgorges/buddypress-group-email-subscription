@@ -41,11 +41,12 @@ h4.activity-subscription-settings-title {
 .activity-subscription-settings-field { margin-left: 55px; }
 .activity-subscription-settings-field input, .ass-email { position: absolute; left: 375px; }
 .ass-sub-settings-level { position: absolute; left: 400px;  font-size: 10px; color: #BBB; }			
-.ass-group-sub-settings-status { font-size: 15px; color: #777; }
+.ass-group-sub-settings-status { background-color: #FFFFCC; font-weight: bold; padding: 5px;}
 .ass-group-sub-settings-table { width: 100%; margin: auto }
-.ass-group-sub-settings-table td { background-color: #FFFFCC; text-align: center; vertical-align: top; width: 33%; padding: 15px; }
+.ass-group-sub-settings-table td { background-color: #FFFFFF; text-align: center; vertical-align: top; width: 33%; padding: 15px; }
 .ass-settings-advanced { display: none; }
 .ass-sub-note { margin-top: 10px; font-size: 12px; color: #777; text-align: left; }
+
 
 .group-subscription-options {
 	display: none;
