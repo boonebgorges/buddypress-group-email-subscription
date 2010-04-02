@@ -1,14 +1,4 @@
 <?php
-/*
-
-TODO
-- Keep subscription simple. (then time permitting maybe create global settings for what people get for three levels...or not)
-- create new functions for new_forum_post and new_forum_topics, and keep the generic one for the rest.
-- put the email icon back for subscribed, maybe make it green, and super more green
-- add bp_before_topic_posts and bp_after_topic_posts in topic.php request into trac
-- create a way for users to GLOBALY set their preference for super/sub/unsub for the misc activity types	
-
-*/
 
 // Loads JS on group pages
 function ass_add_js() {
@@ -86,7 +76,7 @@ To view or reply to this message, follow the link below:
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
 
-		if ( $value != 'sub' && $value != 'supersub' )  // this is not really necessary, but good for safety
+		if ( $value != 'sub' && $value != 'supersub' )  // only send if the user is subscribed
 			continue;
 				
 		$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
@@ -124,7 +114,7 @@ function ass_group_notification_new_forum_topic_post( $params ) {
 	$previous_posters = ass_get_previous_posters( $post->topic_id );	
 	$group = new BP_Groups_Group( $group_id, false, true );
 	$subject = "{$bp->loggedin_user->fullname} commented on the topic '{$topic->topic_title}' in {$group->name} [" . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . "]";
-	$content = apply_filters( 'ass_forum_notification_content', strip_tags( stripslashes( $params[ 'content' ] ) ), $post );
+	$content = strip_tags( stripslashes( $params[ 'content' ] ) );
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $group->slug . '/notifications/';
 	
 	$message = sprintf( __(
@@ -332,7 +322,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 	<td>
 		<p><b>Get everything</b></p>
 		<?php if ( $gsub_type == 'supersub' ) { ?>
-			<p><a class="button">Super-subscribe</a><br><b>You are Super-subscribed</b></p>
+			<p><a class="button">Super-subscribe</a><div class="ass-group-sub-settings-status">You are Super-Subscribed</div></p>
 		<?php } else { ?>
 			<p><input type="submit" class="generic-button" name="ass_group_subscribe" value="Super-subscribe"></p>
 		<?php } ?>
@@ -341,46 +331,46 @@ function ass_group_subscribe_settings ( $group = false ) {
 	</td><td>
 		<p><b>Get content, no conversations</b></p>
 		<?php if ( $gsub_type == 'sub' ) { ?>
-			<p><a class="button">Subscribe</a><br><b>You are Subscribed</b></p>
+			<p><a class="button">Subscribe</a><br><div class="ass-group-sub-settings-status">You are Subscribed</div></p>
 		<?php } else { ?>
 			<p><input type="submit" class="generic-button" name="ass_group_subscribe" value="Subscribe">
 		<?php } ?>
 		<p>Get email notifications for all new group content, but not for comments or replies.</p>
 	</td><td>
 		<p><b>Get nothing</b></p>
-		<?php if ( !$gsub_type ) { ?>
-			<p><a class="button">Unsubscribe</a><br><b>You are Unsubscribed</b></p>
+		<?php if ( !$gsub_type || $gsub_type == 'un' ) { ?>
+			<p><a class="button">Unsubscribe</a><br><div class="ass-group-sub-settings-status">You are Unsubscribed</div></p>
 		<?php } else { ?>
 			<p><input type="submit" class="generic-button" name="ass_group_subscribe" value="Unsubscribe">
 		<?php } ?>
 		<p>You can visit the group website to stay up-to-date.*</p>
 	</td>
 	</tr></table>
-	<p class="ass-sub-note">* By default users receive notifications for topics they start or comment on. Go to your member notifications page to change these settings  {ADD LINK}</p>
+	<p class="ass-sub-note">* By default users receive notifications for topics they start or comment on. This can be changed at your <a href="<?php echo $bp->loggedin_user->domain . 'settings/notifications/' ?>"> email notifications</a> page.</p>
 	</form>
 	
-	<p><p> HERE IS WHERE THE DIGEST FUNCTIONALITY SHOULD BE
-	<?php
+<!--	
 	
-	// only show the detailed options if they are subscribed
-	// this has been removed for a simpler approach all around
-	if ( $gsub_type ) {
-	?>
-		<br><b><a class="ass-settings-advanced-link">Show advanced settings &#187;</a></b><br>
-		<div class="ass-settings-advanced">
-		<form action="<?php echo $bp->root_domain; ?>/?ass_form=1" id="activity-subscription-settings-form" name="activity-subscription-settings-form" method="post">
-			<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
-			<input type="hidden" name="ass_user_id" value="<?php echo $bp->loggedin_user->id; ?>"/>
-			<?php 
-				
-			?>
-			<?php wp_nonce_field( 'ass_form' ); ?>
-			<?php echo ass_digest_options_cron(); ?>
-			<br><input type="submit" name="submit" value="Save Changes" />
-		</form>
-		</div>
+<p><hr></p>
+	<form action="<?php echo $bp->root_domain; ?>/?ass_form=1" id="activity-subscription-settings-form" name="activity-subscription-settings-form" method="post">
+		<h3>Digest Options</h3>
+		<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
+		<input type="hidden" name="ass_user_id" value="<?php echo $bp->loggedin_user->id; ?>"/>
+		<?php wp_nonce_field( 'ass_form' ); ?>
+		
+		<?php 
+		if ( $gsub_type )
+			echo ass_digest_options_cron(); 
+		else
+			echo 'Digest options are available for subscribed users. Click subscribe above to view options. ';
+		
+		?>
+		<br><input type="submit" name="submit" value="Save Digest Settings" />
+	</form>
+	-->
+	
+	
 	<?php
-	}
 }
 
 
@@ -424,10 +414,15 @@ function ass_group_subscribe_button( $group = false ) {
 	//$gsub = get_usermeta( $bp->loggedin_user->id, 'ass_group_subscription' ); // the old way
 	//$gsub_type = $gsub[ $group->id ];
 	
-	$gsub_type = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );	
+	$gsub_type = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
+	
+	if ( $gsub_type == 'un' )
+		$gsub_type = NULL;
 		
 	echo '<div class="group-subscription-div">';
 		$link_text = 'Email Options';
+		
+		
 		
 		if ( $gsub_type == 'sub' ) {
 			$status = 'Subscribed';
@@ -492,23 +487,112 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	if ( !$action || !$user_id || !$group_id )
 		return false;
 		
-	//$user_group_subscriptions = get_usermeta( $user_id, 'ass_group_subscription' );
 	$group_user_subscriptions = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	
 	if ( $action == 'gsubscribe' || $action == 'Subscribe' ) {
-		//$user_group_subscriptions[ $group_id ] = 'sub';
 		$group_user_subscriptions[ $user_id ] = 'sub';
 	} elseif ( $action == 'gsupersubscribe' || $action == 'Super-subscribe' ) {
-		//$user_group_subscriptions[ $group_id ] = 'supersub';
 		$group_user_subscriptions[ $user_id ] = 'supersub';
 	} elseif ( $action == 'gunsubscribe' || $action == 'Unsubscribe' ) {
-		//unset( $user_group_subscriptions[ $group_id ] );
+		$group_user_subscriptions[ $user_id ] = 'un';
+	} elseif ( $action == 'delete' ) {
 		unset( $group_user_subscriptions[ $user_id ] );
 	}
 	
-	//update_usermeta( $user_id, 'ass_group_subscription', $user_group_subscriptions );
 	groups_update_groupmeta( $group_id , 'ass_subscribed_users', $group_user_subscriptions );
 }
+
+function ass_unsubscribe_on_leave( $group_id, $user_id ){
+	ass_group_subscription( 'delete', $user_id, $group_id );
+}
+add_action( 'groups_leave_group', 'ass_unsubscribe_on_leave', 100, 2 );
+
+
+
+//
+//	Default Group Subscription
+//
+
+
+// when a user joins a group, set their default subscription level
+function ass_set_default_subscription( $groups_member ){
+	global $bp;
+	
+	// only set the default if the user has no subscription history for this group
+	if ( ass_get_group_subscription_status( $groups_member->user_id, $groups_member->group_id ) )
+		return;
+	
+	if ( $default_gsub = groups_get_groupmeta( $groups_member->group_id, 'ass_default_subscription' ) ) {
+		ass_group_subscription( $default_gsub, $groups_member->user_id, $groups_member->group_id );
+	}
+}
+add_action( 'groups_member_after_save', 'ass_set_default_subscription', 20, 1 );
+
+
+// give the user a notice if they are default subscribed to this group (does not work for invites or requests)
+function ass_join_group_message( $group_id, $user_id ) {
+	if ( groups_get_groupmeta( $group_id, 'ass_default_subscription' ) != 'gunsubscribe' )
+		bp_core_add_message( __( 'You successfully joined the group. You are subscribed via email to new group content.', 'buddypress' ) );
+}
+add_action( 'groups_join_group', 'ass_join_group_message', 100, 2 );
+
+
+
+
+// create the default subscription settings during group creation and editing
+function ass_default_subscription_settings_form() {
+	?>
+	<h4>Email Subscription Defaults</h4>
+	<p>When joining this group, the email settings for new members will be (this setting will not affect existing members):</p>
+	<div class="radio">
+		<label><input type="radio" name="ass-default-subscription" value="gunsubscribe" <?php ass_default_subscription_settings( 'gunsubscribe' ) ?> /> <?php _e( 'Not subscribed (no emails - recommended for large groups)', 'bp_ges' ) ?></label>
+		<label><input type="radio" name="ass-default-subscription" value="gsubscribe" <?php ass_default_subscription_settings( 'gsubscribe' ) ?> /> <?php _e( 'Subscribed (Get emails about content, but no conversations)', 'bp_ges' ) ?></label>
+		<label><input type="radio" name="ass-default-subscription" value="gsupersubscribe" <?php ass_default_subscription_settings( 'gsupersubscribe' ) ?> /> <?php _e( 'Super-subscribed (get emails about everything - only use for small groups)', 'bp_ges' ) ?></label>
+	</div>
+	<hr />
+	<?php
+}
+add_action ( 'bp_after_group_settings_admin' ,'ass_default_subscription_settings_form' );
+add_action ( 'bp_after_group_settings_creation_step' ,'ass_default_subscription_settings_form' );
+
+
+// echo subscription default checked setting for the group admin settings - default to 'unsubscribed' in group creation
+function ass_default_subscription_settings( $setting ) {
+	$stored_setting = ass_get_default_subscription();
+	
+	if ( $setting == $stored_setting )
+		echo ' checked="checked"';
+	else if ( $setting == 'gunsubscribe' && !$stored_setting )
+		echo ' checked="checked"';
+}
+
+
+// Get the default subscription settings for the group
+function ass_get_default_subscription( $group = false ) {
+	global $groups_template;
+	if ( !$group )
+		$group =& $groups_template->group;
+	$default_subscription =  groups_get_groupmeta( $group->id, 'ass_default_subscription' );
+	return apply_filters( 'ass_get_default_subscription', $default_subscription );
+}
+
+
+// Save the announce group setting in the group meta, if normal, delete it
+function ass_save_default_subscription( $group ) { 
+	global $bp, $_POST;
+	
+	if ( $postval = $_POST['ass-default-subscription'] ) {
+		if ( $postval == 'gsubscribe' || $postval == 'gsupersubscribe' )  // this is overly safe
+			groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
+		elseif ( $postval == 'gunsubscribe' )
+			groups_delete_groupmeta( $group->id, 'ass_default_subscription' );
+	}
+}
+add_action( 'groups_group_after_save', 'ass_save_default_subscription' );
+
+
+
+
 
 
 
@@ -655,6 +739,10 @@ function ass_registered_long_enough( $activity_user_id ) {
 	
 	return true;
 }
+
+
+
+
 
 
 
@@ -887,95 +975,6 @@ add_action('template_redirect', 'ass_admin_notice');
 
 
 
-/*
-// with new system this is not needed, i believe. 
-function ass_update_settings() {
-    global $bp, $wpdb, $ass_form_vars, $ass_activities;
-    
-	ass_get_form_vars(); 
-	$group_id = $ass_form_vars['ass_group_id'];
-	$user_id = $bp->loggedin_user->id;
-	
-	if ( $group_id && $ass_form_vars['ass_form'] ) {
-		 wp_verify_nonce('ass_settings');  // dw: this does nothing!
-	
-		if ( !groups_is_user_member( $user_id , $group_id ) )
-			return;
-			
-		$user_settings = array();
-		// could potentialy add user_id and group_id here for quicker processing when sending emails
-		//$user_settings[ 'group_id' ] = $group_id;
-		//$user_settings[ 'user_id' ] = $user_id;
-		
-		// Process each of the user setting changes
-		foreach ( $ass_form_vars as $ass_activity => $value ) {
-			if ( $ass_activity == 'ass_group_id' || $ass_activity == 'ass_form' ) 
-				continue;  // skip over group_id and form submit vars
-			
-			$user_settings[ $ass_activity ] = $value;
-		}
-		
-		update_usermeta( $user_id, 'ass_activity_' . $group_id, $user_settings ); 
-		// DW: maybe we should store this in group meta if we're going to send digests by group
-		// groups_update_groupmeta( $group_id , 'ass_activity_' . $user_id, $user_settings );
-		
-		// maybe in group meta, keep track of each user's preference together for this group
-		
-		bp_core_add_message( __( 'Settings saved successfully', 'buddypress' ) );
-		bp_core_redirect( wp_get_referer() );
-	} 
-	// If we get to this point the page request isn't our submitted form.  The rest of WP will load normally now
-}
-add_action('template_redirect', 'ass_update_settings');  
-//-------------------------------------------------------------------------------------------
-
-
-// not needed any more
-function ass_group_notification_settings_fields() {
-	global $bp, $ass_activities;
-		
-	$output = '<p>Here you can specify how often and for which types of content you will receive email notifications.</p>';
-	$output .= '<p>Send me an email notification when someone...';
-	$output .= '<br><div class="ass-email gemail_icon">&nbsp;</div>';
-
-	$user_settings = get_usermeta( $bp->loggedin_user->id , 'ass_activity_' . $bp->groups->current_group->id );
-	//$user_settings = groups_get_groupmeta( $bp->groups->current_group->id , 'ass_activity_' . $bp->loggedin_user->id ); //alternative
-	
-	foreach ( $ass_activities as $ass_activity ) {
-		
-		// create section headings
-		if ( $ass_activity['section'] != $section ) {
-			$output .= '<div class="activity-subscription-settings-section">'.$ass_activity['section'].'</div>';
-			$section = $ass_activity['section'];
-		}
-		
-		$output .= '<div class="activity-subscription-settings-field">';
-		$output .= ucfirst( $ass_activity[ 'name_pres' ] ); 
-		$output .= '<input type="checkbox" name="' . $ass_activity['type'] . '" value="1"';
-		if ( $user_settings[ $ass_activity[ 'type' ] ] ) 
-			$output .= 'checked="checked"';
-		$output .= '/>';
-		$output .= '<span class="ass-sub-settings-level">' . $ass_activity['level'] . '</span>';
-		$output .= '</div>';
-	}	
-	
-	return $output;
-}
-*/
-
-
-// Function to allow other plugins to add extra activity types.  Plugins should hook in with a higher priority than ass_update_activities
-// ...as this will ensure that the default frequency settings are updated by the main functions
-// Also updates the $ass_activities global with any new default frequency settings
-/*
-function ass_update_activities() {
-	global $ass_activities;
-	// Update the default frequency settings for each activity
-	foreach ( $ass_activities as &$ass_activity ) {
-		$ass_activity['default_frequency'] = get_site_option( 'ass_activity_frequency_' . $ass_activity['type'] );
-	}
-}
-*/
 
 
 
@@ -1054,50 +1053,7 @@ function ass_admin_options() {
 	</div>
 	<?php
 }
-/*
 
-// not used any more
-function ass_admin_group_notification_settings_fields( ) {
-	global $bp, $ass_activities;
-	
-	$output .= '<th><h3>Activity Type</h3></th><th><h3>Default Frequency of Email Notifications</h3></th>';
-	
-	foreach ( $ass_activities as $ass_activity ) {
-		// Get the user meta for this activity type
-		$site_setting = get_site_option( 'ass_activity_frequency_' . $ass_activity['type'] );
-		if ( $site_setting == '' ) {
-			$site_setting = $ass_activity['default_frequency'];
-			update_site_option( 'ass_activity_frequency_' . $ass_activity['type'] , $site_setting );
-		}
-		$output .= '<tr>';
-		$output .= '<td>';
-		$output .= ucfirst($ass_activity['name_past']); 
-		$output .= '</td>';
-		$output .= '<td>';
-		$output .= '<input type="radio" name="' . $ass_activity['type'] . '" value="' . 1*60 . '"';
-		if ($site_setting == 1*60) $output .= 'checked="checked"';
-		$output .= '/>1 min';
-		$output .= '<input type="radio" name="' . $ass_activity['type'] . '" value="' . 15*60 . '"';
-		if ($site_setting == 15*60) $output .= 'checked="checked"';
-		$output .= '/>15 mins';
-		$output .= '<input type="radio" name="' . $ass_activity['type'] . '" value="' . 60*60 . '"';
-		if ($site_setting == 60*60) $output .= 'checked="checked"';
-		$output .= '/>60 mins';
-		$output .= '<input type="radio" name="' . $ass_activity['type'] . '" value="' . 12*60*60 . '"'; 
-		if ($site_setting == 12*60*60) $output .= 'checked="checked"';
-		$output .= '/>12 hours';
-		$output .= '<input type="radio" name="' . $ass_activity['type'] . '" value="' . 24*60*60 . '"'; 
-		if ($site_setting == 24*60*60) $output .= 'checked="checked"';
-		$output .= '/>24 hours';
-		$output .= '<input type="radio" name="' . $ass_activity['type'] . '" value="no"';
-		if ($site_setting == 'no') $output .= 'checked="checked"';
-		$output .= '/>Never';
-		$output .= '</td></tr>';
-	}	
-	
-	return $output;
-}
-*/
 
 function ass_update_admin_settings() {
     global $bp, $wpdb, $ass_form_vars, $ass_activities;
@@ -1146,6 +1102,8 @@ function ass_update_admin_settings() {
 }
 add_action('template_redirect', 'ass_update_admin_settings');  
 
+
+
 // Digest functions
 function ass_digest_options_cron($hook = '') {
 	
@@ -1153,10 +1111,11 @@ function ass_digest_options_cron($hook = '') {
 		$schedule = wp_get_schedule( $hook );
 	else
 		$schedule = '';
-	$output .= '<table><th><h3>'.__('Digest Subscription','buddypress').'</h3></th>';
-	$output .= '<tr><td><input name="ass_digest_scheduler" type="radio" value="daily"  /><span>' . __( 'Daily', 'bp-ass' ) . '</span>';
-	$output .= '<input name="ass_digest_scheduler" type="radio" value="twicedaily"  /><span>' . __( 'Twicedaily', 'bp-ass' ) . '</span>';
-	$output .= '<input name="ass_digest_scheduler" type="radio" value="hourly"  /><span>' . __( 'Hourly', 'bp-ass' ) . '</span></td></tr></table>';
+	
+	$output .= '<input name="ass_digest_scheduler" type="radio" value="daily"  /><span>' . __( 'Daily', 'bp-ass' ) . '</span> &nbsp;';
+	$output .= '<input name="ass_digest_scheduler" type="radio" value="twicedaily"  /><span>' . __( 'Twicedaily', 'bp-ass' ) . '</span> &nbsp;';
+	$output .= '<input name="ass_digest_scheduler" type="radio" value="hourly"  /><span>' . __( 'Hourly', 'bp-ass' ) . '</span>';
+	$output .= '<br>';
 	
 	return $output;
 }

@@ -5,7 +5,7 @@ Plugin URI: http://www.namoo.co.uk
 Description: Allow BuddyPress members to get email updates for new forum topics, posts, activity updates and more with levels of control. 
 Author: David Cartwright, boonebgorges, Deryk Wenaus
 Revision Date: Mar 24, 2010
-Version: 2.0b
+Version: 2.1b
 */
 
 

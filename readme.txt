@@ -1,10 +1,10 @@
 === BuddyPress Group Email Subscription ===
-Contributors: David Cartwright, boonebgorges, Deryk Wenaus
+Contributors: David Cartwright, boonebgorges, dwenaus
 Donate link: http://namoo.co.uk/
-Tags: buddypress, activities, groups, emails, notifications
-Requires at least: 2.9.1
-Tested up to: 2.9.2 BP 1.2.1
-Stable tag: 2.0b
+Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription
+Requires at least: 2.9.1 BP 1.2
+Tested up to: 2.9.2 BP 1.2.3
+Stable tag: 2.1b
 
 This plugin allows members to subscribe to groups to receive email notifications for forum topics and posts and activity updates.  
 
@@ -52,6 +52,9 @@ The above code adds support for a new activity type "wiki_add" at the regular su
 1. Example Email
 
 == Changelog ==
+
+= 2.1 =
+group admins can set default subscription level
 
 = 2.0 =
 Plugin totally re-written by Deryk Wenaus, with new structure and name

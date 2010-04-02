@@ -106,8 +106,8 @@ jQuery(document).ready( function() {
 		j( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 	
-	j('.ass-settings-advanced-link').click( function() {
-		j( '.ass-settings-advanced' ).slideToggle('fast');
-	});
+	//j('.ass-settings-advanced-link').click( function() {
+	//	j( '.ass-settings-advanced' ).slideToggle('fast');
+	//});
 	
 });
