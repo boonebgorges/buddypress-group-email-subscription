@@ -293,7 +293,7 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 		return false;
 	
 	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
-	
+
 	if ( $group_user_subscriptions[ $user_id ] ) 
 		return 	( $group_user_subscriptions[ $user_id ] );
 	else
@@ -400,7 +400,6 @@ add_action('template_redirect', 'ass_update_group_subscribe_settings');
 
 
 
-
 // this adds the ajax-based subscription option in the group header
 function ass_group_subscribe_button( $group = false ) {
 	global $bp, $groups_template;
@@ -421,8 +420,6 @@ function ass_group_subscribe_button( $group = false ) {
 		
 	echo '<div class="group-subscription-div">';
 		$link_text = 'Email Options';
-		
-		
 		
 		if ( $gsub_type == 'sub' ) {
 			$status = 'Subscribed';
@@ -481,7 +478,6 @@ add_action( 'wp_ajax_ass_group_ajax', 'ass_group_ajax_callback' );
 
 
 
-
 // updates the group's user subscription list.
 function ass_group_subscription( $action, $user_id, $group_id ) {
 	if ( !$action || !$user_id || !$group_id )
@@ -489,23 +485,40 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 		
 	$group_user_subscriptions = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	
-	if ( $action == 'gsubscribe' || $action == 'Subscribe' ) {
+	if ( $action == 'gsubscribe' || $action == 'Subscribe' || $action == 'subscribe' ) {
 		$group_user_subscriptions[ $user_id ] = 'sub';
-	} elseif ( $action == 'gsupersubscribe' || $action == 'Super-subscribe' ) {
+	} elseif ( $action == 'gsupersubscribe' || $action == 'Super-subscribe' || $action == 'supersubscribe' ) {
 		$group_user_subscriptions[ $user_id ] = 'supersub';
-	} elseif ( $action == 'gunsubscribe' || $action == 'Unsubscribe' ) {
+	} elseif ( $action == 'gunsubscribe' || $action == 'Unsubscribe' || $action == 'unsubscribe' ) {
 		$group_user_subscriptions[ $user_id ] = 'un';
-	} elseif ( $action == 'delete' ) {
+	} elseif ( $action == 'delete' || $action == 'leave' ) {
 		unset( $group_user_subscriptions[ $user_id ] );
 	}
 	
 	groups_update_groupmeta( $group_id , 'ass_subscribed_users', $group_user_subscriptions );
 }
 
+
 function ass_unsubscribe_on_leave( $group_id, $user_id ){
 	ass_group_subscription( 'delete', $user_id, $group_id );
 }
 add_action( 'groups_leave_group', 'ass_unsubscribe_on_leave', 100, 2 );
+
+
+// show subscription status on group member pages (for admins and mods only)
+function ass_show_subscription_status_in_member_list() {
+	global $bp, $members_template;
+	
+	$group_id = $bp->groups->current_group->id;
+	
+	if ( !groups_is_user_admin( $bp->loggedin_user->id , $group_id ) && !groups_is_user_mod( $bp->loggedin_user->id , $group_id ) )
+		return;
+		
+	if ( $sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id ) ) {
+		echo '<div class="ass_member_list_sub_status">'. ucfirst($sub_type) .'scribed</div>';
+	}
+}
+add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
 
 
 
@@ -531,11 +544,11 @@ add_action( 'groups_member_after_save', 'ass_set_default_subscription', 20, 1 );
 
 // give the user a notice if they are default subscribed to this group (does not work for invites or requests)
 function ass_join_group_message( $group_id, $user_id ) {
-	if ( groups_get_groupmeta( $group_id, 'ass_default_subscription' ) != 'gunsubscribe' )
+	global $bp;
+	if ( groups_get_groupmeta( $group_id, 'ass_default_subscription' ) != 'gunsubscribe' && $user_id == $bp->loggedin_user->id )
 		bp_core_add_message( __( 'You successfully joined the group. You are subscribed via email to new group content.', 'buddypress' ) );
 }
 add_action( 'groups_join_group', 'ass_join_group_message', 100, 2 );
-
 
 
 
@@ -655,8 +668,8 @@ function ass_topic_follow_or_mute_link() {
 	}
 }
 add_action( 'bp_directory_forums_extra_cell', 'ass_topic_follow_or_mute_link', 50 );
-add_action( 'bp_before_topic_posts', 'ass_topic_follow_or_mute_link' );
-add_action( 'bp_after_topic_posts', 'ass_topic_follow_or_mute_link' );
+add_action( 'bp_before_group_forum_topic_posts', 'ass_topic_follow_or_mute_link' );
+add_action( 'bp_after_group_forum_topic_posts', 'ass_topic_follow_or_mute_link' );
 
 
 
