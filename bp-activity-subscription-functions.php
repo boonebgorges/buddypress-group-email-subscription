@@ -793,89 +793,6 @@ function ass_form_vars($public_query_vars) {
 add_filter('query_vars', 'ass_form_vars');
 
 
-
-// these are notes - ignore for now
-function ass_send_digest( $interval ) {
-	global $bp;
-	
-	if ( !$interval )
-		$interval = '1week';
-	
-	switch ( $interval ) {
-		case '1week':
-			$secs = 604800;
-		break;
-	
-		case '1day':
-			$secs = 86400;
-		break;
-	
-		case '12hour':
-			$secs = 43200;
-		break;
-	
-		case '3hour':
-			$secs = 10800;
-		break;		
-		
-	}
-	
-	if ( bp_has_groups() ) {
-		while ( bp_groups() ) : bp_the_group();
-		$group_id = bp_get_group_id();
-		
-		if ( bp_has_activities( 'display_comments=stream' ) ) {
-					global $activities_template;
-				
-				$time = time();
-				
-				foreach ( $activities_template->activities as $key=>$activity ) {
-					$recorded_time = strtotime( $activity->date_recorded );
-					
-					if ( $time - $recorded_time < $secs ) {
-						$action = str_replace( ': <span class="time-since">%s</span>', ' at ' . date('h:ia \o\n l, F j, Y', $recorded_time) , $activity->action);
-						print_r($action);
-						print_r( $activity->content );
-						echo "<br >";
-					}
-				}
-				
-				
-				print "<pre>";
-				//print_r($activities_template);
-				print "</pre>";
-		}
-		
-		endwhile;
-	}
-}
-//add_action('plugins_loaded', 'ass_send_digest');
-
-/* Pseudo-code for cron job */
-/*
-	$this_interval is the interval for this cron job, ie 1hour
-	foreach (groups as group)
-		$pref_array = associative groupmeta which has member $interval preference
-		
-		if ( !in_array( $this_interval$pref_array ) ) // if no one in the group has this interval
-			continue; // no need to bother with the rest - go to the next group			
-		
-		grab and format the activities
-		build email content for each $interval
-		get group members
-		$pref_array = associative groupmeta which has member $interval preference
-		foreach (members as member)
-			get digest prefs from $pref_array ($user_id as $key)
-			if ($pref_array[$user_id] = this $interval ) {			
-				get email address (currently how plugin does it - can it be moved out to a single call? at least do it at the end so you only get the email address of the user in question)
-				send
-			}
-		end foreach member
-	end foreach group
-*/
-
-
-
 //  Call this at the start of our form processing function to get the variables for use in our script			*
 function ass_get_form_vars() {  
     global $ass_form_vars, $ass_activities;  
@@ -1117,22 +1034,6 @@ add_action('template_redirect', 'ass_update_admin_settings');
 
 
 
-// Digest functions
-function ass_digest_options_cron($hook = '') {
-	
-	if($hook != '')
-		$schedule = wp_get_schedule( $hook );
-	else
-		$schedule = '';
-	
-	$output .= '<input name="ass_digest_scheduler" type="radio" value="daily"  /><span>' . __( 'Daily', 'bp-ass' ) . '</span> &nbsp;';
-	$output .= '<input name="ass_digest_scheduler" type="radio" value="twicedaily"  /><span>' . __( 'Twicedaily', 'bp-ass' ) . '</span> &nbsp;';
-	$output .= '<input name="ass_digest_scheduler" type="radio" value="hourly"  /><span>' . __( 'Hourly', 'bp-ass' ) . '</span>';
-	$output .= '<br>';
-	
-	return $output;
-}
-
 // if a user updates the digest settings from the group notification page, this gets called 
 function ass_digest_update_group_settings() {
     global $bp, $ass_form_vars;
@@ -1159,30 +1060,6 @@ function ass_digest_update_group_settings() {
 add_action('template_redirect', 'ass_digest_update_group_settings');  
 
 
-function ass_digest_options_update_cron( $new_schedule = 'daily', $hook = '') {
 
-	if ( in_array( $new_schedule, array( 'daily', 'twicedaily', 'hourly' ) ) ) {
-		$old_schedule = wp_get_schedule( $hook );
-
-		if ( $new_schedule != $old_schedule ) {
-			wp_unschedule_event( wp_next_scheduled( $hook ), $hook );
-
-			wp_schedule_event( time(), $new_schedule, $hook );
-
-		}
-
-	}
-
-}
-
-function my_activation ( ) {
-wp_schedule_event ( time ( ) , 'hourly', 'my_hourly_event' ) ;
-wp_schedule_event(time(), 'daily', 'my_daily_event');
-wp_schedule_event(time(), 'weekly', 'my_weekly_event');
-}
-
-function do_this() {
-	// will check the groupmeta table looking for the meta_key=ass_digest_users and the users of the array hourly, daily or weekly, depends of $new_schedule
-}
 
 ?>
