@@ -1057,9 +1057,17 @@ function ass_admin_menu() {
 add_action('admin_menu', 'ass_admin_menu');
 
 function ass_admin_options() {
+
+	//print_r($_POST); die();
 	if ( $_POST )
 		ass_update_dashboard_settings();
 	
+	if ( !$ass_digest_time = get_option( 'ass_digest_time' ) )
+		$ass_digest_time = array( 'hours' => '05', 'minutes' => '00' );
+	
+	if ( !$ass_weekly_digest = get_option( 'ass_weekly_digest' ) )
+		$ass_weekly_digest = 'Friday';
+		
 	$next = wp_next_scheduled( 'ass_digest_event' );
 	$next = date( "r", $next );
 	?>
@@ -1079,19 +1087,39 @@ function ass_admin_options() {
 			<p>To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members.  By default, this is set to 3 days.  </p>
 			Member must be registered for<input type="text" size="1" name="ass_registered_req" value="<?php echo get_site_option( 'ass_activity_frequency_ass_registered_req' ); ?>" style="text-align:center"/>days
 		
-		<h3>Digest settings</h3>
-		<p><small>The next digest is scheduled to be sent <strong><?php echo $next ?></strong></small></p>
+		<h3><?php _e( 'Digest settings', 'bp-ass' ) ?></h3>
+		<p><?php echo sprintf( __( 'The current server time is %s', 'bp-ass' ), date( r ) ) ?></p>
 		
 		<p>
-			<label for="ass_digest_frequency"><?php _e( 'Set the frequency of email digests, in hours', 'bp-ass' ) ?> </label>
-			<input type="text" size="3" name="ass_digest_frequency" value="<?php echo get_option( 'ass_digest_frequency' ); ?>" style="text-align:center"/><br />
-			<small><?php _e( 'Decimal values accepted', 'bp-ass' ) ?></small>		
+			<label for="ass_digest_time"><?php _e( 'When should <strong>daily</strong> digests be sent?', 'bp-ass' ) ?> </label>
+			<select name="ass_digest_time[hours]" id="ass_digest_time[hours]">
+				<?php for( $i = 0; $i <= 23; $i++ ) : ?>
+					<?php if ( $i < 10 ) $i = '0' . $i ?>
+					<option value="<?php echo $i?>" <?php if ( $i == $ass_digest_time['hours'] ) : ?>selected="selected"<?php endif; ?>><?php echo $i ?></option>
+				<?php endfor; ?>	
+			</select>
+			
+			<select name="ass_digest_time[minutes]" id="ass_digest_time[minutes]">
+				<?php for( $i = 0; $i <= 55; $i += 5 ) : ?>
+					<?php if ( $i < 10 ) $i = '0' . $i ?>
+					<option value="<?php echo $i?>" <?php if ( $i == $ass_digest_time['minutes'] ) : ?>selected="selected"<?php endif; ?>><?php echo $i ?></option>
+				<?php endfor; ?>	
+			</select>
 		</p>
 		
 		<p>
-			<label for="ass_next_digest"><?php _e( 'How many hours until the next digest runs?', 'bp-ass' ) ?> </label>
-			<input type="text" size="3" name="ass_next_digest" value="<?php echo get_option( 'ass_next_digest' ); ?>" style="text-align:center"/><br />
-			<small><?php _e( 'Useful for setting digests for optimal times of day, especially when your digest frequency is a multiple of 24 hours. For example, if it\'s currently 7pm and you want digests to run at 2am daily, enter 7 into this field. Leave blank to keep your current schedule.', 'bp-ass' ) ?></small>
+			<label for="ass_weekly_digest"><?php _e( 'When should <strong>weekly</strong> digests be sent?', 'bp-ass' ) ?> </label>
+			<select name="ass_weekly_digest" id="ass_weekly_digest">
+				<?php /* disabling "no weekly digest" option for now because it will complicate the individual settings pages */ ?>
+				<?php /* <option value="No weekly digest" <?php if ( 'No weekly digest' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'No weekly digest', 'bp-ass' ) ?></option> */ ?>
+				<option value="1" <?php if ( '1' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Monday' ) ?></option>
+				<option value="2" <?php if ( '2' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Tuesday' ) ?></option>
+				<option value="3" <?php if ( '3' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Wednesday' ) ?></option>
+				<option value="4" <?php if ( '4' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Thursday' ) ?></option>
+				<option value="5" <?php if ( '5' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Friday' ) ?></option>
+				<option value="6" <?php if ( '6' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Saturday' ) ?></option>
+				<option value="0" <?php if ( '0' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Sunday' ) ?></option>
+			</select>				
 		</p>
 		
 			<p class="submit">
@@ -1111,24 +1139,46 @@ function ass_update_dashboard_settings() {
 	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
 		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 	
-	if ( $_POST['ass_digest_frequency'] != get_option( 'ass_digest_frequency' ) || $_POST['ass_next_digest'] ) {
+	/* Todo: Process the new admin settings and turn them into real schedules */
+	
+	/* The daily digest time has been changed */
+	if ( $_POST['ass_digest_time'] != get_option( 'ass_digest_time' ) ) {
 		
-		$next = wp_next_scheduled( 'ass_digest_event' );
+		/* Concatenate the hours-minutes entered, and turn it into a timestamp today */
+		$the_time = date( 'Y-m-d' ) . ' ' . $_POST['ass_digest_time']['hours'] . ':' . $_POST['ass_digest_time']['minutes'];
+		$the_timestamp = strtotime( $the_time );
 		
+		/* If the time has already passed today, the next run will be tomorrow */
+		$the_timestamp = ( $the_timestamp > time() ) ? $the_timestamp : (int)$the_timestamp + 86400;
+		
+		/* Clear the old recurring event and set up a new one */
 		wp_clear_scheduled_hook( 'ass_digest_event' );	
+		wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
 		
-		$freq = $_POST['ass_digest_frequency'];
-		$freq_name = $freq . '_hrs';
+		/* Finally, save the option */
+		update_option( 'ass_digest_time', $_POST['ass_digest_time'] );
+	}
+	
+	/* The weekly digest day has been changed */
+	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) ) {
 		
-		update_option( 'ass_digest_frequency', $freq );
+		if ( !$next_weekly = wp_next_scheduled( 'ass_digest_event_weekly' ) )
+			$next_weekly = wp_next_scheduled( 'ass_digest_event' ); 
 		
-		if ( $_POST['ass_next_digest'] || !$next ) {
-			$next = time() + ( $_POST['ass_next_digest'] * 3600 );
+		while ( date( 'w', $next_weekly ) != $_POST['ass_weekly_digest'] ) {
+			$next_weekly += 86400;
 		}
 		
-		wp_schedule_event( $next, $freq_name, 'ass_digest_event' );
-	}
+		/* Clear the old recurring event and set up a new one */
+		wp_clear_scheduled_hook( 'ass_digest_event_weekly' );	
+		wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
 		
+		/* Finally, save the option */
+		update_option( 'ass_weekly_digest', $_POST['ass_weekly_digest'] );
+	}
+	
+	
+	
 //print_r($_POST);
 }
 
