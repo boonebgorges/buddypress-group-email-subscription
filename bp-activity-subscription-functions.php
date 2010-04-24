@@ -1,5 +1,7 @@
 <?php
 
+require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
+
 // Loads JS on group pages
 function ass_add_js() {
 	global $bp;
@@ -33,6 +35,8 @@ add_action( 'wp_print_styles', 'ass_add_css' );
 
 
 
+
+
 //
 // SEND EMAIL UDPATES FOR FORUM TOPICS AND POSTS
 //
@@ -41,7 +45,9 @@ add_action( 'wp_print_styles', 'ass_add_css' );
 // send email notificaitons for new forum topics to members who are subscribed to the group
 function ass_group_notification_new_forum_topic( $params ) {
 	global $bp;
-		
+	
+	$group_id = $params['item_id'];
+	
 	if ( $params['type'] != 'new_forum_topic' )
 		return;	
 
@@ -50,7 +56,7 @@ function ass_group_notification_new_forum_topic( $params ) {
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) ) // check to see if the user has been registered long enough
 		return;
 
-	$group_id = $params['item_id'];
+	
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	$group = new BP_Groups_Group( $group_id, false, true );
 	$topic = get_topic( $params[ 'secondary_item_id' ] );
@@ -71,8 +77,16 @@ To view or reply to this message, follow the link below:
 
 	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
 	
+		
+	$digest_subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' );
+	
 	// cycle through subscribed members and send an email
 	foreach ( $subscribed_users as $user_id => $value ) { 		
+		
+		/* Not ideal, but it's necessary because this function is hooked to bp_activity_add - too early to get the activity_id number */		
+		if ( in_array( $user_id, $digest_subscribers ) && ( $value == 'sub' || $value == 'supersub' ) )
+			continue;
+
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
 
@@ -130,8 +144,10 @@ To view or reply to this message, follow the link below:
 
 	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
 	
+	$digest_subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' );
+	
 	// cycle through subscribed members and send an email
-	foreach ( $user_ids as $user_id ) { 		 		
+	foreach ( $user_ids as $user_id ) { 
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
 		
@@ -142,6 +158,9 @@ To view or reply to this message, follow the link below:
 	 	//echo '<p>uid:' . $user_id .' | gstat:' . $group_status . ' | tstat:'.$topic_status . ' | owner:'.$topic->topic_poster . ' | prev:'.$previous_posters[ $user_id ];
 		
 		if ( $topic_status == 'mute' )  // the topic mute button will override the subscription options below
+			continue;
+		
+		if ( in_array( $user_id, $digest_subscribers ) && ( $value == 'sub' || $value == 'supersub' ) )
 			continue;
 		
 		if ( $group_status == 'supersub' || $topic_status == 'sub' ) 
@@ -254,13 +273,19 @@ To view or reply to this message, follow the link below:
 
 	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
 	
+	$digest_subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' );
+	
 	// cycle through all group members and send them an email depending on their individual settings.
 	foreach ( $user_ids as $user_id ) { 
+			
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
 			
 		// it would be good to create a way for users to GLOBALY set their preference for super/sub/unsub for the misc activity types			
 		$group_sub_status = $subscribed_users[ $user_id ];
+		
+		if ( in_array( $user_id, $digest_subscribers ) && ( $group_sub_status == 'sub' || $group_sub_status == 'supersub' ) )
+			continue;
 		
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_sub_status . ' | actlvl: '. $activity_sub_level . ' | glvlsubstr: ' . substr( $group_sub_status, 5, 8 );
 		
@@ -293,7 +318,7 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 		return false;
 	
 	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
-
+	
 	if ( $group_user_subscriptions[ $user_id ] ) 
 		return 	( $group_user_subscriptions[ $user_id ] );
 	else
@@ -306,6 +331,16 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 function ass_group_subscribe_settings ( $group = false ) {
 	global $bp, $groups_template;
 
+	$digest_sub_button = __( 'Switch to digests', 'bp-ass' );
+	$digest_unsub_button = __( 'Turn digests off', 'bp-ass' );
+
+	if ( !$digest_period = get_option( 'ass_digest_period' ) )
+		$digest_period = '24';
+	
+	$digest_sub_text = sprintf ( __( 'You are currently receiving individual notification emails for each activity item you are subscribed to. Click this button to receive digests instead, which send a summary of all activity once every %s hours.', 'bp-ass' ), $digest_period );
+	
+	$digest_unsub_text = __( 'You are currently receiving activity digests for this group. Click this button to receive individual emails for each activity item.', 'bp-ass' );
+
 	if ( !$group )
 		$group = $bp->groups->current_group;
 	
@@ -313,7 +348,10 @@ function ass_group_subscribe_settings ( $group = false ) {
 		return false;
 		
 	$gsub_type = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
-		
+	
+	if ( !$subscribers = groups_get_groupmeta( $group->id, 'ass_digest_subscribers' ) )
+		$subscribers = array();
+	
 	?>
 	<form action="<?php echo $bp->root_domain; ?>/?ass_subscribe_form=1" name="group-subscribe-form" method="post">
 	<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
@@ -347,7 +385,22 @@ function ass_group_subscribe_settings ( $group = false ) {
 	</td>
 	</tr></table>
 	<p class="ass-sub-note">* By default users receive notifications for topics they start or comment on. This can be changed at your <a href="<?php echo $bp->loggedin_user->domain . 'settings/notifications/' ?>"> email notifications</a> page.</p>
+
+	
+	
+	
+	<h4><?php _e( 'Email frequency', 'bp-ass' ) ?></h4>
+	<?php if ( !in_array( $bp->loggedin_user->id, $subscribers ) ) : ?>
+		<p><?php echo $digest_sub_text ?> <input type="submit" class="generic-button" name="ass_digest_toggle" value="<?php echo $digest_sub_button ?>" />
+	<?php else : ?>
+		<p><?php echo $digest_unsub_text ?> <input type="submit" class="generic-button" name="ass_digest_toggle" value="<?php echo $digest_unsub_button ?>" />
+	<?php endif; ?>
+	
 	</form>
+	
+	
+	
+	
 	
 <!--	
 	
@@ -380,8 +433,37 @@ function ass_update_group_subscribe_settings() {
     global $bp, $ass_form_vars;
             
 	ass_get_form_vars(); 
+	$user_id = $bp->loggedin_user->id;
 	$group_id = $ass_form_vars[ 'ass_group_id' ];
 	$action = $ass_form_vars[ 'ass_group_subscribe' ];
+	$digest_toggle = $ass_form_vars['ass_digest_toggle'];
+	//print_r($ass_form_vars); die();
+	if ( $group_id && $user_id && $digest_toggle ) {
+	
+		if ( !groups_is_user_member( $user_id , $group_id ) )
+			return;
+			
+		wp_verify_nonce('ass_form');
+	
+		if ( !$subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' ) )
+			$subscribers = array();
+		
+		if ( !in_array( $user_id, $subscribers ) ) {
+			$subscribers[] = $user_id;
+		} else {
+			$key = array_search( $user_id, $subscribers );
+			unset( $subscribers[$key] );
+		}
+		
+		groups_update_groupmeta( $group_id, 'ass_digest_subscribers', $subscribers );
+		
+		
+//		ass_digest_options_update_cron( $digest_scheduler, $hook ); // save the settings
+		
+		bp_core_add_message( __( $security.'You are now ' . $action . 'd for this group.', 'buddypress' ) );
+		bp_core_redirect( wp_get_referer() );
+	} 
+	
 	
 	if ( $action && $group_id ) {
 	
@@ -397,6 +479,7 @@ function ass_update_group_subscribe_settings() {
 	} 
 }
 add_action('template_redirect', 'ass_update_group_subscribe_settings');  
+
 
 
 
@@ -420,6 +503,8 @@ function ass_group_subscribe_button( $group = false ) {
 		
 	echo '<div class="group-subscription-div">';
 		$link_text = 'Email Options';
+		
+		
 		
 		if ( $gsub_type == 'sub' ) {
 			$status = 'Subscribed';
@@ -478,6 +563,7 @@ add_action( 'wp_ajax_ass_group_ajax', 'ass_group_ajax_callback' );
 
 
 
+
 // updates the group's user subscription list.
 function ass_group_subscription( $action, $user_id, $group_id ) {
 	if ( !$action || !$user_id || !$group_id )
@@ -520,8 +606,6 @@ function ass_show_subscription_status_in_member_list() {
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
 
-
-
 //
 //	Default Group Subscription
 //
@@ -549,6 +633,7 @@ function ass_join_group_message( $group_id, $user_id ) {
 		bp_core_add_message( __( 'You successfully joined the group. You are subscribed via email to new group content.', 'buddypress' ) );
 }
 add_action( 'groups_join_group', 'ass_join_group_message', 100, 2 );
+
 
 
 
@@ -783,6 +868,7 @@ function ass_form_vars($public_query_vars) {
 	//Digest
 	$public_query_vars[] = 'ass_user_id';
 	$public_query_vars[] = 'ass_digest_scheduler';
+	$public_query_vars[] = 'ass_digest_toggle';
 	
 	//foreach ( $ass_activities as $ass_activity ) {
 	//	$public_query_vars[] = $ass_activity['type'];
@@ -823,6 +909,18 @@ function ass_get_form_vars() {
 	
     if(get_query_var('ass_group_subscribe')) {  
         $ass_form_vars['ass_group_subscribe'] = mysql_real_escape_string(get_query_var('ass_group_subscribe'));  
+	}
+	
+	if( get_query_var( 'ass_digest_toggle' ) ) {
+		$ass_form_vars['ass_digest_toggle'] = mysql_real_escape_string(get_query_var('ass_digest_toggle'));  
+	}
+	
+	if( get_query_var( 'ass_digest_frequency' ) ) {
+		$ass_form_vars['ass_digest_frequency'] = mysql_real_escape_string(get_query_var('ass_digest_frequency'));  
+	}
+	
+	if( get_query_var( 'ass_next_digest' ) ) {
+		$ass_form_vars['ass_next_digest'] = mysql_real_escape_string(get_query_var('ass_next_digest'));  
 	}
 	
 	/*foreach ( $ass_activities as $ass_activity ) {
@@ -959,11 +1057,18 @@ function ass_admin_menu() {
 add_action('admin_menu', 'ass_admin_menu');
 
 function ass_admin_options() {
+	if ( $_POST )
+		ass_update_dashboard_settings();
+	
+	$next = wp_next_scheduled( 'ass_digest_event' );
+	$next = date( "r", $next );
 	?>
 	<div class="wrap">
 		<h2>Group Notification Settings</h2>
 
-		<form id="ass-admin-settings-form" method="post" action="<?php echo $bp->root_domain; ?>/?ass_admin_settings=1">
+		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
+		
+		<h3>General settings</h3>
 		
 			<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 				
@@ -973,7 +1078,22 @@ function ass_admin_options() {
 			<br/>
 			<p>To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members.  By default, this is set to 3 days.  </p>
 			Member must be registered for<input type="text" size="1" name="ass_registered_req" value="<?php echo get_site_option( 'ass_activity_frequency_ass_registered_req' ); ?>" style="text-align:center"/>days
-			
+		
+		<h3>Digest settings</h3>
+		<p><small>The next digest is scheduled to be sent <strong><?php echo $next ?></strong></small></p>
+		
+		<p>
+			<label for="ass_digest_frequency"><?php _e( 'Set the frequency of email digests, in hours', 'bp-ass' ) ?> </label>
+			<input type="text" size="3" name="ass_digest_frequency" value="<?php echo get_option( 'ass_digest_frequency' ); ?>" style="text-align:center"/><br />
+			<small><?php _e( 'Decimal values accepted', 'bp-ass' ) ?></small>		
+		</p>
+		
+		<p>
+			<label for="ass_next_digest"><?php _e( 'How many hours until the next digest runs?', 'bp-ass' ) ?> </label>
+			<input type="text" size="3" name="ass_next_digest" value="<?php echo get_option( 'ass_next_digest' ); ?>" style="text-align:center"/><br />
+			<small><?php _e( 'Useful for setting digests for optimal times of day, especially when your digest frequency is a multiple of 24 hours. For example, if it\'s currently 7pm and you want digests to run at 2am daily, enter 7 into this field. Leave blank to keep your current schedule.', 'bp-ass' ) ?></small>
+		</p>
+		
 			<p class="submit">
 				<input type="submit" value="Save Settings" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
 			</p>
@@ -985,6 +1105,49 @@ function ass_admin_options() {
 }
 
 
+function ass_update_dashboard_settings() {
+	check_admin_referer( 'ass_admin_settings' );
+
+	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
+		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
+	
+	if ( $_POST['ass_digest_frequency'] != get_option( 'ass_digest_frequency' ) || $_POST['ass_next_digest'] ) {
+		
+		$next = wp_next_scheduled( 'ass_digest_event' );
+		
+		wp_clear_scheduled_hook( 'ass_digest_event' );	
+		
+		$freq = $_POST['ass_digest_frequency'];
+		$freq_name = $freq . '_hrs';
+		
+		update_option( 'ass_digest_frequency', $freq );
+		
+		if ( $_POST['ass_next_digest'] || !$next ) {
+			$next = time() + ( $_POST['ass_next_digest'] * 3600 );
+		}
+		
+		wp_schedule_event( $next, $freq_name, 'ass_digest_event' );
+	}
+		
+//print_r($_POST);
+}
+
+function ass_custom_digest_frequency() {
+	if ( !$freq = get_option( 'ass_digest_frequency' ) )
+		return array();
+		
+	$freq_name = $freq . '_hrs';
+	
+	return array(
+		$freq_name => array('interval' => $freq * 3600, 'display' => "Every $freq hours" )
+	);
+}
+add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
+
+
+
+
+// These are all BP functions, which don't work very well in the WP backend. I've written another function ass_update_dashboard_settings() to handle this stuff.
 function ass_update_admin_settings() {
     global $bp, $wpdb, $ass_form_vars, $ass_activities;
 	
@@ -1001,7 +1164,6 @@ function ass_update_admin_settings() {
 			bp_core_add_message( __( 'You are not allowed to do that.', 'buddypress' ), 'error' );
 			bp_core_redirect( $bp->root_domain );
 		}
-		
 		// Process each of the user setting changes
 		foreach ( $ass_form_vars as $key=>$ass_form_var ) {
 			// Check to get rid of the ass_admin_settings from fields.  Oops.
@@ -1035,6 +1197,8 @@ add_action('template_redirect', 'ass_update_admin_settings');
 
 
 // if a user updates the digest settings from the group notification page, this gets called 
+// BG: Now handled in ass_update_group_subscribe_settings
+/* 
 function ass_digest_update_group_settings() {
     global $bp, $ass_form_vars;
             
@@ -1042,22 +1206,36 @@ function ass_digest_update_group_settings() {
 	$group_id = $ass_form_vars[ 'ass_group_id' ];
 	$user_id = $ass_form_vars[ 'ass_user_id' ];
 	$action = $ass_form_vars[ 'ass_form' ];
-	$digest_scheduler = $ass_form_vars[ 'ass_digest_scheduler' ];
+	$digest_toggle = $ass_form_vars['ass_digest_toggle'];
 	
-	if ( $action && $group_id && $user_id && $digest_scheduler) {
+	if ( $action && $group_id && $user_id && $digest_toggle ) {
 	
 		if ( !groups_is_user_member( $user_id , $group_id ) )
 			return;
 			
 		wp_verify_nonce('ass_form');
+	
+		if ( !$subscribers = groups_get_groupmeta( $group_id, 'ass_subscribed_users' ) )
+			$subscribers = array();
 		
-		ass_digest_options_update_cron( $digest_scheduler, $hook ); // save the settings
+		if ( !in_array( $user_id, $subscribers ) ) {
+			$subscribers[] = $user_id;
+		} else {
+			$key = array_search( $user_id, $subscribers );
+			unset( $subscribers[$key] );
+		}
+		
+		groups_update_groupmeta( $group_id, 'ass_subscribed_users', $subscribers );
+		
+		
+//		ass_digest_options_update_cron( $digest_scheduler, $hook ); // save the settings
 		
 		bp_core_add_message( __( $security.'You are now ' . $action . 'd for this group.', 'buddypress' ) );
 		bp_core_redirect( wp_get_referer() );
 	} 
 }
 add_action('template_redirect', 'ass_digest_update_group_settings');  
+*/
 
 
 
