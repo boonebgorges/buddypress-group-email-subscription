@@ -1,22 +1,24 @@
 <?php
-
+/* This is for local testing only!! */
+date_default_timezone_set('America/New_York');
 
 /* This function was used for debugging the digest scheduling features */
 function ass_digest_schedule_print() {	
-	
 	//print "<pre>";
 	print "<br />";
 $crons = _get_cron_array();
 	echo "<div style='background: #fff;'>";
 	
-	echo "Now: " . time() . " Scheduled: ";
 	$sched = wp_next_scheduled( 'ass_digest_event' );
+	
+	echo "Scheduled: " . date( 'h:i', $sched );
+	
 	$until = (int)$sched - time();
 	echo " Until: " . $until;
 	echo "</div>";
 	
 }
-//add_action( 'wp_head', 'ass_digest_schedule_print' );
+add_action( 'wp_head', 'ass_digest_schedule_print' );
 
 
 /* Digest-specific functions */
@@ -65,7 +67,7 @@ function ass_digest_fire() {
 				$to = $ud->user_email;
 				//print_r($to); die();
 				wp_mail( $to, $subject, $message );
-		
+		//echo $message; die();
 				unset( $message, $to );
 				
 				delete_usermeta( $subscriber, 'ass_digest_items' );
@@ -169,32 +171,22 @@ function ass_digest_format_item( $item ) {
 
 
 
-function ass_digest_record_activity( $content ) {
+function ass_digest_record_activity( $activity_id, $user_id, $group_id ) {
 	global $bp;
 	
-	if ( $content->component != 'groups' )
-		return;
+	if ( !$group_activity_ids = get_usermeta( $user_id, 'ass_digest_items' ) )
+		$group_activity_ids = array();
+	
+	if ( !$this_group_activity_ids = $group_activity_ids[$group_id] )
+		$this_group_activity_ids = array();
 		
-	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
-		return;
-	
-	if ( !$subscribers = groups_get_groupmeta( $content->item_id, 'ass_digest_subscribers' ) )
-		return;
-	
-	foreach ( $subscribers as $subscriber ) {
-		if ( !$group_activity_ids = get_usermeta( $subscriber, 'ass_digest_items' ) )
-			$group_activity_ids = array();
-	
-		if ( !$this_group_activity_ids = $group_activity_ids[$content->item_id] )
-			$this_group_activity_ids = array();
-		$this_group_activity_ids[] = $content->id;
+	$this_group_activity_ids[] = $activity_id;
 
-		$group_activity_ids[$content->item_id] = $this_group_activity_ids;
+	$group_activity_ids[$group_id] = $this_group_activity_ids;
 
-		update_usermeta( $subscriber, 'ass_digest_items', $group_activity_ids );
-	}
+	update_usermeta( $user_id, 'ass_digest_items', $group_activity_ids );
+	
 }
-add_action( 'bp_activity_after_save', 'ass_digest_record_activity', 10 );
 
 
 function ass_cron_add_weekly( $schedules ) {
