@@ -906,9 +906,11 @@ function ass_registered_long_enough( $activity_user_id ) {
 //
 
 
+//
+// NOTE to Boone: these next two functions seem totally strange to me, isn't there a better way to o this, the WP/BP way? If you can lead me in the right direction i can code it perhaps. 
+//
 
-
-// hook into the query_vars parsing so we can get our own form vars	 - DW: isn't there a better way to do this?
+// hook into the query_vars parsing so we can get our own form vars
 function ass_form_vars($public_query_vars) {
 	//global $ass_activities;
 		
@@ -990,6 +992,7 @@ function ass_get_form_vars() {
 
 
 
+// TODO: this function needs to be cleaned up. 
 // This function sends an email out to all group members regardless of subscription status. 
 // It's called before template redirect to give feedback.
 function ass_admin_notice() {
@@ -1065,7 +1068,6 @@ add_action('template_redirect', 'ass_admin_notice');
 
 
 // adds forum notification options in the users settings->notifications page 
-// TODO: implement this functionality
 function ass_group_subscription_notification_settings() {
 	global $current_user; ?>
 	<table class="notification-settings" id="groups-notification-settings">
@@ -1105,7 +1107,7 @@ add_action( 'bp_notification_settings', 'ass_group_subscription_notification_set
 //
 
 
-// TODO: rework this totally, move to an admin.php file
+// TODO: rework this totally, move to an admin.php file probably
 // Functions to add the backend admin menu to control changing default settings
 function ass_admin_menu() {
 	add_submenu_page( 'bp-general-settings', "Group Notifications", "Group Notifications", 'manage_options', 'ass_admin_options', "ass_admin_options" );
@@ -1188,7 +1190,7 @@ function ass_admin_options() {
 	<?php
 }
 
-
+// TODO: clean this up totally
 function ass_update_dashboard_settings() {
 	check_admin_referer( 'ass_admin_settings' );
 
