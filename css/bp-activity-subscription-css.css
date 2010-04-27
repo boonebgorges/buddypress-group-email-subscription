@@ -26,27 +26,21 @@ h4.activity-subscription-settings-title {
 	padding:8px;
 }
 
-.activity-admin-notice-textarea {
-	border:medium none;
-	color:#555555;
-	font-family:inherit;
-	font-size:14px;
-	height:60px;
-	margin:0;
-	padding:0;
-	width:100%;
+#ass-admin-notice-textarea {
+	height: 250px;
+	margin-bottom: 10px;
 }
 
 .ass-settings-advanced { display: none; }
 
 .ass-email-type {
-	margin-top: 10px;
+	margin-top: 6px;
 	color: #333;
 	font-size: 14px;
 }
 .ass-email-type .ass-email-explain {
 	margin-left: 19px;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 	color: #777;
 	font-size: 12px;
 }

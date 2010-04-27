@@ -1,16 +1,12 @@
 <?php
 /*
 Plugin Name: BuddyPress Group Email Subscription
-Plugin URI: http://www.namoo.co.uk
+Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
 Description: Allow BuddyPress members to get email updates for new forum topics, posts, activity updates and more with levels of control. 
-Author: David Cartwright, boonebgorges, Deryk Wenaus
-Revision Date: Mar 24, 2010
+Author: boonebgorges, dwenaus, David Cartwright
+Revision Date: Apr 28, 2010
 Version: 2.1b
 */
-
-
-//global $ass_activities;
-//$ass_activities = 'we are going to put the activities data in here later';
 
 function activitysub_load_buddypress() {
 	global $ass_activities;
@@ -32,29 +28,6 @@ function activitysub_load_buddypress() {
 
 	return false;
 }
-
 add_action( 'plugins_loaded', 'activitysub_load_buddypress', 1 );
-//add_action( 'plugins_loaded', 'ass_init', 1 );
-
-/* broken?
-function load_activity_subscription_plugin() {
-	require_once( WP_PLUGIN_DIR . '/bp-activity-subscription/bp-activity-subscription-main.php' );
-}
-
-if ( defined( 'BP_VERSION' ) )
-	load_activity_subscription_plugin();
-else
-	add_action( 'bp_init', 'load_activity_subscription_plugin' );
-*/
-
-/* DIGEST */
-/* To activate when all digest functions are finished
-register_activation_hook ( __FILE__ , 'my_activation' ) ;
-add_action ( Ô my_hourly_event Ô , 'do_this' );
-add_action ( Ô my_daily_event Ô , 'do_this' );
-add_action ( Ô my_weekly_event Ô , 'do_this' );
-
-*/
-
 
 ?>
