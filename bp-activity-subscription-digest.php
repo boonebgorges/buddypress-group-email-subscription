@@ -43,9 +43,14 @@ function ass_digest_fire() {
 			
 			$group_id = bp_get_group_id();
 			
-			$subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' );
+			// boone: I switched this to the consolidated subscribe/digeset list
+			// $subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' );
+			$subscribers = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 			
-			foreach ( $subscribers as $subscriber ) {
+			foreach ( (array)$subscribers as $subscriber => $email_status ) {
+				if ( $email_status != 'dig' ) // *** boone: somewhere you'll need to put the one for the weekly summary 'sum'
+					continue; 
+			
 				$message = $subject . '
 ';
 				
