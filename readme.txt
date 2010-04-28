@@ -4,7 +4,7 @@ Donate link: http://namoo.co.uk/
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription
 Requires at least: 2.9.1 BP 1.2
 Tested up to: 2.9.2 BP 1.2.3
-Stable tag: 2.1b
+Stable tag: 2.1b2
 
 This plugin allows members to subscribe to groups to receive email notifications for forum topics and posts and activity updates.  
 

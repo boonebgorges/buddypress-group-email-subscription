@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscript
 Description: Allow BuddyPress members to get email updates for new forum topics, posts, activity updates and more with levels of control. 
 Author: boonebgorges, dwenaus, David Cartwright
 Revision Date: Apr 28, 2010
-Version: 2.1b
+Version: 2.1b2
 */
 
 function activitysub_load_buddypress() {
