@@ -54,8 +54,13 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Screenshots ==
 
-1. Changing Email Options
-1. Example Email
+1. Email Options on settings page
+2. Email Options on other group pages
+3. Email Options in Group Directory
+4. Sample Email (HTML emails in future versions)
+5. Follow and mute links in group forum
+6. Send Email Notice to entire group (admin only)
+7. Admin Settings
 
 == Changelog ==
 
