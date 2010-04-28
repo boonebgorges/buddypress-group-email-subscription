@@ -1,50 +1,56 @@
 === BuddyPress Group Email Subscription ===
-Contributors: David Cartwright, boonebgorges, dwenaus
-Donate link: http://namoo.co.uk/
-Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription
+Contributors: boonebgorges, dwenaus, David Cartwright
+Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
 Tested up to: 2.9.2 BP 1.2.3
 Stable tag: 2.1b2
 
-This plugin allows members to subscribe to groups to receive email notifications for forum topics and posts and activity updates.  
+This plugin allows group members to receive email notifications for group activity, especially forum posts. Weekly or daily digests are available.
 
 == Description ==
 
-This plugin is currently in early beta status. Please refrain from using on production websites. (It is here in the plugin directory so we can use the trac features.)
+*This plugin is currently in beta status. Please refrain from using on production websites.*
 
-This plugin allow group members to receive email updates about new forum topics, forum posts and group activity updates. In order to get updates, a user must either subscribe or super-subscribe to the group. Subscribed users will get all new forum topics, but not the subsequent comments (same with activity posts). If a user super-subscribes to the group, they will get an email will all new content.
+This plugin allow group members to receive email notifications for all types of group activity, especially forum posts. Each user can choose how they want to subscribe to the group. 
 
-By default, the plugin will send email updates to a user for any comments on a forum topic they create or comment on. These settings are controlled in the users' settings->notifications page. 
+EMAIL SUBSCRIPTION LEVELS
+There are 5 levels of email subscription options: 
+1. No Email - Read this group on the web
+2. Weekly Summary Email - A summary of new topics each week
+3. Daily Digest Email - All the day's activity bundled into a single email
+4. New Topics Email - Send new topics as they arrive (but don't send replies)
+5. Email - Send all group activity as it arrives 
 
-We are actively working on an email digest function.
+DEFAULT SUBSCRIPTION STATUS
+Group admins can choose one of the 5 subscription levels as a default that gets applied when new members join. 
 
-Group admins and mods can also override the user settings for updates to send out group notifications to all their group users.
+DIGEST AND SUMMARY EMAILS
+The daily digest email is sent every morning and contains all the emails from all the groups a user is subscribed to. The digest begins with a helpful topic summary. The weekly summary email contains just the topic titles from the past week. Summary and digest timing can be configured in the back end. 
 
-To protect against spam, you can set a minimum time users need to be registered before people receive email. This feature is off by default, but can be enabled in the admin.
+EMAILS FOR TOPICS I'VE STARTED OR COMMENTED ON
+Users receive email notifications when someone replies to a topic they create or comment on (similar to Facebook). This happens whether they are subscribed or not. Users can control this behavior in their notifications page.
 
-In the final version, the plugin will be internationalized, and there will be more helpful support text and admin options. 
+TOPIC FOLLOW AND MUTE
+Users who are not fully subscribed to a group (ie. maybe they are on digest) can choose to get immediate email updates for specific topic threads. Any subsequent replies to that thread will be emailed to them. In an opposite way, users who are fully subscribed to a group but want to stop getting emails from a specific (perhaps annoying) thread can choose to mute that topic.
 
-NOTE TO PLUGIN AUTHORS: You can hook in your own activity types. See the example code below:
+ADMIN NOTIFICATION
+Group admins can send out an email to all group members from the group's admin section. The email will be sent to all group members regardless of subscription status. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
 
-`// an example of a plugin adding an activity filter to group email notifications
-function my_fun_activity_filter( $ass_activity ) {
-	$ass_activity[ 'wiki_add' ] = array(
-		"level"=>"sub",  // can be either "sub" or "supersub"
-		"name_past"=>"added a wiki page", 
-		"name_pres"=>"adds a wiki page", 
-		"section"=>"Wiki"
-		);
-	return $ass_activity;
-}
-add_filter( 'ass_activity_types', 'my_fun_activity_filter' );
-`
+SPAM PROTECTION
+To protect against spam, you can set a minimum number of days users need to be registered before their group activity will be emailed to other users. This feature is off by default, but can be enabled in the admin.
 
-The above code adds support for a new activity type "wiki_add" at the regular subscription level. 
+The plugin is fully internationalized.
+
+NOTE TO PLUGIN AUTHORS
+If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can hook into 'ass_group_notification_activity' and set $this_activity_is_important to TRUE. See the ass_group_notification_activity() function in bp-activity-subscription-functions.php for more details. An example: adding a new wiki page would be considered important and should be hooked in, whereas a comment on a wiki page would be less important and should not be hooked in.
+
 
 == Installation ==
 
 1. Install plugin
-2. Do a dance (optional)
+2. Go to the front end and set your email options for each of your groups
+3. On the group admin settings, set the default subscription status of existing groups
+4. to enable follow and mute on individual topic pages, edit core file `bp-themes/bp-default/groups/single/forum/topic.php` and add `<?php do_action( 'bp_before_group_forum_topic_posts' ) ?> ` around line 19, just before `<div id="topic-meta">`. A trac request has been added for this hook. so in future versions of BuddyPress, the line may already exist. 
 
 == Screenshots ==
 
@@ -52,6 +58,9 @@ The above code adds support for a new activity type "wiki_add" at the regular su
 1. Example Email
 
 == Changelog ==
+
+= 2.2 =
+Plugin complete re-write finished. Digest function added, plus too many features to list here.
 
 = 2.1 =
 group admins can set default subscription level

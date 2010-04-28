@@ -18,13 +18,12 @@ $crons = _get_cron_array();
 	echo "</div>";
 	
 }
-add_action( 'wp_head', 'ass_digest_schedule_print' );
+//add_action( 'wp_head', 'ass_digest_schedule_print' );
 
 
 /* Digest-specific functions */
-// The plan: The format should be basically the same for weekly and daily digests, so I can use the same function with a $type argument. $type can be 'dig' for daily digests or 'wdig' for weekly digests.
 
-function ass_digest_fire( $type = 'dig' ) {
+function ass_digest_fire() {
 	global $bp;
 	
 	if ( bp_has_groups( 'per_page=100000' ) ) {
@@ -44,10 +43,12 @@ function ass_digest_fire( $type = 'dig' ) {
 			
 			$group_id = bp_get_group_id();
 			
+			// boone: I switched this to the consolidated subscribe/digeset list
+			// $subscribers = groups_get_groupmeta( $group_id, 'ass_digest_subscribers' );
 			$subscribers = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 			
 			foreach ( (array)$subscribers as $subscriber => $email_status ) {
-				if ( $email_status != $type )
+				if ( $email_status != 'dig' ) // *** boone: somewhere you'll need to put the one for the weekly summary 'sum'
 					continue; 
 			
 				$message = $subject . '
@@ -70,9 +71,8 @@ function ass_digest_fire( $type = 'dig' ) {
 				// Set up and send the message
 				$to = $ud->user_email;
 				//print_r($to); die();
-		print_r( $message ); die();
 				wp_mail( $to, $subject, $message );
-		
+		//echo $message; die();
 				unset( $message, $to );
 				
 				delete_usermeta( $subscriber, 'ass_digest_items' );
@@ -126,8 +126,8 @@ function ass_digest_format_item( $item ) {
 	
 	$item_message = '';
 	
-	// Action text
-	// This technique will not translate well
+	/* Action text */
+	/* This technique will not translate well */
 	$action_split = explode( ' in the group', $item->action );
 	if ( $action_split[1] )
 		$action = $action_split[0] . ':';
@@ -137,8 +137,8 @@ function ass_digest_format_item( $item ) {
 	$item_message .= $action . '
 ';
 	
-	// Activity content
-	// At some point I will get the full text to work. For now it sucks and is hard
+	/* Activity content */
+	/* At some point I will get the full text to work. For now it sucks and is hard */
 	if ( $options['forum_post_format'] == 'full_text' ) {
 /*		if ( bp_has_forum_topic_posts( "topic_id=2" ) ) {
 			global $topic_template;
@@ -154,7 +154,7 @@ function ass_digest_format_item( $item ) {
 		$item_message .= '   ' . $content . '
 ';
 	
-	// Activity timestamp
+	/* Activity timestamp */
 	$timestamp = strtotime( $item->date_recorded );
 	$time_format = get_option( 'time_format' );
 	$date_format = get_option( 'date_format' );
@@ -162,11 +162,11 @@ function ass_digest_format_item( $item ) {
 	$date_posted = date( "$date_format", $timestamp );
 	$item_message .= sprintf( 'at %s %s', $time_posted, $date_posted );
 	
-	// Permalink
+	/* Permalink */
 	if ( $item->type == 'new_forum_topic' || $item->type == 'new_forum_post' || $item->type == 'new_blog_post' )
 		$item_message .= ' - ' . $item->primary_link;
 	
-	// Cleanup
+	/* Cleanup */
 	$item_message .= '
 
 ';
@@ -193,11 +193,12 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id ) {
 	
 }
 
-
+// boone: I changed this so it works now, the filter is not really a true filter, it's more like an action.
+// in cron.php this is the code: return array_merge( apply_filters( 'cron_schedules', array() ), $schedules );
 function ass_cron_add_weekly( $schedules ) {
-	$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) );
-	$schedules['twominutes'] = array( 'interval' => 120, 'display' => __( 'Every Two Minutes', 'bp-ass' ) );
-	return $schedules;
+	return array( 
+		'weekly' => array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) )
+	);
 }
 add_filter( 'cron_schedules', 'ass_cron_add_weekly' );
 

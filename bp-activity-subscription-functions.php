@@ -947,6 +947,8 @@ function ass_update_dashboard_settings() {
 	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
 		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 	
+	/* Todo: Process the new admin settings and turn them into real schedules */
+	
 	/* The daily digest time has been changed */
 	if ( $_POST['ass_digest_time'] != get_option( 'ass_digest_time' ) ) {
 		
@@ -958,10 +960,8 @@ function ass_update_dashboard_settings() {
 		$the_timestamp = ( $the_timestamp > time() ) ? $the_timestamp : (int)$the_timestamp + 86400;
 		
 		/* Clear the old recurring event and set up a new one */
-		wp_clear_scheduled_hook( 'ass_digest_event' );
-		//wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );	
-		// Two minutes for testing
-		wp_schedule_event( $the_timestamp, 'twominutes', 'ass_digest_event' );
+		wp_clear_scheduled_hook( 'ass_digest_event' );	
+		wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
 		
 		/* Finally, save the option */
 		update_option( 'ass_digest_time', $_POST['ass_digest_time'] );
@@ -988,6 +988,18 @@ function ass_update_dashboard_settings() {
 }
 
 
+function ass_custom_digest_frequency() {
+	if ( !$freq = get_option( 'ass_digest_frequency' ) )
+		return array();
+	
+	return array(
+		$freq . '_hrs' => array('interval' => $freq * 3600, 'display' => "Every $freq hours" )
+	);
+}
+add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
+
+
+
 function ass_weekly_digest_week() {
 	$ass_weekly_digest = get_option( 'ass_weekly_digest' );
 	if ( $ass_weekly_digest == 1 )
@@ -1006,5 +1018,10 @@ function ass_weekly_digest_week() {
 		return __('Sunday' );
 }
 
+function ass_testing_func() {
+	//echo '<pre>'; print_r( wp_get_schedules() ); echo '</pre>';
+}
+//add_action('bp_before_container','ass_testing_func');
+add_action('bp_after_container','ass_testing_func');
 
 ?>
