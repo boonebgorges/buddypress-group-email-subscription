@@ -51,7 +51,7 @@ To view or reply to this topic, log in and follow the link below:
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 			wp_mail( $user->user_email, $subject, $message );  // Send the email
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
-			ass_digest_record_activity( $content->id, $user_id, $group_id );
+			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 		}
 		//echo '<br>Email: ' . $user->user_email;
 	}	
@@ -146,7 +146,7 @@ To view or reply to this topic, log in and follow the link below:
 		} 
 		
 		if ( $group_status == 'dig' ) {
-			ass_digest_record_activity( $content->id, $user_id, $group_id );
+			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 			//echo '<br>Digest: ' . $user_id;
 		}
 		
@@ -219,7 +219,7 @@ To view or reply, log in and follow the link below:
 			wp_mail( $user->user_email, $subject, $message );  // Send the email
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
-			ass_digest_record_activity( $content->id, $user_id, $group_id );
+			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 			//echo '<br>DIGEST: ' . $user_id . "<br>";
 		}
 	}
