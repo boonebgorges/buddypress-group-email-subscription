@@ -950,40 +950,13 @@ function ass_update_dashboard_settings() {
 	/* Todo: Process the new admin settings and turn them into real schedules */
 	
 	/* The daily digest time has been changed */
-	if ( $_POST['ass_digest_time'] != get_option( 'ass_digest_time' ) ) {
-		
-		/* Concatenate the hours-minutes entered, and turn it into a timestamp today */
-		$the_time = date( 'Y-m-d' ) . ' ' . $_POST['ass_digest_time']['hours'] . ':' . $_POST['ass_digest_time']['minutes'];
-		$the_timestamp = strtotime( $the_time );
-		
-		/* If the time has already passed today, the next run will be tomorrow */
-		$the_timestamp = ( $the_timestamp > time() ) ? $the_timestamp : (int)$the_timestamp + 86400;
-		
-		/* Clear the old recurring event and set up a new one */
-		wp_clear_scheduled_hook( 'ass_digest_event' );	
-		wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
-		
-		/* Finally, save the option */
-		update_option( 'ass_digest_time', $_POST['ass_digest_time'] );
-	}
+	if ( $_POST['ass_digest_time'] != get_option( 'ass_digest_time' ) )		
+		ass_set_daily_digest_time( $_POST['ass_digest_time']['hours'], $_POST['ass_digest_time']['minutes'] );
 	
 	/* The weekly digest day has been changed */
-	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) ) {
-		
-		if ( !$next_weekly = wp_next_scheduled( 'ass_digest_event_weekly' ) )
-			$next_weekly = wp_next_scheduled( 'ass_digest_event' ); 
-		
-		while ( date( 'w', $next_weekly ) != $_POST['ass_weekly_digest'] ) {
-			$next_weekly += 86400;
-		}
-		
-		/* Clear the old recurring event and set up a new one */
-		wp_clear_scheduled_hook( 'ass_digest_event_weekly' );	
-		wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
-		
-		/* Finally, save the option */
-		update_option( 'ass_weekly_digest', $_POST['ass_weekly_digest'] );
-	}
+	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) )		
+		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
+
 //print_r($_POST);
 }
 

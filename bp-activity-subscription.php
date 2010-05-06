@@ -30,4 +30,18 @@ function activitysub_load_buddypress() {
 }
 add_action( 'plugins_loaded', 'activitysub_load_buddypress', 1 );
 
+function activitysub_setup_digest_defaults() {
+	require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
+	ass_set_daily_digest_time( '05', '00' );	
+	ass_set_weekly_digest_time( '4' );
+}
+register_activation_hook( __FILE__, 'activitysub_setup_digest_defaults' );
+
+function activitysub_unset_digests() {
+	wp_clear_scheduled_hook( 'ass_digest_event' );
+	wp_clear_scheduled_hook( 'ass_digest_event_weekly' );
+}
+register_deactivation_hook( __FILE__, 'activitysub_unset_digests' );
+
+
 ?>

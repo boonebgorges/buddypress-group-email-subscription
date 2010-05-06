@@ -9,7 +9,7 @@ function ass_digest_schedule_print() {
 $crons = _get_cron_array();
 	echo "<div style='background: #fff;'>";
 	
-	$sched = wp_next_scheduled( 'ass_digest_event' );
+	$sched = wp_next_scheduled( 'ass_digest_event_weekly' );
 	
 	echo "Scheduled: " . date( 'h:i', $sched );
 	
@@ -23,11 +23,11 @@ $crons = _get_cron_array();
 
 /* Digest-specific functions */
 
-function ass_digest_fire( $type = 'dig' ) {
+function ass_digest_fire( $type ) {
 	global $bp;
 	
-//	if ( !isset( $type ) )
-		$type = 'sum';
+	if ( !$type )
+		$type = 'dig';
 		
 	// This is done with bp_has_groups because user subscription status is stored in groupmeta. Therefore you can't simply pull up a list of all members on the site and run through them one by one. The bp_has_groups method will result in far fewer db hits
 	
@@ -95,7 +95,7 @@ function ass_digest_fire( $type = 'dig' ) {
 				// Set up and send the message
 				$to = $ud->user_email;
 				
-				print "<pre>"; print_r($message); die(); // For testing only
+				//print "<pre>"; print_r($message); die(); // For testing only
 				
 				wp_mail( $to, $subject, $message );
 				unset( $message, $to );
@@ -109,7 +109,17 @@ function ass_digest_fire( $type = 'dig' ) {
 	}
 }
 //add_action( 'bp_init', 'ass_digest_fire' ); // for testing only
-add_action( 'ass_digest_event', 'ass_digest_fire' );
+
+
+function ass_daily_digest_fire() {
+	ass_digest_fire( 'dig' );
+}
+add_action( 'ass_digest_event', 'ass_daily_digest_fire' );
+
+function ass_weekly_digest_fire() {
+	ass_digest_fire( 'sum' );
+}
+add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 
 
 
@@ -260,13 +270,45 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 	
 }
 
-// boone: I changed this so it works now, the filter is not really a true filter, it's more like an action.
-// in cron.php this is the code: return array_merge( apply_filters( 'cron_schedules', array() ), $schedules );
+
 function ass_cron_add_weekly( $schedules ) {
 	return array( 
 		'weekly' => array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) )
 	);
 }
 add_filter( 'cron_schedules', 'ass_cron_add_weekly' );
+
+
+function ass_set_daily_digest_time( $hours, $minutes ) {
+	$the_time = date( 'Y-m-d' ) . ' ' . $hours . ':' . $minutes;
+	$the_timestamp = strtotime( $the_time );
+	
+	/* If the time has already passed today, the next run will be tomorrow */
+	$the_timestamp = ( $the_timestamp > time() ) ? $the_timestamp : (int)$the_timestamp + 86400;
+	
+	/* Clear the old recurring event and set up a new one */
+	wp_clear_scheduled_hook( 'ass_digest_event' );	
+	wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
+	
+	/* Finally, save the option */
+	update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
+}
+
+// Takes the numeral equivalent of a $day: 0 for Sunday, 1 for Monday, etc
+function ass_set_weekly_digest_time( $day ) {
+	if ( !$next_weekly = wp_next_scheduled( 'ass_digest_event' ) )
+		$next_weekly = time() + 60; 
+	
+	while ( date( 'w', $next_weekly ) != $day ) {
+		$next_weekly += 86400;
+	}
+	
+	/* Clear the old recurring event and set up a new one */
+	wp_clear_scheduled_hook( 'ass_digest_event_weekly' );	
+	wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
+	
+	/* Finally, save the option */
+	update_option( 'ass_weekly_digest', $day );
+}
 
 ?>
