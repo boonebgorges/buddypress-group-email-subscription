@@ -1,5 +1,5 @@
 === BuddyPress Group Email Subscription ===
-Contributors: boonebgorges, dwenaus, David Cartwright
+Contributors: boonebgorges, dwenaus, aekeron
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
 Tested up to: 2.9.2 BP 1.2.3
