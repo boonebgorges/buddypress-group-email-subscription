@@ -25,7 +25,7 @@ $crons = _get_cron_array();
 
 function ass_digest_fire( $type ) {
 	global $bp;
-	
+
 	if ( !$type )
 		$type = 'dig';
 		
@@ -33,12 +33,16 @@ function ass_digest_fire( $type ) {
 	
 	if ( bp_has_groups( 'per_page=100000' ) ) {
 		
-		$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
-		$subject = sprintf( __( 'Your group updates from %s', 'bp-ass' ), $blogname );
 		
-		$footer = '
------------
-';
+		if ( $type == 'dig' )
+			$subject = sprintf( __( 'Daily digest of group activity', 'bp-ass' ) );
+		else
+			$subject = sprintf( __( 'Weekly summary of group activity', 'bp-ass' ) );
+
+		$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );			
+		$subject .= ' [' . $blogname . '] ';
+	
+		$footer = "\n-----------\n";
 		$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s. To change your notification settings for a given group, click on the group\'s link above and visit the Email Options page.", 'bp-ass' ), $blogname );
 			
 		$member_sent = array();
@@ -64,11 +68,8 @@ function ass_digest_fire( $type ) {
 				if ( !$group_activity_ids = (array)$group_activity_ids_array[$type] )
 					continue;
 		
-				$message = $subject . '
-
------------
-';
-				$summary = __( 'Summary', 'bp-ass');
+				$message = $subject . "\n\n----------------------\n";
+				$summary = __( 'Group Summary', 'bp-ass');
 				
 				foreach ( $group_activity_ids as $group_id => $activity_ids ) {
 					// get group name and add it to this
@@ -81,9 +82,11 @@ function ass_digest_fire( $type ) {
 					unset( $group_activity_ids[$group_id] );
 				}
 				
-				$summary .= "\n-----------\n\n";
+				$summary .= "\n----------------------\n\n";
 				
-				$message .= $summary;
+				if ( $type == 'dig' )
+					$message .= $summary;
+					
 				$message .= $activity_message;
 				$message .= $footer;
 				
@@ -95,20 +98,20 @@ function ass_digest_fire( $type ) {
 				// Set up and send the message
 				$to = $ud->user_email;
 				
-				//print "<pre>"; print_r($message); die(); // For testing only
+				//echo '<br><br>========================================================<br><br>';// For testing only
+				//echo '<pre> To: '.$to . '</pre>'; // For testing only
+				//echo '<pre>'; print_r( $message ); echo '</pre>'; //die(); // For testing only
 				
 				wp_mail( $to, $subject, $message );
 				unset( $message, $to );
 		
 				$group_activity_ids_array[$type] = $group_activity_ids;
-				update_usermeta( $subscriber, 'ass_digest_items', $group_activity_ids_array );
-				//delete_usermeta( $subscriber, 'ass_digest_items' );
+				update_usermeta( $subscriber, 'ass_digest_items', $group_activity_ids_array );  // comment this out for helpful testing
 				$member_sent[] = $subscriber;
 			}
 		}
 	}
 }
-//add_action( 'bp_init', 'ass_digest_fire' ); // for testing only
 
 
 function ass_daily_digest_fire() {
@@ -121,36 +124,35 @@ function ass_weekly_digest_fire() {
 }
 add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 
+// Use these two lines for testing the digest firing in realtime
+//add_action( 'bp_after_container', 'ass_daily_digest_fire' ); // for testing only
+//add_action( 'bp_after_container', 'ass_weekly_digest_fire' ); // for testing only
+
+
+
 
 
 
 function ass_digest_format_item_group( $group_id, $activity_ids, $type ) {
 	
-	$group_message = '';
-	
 	$group = new BP_Groups_Group( $group_id, false, true );	
 	
-	$group_message .= '
------------
-';
-	if ( $type == 'dig' )
+	if ( $type == 'dig' ) {
+		$group_message = "\n-----------\n";
 		$group_message .= sprintf( __( 'Activity from the group "%s"', 'bp-ass' ), $group->name );
-	else
-		$group_message .= sprintf( __( 'New forum posts in the group "%s"', 'bp-ass' ), $group->name );
-		
-	$group_message .= '
-';
-	$group_message .= bp_get_group_permalink( $group );
-	
-	$group_message .= '
------------
-	
-';
+		$group_message .= "\n";
+		$group_message .= bp_get_group_permalink( $group );
+		$group_message .= "\n-----------\n\n";
+	} else {
+		$group_message =  "\n" . sprintf( __( 'New topics for "%s"', 'bp-ass' ), $group->name );
+		$group_message .= ' - ' . bp_get_group_permalink( $group );
+		$group_message .= "\n";
+	}	
 	
 	if ( is_array( $activity_ids ) )
 		$activity_ids = implode( ",", $activity_ids );
 	$items = bp_activity_get_specific( "sort=ASC&activity_ids=" . $activity_ids );
-			
+				
 	foreach ( $items['activities'] as $item ) {
 		$group_message .= ass_digest_format_item( $item, $type );
 	}
@@ -160,27 +162,28 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type ) {
 
 
 function ass_digest_format_item( $item, $type ) {
-	//print_r($item);
+	//echo '<pre>'; print_r( $item ); echo '</pre>';	
 	
 	//$options = get_site_option( 'ass_digest_options' );
 	$options = array( 'forum_post_format' => 'full_text' );
 	
-	$item_message = '';
+	/* Action text - This technique will not translate well */
+	$action_split = explode( ' in the group', $item->action );
 	
+	if ( $action_split[1] )
+		$action = $action_split[0];
+	else
+		$action = $item->action;
 
-	// Only get the item content if this is a daily digest
+	/* Activity timestamp */
+	$timestamp = strtotime( $item->date_recorded );
+	$time_posted = date( get_option( 'time_format' ), $timestamp );
+	$date_posted = date( get_option( 'date_format' ), $timestamp );
+	
+	// Daily Digest
 	if ( $type == 'dig' ) {
-		/* Action text */
-		/* This technique will not translate well */
-		$action_split = explode( ' in the group', $item->action );
-		if ( $action_split[1] )
-			$action = $action_split[0] . ':';
-		else
-			$action = $item->action;
 		
-		$item_message .= strip_tags( $action ) . '
-';
-
+		$item_message = strip_tags( $action ) . ": \n";
 
 		/* Activity content */
 		/* At some point I will get the full text to work. For now it sucks and is hard */
@@ -190,21 +193,14 @@ function ass_digest_format_item( $item, $type ) {
 			}
 		
 			print_r($topic_template);*/
-			$content = '"' . $item->content . '"';
+			$content = $item->content;
 		} else {
-			$content = '"' . $item->content . '"';
+			$content = $item->content;
 		}
 		
 		if ( $content )
-			$item_message .= '   ' . $content . '
-';
+			$item_message .= '   "' . $content . '"' . "\n";
 	
-		/* Activity timestamp */
-		$timestamp = strtotime( $item->date_recorded );
-		$time_format = get_option( 'time_format' );
-		$date_format = get_option( 'date_format' );
-		$time_posted = date( "$time_format", $timestamp );
-		$date_posted = date( "$date_format", $timestamp );
 		$item_message .= sprintf( 'at %s %s', $time_posted, $date_posted );
 		
 		/* Permalink */
@@ -212,43 +208,30 @@ function ass_digest_format_item( $item, $type ) {
 			$item_message .= ' - ' . $item->primary_link;
 		
 		/* Cleanup */
-		$item_message .= '
+		$item_message .= "\n\n";
 	
-';
-	
+	// Weekly summary
 	} else {
-		$post = bp_forums_get_post( $item->secondary_item_id );
-
-		$topic_id = $post->topic_id;
 		
-		
-		$counter = 0;
-		
-		if ( bp_has_forum_topic_posts( 'per_page=10000&topic_id=' . $topic_id ) ) {
-			global $topic_template;
-	print "<pre>";
-	//print_r($topic_template);
-			foreach ( $topic_template->posts as $post ) {
-				$since = time() - strtotime( $post->post_time );
-				if ( $since < 604800 )
-					$counter++;
+		if ( $item->type == 'new_forum_topic' ) {
+			if ( bp_has_forum_topic_posts( 'per_page=10000&topic_id=' . $item->secondary_item_id ) ) {
+				global $topic_template;
+				foreach ( $topic_template->posts as $post ) {
+					$since = time() - strtotime( $post->post_time );
+					if ( $since < 604800 ) //number of seconds in a week
+						$counter++;
+				}
 			}
+			$replies = ' ' . sprintf( __( '(%s replies)', 'bp-ass' ), $counter );
 		}
 		
-		$action_split = explode( ' in the group', $item->action );
-		if ( $action_split[1] )
-			$action = $action_split[0] . ':';
-		else
-			$action = $item->action;
-		
-//		$topic = bp_forums_get_topic_details( $topic_id );
-		//		print_r($topic);
-		$item_message = $action . " " . sprintf( __( '(%s new posts)', 'bp-ass' ), $counter ) . "\n";
-		$item_message .= $item->primary_link . "\n";
+		$action = str_replace( ' started the forum topic', ':', $action ); // won't translate but it's not essential
+		$item_message = '   ' . $action . $replies;
+		// until we can get this working in dual plain text and html, we should keep it simpler. 
+		//$item_message .= ' - ' . $item->primary_link; 
+		$item_message .= "\n";
 	}
 	
-	
-
 	return $item_message;
 }
 
@@ -263,11 +246,8 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 		$this_group_activity_ids = array();
 		
 	$this_group_activity_ids[] = $activity_id;
-
 	$group_activity_ids[$type][$group_id] = $this_group_activity_ids;
-
 	update_usermeta( $user_id, 'ass_digest_items', $group_activity_ids );
-	
 }
 
 

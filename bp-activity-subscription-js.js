@@ -1,6 +1,6 @@
 jQuery(document).ready( function() {
 	var j = jQuery;
-	
+		
 	// topic follow/mute
 	j(".ass-topic-subscribe > a").click( function() {
 		it = j(this);
@@ -53,6 +53,7 @@ jQuery(document).ready( function() {
 			group_id: stheid[1],
 			//_ajax_nonce: stheid[2],
 		};
+		
 		j.post( ajaxurl, data, function( response ) {
 			status = j(it).html();
 			if ( !current || current == 'No Email' ) {
@@ -60,6 +61,7 @@ jQuery(document).ready( function() {
 				status = status + ' / ';
 			}
 			j( '#gsubstat-'+group_id ).html( status );
+			j( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
 			j( '#gsubopt-'+group_id ).slideToggle('fast');
 			//j('.ajax-loader').toggle();
 		});		

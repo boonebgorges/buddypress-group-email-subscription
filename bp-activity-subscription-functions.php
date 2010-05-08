@@ -202,9 +202,9 @@ To view or reply, log in and follow the link below:
 
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
-		
-	$this_activity_is_important = FALSE;
-	do_action( 'ass_group_notification_activity', $type, $subject, $message );	
+	
+	//echo '<pre>'; print_r( $content ); echo '</pre>';
+	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );	
 	
 	// cycle through subscribed users
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) { 			
@@ -230,6 +230,17 @@ To view or reply, log in and follow the link below:
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
 
+// this funciton is used to include important activity updates from plugins for Topic only and Weekly Summary emails 
+// plugin developers can write a similar one to include important updates such as adding documents, wiki pages, calenar events
+// editing of these itmes or comments on them SHOULD NOT be included
+function ass_default_important_things( $is_important, $type ) {
+	// group documents send out their own email for adding new docs
+	if ( $type == 'wiki_group_page_add' || $type == 'new_calendar_event' )
+		$is_important = true;
+	
+	return $is_important;
+}
+add_filter( 'ass_this_activity_is_important', 'ass_default_important_things', 1, 2 );
 
 
 
@@ -323,7 +334,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 	</div>
 	
 	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('Email', 'bp-ass'); ?></label>
+	<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('All Email', 'bp-ass'); ?></label>
 	<div class="ass-email-explain"><?php _e('Send all group activity as it arrives', 'bp-ass'); ?></div>
 	</div>
 
@@ -376,7 +387,7 @@ function ass_subscribe_translate( $status ){
 	elseif ( $status == 'sub' )
 		$output = __('New topics', 'bp-ass');
 	elseif ( $status == 'supersub' )
-		$output = __('Email', 'bp-ass');
+		$output = __('All Email', 'bp-ass');
 	
 	return $output;
 }
@@ -398,10 +409,12 @@ function ass_group_subscribe_button( $group = false ) {
 		$group_status = NULL;
 		
 	$link_text = __('Email Options', 'bp-ass');
+	$gemail_icon_class = 'class="gemail_icon"';
 	$sep = '/ ';
 	
 	if ( !$group_status ) {
 		$link_text = __('Get email updates', 'bp-ass');
+		$gemail_icon_class = '';
 		$sep = '';
 	}
 	
@@ -409,7 +422,7 @@ function ass_group_subscribe_button( $group = false ) {
 	?>
 		
 	<div class="group-subscription-div">
-	<span class="gemail_icon" id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
+	<span <?php echo $gemail_icon_class ?> id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
 	<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>"><?php echo $link_text; ?>&nbsp;&#187;</a>
 	<!--<span class="ajax-loader2" id="gsubajaxloader-<?php echo $group->id; ?>"></span>'-->
 	</div>
@@ -420,7 +433,7 @@ function ass_group_subscribe_button( $group = false ) {
 	<a class="group-subscription" id="sum-<?php echo $group->id; ?>">Weekly summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
 	<a class="group-subscription" id="dig-<?php echo $group->id; ?>">Daily digest</a> Get the day's activity bundled into one email<br>
 	<a class="group-subscription" id="sub-<?php echo $group->id; ?>">New topics</a> Send new topics as they arrive (but no replies)<br>
-	<a class="group-subscription" id="supersub-<?php echo $group->id; ?>">Email</a> Send all group activity as it arrives
+	<a class="group-subscription" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives
 	</div>
 	<?php
 }
@@ -477,10 +490,19 @@ add_action( 'groups_member_after_save', 'ass_set_default_subscription', 20, 1 );
 // give the user a notice if they are default subscribed to this group (does not work for invites or requests)
 function ass_join_group_message( $group_id, $user_id ) {
 	global $bp;
-	if ( groups_get_groupmeta( $group_id, 'ass_default_subscription' ) != 'no' && $user_id == $bp->loggedin_user->id )
-		bp_core_add_message( __( 'You successfully joined the group. You are subscribed via email to new group content.', 'buddypress' ) );
+	
+	if ( $user_id != $bp->loggedin_user->id  )
+		return;
+	
+	$status = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
+	
+	if ( !$status )
+		$status = 'no';
+
+	bp_core_add_message( __( 'You successfully joined the group. Your group email status is: ', 'buddypress' ) . ass_subscribe_translate( $status ) );
+	
 }
-add_action( 'groups_join_group', 'ass_join_group_message', 100, 2 );
+add_action( 'groups_join_group', 'ass_join_group_message', 1, 2 );
 
 
 
@@ -500,7 +522,7 @@ function ass_default_subscription_settings_form() {
 		<label><input type="radio" name="ass-default-subscription" value="sub" <?php ass_default_subscription_settings( 'sub' ) ?> /> 
 			<?php _e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'bp-ass' ) ?></label>
 		<label><input type="radio" name="ass-default-subscription" value="supersub" <?php ass_default_subscription_settings( 'supersub' ) ?> /> 
-			<?php _e( 'Email (send emails about everything - recommended only for working groups)', 'bp-ass' ) ?></label>
+			<?php _e( 'All Email (send emails about everything - recommended only for working groups)', 'bp-ass' ) ?></label>
 	</div>
 	<hr />
 	<?php

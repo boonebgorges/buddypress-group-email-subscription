@@ -28,7 +28,7 @@ DIGEST AND SUMMARY EMAILS
 The daily digest email is sent every morning and contains all the emails from all the groups a user is subscribed to. The digest begins with a helpful topic summary. The weekly summary email contains just the topic titles from the past week. Summary and digest timing can be configured in the back end. 
 
 EMAILS FOR TOPICS I'VE STARTED OR COMMENTED ON
-Users receive email notifications when someone replies to a topic they create or comment on (similar to Facebook). This happens whether they are subscribed or not. Users can control this behavior in their notifications page.
+Users receive email notifications when someone replies to a topic they create or comment on (similar to Facebook). This happens whether they are subscribed or not. Users can control this behaviour in their notifications page.
 
 TOPIC FOLLOW AND MUTE
 Users who are not fully subscribed to a group (ie. maybe they are on digest) can choose to get immediate email updates for specific topic threads. Any subsequent replies to that thread will be emailed to them. In an opposite way, users who are fully subscribed to a group but want to stop getting emails from a specific (perhaps annoying) thread can choose to mute that topic.
