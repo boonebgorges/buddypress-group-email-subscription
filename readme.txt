@@ -19,7 +19,7 @@ There are 5 levels of email subscription options:
 2. Weekly Summary Email - A summary of new topics each week
 3. Daily Digest Email - All the day's activity bundled into a single email
 4. New Topics Email - Send new topics as they arrive (but don't send replies)
-5. Email - Send all group activity as it arrives 
+5. All Email - Send all group activity as it arrives 
 
 DEFAULT SUBSCRIPTION STATUS
 Group admins can choose one of the 5 subscription levels as a default that gets applied when new members join. 
@@ -42,7 +42,7 @@ To protect against spam, you can set a minimum number of days users need to be r
 The plugin is fully internationalized.
 
 NOTE TO PLUGIN AUTHORS
-If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can hook into 'ass_group_notification_activity' and set $this_activity_is_important to TRUE. See the ass_group_notification_activity() function in bp-activity-subscription-functions.php for more details. An example: adding a new wiki page would be considered important and should be hooked in, whereas a comment on a wiki page would be less important and should not be hooked in.
+If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
 
 
 == Installation ==
