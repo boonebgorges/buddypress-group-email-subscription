@@ -33,11 +33,10 @@ function ass_digest_fire( $type ) {
 	
 	if ( bp_has_groups( 'per_page=100000' ) ) {
 		
-		
 		if ( $type == 'dig' )
-			$subject = sprintf( __( 'Daily digest of group activity', 'bp-ass' ) );
+			$subject = sprintf( __( 'Your daily digest of group activity', 'bp-ass' ) );
 		else
-			$subject = sprintf( __( 'Weekly summary of group activity', 'bp-ass' ) );
+			$subject = sprintf( __( 'Your weekly summary of group topics', 'bp-ass' ) );
 
 		$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );			
 		$subject .= ' [' . $blogname . '] ';
