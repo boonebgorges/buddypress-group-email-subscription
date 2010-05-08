@@ -9,7 +9,7 @@ This plugin allows group members to receive email notifications for group activi
 
 == Description ==
 
-*This plugin is currently in beta status. Please refrain from using on production websites.*
+*This plugin is in late beta status. Use on production websites with a bit of caution.*
 
 This plugin allow group members to receive email notifications for all types of group activity, especially forum posts. Each user can choose how they want to subscribe to the group. 
 
