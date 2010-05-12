@@ -729,14 +729,14 @@ function ass_registered_long_enough( $activity_user_id ) {
 	
 		if ( strtotime(current_time("mysql", 0)) - strtotime($current_user_info->user_registered) < ( $ass_reg_age_setting*24*60*60 ) )
 			return false;
-			
+
 	}
 	
 	return true;
 }
 
 
-// show group subscription status on group member pages (for admins and mods only)
+// show group email subscription status on group member pages (for admins and mods only)
 function ass_show_subscription_status_in_member_list() {
 	global $bp, $members_template;
 	
@@ -746,7 +746,7 @@ function ass_show_subscription_status_in_member_list() {
 		return;
 		
 	if ( $sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id ) ) {
-		echo '<div class="ass_member_list_sub_status">'. ucfirst($sub_type) .'scribed</div>';
+		echo '<div class="ass_members_status"> Email status: ' . ass_subscribe_translate( $sub_type ) . '</div>';
 	}
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
