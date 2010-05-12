@@ -59,6 +59,7 @@ h4.activity-subscription-settings-title {
 	position: absolute;
 	margin-left: 30px;
 	font-size: 11px;
+	z-index: 1;
 }
 
 #groups-dir-list .group-subscription-options {
@@ -92,4 +93,6 @@ h4.activity-subscription-settings-title {
 	display: none;  
 }
 
-.group-forum-topic .ass-topic-subscribe  { float: right; margin-top: 10px; }
+.group-forum-topic .ass-topic-subscribe  { width: 100%; text-align: right; margin: 10px 0; }
+
+.ass_members_status { font-size:11px; color:#aaa; margin-top:5px; } /* only admins see this */
