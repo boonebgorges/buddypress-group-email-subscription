@@ -64,6 +64,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.3 =
+Plugin finished and ready for public usage.
+
 = 2.2 =
 Plugin complete re-write finished. Digest function added, plus too many features to list here.
 
