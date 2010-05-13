@@ -68,7 +68,7 @@ jQuery(document).ready( function() {
 		
 	});
 		
-	j('.group-subscription-options-link').click( function() {
+	j('.group-subscription-options-link').live("click", function() {
 		stheid = j(this).attr('id').split('-');
 		group_id = stheid[1];
 		j( '#gsubopt-'+group_id ).slideToggle('fast');
