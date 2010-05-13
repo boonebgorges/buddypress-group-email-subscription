@@ -7,7 +7,8 @@ jQuery(document).ready( function() {
 		var theid = j(this).attr('id');
 		var stheid = theid.split('-');
 		
-		//j('.pagination .ajax-loader').toggle();		
+		//j('.pagination .ajax-loader').toggle();
+			
 		var data = {
 			action: 'ass_ajax',
 			a: stheid[0],
@@ -39,13 +40,13 @@ jQuery(document).ready( function() {
 
 
 	// group subscription options
-	j(".group-subscription").click( function() {
+	j(".group-sub").live("click", function() {
 		it = j(this);
 		var theid = j(this).attr('id');
 		var stheid = theid.split('-');
 		group_id = stheid[1];
 		current = j( '#gsubstat-'+group_id ).html();
-		//j('.ajax-loader').toggle();
+		j('#gsubajaxload-'+group_id).toggle();
 		
 		var data = {
 			action: 'ass_group_ajax',
@@ -60,10 +61,10 @@ jQuery(document).ready( function() {
 				j( '#gsublink-'+group_id ).html('Email Options &#187;');
 				status = status + ' / ';
 			}
-			j( '#gsubstat-'+group_id ).html( status );
+			j( '#gsubstat-'+group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
 			j( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
 			j( '#gsubopt-'+group_id ).slideToggle('fast');
-			//j('.ajax-loader').toggle();
+			j( '#gsubajaxload-'+group_id ).toggle();
 		});		
 		
 	});
@@ -74,7 +75,7 @@ jQuery(document).ready( function() {
 		j( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 	
-	j('.group-subscription-close').click( function() {
+	j('.group-subscription-close').live("click", function() {
 		stheid = j(this).attr('id').split('-');
 		group_id = stheid[1];
 		j( '#gsubopt-'+group_id ).slideToggle('fast');

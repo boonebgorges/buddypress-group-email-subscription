@@ -1,6 +1,3 @@
-/*
- * The dodgy css for controlling the settings page
- */
  
 h4.activity-subscription-settings-title {
 	margin:15px auto;
@@ -70,7 +67,9 @@ h4.activity-subscription-settings-title {
 }
 #groups-dir-list .group-subscription-div {
 	padding-top: 6px;
+	font-size: 11px;
 }
+
 .group-subscription-close {
 	float: right;
 	line-height: 12px;

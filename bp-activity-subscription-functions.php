@@ -393,7 +393,7 @@ function ass_subscribe_translate( $status ){
 }
 
 
-// this adds the ajax-based subscription option in the group header
+// this adds the ajax-based subscription option in the group header, or group directory
 function ass_group_subscribe_button( $group = false ) {
 	global $bp, $groups_template;
 
@@ -422,19 +422,19 @@ function ass_group_subscribe_button( $group = false ) {
 	?>
 		
 	<div class="group-subscription-div">
-	<span <?php echo $gemail_icon_class ?> id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
-	<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>"><?php echo $link_text; ?>&nbsp;&#187;</a>
-	<!--<span class="ajax-loader2" id="gsubajaxloader-<?php echo $group->id; ?>"></span>'-->
+		<span <?php echo $gemail_icon_class ?> id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
+		<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>"><?php echo $link_text; ?>&nbsp;&#187;</a>
+		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
+	</div>
+	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>">
+		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>">x</a>	
+		<a class="group-sub" id="no-<?php echo $group->id; ?>">No email</a> I will read this group on the web<br>
+		<a class="group-sub" id="sum-<?php echo $group->id; ?>">Weekly summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
+		<a class="group-sub" id="dig-<?php echo $group->id; ?>">Daily digest</a> Get the day's activity bundled into one email<br>
+		<a class="group-sub" id="sub-<?php echo $group->id; ?>">New topics</a> Send new topics as they arrive (but no replies)<br>
+		<a class="group-sub" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives
 	</div>
 	
-	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>">
-	<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>">x</a>	
-	<a class="group-subscription" id="no-<?php echo $group->id; ?>">No email</a> I will read this group on the web<br>
-	<a class="group-subscription" id="sum-<?php echo $group->id; ?>">Weekly summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
-	<a class="group-subscription" id="dig-<?php echo $group->id; ?>">Daily digest</a> Get the day's activity bundled into one email<br>
-	<a class="group-subscription" id="sub-<?php echo $group->id; ?>">New topics</a> Send new topics as they arrive (but no replies)<br>
-	<a class="group-subscription" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives
-	</div>
 	<?php
 }
 add_action ( 'bp_group_header_meta', 'ass_group_subscribe_button' );
@@ -742,11 +742,10 @@ function ass_show_subscription_status_in_member_list() {
 	
 	$group_id = $bp->groups->current_group->id;
 	
-	if ( !groups_is_user_admin( $bp->loggedin_user->id , $group_id ) && !groups_is_user_mod( $bp->loggedin_user->id , $group_id ) )
-		return;
-		
-	if ( $sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id ) ) {
-		echo '<div class="ass_members_status"> Email status: ' . ass_subscribe_translate( $sub_type ) . '</div>';
+	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_site_admin() ) {		
+		if ( $sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id ) ) {
+			echo '<div class="ass_members_status"> Email status: ' . ass_subscribe_translate( $sub_type ) . '</div>';
+		}
 	}
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );

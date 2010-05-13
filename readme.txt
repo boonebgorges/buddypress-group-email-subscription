@@ -5,7 +5,7 @@ Requires at least: 2.9.1 BP 1.2
 Tested up to: 2.9.2 BP 1.2.3
 Stable tag: trunk
 
-This plugin allows group members to receive email notifications for group activity, especially forum posts. Weekly or daily digests are available.
+This plugin allows group members to receive email notifications for group activity, especially forum posts, or weekly or daily digests.
 
 == Description ==
 
@@ -63,6 +63,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.3.1 =
+Javascript fix for subscribe options.
 
 = 2.3 =
 Plugin finished and ready for public usage.
