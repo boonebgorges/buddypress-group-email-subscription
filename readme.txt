@@ -9,7 +9,7 @@ This plugin allows group members to receive email notifications for group activi
 
 == Description ==
 
-*This plugin is in late beta status. Use on production websites with a bit of caution.*
+*Elvis has left the building. Tthis plugin is NO LONGER IN BETA*
 
 This plugin allow group members to receive email notifications for all types of group activity, especially forum posts. Each user can choose how they want to subscribe to the group. 
 
@@ -64,8 +64,8 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
-= 2.3.1 =
-Javascript fix for subscribe options.
+= 2.3.2 =
+Javascript fix for subscribe options. removed beta notice.
 
 = 2.3 =
 Plugin finished and ready for public usage.
