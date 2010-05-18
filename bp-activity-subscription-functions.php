@@ -183,8 +183,7 @@ function ass_group_notification_activity( $content ) {
 		return;
 	
 	/* Subject & Content */
-	$action = strip_tags( $content->action );
-	$action = preg_replace( '/:$/', '', $action );  // remove possible trailing colon
+	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$the_content = strip_tags( stripslashes( $content->content ) );
 	
@@ -231,7 +230,7 @@ To view or reply, log in and follow the link below:
 		
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
 			$user = bp_core_get_core_userdata( $user_id );
-			//wp_mail( $user->user_email, $subject, $message );  // Send the email
+			wp_mail( $user->user_email, $subject, $message );  // Send the email
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
@@ -239,8 +238,8 @@ To view or reply, log in and follow the link below:
 		}
 	}
 	
-	echo '<p>Subject: ' . $subject;
-	echo '<pre>'; print_r( $message ); echo '</pre>';	
+	//echo '<p>Subject: ' . $subject;
+	//echo '<pre>'; print_r( $message ); echo '</pre>';	
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
@@ -742,9 +741,11 @@ function ass_get_group_admins_mods( $group_id ) {
 function ass_clean_subject( $subject ) {
 	
 	// this feature of adding quotes only happens in english installs
-	$subject = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
-	$subject = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject );
-	$subject = preg_replace( '/ in the group /', '" in the group ', $subject );
+	$subject_quotes = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
+	$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );
+	
+	if ( $subject != $subject_quotes )
+		$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
 	
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
 	$subject = strip_tags( $subject );

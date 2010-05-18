@@ -64,7 +64,7 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
-= 2.3.3 =
+= 2.3.4 =
 Added quotes around topic name in emails and added setting status at bottom of emails
 
 = 2.3.2 =
