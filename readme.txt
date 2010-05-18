@@ -64,6 +64,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.3.3 =
+Added quotes around topic name in emails and added setting status at bottom of emails
+
 = 2.3.2 =
 Javascript fix for subscribe options. removed beta notice.
 

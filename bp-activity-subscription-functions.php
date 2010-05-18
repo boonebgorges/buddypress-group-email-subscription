@@ -16,11 +16,10 @@ function ass_group_notification_new_forum_topic( $content ) {
 	/* Check to see if user has been registered long enough */
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) ) 
 		return;
-	
-	/* Subject */
-	$subject = ass_clean_subject( $content->action ) . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	
-	/* Content */
+		
+	/* Subject & Content */
+	$action = ass_clean_subject( $content->action );
+	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$the_content = strip_tags( stripslashes( $content->content ) );
 	
 	$message = sprintf( __(
@@ -28,11 +27,11 @@ function ass_group_notification_new_forum_topic( $content ) {
 
 "%s"
 
-To view or reply to this topic, log in and follow the link below:
+To view or reply to this topic, log in and go to:
 %s
 
 ---------------------
-', 'bp-ass' ), strip_tags( $content->action ), $the_content, $content->primary_link );
+', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
@@ -46,15 +45,21 @@ To view or reply to this topic, log in and follow the link below:
 
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
-
+			
+		if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
+			$message = str_replace( 'To view or reply to', __('To follow, view or reply to', 'bp-ass'), $message );
+		
 		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
-			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
+			$message .= "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
+			$user = bp_core_get_core_userdata( $user_id );
 			wp_mail( $user->user_email, $subject, $message );  // Send the email
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 		}
 		//echo '<br>Email: ' . $user->user_email;
 	}	
+	//echo '<p>Subject: ' . $subject;
+	//echo '<pre>'; print_r( $message ); echo '</pre>';
 }
 
 add_action( 'bp_activity_after_save', 'ass_group_notification_new_forum_topic' );
@@ -73,11 +78,10 @@ function ass_group_notification_forum_reply( $content ) {
 	/* Check to see if user has been registered long enough */
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
 		return;
-
-	/* Subject */
-	$subject = ass_clean_subject( $content->action ) . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-
-	/* Content */
+	
+	/* Subject & Content */
+	$action = ass_clean_subject( $content->action );
+	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$the_content = strip_tags( stripslashes( $content->content ) );
 	
 	$message = sprintf( __(
@@ -89,7 +93,7 @@ To view or reply to this topic, log in and follow the link below:
 %s
 
 ---------------------
-', 'bp-ass' ), strip_tags( $content->action ), $the_content, $content->primary_link );
+', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
@@ -140,6 +144,7 @@ To view or reply to this topic, log in and follow the link below:
 			$send_it = true; 
 		
 		if ( $send_it ) {
+			$message .= "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 			wp_mail( $user->user_email, $subject, $message );  // Send the email
 			//echo '<br>Email: ' . $user->user_email;
@@ -162,6 +167,7 @@ add_action( 'bp_activity_after_save', 'ass_group_notification_forum_reply' );
 
 
 // The email notification function for all other activity
+// as of right now activity_comment is not caught because it is missing the proper group_id a track request has be added for this feature at http://trac.buddypress.org/ticket/2388
 function ass_group_notification_activity( $content ) {
 	global $bp;
 	$type = $content->type;	
@@ -169,19 +175,21 @@ function ass_group_notification_activity( $content ) {
 	/* all other activity notifications */	
 	if ( $content->component != 'groups' || $type == 'new_forum_topic' || $type == 'new_forum_post' || $type == 'created_group' )
 		return;
-			
-	if ( $type == 'joined_group' ) // TODO: in a future version, maybe allow mods and admins to get joined_group emails (?)
-		return;	
 
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
 		return;
-
-	/* Subject */
-	$subject = ass_clean_subject( $content->action ) . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-
-	/* Content */
+	
+	if ( $type == 'joined_group' )	// TODO: in the future, it would be nice for admins to get this message
+		return;
+	
+	/* Subject & Content */
+	$action = strip_tags( $content->action );
+	$action = preg_replace( '/:$/', '', $action );  // remove possible trailing colon
+	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$the_content = strip_tags( stripslashes( $content->content ) );
 	
+	// TODO: if there is no content, perhaps we should not send the email?
+		
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
 	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $bp->groups->current_group );
 	
@@ -194,7 +202,7 @@ To view or reply, log in and follow the link below:
 %s
 
 ---------------------
-', 'bp-ass' ), strip_tags( $content->action ), $the_content, $activity_permalink );
+', 'bp-ass' ), $action, $the_content, $activity_permalink );
 
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
@@ -203,20 +211,27 @@ To view or reply, log in and follow the link below:
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	
-	//echo '<pre>'; print_r( $content ); echo '</pre>';
+	//if ( $type == 'joined_group' )  // a failed attempt at restricting group joins to admins and mods
+	//	$group_admins_mods = ass_get_group_admins_mods( $group_id );
+		
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );	
 	
 	// cycle through subscribed users
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) { 			
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
+
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
 		
+		//if ( $type == 'joined_group' ) // a failed attempt at restricting group joins to admins and mods
+		//	if ( !$group_admins_mods[ $user_id ] )
+		//		continue;
+			
 		// activity notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
 		
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
-			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
-			wp_mail( $user->user_email, $subject, $message );  // Send the email
+			$user = bp_core_get_core_userdata( $user_id );
+			//wp_mail( $user->user_email, $subject, $message );  // Send the email
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
@@ -224,10 +239,12 @@ To view or reply, log in and follow the link below:
 		}
 	}
 	
-	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message ); echo '</pre>';	
+	echo '<p>Subject: ' . $subject;
+	echo '<pre>'; print_r( $message ); echo '</pre>';	
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
+
+
 
 
 // this funciton is used to include important activity updates from plugins for Topic only and Weekly Summary emails 
@@ -379,13 +396,13 @@ add_action( 'wp', 'ass_update_group_subscribe_settings', 4 );
 // translate the short code subscription status into a nicer version
 function ass_subscribe_translate( $status ){
 	if ( $status == 'no' )
-		$output = __('No email', 'bp-ass');
+		$output = __('No Email', 'bp-ass');
 	elseif ( $status == 'sum' )
-		$output = __('Weekly summary', 'bp-ass');
+		$output = __('Weekly Summary', 'bp-ass');
 	elseif ( $status == 'dig' )
-		$output = __('Daily digest', 'bp-ass');
+		$output = __('Daily Digest', 'bp-ass');
 	elseif ( $status == 'sub' )
-		$output = __('New topics', 'bp-ass');
+		$output = __('New Topics', 'bp-ass');
 	elseif ( $status == 'supersub' )
 		$output = __('All Email', 'bp-ass');
 	
@@ -428,10 +445,10 @@ function ass_group_subscribe_button( $group = false ) {
 	</div>
 	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>">
 		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>">x</a>	
-		<a class="group-sub" id="no-<?php echo $group->id; ?>">No email</a> I will read this group on the web<br>
-		<a class="group-sub" id="sum-<?php echo $group->id; ?>">Weekly summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
-		<a class="group-sub" id="dig-<?php echo $group->id; ?>">Daily digest</a> Get the day's activity bundled into one email<br>
-		<a class="group-sub" id="sub-<?php echo $group->id; ?>">New topics</a> Send new topics as they arrive (but no replies)<br>
+		<a class="group-sub" id="no-<?php echo $group->id; ?>">No Email</a> I will read this group on the web<br>
+		<a class="group-sub" id="sum-<?php echo $group->id; ?>">Weekly Summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
+		<a class="group-sub" id="dig-<?php echo $group->id; ?>">Daily Digest</a> Get the day's activity bundled into one email<br>
+		<a class="group-sub" id="sub-<?php echo $group->id; ?>">New Topics</a> Send new topics as they arrive (but no replies)<br>
 		<a class="group-sub" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives
 	</div>
 	
@@ -708,13 +725,29 @@ function ass_user_settings_array( $setting ) {
 	return $settings;
 }
 
-
-// cleans up the subject for email, strips trailing colon if exists
-function ass_clean_subject( $subject ) {
-	$subject = strip_tags( $subject );
+/*
+// here lies a failed attempt ...
+// return array of users who are admins or mods in a specific group
+function ass_get_group_admins_mods( $group_id ) {
+	global $bp;
+	$results = $wpdb->get_results( "SELECT user_id, is_admin, is_mod FROM {$bp->groups->table_name_members} WHERE group_id = $group_id AND (is_admin = 1 OR is_mod = 1)", ARRAY_A );
 	
-	if ( substr( $subject, -1 ) == ':' )
-		$subject = substr( $subject, 0, -1 );
+	return $results;
+}
+*/
+
+
+
+// cleans up the subject for email, strips trailing colon, add quotes to topic name, strips html
+function ass_clean_subject( $subject ) {
+	
+	// this feature of adding quotes only happens in english installs
+	$subject = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
+	$subject = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject );
+	$subject = preg_replace( '/ in the group /', '" in the group ', $subject );
+	
+	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
+	$subject = strip_tags( $subject );
 		
 	return $subject;
 }
