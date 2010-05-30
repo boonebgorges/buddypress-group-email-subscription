@@ -2,7 +2,7 @@
 Contributors: boonebgorges, dwenaus, aekeron
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
-Tested up to: 2.9.2 BP 1.2.3
+Tested up to: 2.9.2 BP 1.2.4
 Stable tag: trunk
 
 This plugin allows group members to receive email notifications for group activity, especially forum posts, or weekly or daily digests.
@@ -63,6 +63,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.4 =
+Made daily digests and weekly summaries HTML/Plain text multipart emails
 
 = 2.3.4 =
 Added quotes around topic name in emails and added setting status at bottom of emails

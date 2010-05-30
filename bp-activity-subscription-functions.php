@@ -50,9 +50,9 @@ To view or reply to this topic, log in and go to:
 			$message = str_replace( 'To view or reply to', __('To follow, view or reply to', 'bp-ass'), $message );
 		
 		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
-			$message .= "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
+			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id );
-			wp_mail( $user->user_email, $subject, $message );  // Send the email
+			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 		}
@@ -144,9 +144,9 @@ To view or reply to this topic, log in and follow the link below:
 			$send_it = true; 
 		
 		if ( $send_it ) {
-			$message .= "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
+			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
-			wp_mail( $user->user_email, $subject, $message );  // Send the email
+			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
 			//echo '<br>Email: ' . $user->user_email;
 		} 
 		
@@ -229,8 +229,9 @@ To view or reply, log in and follow the link below:
 		// activity notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
 		
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
+			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id );
-			wp_mail( $user->user_email, $subject, $message );  // Send the email
+			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
@@ -251,7 +252,7 @@ add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 // editing of these itmes or comments on them SHOULD NOT be included
 function ass_default_important_things( $is_important, $type ) {
 	// group documents send out their own email for adding new docs
-	if ( $type == 'wiki_group_page_add' || $type == 'new_calendar_event' )
+	if ( $type == 'wiki_group_page_create' || $type == 'new_calendar_event' )
 		$is_important = true;
 	
 	return $is_important;
@@ -740,16 +741,20 @@ function ass_get_group_admins_mods( $group_id ) {
 // cleans up the subject for email, strips trailing colon, add quotes to topic name, strips html
 function ass_clean_subject( $subject ) {
 	
-	// this feature of adding quotes only happens in english installs
+	// this feature of adding quotes only happens in english installs // and is not that useful in the HTML digest
 	$subject_quotes = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
-	$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );
-	
+	$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );	
 	if ( $subject != $subject_quotes )
 		$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
 	
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
 	$subject = strip_tags( $subject );
 		
+	return $subject;
+}
+
+function ass_clean_subject_html( $subject ) {
+	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon		
 	return $subject;
 }
 
