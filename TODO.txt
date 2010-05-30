@@ -1,9 +1,3 @@
 TODO
 
-- add bp_before_topic_posts and bp_after_topic_posts in topic.php request into trac
-- add help text for subscribe/super subscribe - maybe a question mark roll over or tooltip help
-- add back Email everyone in the group and clean up that code (maybe make an admin option to allow this? default to not allow.)
-- fix the way admin and other settings are posted (no more mixed post/get)
-- maybe create a way for users to GLOBALY set their preference for super/sub/unsub for the misc activity types
-- maybe create global setting whether you want to hear about new group members joining
-
+- not much
