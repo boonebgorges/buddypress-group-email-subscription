@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscript
 Description: Allows group members to receive email notifications for group activity, especially forum posts, or weekly or daily digests.
 Author: boonebgorges, Deryk Wenaus, David Cartwright
 Revision Date: May 30, 2010
-Version: 2.4
+Version: 2.4.1
 Requires at least: WPMU 2.9, BuddyPress 1.2
 Tested up to: WPMU 2.9.2, BuddyPress 1.2.4
 */

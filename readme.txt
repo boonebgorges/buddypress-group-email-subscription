@@ -65,7 +65,7 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
-= 2.4 =
+= 2.4.1 =
 Made daily digests and weekly summaries HTML/Plain text multipart emails
 
 = 2.3.4 =
