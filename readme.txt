@@ -5,13 +5,11 @@ Requires at least: 2.9.1 BP 1.2
 Tested up to: 2.9.2 BP 1.2.4
 Stable tag: trunk
 
-This plugin allows group members to receive email notifications for group activity, especially forum posts, or weekly or daily digests.
+This plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available.
 
 == Description ==
 
-*Elvis has left the building. Tthis plugin is NO LONGER IN BETA*
-
-This plugin allow group members to receive email notifications for all types of group activity, especially forum posts. Each user can choose how they want to subscribe to the group. 
+This plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. 
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options: 
@@ -26,6 +24,9 @@ Group admins can choose one of the 5 subscription levels as a default that gets 
 
 DIGEST AND SUMMARY EMAILS
 The daily digest email is sent every morning and contains all the emails from all the groups a user is subscribed to. The digest begins with a helpful topic summary. The weekly summary email contains just the topic titles from the past week. Summary and digest timing can be configured in the back end. 
+
+HTML EMAILS
+The digest and summary emails are sent out in multipart HTML and plain text email format. This makes the digest much more readable with better links. The email is multipart so users who need only plain text will get plain text. 
 
 EMAILS FOR TOPICS I'VE STARTED OR COMMENTED ON
 Users receive email notifications when someone replies to a topic they create or comment on (similar to Facebook). This happens whether they are subscribed or not. Users can control this behaviour in their notifications page.
