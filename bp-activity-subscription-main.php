@@ -18,11 +18,13 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 		} else {
 			$this->enable_nav_item = false;
 		}
-		
+
 		$this->nav_item_position = 91;
 		$this->enable_create_step = false;
-		$this->enable_edit_item  = true;
 		
+		if ( get_option('ass-admin-can-send-email') == 'no' )
+			$this->enable_edit_item = false;
+					
 		// hook in the css and js
 		add_action ( 'wp_print_styles' , array( &$this , 'add_settings_stylesheet' ) );
 		add_action( 'wp_head', array( &$this , 'ass_add_javascript' ),1 );
@@ -62,6 +64,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	function edit_screen() {
+		// if ass-admin-can-send-email = no this won't show
 		ass_admin_notice_form();
 		return true;
 	}

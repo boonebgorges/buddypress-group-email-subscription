@@ -40,6 +40,9 @@ Group admins can send out an email to all group members from the group's admin s
 SPAM PROTECTION
 To protect against spam, you can set a minimum number of days users need to be registered before their group activity will be emailed to other users. This feature is off by default, but can be enabled in the admin.
 
+GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
+Group admins can set the subscription level for existing users in the manage members admin page. 
+
 The plugin is fully internationalized.
 
 NOTE TO PLUGIN AUTHORS
@@ -64,6 +67,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.4.3 =
+Added ability for group admins to change the subscription settings for users in their group. Added backend options to enable or disable this function. Also added backend options to enable group admin override emails. 
 
 = 2.4.2 =
 Fixed minor bug about leaving groups your not subscribed to

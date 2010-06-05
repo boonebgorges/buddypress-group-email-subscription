@@ -396,7 +396,7 @@ add_action( 'wp', 'ass_update_group_subscribe_settings', 4 );
 
 // translate the short code subscription status into a nicer version
 function ass_subscribe_translate( $status ){
-	if ( $status == 'no' )
+	if ( $status == 'no' || !$status )
 		$output = __('No Email', 'bp-ass');
 	elseif ( $status == 'sum' )
 		$output = __('Weekly Summary', 'bp-ass');
@@ -783,12 +783,63 @@ function ass_show_subscription_status_in_member_list() {
 	$group_id = $bp->groups->current_group->id;
 	
 	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_site_admin() ) {		
-		if ( $sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id ) ) {
-			echo '<div class="ass_members_status"> Email status: ' . ass_subscribe_translate( $sub_type ) . '</div>';
-		}
+		$sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id );
+		echo '<div class="ass_members_status"> Email status: ' . ass_subscribe_translate( $sub_type ) . '</div>';
 	}
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
+
+
+
+// add links to the group admin manage members section so admins can change user's email status
+function ass_manage_members_email_status() {
+	global $members_template, $groups_template, $bp;
+	
+	if ( get_option('ass-admin-can-edit-email') == 'no' )
+		return;
+	
+	$user_id = $members_template->member->user_id;
+	$group = &$groups_template->group;
+	$group_url = bp_get_group_permalink( $group );
+	$sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group->id );
+	echo '<div class="ass_manage_members_links"> Email status: ' . ass_subscribe_translate( $sub_type ) . '.';	
+	echo ' &nbsp; Change to: ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/no/'.$user_id, 'ass_member_email_status' ) . '">No Email</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sum/'.$user_id, 'ass_member_email_status' ) . '">Weekly</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/dig/'.$user_id, 'ass_member_email_status' ) . '">Daily</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sub/'.$user_id, 'ass_member_email_status' ) . '">New Topics</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/supersub/'.$user_id, 'ass_member_email_status' ) . '">All Email</a>';
+	echo '</div>';
+}
+add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
+
+// make the change to the users' email status based on the function above
+function ass_manage_members_email_update() {
+	global $bp;
+
+	if ( $bp->current_component == $bp->groups->slug && 'manage-members' == $bp->action_variables[0] ) {
+
+		if ( !$bp->is_item_admin )
+			return false;
+
+		if ( 'email' == $bp->action_variables[1] && ( 'no' == $bp->action_variables[2] || 'sum' == $bp->action_variables[2] || 'dig' == $bp->action_variables[2] || 'sub' == $bp->action_variables[2] || 'supersub' == $bp->action_variables[2] ) && is_numeric( $bp->action_variables[3] ) ) {
+			$user_id = $bp->action_variables[3];
+			$action = $bp->action_variables[2];
+
+			/* Check the nonce first. */
+			if ( !check_admin_referer( 'ass_member_email_status' ) )
+				return false;
+
+			ass_group_subscription( $action, $user_id, $bp->groups->current_group->id );
+			bp_core_add_message( __( 'User email status changed successfully', 'buddypress' ) );
+			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/manage-members/' );
+		}
+	}
+}
+add_action( 'wp', 'ass_manage_members_email_update', 4 );
+
+
+
 
 
 
@@ -833,6 +884,9 @@ function ass_admin_notice() {
     
 	    // Make sure the user is an admin
 		if ( !groups_is_user_admin( $bp->loggedin_user->id , $group_id ) && !is_site_admin() )
+			return;
+		
+		if ( get_option('ass-admin-can-send-email') == 'no' )
 			return;
 		
 		// make sure the correct form variables are here
@@ -946,11 +1000,7 @@ function ass_admin_options() {
 
 		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
-		
-		<h3><?php _e('General', 'bp-ass'); ?></h3>
-			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'bp-ass'); ?> </p>
-			<?php _e('Member must be registered for', 'bp-ass'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'bp-ass'); ?>
-		
+
 		<h3><?php _e( 'Digests & Summaries', 'bp-ass' ) ?></h3>
 		<p>
 			<label for="ass_digest_time"><?php _e( '<strong>Daily Digests</strong> should be sent at this time:', 'bp-ass' ) ?> </label>
@@ -985,7 +1035,27 @@ function ass_admin_options() {
 			<!-- (the summary will be sent one hour after the daily digests) -->			
 		</p>
 		
-		<p><i><?php echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'bp-ass' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), date( 'l' ) ) ?></i></p>
+		<p><i><?php echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'bp-ass' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), date( 'l' ) ) ?></i>
+		
+		<br>
+		<br>
+		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
+		<p>Allow group admins and mods to change members' email subscription settings: 
+		<?php $admins_can_edit_status = get_option('ass-admin-can-edit-email'); ?>
+		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> yes &nbsp; 
+		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> no
+		
+		<p>Allow group admins to override subscription settings and send an email to everyone in their group: 
+		<?php $admins_can_send_email = get_option('ass-admin-can-send-email'); ?>
+		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> yes &nbsp; 
+		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> no
+
+		<br>
+		<br>
+		<h3><?php _e('Spam Prevention', 'bp-ass'); ?></h3>
+			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'bp-ass'); ?> </p>
+			<?php _e('Member must be registered for', 'bp-ass'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'bp-ass'); ?></p>
+		
 		
 			<p class="submit">
 				<input type="submit" value="Save Settings" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
@@ -1000,16 +1070,12 @@ function ass_admin_options() {
 
 // save the back-end admin settings
 function ass_update_dashboard_settings() {
-	check_admin_referer( 'ass_admin_settings' );
+	if ( !check_admin_referer( 'ass_admin_settings' ) )
+		return;
 	
 	if ( !is_site_admin() )
 		return;
-
-	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
-		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
-	
-	/* Todo: Process the new admin settings and turn them into real schedules */
-	
+		
 	/* The daily digest time has been changed */
 	if ( $_POST['ass_digest_time'] != get_option( 'ass_digest_time' ) )		
 		ass_set_daily_digest_time( $_POST['ass_digest_time']['hours'], $_POST['ass_digest_time']['minutes'] );
@@ -1018,7 +1084,16 @@ function ass_update_dashboard_settings() {
 	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) )		
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
 
-//print_r($_POST);
+	if ( $_POST['ass-admin-can-edit-email'] != get_option( 'ass-admin-can-edit-email' ) )
+		update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );
+
+	if ( $_POST['ass-admin-can-send-email'] != get_option( 'ass-admin-can-send-email' ) )
+		update_option( 'ass-admin-can-send-email', $_POST['ass-admin-can-send-email'] );
+
+	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
+		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
+	
+	//echo '<pre>'; print_r( $_POST ); echo '</pre>';
 }
 
 
