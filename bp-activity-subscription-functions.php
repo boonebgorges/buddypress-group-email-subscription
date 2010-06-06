@@ -47,7 +47,7 @@ To view or reply to this topic, log in and go to:
 			continue;
 			
 		if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
-			$message = str_replace( 'To view or reply to', __('To follow, view or reply to', 'bp-ass'), $message );
+			$message = str_replace( "\n---------------------", __("Note: You won't receive replies to this topic. To get them, click the link above then click the 'Follow this topic' button", 'bp-ass')."\n\n---------------------", $message );
 		
 		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
@@ -59,7 +59,7 @@ To view or reply to this topic, log in and go to:
 		//echo '<br>Email: ' . $user->user_email;
 	}	
 	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message ); echo '</pre>';
+	//echo '<pre>'; print_r( $message . $notice ); echo '</pre>';
 }
 
 add_action( 'bp_activity_after_save', 'ass_group_notification_new_forum_topic' );

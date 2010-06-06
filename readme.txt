@@ -68,6 +68,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.4.4 =
+improved the follow this topic text in New Topic subscription emails so the user knows they won't get replies and gives them instructions if they do. 
+
 = 2.4.3 =
 Added ability for group admins to change the subscription settings for users in their group. Added backend options to enable or disable this function. Also added backend options to enable group admin override emails. 
 
