@@ -68,6 +68,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.5 =
+fixed a bug where digest emails were cumulative. fixed bug where editing an item would resend the notification email. added filter hooks to digest section
+
 = 2.4.4 =
 improved the follow this topic text in New Topic subscription emails so the user knows they won't get replies and gives them instructions if they do. 
 

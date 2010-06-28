@@ -81,11 +81,18 @@ function ass_digest_fire( $type ) {
 				// We only want the weekly or daily ones
 				if ( !$group_activity_ids = (array)$group_activity_ids_array[$type] )
 					continue;
-		
+					
+				// filter the list - can be used to sort the groups
+				$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
+					
 				$message = "<div {$ass_email_css['title']}>$title ";
 				$message .= __('at', 'bp-ass')." <a href='{$bp->root_domain}'>$blogname</a>";
 				$message .= "</div>\n\n";
 				
+				$activity_message = NULL; 
+				$summary = NULL;
+
+				//echo '<pre>'; print_r( $group_activity_ids ); echo '</pre>';
 				
 				foreach ( $group_activity_ids as $group_id => $activity_ids ) {
 					// get group name and add it to this
@@ -98,7 +105,7 @@ function ass_digest_fire( $type ) {
 				}
 
 				if ( $type == 'dig' )
-					$message .= "\n<ul {$ass_email_css['summary_ul']}>".__( 'Summary', 'bp-ass').":\n".$summary."</ul>\n";
+					$message .= "\n<ul {$ass_email_css['summary_ul']}>".__( 'Group Summary', 'bp-ass').":\n".$summary."</ul>\n";
 				elseif ( $type = 'sum' )
 					$message .= "<div {$ass_email_css['follow_topic']}>". __( "How to follow a topic: to get email updates for a specific topic click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to log in first.)", 'bp-ass' ) . "</div>\n";
 
@@ -106,22 +113,22 @@ function ass_digest_fire( $type ) {
 				$message .= $footer;
 				$message_text = ass_convert_html_to_plaintext( $message );
 				//$message_text = strip_tags(stripslashes( $message_text ) );
-				$message_html = $message ;
+				$message_html = $message;
 				
 				// Get the details for the user
 				$ud = bp_core_get_core_userdata( $subscriber );
 				$to = $ud->user_email;
 				
 				// For testing only
-				/*
-				echo '<div style="background-color:white; width:600px;padding:10px;">'; 
+				/* 
+				echo '<div style="background-color:white; width:65%;padding:10px;">'; 
 				echo '<br><br>========================================================<br><br>';
 				echo '<p><b> To: '.$to . '</b></p>';
 				echo 'HTML PART:<br>'.$message_html ; 
 				echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_text ; echo '</pre>'; 
 				echo '</div>'; 
 				*/
-				//die(); // (by using die() you'll only see one digest, and miss weekly summary)
+				//die(); // (by using die() you'll only see one digest, and miss weekly summary and multiple emails)
 				// For testing only
 				
 				ass_send_multipart_email( $to, $subject, $message_text, $message_html );
@@ -161,11 +168,15 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type ) {
 	$group = new BP_Groups_Group( $group_id, false, true );	
 	$group_name_link = '<a href="' . bp_get_group_permalink( $group ) . '">' . $group->name . '</a>'; 
 	
+	//do_action( 'ass_before_group_message', $group_id, $group->slug );
+	
 	if ( $type == 'dig' ) {
 		$group_message = "\n<div {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s', 'bp-ass' ), $group_name_link ) . "</div>\n\n";
 	} elseif ( $type == 'sum' ) {
 		$group_message = "\n<div {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s new topics summary', 'bp-ass' ), $group_name_link ) . "</div>\n";
 	}	
+	
+	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 	
 	if ( is_array( $activity_ids ) )
 		$activity_ids = implode( ",", $activity_ids );
@@ -175,7 +186,9 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type ) {
 		$group_message .= ass_digest_format_item( $item, $type );
 	}
 	
-	return $group_message;
+	//do_action( 'ass_after_group_message', $group_id, $group->slug );
+	
+	return apply_filters( 'ass_digest_format_item_group', $group_message, $group_id, $type );
 }
 
 // displays each item in a group
@@ -252,15 +265,19 @@ function ass_digest_format_item( $item, $type ) {
 		$item_message .= "</div>\n";
 	}
 	
-	return $item_message;
+	return apply_filters( 'ass_digest_format_item', $item_message, $item, $action, $timestamp, $type, $replies );
 }
 
 
 // convert the email to plain text, and fancy it up a bit. these conversion only work in English, but it's ok.
 function ass_convert_html_to_plaintext( $message ) {
+	// convert view links to http:// links
 	$message = preg_replace( "/<a href=\"(.*)\">View<\/a>/i", "\\1", $message );
+	// convert group div to two lines encasing the group name
 	$message = preg_replace( "/<div.*>Group: <a href=\"(.*)\">(.*)<\/a>.*<\/div>/i", "------\n\\2 - \\1\n------", $message );
+	// convert footer line to two dashes
 	$message = preg_replace( "/\n<div class=\"ass-footer\"/i", "--\n<div", $message );
+	
 	$message = strip_tags( stripslashes( $message ) );
 	$message = html_entity_decode( $message , ENT_QUOTES, 'UTF-8' );    
 	

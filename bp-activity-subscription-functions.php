@@ -4,13 +4,34 @@
 // !SEND EMAIL UDPATES FOR FORUM TOPICS AND POSTS
 //
 
+// if the topic is new, set $ass_item_is_new to true and it will get sent, otherwise if an update it won't
+// these hooks are a bit cludgy, but they work
+function ass_item_is_new( $item ) {
+	global $ass_item_is_new;
+	$ass_item_is_new = true;
+	return $item;
+}
+add_filter( 'group_forum_topic_forum_id_before_save', 'ass_item_is_new' );
+// if the post is an update, set $ass_item_is_update to true and it will not get sent, otherwise it will
+function ass_item_is_update( $item ) {
+	global $ass_item_is_update;
+	$ass_item_is_update = true;
+	return $item;
+}
+add_action( 'bp_activity_get_activity_id', 'ass_item_is_update' );
+
+
 
 // send email notificaitons for new forum topics
 function ass_group_notification_new_forum_topic( $content ) {
-	global $bp;
+	global $bp, $ass_item_is_new;
 	
 	/* New forum topics only */
 	if ( $content->type != 'new_forum_topic' )
+		return;	
+	
+	/* skip item edits */
+	if ( !$ass_item_is_new )
 		return;	
 
 	/* Check to see if user has been registered long enough */
@@ -69,11 +90,15 @@ add_action( 'bp_activity_after_save', 'ass_group_notification_new_forum_topic' )
 
 // send email notificaitons for forum replies (or store for digest)
 function ass_group_notification_forum_reply( $content ) {
-	global $bp;
+	global $bp, $ass_item_is_update;
 
 	/* New forum posts only */
 	if ( $content->type != 'new_forum_post' )
 		return;
+	
+	/* skip item edits */
+	if ( $ass_item_is_update )
+		return;	
 		
 	/* Check to see if user has been registered long enough */
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
