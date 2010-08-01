@@ -675,6 +675,18 @@ add_action( 'bp_before_group_forum_topic_posts', 'ass_topic_follow_or_mute_link'
 add_action( 'bp_after_group_forum_topic_posts', 'ass_topic_follow_or_mute_link' );
 
 
+// add a title to the mute/follow above (in the th tag)
+function ass_after_topic_title_head() {
+	global $bp;
+	
+	if ( !$bp->groups->current_group->is_member )
+		return;
+		
+	echo '<th id="th-rating">Email</th>';
+}
+add_filter( 'bp_directory_forums_extra_cell_head', 'ass_after_topic_title_head', 3 ); 
+
+
 
 // Handles AJAX request to follow/mute a topic
 function ass_ajax_callback() {

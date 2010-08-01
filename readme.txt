@@ -68,6 +68,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.5.1 =
+fixed silly bug where th tag was not showing up in group forum directory to match the extra td tag for follow/mute. sorry for the delay.
+
 = 2.5 =
 fixed a bug where digest emails were cumulative. fixed bug where editing an item would resend the notification email. added filter hooks to digest section
 
