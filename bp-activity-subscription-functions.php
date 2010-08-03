@@ -666,7 +666,7 @@ function ass_topic_follow_or_mute_link() {
 		echo "<div class=\"generic-button ass-topic-subscribe\"><a title=\"{$title}\" 
 			id=\"{$action}-{$topic_id}\">{$link_text} this topic</a></div>"; 
 	} else if ( $action )  { // we're viewing a list of topics
-		echo "<td><div class=\"generic-button ass-topic-subscribe\"><a title=\"{$title}\" 
+		echo "<td class=\"td-email-sub\"><div class=\"generic-button ass-topic-subscribe\"><a title=\"{$title}\" 
 			id=\"{$action}-{$topic_id}\">{$link_text}</a></div></td>"; 
 	}
 }
@@ -682,7 +682,7 @@ function ass_after_topic_title_head() {
 	if ( !$bp->groups->current_group->is_member )
 		return;
 		
-	echo '<th id="th-rating">Email</th>';
+	echo '<th id="th-email-sub">Email</th>';
 }
 add_filter( 'bp_directory_forums_extra_cell_head', 'ass_after_topic_title_head', 3 ); 
 
