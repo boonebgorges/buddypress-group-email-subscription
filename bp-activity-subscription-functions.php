@@ -66,12 +66,13 @@ To view or reply to this topic, log in and go to:
 
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
-			
-		if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
-			$message = str_replace( "\n---------------------", __("Note: You won't receive replies to this topic. To get them, click the link above then click the 'Follow this topic' button", 'bp-ass')."\n\n---------------------", $message );
 		
 		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
+			
+			if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
+				$notice .= __(", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass');
+			
 			$user = bp_core_get_core_userdata( $user_id );
 			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
@@ -349,6 +350,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 	$submit_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications';
 	
 	?>
+	<div id="ass-email-subscriptions-options-page">
 	<h3 class="activity-subscription-settings-title">Email Subscription Options</h3>
 	<form action="<?php echo $submit_link ?>" method="post">
 	<input type="hidden" name="ass_group_id" value="<?php echo $group->id; ?>"/>
@@ -386,7 +388,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 	<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo $bp->loggedin_user->domain . 'settings/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
 	
 	</form>
-
+	</div><!-- end ass-email-subscriptions-options-page -->
 	<?php
 }
 
@@ -466,7 +468,7 @@ function ass_group_subscribe_button( $group = false ) {
 		
 	<div class="group-subscription-div">
 		<span <?php echo $gemail_icon_class ?> id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
-		<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>"><?php echo $link_text; ?>&nbsp;&#187;</a>
+		<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>" href="javascript:void(0);"><?php echo $link_text; ?>&nbsp;&#187;</a>
 		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
 	</div>
 	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>">
