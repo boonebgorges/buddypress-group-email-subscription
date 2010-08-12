@@ -72,7 +72,7 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 == Changelog ==
 
 = 2.6 =
-allow site admins to set the subscription level for all current users of a group
+allow site admins to set the subscription level for all current users of a group (in manage members)
 
 = 2.5.5 =
 put back text domain, added more translation hooks
