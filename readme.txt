@@ -37,6 +37,9 @@ Users who are not fully subscribed to a group (ie. maybe they are on digest) can
 ADMIN NOTIFICATION
 Group admins can send out an email to all group members from the group's admin section. The email will be sent to all group members regardless of subscription status. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
 
+MOVING AN EXISTING SITE
+Site admins can reset the subscription level for CURRENT group members by clicking the link at the bottom of the manage members admin page. 
+
 SPAM PROTECTION
 To protect against spam, you can set a minimum number of days users need to be registered before their group activity will be emailed to other users. This feature is off by default, but can be enabled in the admin.
 
@@ -67,6 +70,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.6 =
+allow site admins to set the subscription level for all current users of a group
 
 = 2.5.5 =
 put back text domain, added more translation hooks

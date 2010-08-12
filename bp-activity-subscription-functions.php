@@ -879,6 +879,54 @@ add_action( 'wp', 'ass_manage_members_email_update', 4 );
 
 
 
+// Site admin can change the email settings for ALL users in a group
+function ass_change_all_email_sub() {
+	global $groups_template, $bp;
+		
+	if ( !is_site_admin() )
+		return false;
+	
+	$group = &$groups_template->group;
+		
+	if (! $default_email_sub = ass_get_default_subscription( $group ) )
+		$default_email_sub = 'no';
+		
+	echo '<p><br>Site Admin Only: update email subscription settings for ALL members to the default: ' . ass_subscribe_translate( $default_email_sub ) . '  Warning: this is not reversible so use with caution. <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">Make it so!</a>';
+}
+add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
+
+// change all users' email status based on the function above
+function ass_manage_all_members_email_update() {
+	global $bp;
+
+	if ( $bp->current_component == $bp->groups->slug && 'manage-members' == $bp->action_variables[0] ) {
+	
+		if ( !is_site_admin() )
+			return false;
+		
+		$action = $bp->action_variables[2];	
+
+		if ( 'email-all' == $bp->action_variables[1] && ( 'no' == $action || 'sum' == $action || 'dig' == $action || 'sub' == $action || 'supersub' == $action ) ) {
+					
+			if ( !check_admin_referer( 'ass_change_all_email_sub' ) ) 
+				return false;
+				
+			$result = BP_Groups_Member::get_all_for_group( $bp->groups->current_group->id, 0, 0, 1 ); // set the last value to 1 to exclude admins
+			$members = $result['members'];
+			
+			foreach ( $members as $member ) {
+				ass_group_subscription( $action, $member->user_id, $bp->groups->current_group->id );
+			}	
+			
+			bp_core_add_message( __( 'All user email status\'s changed successfully', 'bp-ass' ) );
+			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/manage-members/' );
+		}
+	}
+}
+add_action( 'wp', 'ass_manage_all_members_email_update', 4 );
+
+
+
 
 
 
@@ -1171,5 +1219,6 @@ function ass_testing_func() {
 }
 //add_action('bp_before_container','ass_testing_func');
 add_action('bp_after_container','ass_testing_func');
+
 
 ?>
