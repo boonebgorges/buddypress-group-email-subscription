@@ -891,7 +891,7 @@ function ass_change_all_email_sub() {
 	if (! $default_email_sub = ass_get_default_subscription( $group ) )
 		$default_email_sub = 'no';
 		
-	echo '<p><br>Site Admin Only: update email subscription settings for ALL members to the default: <i>' . ass_subscribe_translate( $default_email_sub ) . '<?i>.  Warning: this is not reversible so use with caution. <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">Make it so!</a>';
+	echo '<p><br>Site Admin Only: update email subscription settings for ALL members to the default: <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  Warning: this is not reversible so use with caution. <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">Make it so!</a>';
 }
 add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
 
