@@ -68,6 +68,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.5.5 =
+put back text domain, added more translation hooks
+
 = 2.5.4 =
 added css class names, fixed duplication in email display when sending New Topics email
 

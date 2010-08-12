@@ -205,6 +205,9 @@ function ass_digest_format_item( $item, $type ) {
 		$action = $action_split[0];
 	else
 		$action = $item->action;
+	
+	$action = str_replace( ' started the forum topic', ' started:', $action ); // won't translate but it's not essential
+	$action = str_replace( ' started the discussion topic', ' started:', $action );
 
 	/* Activity timestamp */
 	$timestamp = strtotime( $item->date_recorded );
@@ -257,8 +260,6 @@ function ass_digest_format_item( $item, $type ) {
 			}
 			$replies = ' ' . sprintf( __( '(%s replies)', 'bp-ass' ), $counter );
 		}
-		
-		$action = str_replace( ' started the forum topic', ' started:', $action ); // won't translate but it's not essential
 		
 		$item_message = "<div {$ass_email_css['item_weekly']}>" . $action . $replies;
 		$item_message .= " <span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";

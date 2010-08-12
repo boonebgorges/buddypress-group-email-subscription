@@ -651,25 +651,25 @@ function ass_topic_follow_or_mute_link() {
 			
 	if ( $topic_status == 'mute' || ( $group_status != 'supersub' && !$topic_status ) ) {
 		$action = 'follow';
-		$link_text = 'Follow';
-		$title = 'You are not following this topic. Click to follow it and get email updates for new posts';
+		$link_text = __('Follow','bp-ass');
+		$title = __('You are not following this topic. Click to follow it and get email updates for new posts','bp-ass');
 	} else if ( $topic_status == 'sub' || ( $group_status == 'supersub' && !$topic_status ) ) {
 		$action = 'mute';
-		$link_text = 'Mute';
-		$title = 'You are following this topic. Click to stop getting email updates';
+		$link_text = __('Mute','bp-ass');
+		$title = __('You are following this topic. Click to stop getting email updates','bp-ass');
 	} else {
 		echo 'nothing'; // do nothing
 	}
 	
 	if ( $topic_status == 'mute' )
-		$title = 'This conversation is muted. Click to follow it';
+		$title = __('This conversation is muted. Click to follow it','bp-ass');
 			
 	if ( $action && $bp->action_variables[0] == 'topic' ) { // we're viewing one topic
-		echo "<div class=\"generic-button ass-topic-subscribe\"><a title=\"{$title}\" 
-			id=\"{$action}-{$topic_id}\">{$link_text} this topic</a></div>"; 
+		echo '<div class="generic-button ass-topic-subscribe"><a title="{$title}" 
+			id="{$action}-{$topic_id}">{$link_text} '.__('this topic','bp-ass').'</a></div>'; 
 	} else if ( $action )  { // we're viewing a list of topics
-		echo "<td class=\"td-email-sub\"><div class=\"generic-button ass-topic-subscribe\"><a title=\"{$title}\" 
-			id=\"{$action}-{$topic_id}\">{$link_text}</a></div></td>"; 
+		echo '<td class="td-email-sub"><div class="generic-button ass-topic-subscribe"><a title="{$title}" 
+			id="{$action}-{$topic_id}">{$link_text}</a></div></td>'; 
 	}
 }
 add_action( 'bp_directory_forums_extra_cell', 'ass_topic_follow_or_mute_link', 50 );
@@ -684,7 +684,7 @@ function ass_after_topic_title_head() {
 	if ( !$bp->groups->current_group->is_member )
 		return;
 		
-	echo '<th id="th-email-sub">Email</th>';
+	echo '<th id="th-email-sub">'.__('Email','bp-ass').'</th>';
 }
 add_filter( 'bp_directory_forums_extra_cell_head', 'ass_after_topic_title_head', 3 ); 
 
@@ -823,7 +823,7 @@ function ass_show_subscription_status_in_member_list() {
 	
 	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_site_admin() ) {		
 		$sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id );
-		echo '<div class="ass_members_status"> Email status: ' . ass_subscribe_translate( $sub_type ) . '</div>';
+		echo '<div class="ass_members_status">'.__('Email status:','bp-ass'). ' ' . ass_subscribe_translate( $sub_type ) . '</div>';
 	}
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
@@ -841,13 +841,13 @@ function ass_manage_members_email_status() {
 	$group = &$groups_template->group;
 	$group_url = bp_get_group_permalink( $group );
 	$sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group->id );
-	echo '<div class="ass_manage_members_links"> Email status: ' . ass_subscribe_translate( $sub_type ) . '.';	
-	echo ' &nbsp; Change to: ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/no/'.$user_id, 'ass_member_email_status' ) . '">No Email</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sum/'.$user_id, 'ass_member_email_status' ) . '">Weekly</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/dig/'.$user_id, 'ass_member_email_status' ) . '">Daily</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sub/'.$user_id, 'ass_member_email_status' ) . '">New Topics</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/supersub/'.$user_id, 'ass_member_email_status' ) . '">All Email</a>';
+	echo '<div class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';	
+	echo ' &nbsp; '.__('Change to:','bp-ass').' ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
 	echo '</div>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
@@ -870,7 +870,7 @@ function ass_manage_members_email_update() {
 				return false;
 
 			ass_group_subscription( $action, $user_id, $bp->groups->current_group->id );
-			bp_core_add_message( __( 'User email status changed successfully', 'buddypress' ) );
+			bp_core_add_message( __( 'User email status changed successfully', 'bp-ass' ) );
 			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/manage-members/' );
 		}
 	}
@@ -984,13 +984,13 @@ function ass_group_subscription_notification_settings() {
 		</tr>
 		<tr>
 			<td></td>
-			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'buddypress' ) ?></td>
+			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
 			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_usermeta( $current_user->id, 'ass_replies_to_my_topic') || 'yes' == get_usermeta( $current_user->id, 'ass_replies_to_my_topic') ) { ?>checked="checked" <?php } ?>/></td>
 			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_usermeta( $current_user->id, 'ass_replies_to_my_topic') ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 		<tr>
 			<td></td>
-			<td><?php _e( 'A member replies after you in a forum topic', 'buddypress' ) ?></td>
+			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
 			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_usermeta( $current_user->id, 'ass_replies_after_me_topic') || 'yes' == get_usermeta( $current_user->id, 'ass_replies_after_me_topic') ) { ?>checked="checked" <?php } ?>/></td>
 			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_usermeta( $current_user->id, 'ass_replies_after_me_topic') ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
