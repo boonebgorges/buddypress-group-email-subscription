@@ -453,11 +453,13 @@ function ass_group_subscribe_button( $group = false ) {
 	if ( $group_status == 'no' )
 		$group_status = NULL;
 		
-	$link_text = __('Email Options', 'bp-ass');
-	$gemail_icon_class = 'class="gemail_icon"';
-	$sep = '/ ';
+	$status_desc = __('Your email status is ', 'bp-ass');
+	$link_text = __('change', 'bp-ass');
+	$gemail_icon_class = ' gemail_icon';
+	$sep = '';
 	
 	if ( !$group_status ) {
+		//$status_desc = '';
 		$link_text = __('Get email updates', 'bp-ass');
 		$gemail_icon_class = '';
 		$sep = '';
@@ -467,17 +469,18 @@ function ass_group_subscribe_button( $group = false ) {
 	?>
 		
 	<div class="group-subscription-div">
-		<span <?php echo $gemail_icon_class ?> id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
-		<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>" href="javascript:void(0);"><?php echo $link_text; ?>&nbsp;&#187;</a>
+		<span class="group-subscription-status-desc"><?php echo $status_desc; ?></span>
+		<span class="group-subscription-status<?php echo $gemail_icon_class ?>" id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>	
+		(<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>" href="javascript:void(0);" title="<?php _e('Change your email subscription options for this group','bp-ass');?>"><?php echo $link_text; ?></a>)
 		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
 	</div>
 	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>">
-		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>">x</a>	
 		<a class="group-sub" id="no-<?php echo $group->id; ?>">No Email</a> I will read this group on the web<br>
 		<a class="group-sub" id="sum-<?php echo $group->id; ?>">Weekly Summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
 		<a class="group-sub" id="dig-<?php echo $group->id; ?>">Daily Digest</a> Get the day's activity bundled into one email<br>
 		<a class="group-sub" id="sub-<?php echo $group->id; ?>">New Topics</a> Send new topics as they arrive (but no replies)<br>
-		<a class="group-sub" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives
+		<a class="group-sub" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives<br>
+		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>">close</a>
 	</div>
 	
 	<?php
@@ -665,11 +668,11 @@ function ass_topic_follow_or_mute_link() {
 		$title = __('This conversation is muted. Click to follow it','bp-ass');
 			
 	if ( $action && $bp->action_variables[0] == 'topic' ) { // we're viewing one topic
-		echo '<div class="generic-button ass-topic-subscribe"><a title="{$title}" 
-			id="{$action}-{$topic_id}">{$link_text} '.__('this topic','bp-ass').'</a></div>'; 
+		echo '<div class="generic-button ass-topic-subscribe"><a title="'.$title.'" 
+			id="'.$action.'-'.$topic_id.'">'.$link_text.' '.__('this topic','bp-ass').'</a></div>'; 
 	} else if ( $action )  { // we're viewing a list of topics
-		echo '<td class="td-email-sub"><div class="generic-button ass-topic-subscribe"><a title="{$title}" 
-			id="{$action}-{$topic_id}">{$link_text}</a></div></td>'; 
+		echo '<td class="td-email-sub"><div class="generic-button ass-topic-subscribe"><a title="'.$title.'" 
+			id="'.$action.'-'.$topic_id.'">'.$link_text.'</a></div></td>'; 
 	}
 }
 add_action( 'bp_directory_forums_extra_cell', 'ass_topic_follow_or_mute_link', 50 );

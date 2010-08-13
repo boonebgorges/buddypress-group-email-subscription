@@ -44,7 +44,6 @@ h4.activity-subscription-settings-title {
 
 .ass-sub-note { margin-top: 10px; font-size: 12px; color: #777; }
 
-
 .group-subscription-options {
 	display: none;
 	padding: 4px 6px;
@@ -69,9 +68,13 @@ h4.activity-subscription-settings-title {
 	padding-top: 6px;
 	font-size: 11px;
 }
+#groups-dir-list .group-subscription-status-desc {
+	display: none;
+}
 
 .group-subscription-close {
-	float: right;
+	float: right; 
+	display: block;
 	line-height: 12px;
 	height: 12px;
 }
@@ -85,7 +88,9 @@ h4.activity-subscription-settings-title {
 }
 .gemail_icon{ 
 	background: url(email.png) top left no-repeat !important; 
-	padding-left: 21px  !important; 
+	padding-left: 20px !important; 
+	margin-left: 2px;
+	font-weight: bold;
 }
 
 .notifications .group-subscription-div { /* hide ajax buttons when we're on the group notification page. */

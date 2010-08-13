@@ -58,8 +58,8 @@ jQuery(document).ready( function() {
 		j.post( ajaxurl, data, function( response ) {
 			status = j(it).html();
 			if ( !current || current == 'No Email' ) {
-				j( '#gsublink-'+group_id ).html('Email Options &#187;');
-				status = status + ' / ';
+				j( '#gsublink-'+group_id ).html('change');
+				//status = status + ' / ';
 			}
 			j( '#gsubstat-'+group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
 			j( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
