@@ -1,8 +1,8 @@
 === BuddyPress Group Email Subscription ===
-Contributors: boonebgorges, dwenaus, aekeron
+Contributors: dwenaus, boonebgorges
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
-Tested up to: 3.0.1 BP 1.2.5
+Tested up to: 3.0.1 BP 1.2.5.2
 Stable tag: trunk
 
 This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available.
@@ -70,6 +70,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.6.2 =
+fixed sneaky bug where people who requested access to a private group were subscribed to default setting.
 
 = 2.6.1 =
 improves wording of join pull down menu, fix bad follow/mute link. 

@@ -523,9 +523,13 @@ add_action( 'groups_leave_group', 'ass_unsubscribe_on_leave', 100, 2 );
 // when a user joins a group, set their default subscription level
 function ass_set_default_subscription( $groups_member ){
 	global $bp;
-	
+		
 	// only set the default if the user has no subscription history for this group
 	if ( ass_get_group_subscription_status( $groups_member->user_id, $groups_member->group_id ) )
+		return;
+
+	//if the person has requested access to a private group but has not been approved, don't subscribe them
+	if ( !$groups_member->is_confirmed )
 		return;
 	
 	if ( $default_gsub = groups_get_groupmeta( $groups_member->group_id, 'ass_default_subscription' ) ) {
@@ -793,12 +797,12 @@ function ass_clean_subject( $subject ) {
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
 	$subject = strip_tags( $subject );
 		
-	return $subject;
+	return apply_filters( 'ass_clean_subject', $subject );
 }
 
 function ass_clean_subject_html( $subject ) {
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon		
-	return $subject;
+	return apply_filters( 'ass_clean_subject_html', $subject );
 }
 
 
