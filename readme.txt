@@ -58,7 +58,6 @@ Plugin Contributors: dwenaus, boonebgorges, aekeron
 1. Install plugin
 2. Go to the front end and set your email options for each of your groups
 3. On the group admin settings, set the default subscription status of existing groups
-4. to enable follow and mute on individual topic pages, edit core file `bp-themes/bp-default/groups/single/forum/topic.php` and add `<?php do_action( 'bp_before_group_forum_topic_posts' ) ?> ` around line 19, just before `<div id="topic-meta">`. A trac request has been added for this hook. so in future versions of BuddyPress, the line may already exist. 
 
 == Screenshots ==
 
