@@ -56,8 +56,7 @@ function ass_digest_fire( $type ) {
 		$subject = "$title [$blogname]";
 	
 		$footer = "\n\n<div {$ass_email_css['footer']}>";
-		$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s. To change your notification settings for a given group, click on the group's link above and visit the Email Options page.", 'bp-ass' ), $blogname );
-		$footer .= "</div>";
+		$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
 			
 		$member_sent = array();
 		
@@ -111,37 +110,46 @@ function ass_digest_fire( $type ) {
 
 				$message .= $activity_message;
 				$message .= $footer;
+
+				// Get the details for the user
+				$userdata = bp_core_get_core_userdata( $subscriber );
+				
+				$message .= "\n\n<br><br>To disable these notifications please log in and go to: <a href=\"".$userdata->user_url."groups/\">My Groups</a> where you can change your email settings for each group.</p>";
+				$message .= "</div>";
+
 				$message_text = ass_convert_html_to_plaintext( $message );
-				//$message_text = strip_tags(stripslashes( $message_text ) );
 				$message_html = $message;
 				
-				// Get the details for the user
-				$ud = bp_core_get_core_userdata( $subscriber );
-				$to = $ud->user_email;
+				$to = $userdata->user_email;
 				
 				// For testing only
-				/* 
+/*
 				echo '<div style="background-color:white; width:65%;padding:10px;">'; 
 				echo '<br><br>========================================================<br><br>';
 				echo '<p><b> To: '.$to . '</b></p>';
 				echo 'HTML PART:<br>'.$message_html ; 
 				echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_text ; echo '</pre>'; 
 				echo '</div>'; 
-				*/
-				//die(); // (by using die() you'll only see one digest, and miss weekly summary and multiple emails)
+*/	
 				// For testing only
 				
 				ass_send_multipart_email( $to, $subject, $message_text, $message_html );
-				unset( $message, $to );
-		
+				
+				// update the subscriber's digest list
 				$group_activity_ids_array[$type] = $group_activity_ids;
 				update_usermeta( $subscriber, 'ass_digest_items', $group_activity_ids_array );  // comment this out for helpful testing
+				
 				$member_sent[] = $subscriber;
+				unset( $message, $message_text, $message_html, $to, $userdata, $activity_message, $summary );
 			}
 		}
 	}
 }
 
+
+// Use these two lines for testing the digest firing in real-time
+//add_action( 'bp_after_container', 'ass_daily_digest_fire' ); // for testing only
+//add_action( 'bp_after_container', 'ass_weekly_digest_fire' ); // for testing only
 
 function ass_daily_digest_fire() {
 	ass_digest_fire( 'dig' );
@@ -152,10 +160,6 @@ function ass_weekly_digest_fire() {
 	ass_digest_fire( 'sum' );
 }
 add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
-
-// Use these two lines for testing the digest firing in real-time
-//add_action( 'bp_after_container', 'ass_daily_digest_fire' ); // for testing only
-//add_action( 'bp_after_container', 'ass_weekly_digest_fire' ); // for testing only
 
 
 
@@ -278,6 +282,8 @@ function ass_convert_html_to_plaintext( $message ) {
 	$message = preg_replace( "/<div.*>Group: <a href=\"(.*)\">(.*)<\/a>.*<\/div>/i", "------\n\\2 - \\1\n------", $message );
 	// convert footer line to two dashes
 	$message = preg_replace( "/\n<div class=\"ass-footer\"/i", "--\n<div", $message );
+	// convert My Groups links to http:// links
+	$message = preg_replace( "/<a href=\"(.*)\">My Groups<\/a>/i", "\\1", $message );
 	
 	$message = strip_tags( stripslashes( $message ) );
 	$message = html_entity_decode( $message , ENT_QUOTES, 'UTF-8' );    
@@ -285,38 +291,41 @@ function ass_convert_html_to_plaintext( $message ) {
 	return $message;
 }
 
-// formats and sends a MIME multipart email with both HTML and plaintext
+// formats and sends a MIME multipart email with both HTML and plaintext using PHPMailer to get better control
 function ass_send_multipart_email( $to, $subject, $message_text, $message_html ) {
-	$mime_boundary = "BP_GROUP_SUMMARY--".md5(time()); 
-	$headers .= "MIME-Version: 1.0\n"; 
-	$headers .= "Content-Type: multipart/alternative; boundary=\"$mime_boundary\"\n";
-	
-	// text email part	
-	$message = "--$mime_boundary\n"; 
-	$message .= "Content-Type: text/plain; charset=UTF-8\n"; 
-	$message .= "Content-Transfer-Encoding: 8bit\n\n"; 
-	
-	$message .= "$message_text\n";
-	
-	// HTML email part
-	$message .= "--$mime_boundary\n"; 
-	$message .= "Content-Type: text/html; charset=UTF-8\n"; 
-	$message .= "Content-Transfer-Encoding: 8bit\n\n"; 
+	global $phpmailer;
 
-	$message .= "<html>\n"; 
-	$message .= "<body>\n"; 
-	$message .= "<div {$ass_email_css['wrapper']}>\n"; 
-	// maybe replace all '=' signs with '=3D'	
-	$message .= "$message_html\n";
-	$message .= "</div>\n"; 
-	$message .= "</body>\n"; 
-	$message .= "</html>\n"; 
+	// (Re)create it, if it's gone missing
+	if ( !is_object( $phpmailer ) || !is_a( $phpmailer, 'PHPMailer' ) ) {
+		require_once ABSPATH . WPINC . '/class-phpmailer.php';
+		require_once ABSPATH . WPINC . '/class-smtp.php';
+		$phpmailer = new PHPMailer();
+	}	
 	
-	//final boundary
-	$message .= "--$mime_boundary--\n\n"; 
-
-	// send the darn email!	
-	wp_mail( $to, $subject, $message, $headers );
+	// clear up stuff
+	$phpmailer->ClearAddresses();$phpmailer->ClearAllRecipients();$phpmailer->ClearAttachments();
+	$phpmailer->ClearBCCs();$phpmailer->ClearCCs();$phpmailer->ClearCustomHeaders();
+	$phpmailer->ClearReplyTos();
+	
+	$phpmailer->From     = apply_filters( 'wp_mail_from'     , $from_email );
+	$phpmailer->FromName = apply_filters( 'wp_mail_from_name', $from_name  );
+			
+	foreach ( (array) $to as $recipient ) {
+		$phpmailer->AddAddress( trim( $recipient ) );
+	}
+	
+	$phpmailer->Subject = $subject;
+	$phpmailer->Body    = "<html><body>\n".$message_html."\n</body></html>"; 
+	$phpmailer->AltBody	= $message_text;
+	$phpmailer->IsHTML( true );
+	$phpmailer->IsMail();
+	$charset = get_bloginfo( 'charset' );
+	//do_action_ref_array( 'phpmailer_init', array( &$phpmailer ) );
+	
+	// Send!
+	$result = @$phpmailer->Send();
+	
+	return $result;
 }
 
 
