@@ -4,8 +4,8 @@
 // !SEND EMAIL UDPATES FOR FORUM TOPICS AND POSTS
 //
 
+// these hooks are a bit cludgy, but they work to ensure that only new posts get emailed out and post edits don't
 // if the topic is new, set $ass_item_is_new to true and it will get sent, otherwise if an update it won't
-// these hooks are a bit cludgy, but they work
 function ass_item_is_new( $item ) {
 	global $ass_item_is_new;
 	$ass_item_is_new = true;
@@ -41,7 +41,7 @@ function ass_group_notification_new_forum_topic( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = strip_tags( stripslashes( $content->content ) );
+	$the_content = html_entity_decode( strip_tags( stripslashes( $content->content ) ) );
 	
 	$message = sprintf( __(
 '%s
@@ -108,7 +108,7 @@ function ass_group_notification_forum_reply( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = strip_tags( stripslashes( $content->content ) );
+	$the_content = html_entity_decode( strip_tags( stripslashes( $content->content ) ) );
 	
 	$message = sprintf( __(
 '%s
@@ -211,7 +211,7 @@ function ass_group_notification_activity( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = strip_tags( stripslashes( $content->content ) );
+	$the_content = html_entity_decode( strip_tags( stripslashes( $content->content ) ) );
 	
 	// TODO: if there is no content, perhaps we should not send the email?
 		
@@ -252,7 +252,7 @@ To view or reply, log in and follow the link below:
 		//	if ( !$group_admins_mods[ $user_id ] )
 		//		continue;
 			
-		// activity notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
+		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
 		
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
@@ -795,7 +795,7 @@ function ass_clean_subject( $subject ) {
 		$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
 	
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
-	$subject = strip_tags( $subject );
+	$subject = html_entity_decode( strip_tags( $subject ) );
 		
 	return apply_filters( 'ass_clean_subject', $subject );
 }

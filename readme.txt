@@ -71,6 +71,9 @@ Plugin Contributors: dwenaus, boonebgorges, aekeron
 
 == Changelog ==
 
+= 2.6.4 =
+added 'change email options' link under each group in digest 
+
 = 2.6.3 =
 rewrote the email sending so digest emails are read properly in Outlook. Added a link at bottom of digests to go to my groups to edit notification settings. 
 

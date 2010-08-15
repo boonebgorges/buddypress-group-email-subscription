@@ -36,6 +36,7 @@ function ass_digest_fire( $type ) {
 	//$ass_email_css['summary'] = 		'style="display:list-item;"';
 	$ass_email_css['follow_topic'] = 	'style="padding:15px 0 0; color: #888;"';
 	$ass_email_css['group_title'] = 	'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
+	$ass_email_css['change_email'] = 	'style="font-size:85%; margin-left:10px; color:#888;"';
 	$ass_email_css['item_div'] = 		'style="padding: 10px; border-top: 1px #eee solid;"';
 	$ass_email_css['item_action'] = 	'style="color:#888;"';
 	$ass_email_css['item_date'] = 		'style="font-size:85%; color:#bbb; margin-left:8px;"';
@@ -129,8 +130,8 @@ function ass_digest_fire( $type ) {
 				echo '<p><b> To: '.$to . '</b></p>';
 				echo 'HTML PART:<br>'.$message_html ; 
 				echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_text ; echo '</pre>'; 
-				echo '</div>'; 
-*/	
+				echo '</div>'; 	
+*/
 				// For testing only
 				
 				ass_send_multipart_email( $to, $subject, $message_text, $message_html );
@@ -174,13 +175,16 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type ) {
 	
 	//do_action( 'ass_before_group_message', $group_id, $group->slug );
 	
+	// add the group title bar
 	if ( $type == 'dig' ) {
 		$group_message = "\n<div {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s', 'bp-ass' ), $group_name_link ) . "</div>\n\n";
 	} elseif ( $type == 'sum' ) {
 		$group_message = "\n<div {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s new topics summary', 'bp-ass' ), $group_name_link ) . "</div>\n";
 	}	
-	
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
+	
+	// add change email settings link
+	$group_message .= "\n<div {$ass_email_css['change_email']}>change <a href=\"". bp_get_group_permalink( $group ) . "/notifications/\">".__( 'email options', 'bp-ass' )."</a> for this group</div>\n\n";
 	
 	if ( is_array( $activity_ids ) )
 		$activity_ids = implode( ",", $activity_ids );
