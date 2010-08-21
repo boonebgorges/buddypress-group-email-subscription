@@ -9,7 +9,7 @@ This powerful plugin allows people to receive email notifications of group activ
 
 == Description ==
 
-This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. 
+This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users.
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options: 
@@ -23,7 +23,7 @@ DEFAULT SUBSCRIPTION STATUS
 Group admins can choose one of the 5 subscription levels as a default that gets applied when new members join. 
 
 DIGEST AND SUMMARY EMAILS
-The daily digest email is sent every morning and contains all the emails from all the groups a user is subscribed to. The digest begins with a helpful topic summary. The weekly summary email contains just the topic titles from the past week. Summary and digest timing can be configured in the back end. 
+The daily digest email is sent every morning and contains all the emails from all the groups a user is subscribed to. The digest begins with a helpful topic summary. The weekly summary email contains just the topic titles from the past week. Summary and digest timing can be configured in the back end. (The admin can view a sample of the digests and summaries in the queue by going adding this to your url: mydomain.com/sum=1. This won't send emails just show what will be sent)
 
 HTML EMAILS
 The digest and summary emails are sent out in multipart HTML and plain text email format. This makes the digest much more readable with better links. The email is multipart so users who need only plain text will get plain text. 
@@ -70,6 +70,9 @@ Plugin Contributors: dwenaus, boonebgorges, aekeron
 7. Admin Settings
 
 == Changelog ==
+
+= 2.7 =
+Major re-write to the digest code, implemented caching and drastically sped up processing, other minor changes. see (but not send) what is in the digest queue by visiting mydomain.com/sum=1
 
 = 2.6.4 =
 added 'change email options' link under each group in digest 
