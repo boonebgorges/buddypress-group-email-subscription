@@ -1,11 +1,10 @@
 === BuddyPress Group Email Subscription ===
-Contributors: dwenaus, boonebgorges, aekeron
+Contributors: dwenaus, boonebgorges
+Description: This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
 Tested up to: 3.0.1 BP 1.2.5.2
 Stable tag: trunk
-
-This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available.
 
 == Description ==
 
@@ -51,13 +50,12 @@ The plugin is fully internationalized.
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
 
-Plugin Contributors: dwenaus, boonebgorges, aekeron
-
 == Installation ==
 
 1. Install plugin
 2. Go to the front end and set your email options for each of your groups
 3. On the group admin settings, set the default subscription status of existing groups
+4. For groups with existing members, go to the bottom of the manage members tab to set all members to the default subscription
 
 == Screenshots ==
 
@@ -70,6 +68,9 @@ Plugin Contributors: dwenaus, boonebgorges, aekeron
 7. Admin Settings
 
 == Changelog ==
+
+= 2.7.1 =
+fixed bug where edited topics were removed from digest, added note and link at end of users' notification settings pointing them to place they can edit their group subscriptions
 
 = 2.7 =
 Major re-write to the digest code, implemented caching and drastically sped up processing, other minor changes. see (but not send) what is in the digest queue by visiting mydomain.com/sum=1

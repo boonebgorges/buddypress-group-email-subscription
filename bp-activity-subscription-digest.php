@@ -339,6 +339,7 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 
 
 function ass_cron_add_weekly( $schedules ) {
+	// note it looks like by returning just the value, we'd be replacing the filtered function, however the function does an array merge, so we return just what we want to add.
 	return array( 
 		'weekly' => array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) )
 	);

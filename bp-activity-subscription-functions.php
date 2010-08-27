@@ -18,20 +18,16 @@ function ass_item_is_update( $item ) {
 	$ass_item_is_update = true;
 	return $item;
 }
-add_action( 'bp_activity_get_activity_id', 'ass_item_is_update' );
+add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
 
 
 
 // send email notificaitons for new forum topics
 function ass_group_notification_new_forum_topic( $content ) {
 	global $bp, $ass_item_is_new;
-	
+
 	/* New forum topics only */
 	if ( $content->type != 'new_forum_topic' )
-		return;	
-	
-	/* skip item edits */
-	if ( !$ass_item_is_new )
 		return;	
 
 	/* Check to see if user has been registered long enough */
@@ -68,6 +64,10 @@ To view or reply to this topic, log in and go to:
 			continue;
 		
 		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
+		
+			if ( !$ass_item_is_new ) //don't send emails for item edits (but do update the digest)
+				continue;			
+				
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			
 			if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
@@ -75,8 +75,11 @@ To view or reply to this topic, log in and go to:
 			
 			$user = bp_core_get_core_userdata( $user_id );
 			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+			
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
+		
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
+			
 		}
 		//echo '<br>Email: ' . $user->user_email;
 	}	
@@ -236,7 +239,7 @@ To view or reply, log in and follow the link below:
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	
-	//if ( $type == 'joined_group' )  // a failed attempt at restricting group joins to admins and mods
+	//if ( $type == 'joined_group' )  // a failed attempt at restricting group join email to admins and mods
 	//	$group_admins_mods = ass_get_group_admins_mods( $group_id );
 		
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );	
@@ -446,7 +449,11 @@ function ass_group_subscribe_button( $group = false ) {
 		$group =& $groups_template->group;
 
 	if ( !is_user_logged_in() || $group->is_banned || !$group->is_member )
-		return false;
+		return;
+	
+	// if we're looking at someone elses list of groups hide the subscription
+	if ( $bp->displayed_user->id && ( $bp->loggedin_user->id != $bp->displayed_user->id ) )
+		return;
 	
 	$group_status = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
 	
@@ -933,6 +940,12 @@ function ass_manage_all_members_email_update() {
 add_action( 'wp', 'ass_manage_all_members_email_update', 4 );
 
 
+// Add a notice at end of email notification about how to change group email subscriptions
+function ass_add_notice_to_notifications_page() {
+	echo '<p><b>'.__('Group Email Settings','bp-ass').'</b></p>';
+	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() .'groups/">'.__('My Groups','bp-ass') .'</a>' );
+}
+add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
 
 
