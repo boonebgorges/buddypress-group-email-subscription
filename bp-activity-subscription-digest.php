@@ -134,6 +134,21 @@ function ass_digest_fire( $type ) {
 }
 
 
+// these functions are hooked in via the cron
+function ass_daily_digest_fire() {
+	ass_digest_fire( 'dig' );
+}
+add_action( 'ass_digest_event', 'ass_daily_digest_fire' );
+
+function ass_weekly_digest_fire() {
+	ass_digest_fire( 'sum' );
+}
+add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
+
+// Use these two lines for testing the digest firing in real-time
+//add_action( 'bp_after_container', 'ass_daily_digest_fire' ); // for testing only
+//add_action( 'bp_after_container', 'ass_weekly_digest_fire' ); // for testing only
+
 
 
 // for testing the digest firing in real-time, add /?sum=1 to the url

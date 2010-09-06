@@ -70,7 +70,7 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 == Changelog ==
 
 = 2.7.1 =
-fixed bug where edited topics were removed from digest, added note and link at end of users' notification settings pointing them to place they can edit their group subscriptions
+fixed bug where digests were not fired - the next digest will combine all missed ones. Fixed bug where edited topics were removed from digest, added note and link at end of users' notification settings pointing them to place they can edit their group subscriptions
 
 = 2.7 =
 Major re-write to the digest code, implemented caching and drastically sped up processing, other minor changes. see (but not send) what is in the digest queue by visiting mydomain.com/sum=1
