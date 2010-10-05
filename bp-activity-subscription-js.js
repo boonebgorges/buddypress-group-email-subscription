@@ -85,4 +85,6 @@ jQuery(document).ready( function() {
 	//	j( '.ass-settings-advanced' ).slideToggle('fast');
 	//});
 	
+	j('.group-subscription-options').hide();
+	
 });
