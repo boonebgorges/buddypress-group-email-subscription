@@ -5,12 +5,14 @@
 /* This function was used for debugging the digest scheduling features */
 function ass_digest_schedule_print() {	
 	print "<br />";
-$crons = _get_cron_array();
+	print "<br />";
+
+	$crons = _get_cron_array();
 	echo "<div style='background: #fff;'>";
-	$sched = wp_next_scheduled( 'ass_digest_event_weekly' );
+	$sched = wp_next_scheduled( 'ass_digest_event' );
 	echo "Scheduled: " . date( 'h:i', $sched );
-	$until = (int)$sched - time();
-	echo " Until: " . $until;
+	$until = ( (int)$sched - time() ) / ( 60 * 60 );
+	echo " Until: " . $until . " hours";
 	echo "</div>";
 }
 //add_action( 'wp_head', 'ass_digest_schedule_print' );
@@ -354,10 +356,9 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 
 
 function ass_cron_add_weekly( $schedules ) {
-	// note it looks like by returning just the value, we'd be replacing the filtered function, however the function does an array merge, so we return just what we want to add.
-	return array( 
-		'weekly' => array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) )
-	);
+	$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) );
+	
+	return $schedules;
 }
 add_filter( 'cron_schedules', 'ass_cron_add_weekly' );
 
