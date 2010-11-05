@@ -21,7 +21,7 @@ function ass_digest_schedule_print() {
 /* Digest-specific functions */
 
 function ass_digest_fire( $type ) {
-	global $bp, $wpdb, $groups_template, $ass_email_css;
+	global $bp, $wpdb, $groups_template, $ass_email_css, $current_user;
 
 	if ( !is_string($type) )
 		$type = 'sum';
@@ -51,10 +51,16 @@ function ass_digest_fire( $type ) {
 
 	$footer = "\n\n<div {$ass_email_css['footer']}>";
 	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
-	
+
+	// set user to superadmin so when getting list of groups - they include hidden groups
+	$orig_user_id = $current_user->ID; // save the current user's id
+	$current_user = new WP_User( 1, ''); // set as super admin
 	$all_groups = groups_get_groups();
+	$current_user = new WP_User( $orig_user_id, ''); // back to normal
+	
 	foreach ( $all_groups[ 'groups' ] as $group ) {
-		$groups_info[ $group->id ] = array( 'name'=>$group->name, 'slug'=>$group->slug );  
+		$group_name = ass_digest_filter( $group->name );
+		$groups_info[ $group->id ] = array( 'name'=>$group_name, 'slug'=>$group->slug );  
 	}
 
 	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = 'ass_digest_items' AND meta_value != ''" ) );
@@ -75,9 +81,6 @@ function ass_digest_fire( $type ) {
 			continue; 
 			
 		$userdomain = bp_core_get_user_domain( $user_id );
-		
-		//if ( $to != 'greg@gregsportfolio.com' && $to != 'hgayley@yahoo.com' && $to != 'derykw@gmail.com' && $to != 'test@bluemandala.com' && $to != 'deryk@bluemandala.com' )
-		//	continue;
 							
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
@@ -111,17 +114,16 @@ function ass_digest_fire( $type ) {
 		
 		$message .= "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}groups/\">".__('My Groups', 'bp-ass') ."</a>" );
 		$message .= "</div>";
-
+		
 		$message_plaintext = ass_convert_html_to_plaintext( $message );
 		
 		if ( $_GET['sum'] ) {
-			// test mode run from the browser, dont send the emails, just show them on screen using domain/?sum=1
-			echo '<div style="background-color:white; width:65%;padding:10px;">'; 
-			echo '<p>========================================================<p><b>To: '.$to.'</b></p>';
-			echo 'HTML PART:<br>'.$message ; 
+			// test mode run from the browser, dont send the emails, just show them on screen using domain.com?sum=1
+			echo '<div style="background-color:white; width:75%;padding:20px 10px;">'; 
+			echo '<p>======================== to: <b>'.$to.'</b> ========================</p>';
+			echo $message;
 			//echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_plaintext ; echo '</pre>'; 
 			echo '</div>'; 	
-			//die(); // use this to just test one digest email (will skip weekly)
 		} else { 
 		
 			// send out the email
@@ -156,8 +158,9 @@ add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 // for testing the digest firing in real-time, add /?sum=1 to the url
 function ass_digest_fire_test() {
 	if ( $_GET['sum'] && is_site_admin() ){
+		echo "<h2>DAILY DIGEST:</h2>";
 		ass_digest_fire( 'dig' );
-		echo "<p><p><p><p><p><p><p><p><p><p><p><p>";
+		echo "<h2 style='margin-top:150px'>WEEKLY DIGEST:</h2>";
 		ass_digest_fire( 'sum' );
 		die();
 	}
@@ -211,7 +214,7 @@ function ass_digest_format_item( $item, $type ) {
 
 	//load from the cache if it exists
 	if ( $item_cached = wp_cache_get( 'digest_item_' . $type . '_' . $item->id, 'ass' ) ) {
-		//$item_cached .= "*********GENERATED FROM CACHE*********";
+		//$item_cached .= "GENERATED FROM CACHE";
 		return $item_cached;
 	}	
 		
@@ -222,6 +225,8 @@ function ass_digest_format_item( $item, $type ) {
 		$action = $action_split[0];
 	else
 		$action = $item->action;
+		
+	$action = ass_digest_filter( $action );	
 	
 	$action = str_replace( ' started the forum topic', ' started', $action ); // won't translate but it's not essential
 	$action = str_replace( ' posted on the forum topic', ' posted on', $action );
@@ -242,8 +247,8 @@ function ass_digest_format_item( $item, $type ) {
 		$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
 		$item_message .=  "</span>\n";
 			
-		if ( $content = $item->content )
-			$item_message .= "<br><span {$ass_email_css['item_content']}>" . $content . "</span>";
+		if ( $item->content )
+			$item_message .= "<br><span {$ass_email_css['item_content']}>" . ass_digest_filter( $item->content ) . "</span>";
 			
 		/* Permalink */
 		if ( $item->type == 'new_forum_topic' || $item->type == 'new_forum_post' || $item->type == 'new_blog_post' )
@@ -273,7 +278,8 @@ function ass_digest_format_item( $item, $type ) {
 		$item_message .= "</div>\n";
 	}
 	
-	$item_message =  apply_filters( 'ass_digest_format_item', $item_message, $item, $action, $timestamp, $type, $replies );
+	$item_message = apply_filters( 'ass_digest_format_item', $item_message, $item, $action, $timestamp, $type, $replies );
+	$item_message = ass_digest_filter( $item_message );
 	
 	// save the cache
 	if ( $item->id )
@@ -282,6 +288,12 @@ function ass_digest_format_item( $item, $type ) {
 	return $item_message;
 }
 
+// standard wp filters to clean up things that might mess up email display - (maybe not necessary?)
+function ass_digest_filter( $item ) {
+	$item = wptexturize( $item );
+	$item = convert_chars( $item );
+	return $item;
+}
 
 // convert the email to plain text, and fancy it up a bit. these conversion only work in English, but it's ok.
 function ass_convert_html_to_plaintext( $message ) {

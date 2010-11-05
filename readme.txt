@@ -69,6 +69,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.7.3 =
+fixed bug where hidden groups would not have names in digest, added link to view digest queue in back end (add ?sum=1 to your url to see queue)
+
 = 2.7.2 =
 fixed bug causing wp_cron to misbehave
 

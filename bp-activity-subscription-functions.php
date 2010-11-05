@@ -75,13 +75,14 @@ To view or reply to this topic, log in and go to:
 			
 			$user = bp_core_get_core_userdata( $user_id );
 			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+			//echo '<br>Email: ' . $user->user_email;
 			
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
 		
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 			
 		}
-		//echo '<br>Email: ' . $user->user_email;
+		
 	}	
 	//echo '<p>Subject: ' . $subject;
 	//echo '<pre>'; print_r( $message . $notice ); echo '</pre>';
@@ -830,13 +831,15 @@ function ass_registered_long_enough( $activity_user_id ) {
 
 
 // show group email subscription status on group member pages (for admins and mods only)
-function ass_show_subscription_status_in_member_list() {
+function ass_show_subscription_status_in_member_list( $user_id='' ) {
 	global $bp, $members_template;
 	
 	$group_id = $bp->groups->current_group->id;
 	
-	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_site_admin() ) {		
-		$sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group_id );
+	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_site_admin() ) {
+		if ( !$user_id ) 
+			$user_id = $members_template->member->user_id;	
+		$sub_type = ass_get_group_subscription_status( $user_id, $group_id );
 		echo '<div class="ass_members_status">'.__('Email status:','bp-ass'). ' ' . ass_subscribe_translate( $sub_type ) . '</div>';
 	}
 }
@@ -845,23 +848,25 @@ add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_i
 
 
 // add links to the group admin manage members section so admins can change user's email status
-function ass_manage_members_email_status() {
+function ass_manage_members_email_status(  $user_id='' ) {
 	global $members_template, $groups_template, $bp;
 	
 	if ( get_option('ass-admin-can-edit-email') == 'no' )
 		return;
-	
-	$user_id = $members_template->member->user_id;
+		
+	if ( !$user_id ) 
+		$user_id = $members_template->member->user_id;
+		
 	$group = &$groups_template->group;
-	$group_url = bp_get_group_permalink( $group );
-	$sub_type = ass_get_group_subscription_status( $members_template->member->user_id, $group->id );
+	$group_url = bp_get_group_permalink( $group ) . 'admin/manage-members/email';
+	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
 	echo '<div class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';	
 	echo ' &nbsp; '.__('Change to:','bp-ass').' ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'admin/manage-members/email/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
+	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
+	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
 	echo '</div>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
@@ -924,8 +929,8 @@ function ass_manage_all_members_email_update() {
 					
 			if ( !check_admin_referer( 'ass_change_all_email_sub' ) ) 
 				return false;
-				
-			$result = BP_Groups_Member::get_all_for_group( $bp->groups->current_group->id, 0, 0, 1 ); // set the last value to 1 to exclude admins
+			
+			$result = BP_Groups_Member::get_all_for_group( $bp->groups->current_group->id, 0, 0, 0 ); // set the last value to 1 to exclude admins
 			$members = $result['members'];
 			
 			foreach ( $members as $member ) {
@@ -1109,6 +1114,10 @@ function ass_admin_options() {
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 
 		<h3><?php _e( 'Digests & Summaries', 'bp-ass' ) ?></h3>
+		
+		<p><b><a href="<?php bloginfo('url') ?>?sum=1" target="_blank">View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.<br>
+		</p>
+		
 		<p>
 			<label for="ass_digest_time"><?php _e( '<strong>Daily Digests</strong> should be sent at this time:', 'bp-ass' ) ?> </label>
 			<select name="ass_digest_time[hours]" id="ass_digest_time[hours]">
@@ -1143,9 +1152,10 @@ function ass_admin_options() {
 		</p>
 		
 		<p><i><?php echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'bp-ass' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), date( 'l' ) ) ?></i>
+		<br>
+		<br>
 		
-		<br>
-		<br>
+
 		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
 		<p>Allow group admins and mods to change members' email subscription settings: 
 		<?php $admins_can_edit_status = get_option('ass-admin-can-edit-email'); ?>
