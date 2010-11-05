@@ -43,7 +43,7 @@ SPAM PROTECTION
 To protect against spam, you can set a minimum number of days users need to be registered before their group activity will be emailed to other users. This feature is off by default, but can be enabled in the admin.
 
 GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
-Group admins can set the subscription level for existing users in the manage members admin page. 
+Group admins can set the subscription level for existing users in the manage members admin page - either one by one or all at once.
 
 The plugin is fully internationalized.
 
@@ -68,6 +68,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.7.2 =
+fixed bug causing wp_cron to misbehave
 
 = 2.7.1 =
 fixed bug where digests were not fired - the next digest will combine all missed ones. Fixed bug where edited topics were removed from digest, added note and link at end of users' notification settings pointing them to place they can edit their group subscriptions
