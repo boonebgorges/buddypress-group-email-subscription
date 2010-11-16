@@ -540,7 +540,9 @@ function ass_set_default_subscription( $groups_member ){
 	if ( !$groups_member->is_confirmed )
 		return;
 	
-	if ( $default_gsub = groups_get_groupmeta( $groups_member->group_id, 'ass_default_subscription' ) ) {
+	$default_gsub = apply_filters( 'ass_default_subscription_level', groups_get_groupmeta( $groups_member->group_id, 'ass_default_subscription' ), $groups_member->group_id );
+	
+	if ( $default_gsub ) {
 		ass_group_subscription( $default_gsub, $groups_member->user_id, $groups_member->group_id );
 	}
 }
