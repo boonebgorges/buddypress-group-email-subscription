@@ -1,6 +1,9 @@
 <?php
-/* This is for local testing only!! */
+
+//Change this to reflect local time as WordPress has changed it to UTC as default.
+//date_default_timezone_set('Asia/Tokyo');
 //date_default_timezone_set('America/New_York');
+
 
 /* This function was used for debugging the digest scheduling features */
 function ass_digest_schedule_print() {	
@@ -112,7 +115,7 @@ function ass_digest_fire( $type ) {
 			
 		$message .= $footer;
 		
-		$message .= "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}groups/\">".__('My Groups', 'bp-ass') ."</a>" );
+		$message .= "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">".__('My Groups', 'bp-ass') ."</a>" );
 		$message .= "</div>";
 		
 		$message_plaintext = ass_convert_html_to_plaintext( $message );
@@ -158,9 +161,9 @@ add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 // for testing the digest firing in real-time, add /?sum=1 to the url
 function ass_digest_fire_test() {
 	if ( $_GET['sum'] && is_site_admin() ){
-		echo "<h2>DAILY DIGEST:</h2>";
+		echo "<h2>".__('DAILY DIGEST:','bp-ass')."</h2>";
 		ass_digest_fire( 'dig' );
-		echo "<h2 style='margin-top:150px'>WEEKLY DIGEST:</h2>";
+		echo "<h2 style='margin-top:150px'>".__('WEEKLY DIGEST:','bp-ass')."</h2>";
 		ass_digest_fire( 'sum' );
 		die();
 	}
@@ -187,7 +190,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	}	
 	
 	// add change email settings link
-	$group_message .= "\n<div {$ass_email_css['change_email']}>change <a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> for this group</div>\n\n";
+	$group_message .= "\n<div {$ass_email_css['change_email']}>".__('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ".__('for this group', 'bp-ass')."</div>\n\n";
 	
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 	
@@ -234,7 +237,11 @@ function ass_digest_format_item( $item, $type ) {
 	$action = str_replace( ' posted on the discussion topic', ' posted on', $action );
 
 	/* Activity timestamp */
-	$timestamp = strtotime( $item->date_recorded );
+//	$timestamp = strtotime( $item->date_recorded );
+
+	/* Because BuddyPress core set gmt = true, timezone must be added */
+	$timestamp = strtotime( $item->date_recorded ) +date('Z');
+
 	$time_posted = date( get_option( 'time_format' ), $timestamp );
 	$date_posted = date( get_option( 'date_format' ), $timestamp );
 	
@@ -343,6 +350,9 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	$phpmailer->IsHTML( true );
 	$phpmailer->IsMail();
 	$charset = get_bloginfo( 'charset' );
+	
+	$phpmailer->CharSet = apply_filters( 'wp_mail_charset', $charset );
+	
 	//do_action_ref_array( 'phpmailer_init', array( &$phpmailer ) );
 	
 	// Send!
@@ -368,8 +378,9 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 
 
 function ass_cron_add_weekly( $schedules ) {
-	$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) );
-	
+	if ( !isset( $schedules[ 'weekly' ] ) ) {
+		$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) );
+	}
 	return $schedules;
 }
 add_filter( 'cron_schedules', 'ass_cron_add_weekly' );

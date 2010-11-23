@@ -355,7 +355,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 	
 	?>
 	<div id="ass-email-subscriptions-options-page">
-	<h3 class="activity-subscription-settings-title">Email Subscription Options</h3>
+	<h3 class="activity-subscription-settings-title"><?php _e('Email Subscription Options', 'bp-ass') ?></h3>
 	<form action="<?php echo $submit_link ?>" method="post">
 	<input type="hidden" name="ass_group_id" value="<?php echo $group->id; ?>"/>
 	<?php wp_nonce_field( 'ass_subscribe' ); ?>
@@ -387,7 +387,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 	<div class="ass-email-explain"><?php _e('Send all group activity as it arrives', 'bp-ass'); ?></div>
 	</div>
 
-	<input type="submit" value="Save Settings" id="ass-save" name="ass-save" class="button-primary">
+	<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="ass-save" name="ass-save" class="button-primary">
 
 	<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo $bp->loggedin_user->domain . 'settings/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
 	
@@ -483,12 +483,12 @@ function ass_group_subscribe_button( $group = false ) {
 		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
 	</div>
 	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>">
-		<a class="group-sub" id="no-<?php echo $group->id; ?>">No Email</a> I will read this group on the web<br>
-		<a class="group-sub" id="sum-<?php echo $group->id; ?>">Weekly Summary</a> Get a summary of topics each <?php echo ass_weekly_digest_week(); ?><br>
-		<a class="group-sub" id="dig-<?php echo $group->id; ?>">Daily Digest</a> Get the day's activity bundled into one email<br>
-		<a class="group-sub" id="sub-<?php echo $group->id; ?>">New Topics</a> Send new topics as they arrive (but no replies)<br>
-		<a class="group-sub" id="supersub-<?php echo $group->id; ?>">All Email</a> Send all group activity as it arrives<br>
-		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>">close</a>
+		<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'bp-ass') ?></a> <?php _e('I will read this group on the web', 'bp-ass') ?><br>
+		<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'bp-ass') ?></a> <?php _e('Get a summary of topics each', 'bp-ass') ?> <?php echo ass_weekly_digest_week(); ?><br>
+		<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'bp-ass') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'bp-ass') ?><br>
+		<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'bp-ass') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'bp-ass') ?><br>
+		<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'bp-ass') ?></a> <?php _e('Send all group activity as it arrives', 'bp-ass') ?><br>
+		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php _e('close', 'bp-ass') ?></a>
 	</div>
 	
 	<?php
@@ -603,7 +603,7 @@ function ass_default_subscription_settings( $setting ) {
 }
 
 
-// Save the announce group setting in the group meta, if normal, delete it
+// Save the default group subscription setting in the group meta, if no, delete it
 function ass_save_default_subscription( $group ) { 
 	global $bp, $_POST;
 	
@@ -912,7 +912,7 @@ function ass_change_all_email_sub() {
 	if (! $default_email_sub = ass_get_default_subscription( $group ) )
 		$default_email_sub = 'no';
 		
-	echo '<p><br>Site Admin Only: update email subscription settings for ALL members to the default: <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  Warning: this is not reversible so use with caution. <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">Make it so!</a>';
+	echo '<p><br>'.__('Site Admin Only: update email subscription settings for ALL members to the default:', 'bp-ass').' <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  '.__('Warning: this is not reversible so use with caution.', 'bp-ass').' <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">'.__('Make it so!', 'bp-ass').'</a>';
 }
 add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
 
@@ -979,11 +979,11 @@ function ass_admin_notice_form() {
 		<form action="<?php echo $submit_link ?>" method="post">
 		<?php wp_nonce_field( 'ass_admin_notice' ); ?>
 		<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
-		Email Subject:<br>
+		<?php _e('Email Subject:', 'bp-ass') ?><br>
 		<input type="text" name="ass_admin_notice_subject" value=""/><br><br>
-		Email Content:<br>
+		<?php _e('Email Content:', 'bp-ass') ?><br>
 		<textarea value="" name="ass_admin_notice" id="ass-admin-notice-textarea"></textarea><br>
-		<input type="submit" name="ass_admin_notice_send" value="Email this notice to everyone in the group" />
+		<input type="submit" name="ass_admin_notice_send" value="<?php _e('Email this notice to everyone in the group', 'bp-ass') ?>" />
 		</form> 
 		<?php
 	}
@@ -1050,13 +1050,16 @@ add_action('wp', 'ass_admin_notice');
 // adds forum notification options in the users settings->notifications page 
 function ass_group_subscription_notification_settings() {
 	global $current_user; ?>
-	<table class="notification-settings" id="groups-notification-settings">
+	<table class="notification-settings zebra" id="groups-notification-settings">
+	<thead>
 		<tr>
 			<th class="icon"></th>
 			<th class="title"><?php _e( 'Group Forum', 'buddypress' ) ?></th>
 			<th class="yes"><?php _e( 'Yes', 'buddypress' ) ?></th>
 			<th class="no"><?php _e( 'No', 'buddypress' )?></th>
 		</tr>
+	</thead>
+	<tbody>
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
@@ -1071,6 +1074,7 @@ function ass_group_subscription_notification_settings() {
 		</tr>
 
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
+		</tbody>
 	</table>
 <?php
 }
@@ -1089,7 +1093,7 @@ add_action( 'bp_notification_settings', 'ass_group_subscription_notification_set
 
 // Functions to add the backend admin menu to control changing default settings
 function ass_admin_menu() {
-	add_submenu_page( 'bp-general-settings', "Group Email Options", "Group Email Options", 'manage_options', 'ass_admin_options', "ass_admin_options" );
+	add_submenu_page( 'bp-general-settings', __("Group Email Options", 'bp-ass'), __("Group Email Options", 'bp-ass'), 'manage_options', 'ass_admin_options', "ass_admin_options" );
 }
 add_action('admin_menu', 'ass_admin_menu');
 
@@ -1105,19 +1109,20 @@ function ass_admin_options() {
 		$ass_digest_time = array( 'hours' => '05', 'minutes' => '00' );
 	
 	if ( !$ass_weekly_digest = get_option( 'ass_weekly_digest' ) )
-		$ass_weekly_digest = 5; // friday
+//		$ass_weekly_digest = 5; // friday
+		$ass_weekly_digest = 0; // sunday
 		
 	$next = date( "r", wp_next_scheduled( 'ass_digest_event' ) );
 	?>
 	<div class="wrap">
-		<h2>Group Email Subscription Settings</h2>
+		<h2><?php _e('Group Email Subscription Settings', 'bp-ass'); ?></h2>
 
 		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 
 		<h3><?php _e( 'Digests & Summaries', 'bp-ass' ) ?></h3>
 		
-		<p><b><a href="<?php bloginfo('url') ?>?sum=1" target="_blank">View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.<br>
+		<p><b><a href="<?php bloginfo('url') ?>?sum=1" target="_blank"><?php _e('View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.', 'bp-ass') ?><br>
 		</p>
 		
 		<p>
@@ -1153,21 +1158,21 @@ function ass_admin_options() {
 			<!-- (the summary will be sent one hour after the daily digests) -->			
 		</p>
 		
-		<p><i><?php echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'bp-ass' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), date( 'l' ) ) ?></i>
+		<p><i><?php $weekday = array( __("Sunday"), __("Monday"), __("Tuesday"), __("Wednesday"), __("Thursday"), __("Friday"), __("Saturday") ); echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'bp-ass' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), $weekday[date( 'w' )] ) ?></i>
 		<br>
 		<br>
 		
 
 		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
-		<p>Allow group admins and mods to change members' email subscription settings: 
+		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'bp-ass'); ?>
 		<?php $admins_can_edit_status = get_option('ass-admin-can-edit-email'); ?>
-		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> yes &nbsp; 
-		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> no
+		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> <?php _e('yes', 'bp-ass') ?> &nbsp; 
+		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'bp-ass') ?>
 		
-		<p>Allow group admins to override subscription settings and send an email to everyone in their group: 
+		<p><?php _e('Allow group admins to override subscription settings and send an email to everyone in their group: ', 'bp-ass'); ?>
 		<?php $admins_can_send_email = get_option('ass-admin-can-send-email'); ?>
-		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> yes &nbsp; 
-		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> no
+		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> <?php _e('yes', 'bp-ass') ?> &nbsp; 
+		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'bp-ass') ?>
 
 		<br>
 		<br>
@@ -1177,7 +1182,7 @@ function ass_admin_options() {
 		
 		
 			<p class="submit">
-				<input type="submit" value="Save Settings" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
+				<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
 			</p>
 
 		</form>

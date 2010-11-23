@@ -69,6 +69,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.7.5 =
+the plugin is now fully internationalized thanks to chestnut_jp! Please send other language po and mo files to deryk@bluemandala.com and i'll include them. load_plugin_textdomain is used also. NOTE: due to a bug in buddypress 1.2.6 users will not be able to see their notifications page (see here for a fix http://trac.buddypress.org/changeset/3375)
+
 = 2.7.3 =
 fixed bug where hidden groups would not have names in digest, added link to view digest queue in back end (add ?sum=1 to your url to see queue)
 

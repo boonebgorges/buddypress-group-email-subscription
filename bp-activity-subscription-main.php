@@ -9,7 +9,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	function group_activity_subscription() {
 		global $bp;
 		
-		$this->name = 'Email Options';
+		$this->name = __('Email Options', 'buddypress');
 		$this->slug = 'notifications';
 		
 		// Only enable the notifications nav item if the user is a member of the group
