@@ -52,7 +52,7 @@ To view or reply to this topic, log in and go to:
 
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
+	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 	
 	$group_id = $content->item_id;	
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
@@ -119,7 +119,7 @@ function ass_group_notification_forum_reply( $content ) {
 
 "%s"
 
-To view or reply to this topic, log in and follow the link below:
+To view or reply to this topic, log in and go to:
 %s
 
 ---------------------
@@ -127,7 +127,7 @@ To view or reply to this topic, log in and follow the link below:
 
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
+	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
 	$group_id = $content->item_id;
 	//$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
@@ -227,7 +227,7 @@ function ass_group_notification_activity( $content ) {
 
 "%s"
 
-To view or reply, log in and follow the link below:
+To view or reply, log in and go to:
 %s
 
 ---------------------
@@ -235,7 +235,7 @@ To view or reply, log in and follow the link below:
 
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress' ), $settings_link );
+	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
@@ -561,7 +561,7 @@ function ass_join_group_message( $group_id, $user_id ) {
 	if ( !$status )
 		$status = 'no';
 
-	bp_core_add_message( __( 'You successfully joined the group. Your group email status is: ', 'buddypress' ) . ass_subscribe_translate( $status ) );
+	bp_core_add_message( __( 'You successfully joined the group. Your group email status is: ', 'bp-ass' ) . ass_subscribe_translate( $status ) );
 	
 }
 add_action( 'groups_join_group', 'ass_join_group_message', 1, 2 );
@@ -1054,9 +1054,9 @@ function ass_group_subscription_notification_settings() {
 	<thead>
 		<tr>
 			<th class="icon"></th>
-			<th class="title"><?php _e( 'Group Forum', 'buddypress' ) ?></th>
-			<th class="yes"><?php _e( 'Yes', 'buddypress' ) ?></th>
-			<th class="no"><?php _e( 'No', 'buddypress' )?></th>
+			<th class="title"><?php _e( 'Group Forum', 'bp-ass' ) ?></th>
+			<th class="yes"><?php _e( 'Yes', 'bp-ass' ) ?></th>
+			<th class="no"><?php _e( 'No', 'bp-ass' )?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -1219,17 +1219,6 @@ function ass_update_dashboard_settings() {
 	
 	//echo '<pre>'; print_r( $_POST ); echo '</pre>';
 }
-
-
-function ass_custom_digest_frequency() {
-	if ( !$freq = get_option( 'ass_digest_frequency' ) )
-		return array();
-	
-	return array(
-		$freq . '_hrs' => array('interval' => $freq * 3600, 'display' => "Every $freq hours" )
-	);
-}
-add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
 
 
 

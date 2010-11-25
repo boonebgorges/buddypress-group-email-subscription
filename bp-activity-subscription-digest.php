@@ -386,6 +386,7 @@ function ass_cron_add_weekly( $schedules ) {
 add_filter( 'cron_schedules', 'ass_cron_add_weekly' );
 
 
+
 function ass_set_daily_digest_time( $hours, $minutes ) {
 	$the_time = date( 'Y-m-d' ) . ' ' . $hours . ':' . $minutes;
 	$the_timestamp = strtotime( $the_time );
@@ -417,5 +418,18 @@ function ass_set_weekly_digest_time( $day ) {
 	/* Finally, save the option */
 	update_option( 'ass_weekly_digest', $day );
 }
+
+/*
+// if in the future we want to do flexible schedules. this is how we could add the custom cron. Then we need to change the digest or summary to use this custom schedule. 
+function ass_custom_digest_frequency( $schedules ) {
+    if( ( $freq = get_option(  'ass_digest_frequency' ) ) ) {
+        if( !isset( $schedules[$freq.'_hrs'] ) ) {
+            $schedules[$freq.'_hrs'] = array( 'interval' => $freq * 3600, 'display' => "Every $freq hours" );
+        }
+    }
+    return $schedules;
+}
+add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
+*/
 
 ?>

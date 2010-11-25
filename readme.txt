@@ -8,6 +8,8 @@ Stable tag: trunk
 
 == Description ==
 
+Note for BuddyPress 1.2.6 users: due to a bug in BuddyPress 1.2.6 users will not be able to see their email notifications page (see here for a fix http://trac.buddypress.org/changeset/3375)/ This will be fixed in the next version of BuddyPress
+
 This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users.
 
 EMAIL SUBSCRIPTION LEVELS
@@ -45,7 +47,7 @@ To protect against spam, you can set a minimum number of days users need to be r
 GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
 Group admins can set the subscription level for existing users in the manage members admin page - either one by one or all at once.
 
-The plugin is fully internationalized.
+The plugin is fully internationalized (thanks to chestnut_jp) Please send language po and mo files to deryk@bluemandala.com and i'll include them.
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
@@ -68,6 +70,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.7.6 =
+the cron schedule is now fully fixed, thanks to gvvaughan. plus the plugin is now fully internationalized thanks to chestnut_jp.
 
 = 2.7.5 =
 the plugin is now fully internationalized thanks to chestnut_jp! Please send other language po and mo files to deryk@bluemandala.com and i'll include them. load_plugin_textdomain is used also. NOTE: due to a bug in buddypress 1.2.6 users will not be able to see their notifications page (see here for a fix http://trac.buddypress.org/changeset/3375)
