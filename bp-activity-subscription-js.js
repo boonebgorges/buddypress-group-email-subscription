@@ -12,8 +12,8 @@ jQuery(document).ready( function() {
 		var data = {
 			action: 'ass_ajax',
 			a: stheid[0],
-			topic_id: stheid[1],
-			//_ajax_nonce: stheid[2],
+			topic_id: stheid[1]
+			//,_ajax_nonce: stheid[2]
 		};
 				
 		// TODO: add ajax code to give status feedback that will fade out
@@ -51,8 +51,8 @@ jQuery(document).ready( function() {
 		var data = {
 			action: 'ass_group_ajax',
 			a: stheid[0],
-			group_id: stheid[1],
-			//_ajax_nonce: stheid[2],
+			group_id: stheid[1]
+			//,_ajax_nonce: stheid[2]
 		};
 		
 		j.post( ajaxurl, data, function( response ) {
