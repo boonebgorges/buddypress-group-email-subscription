@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BuddyPress Group Email Subscription\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-26 13:10-0800\n"
-"PO-Revision-Date: 2010-11-26 13:10-0800\n"
+"POT-Creation-Date: 2010-11-26 13:48-0800\n"
+"PO-Revision-Date: 2010-11-26 13:48-0800\n"
 "Last-Translator: Deryk Wenaus <deryk@bluemandala.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -471,43 +471,43 @@ msgstr ""
 
 #: bp-activity-subscription-functions.php:1150
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1228
+#: bp-activity-subscription-functions.php:1237
 msgid "Monday"
 msgstr ""
 
 #: bp-activity-subscription-functions.php:1151
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1230
+#: bp-activity-subscription-functions.php:1239
 msgid "Tuesday"
 msgstr ""
 
 #: bp-activity-subscription-functions.php:1152
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1232
+#: bp-activity-subscription-functions.php:1241
 msgid "Wednesday"
 msgstr ""
 
 #: bp-activity-subscription-functions.php:1153
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1234
+#: bp-activity-subscription-functions.php:1243
 msgid "Thursday"
 msgstr ""
 
 #: bp-activity-subscription-functions.php:1154
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1236
+#: bp-activity-subscription-functions.php:1245
 msgid "Friday"
 msgstr ""
 
 #: bp-activity-subscription-functions.php:1155
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1238
+#: bp-activity-subscription-functions.php:1247
 msgid "Saturday"
 msgstr ""
 
 #: bp-activity-subscription-functions.php:1156
 #: bp-activity-subscription-functions.php:1161
-#: bp-activity-subscription-functions.php:1240
+#: bp-activity-subscription-functions.php:1249
 msgid "Sunday"
 msgstr ""
 
@@ -552,6 +552,15 @@ msgstr ""
 
 #: bp-activity-subscription-functions.php:1181
 msgid "days"
+msgstr ""
+
+#: bp-activity-subscription-functions.php:1192
+#, php-format
+msgid "If you enjoy using this plugin %s please rate it %s."
+msgstr ""
+
+#: bp-activity-subscription-functions.php:1193
+msgid "Please make a donation to the team to support ongoing development."
 msgstr ""
 
 #: bp-activity-subscription-main.php:12
