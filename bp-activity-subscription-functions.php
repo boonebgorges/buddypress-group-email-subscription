@@ -1187,6 +1187,15 @@ function ass_admin_options() {
 
 		</form>
 		
+		<hr>
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+		<?php echo sprintf( __('If you enjoy using this plugin %s please rate it %s.', 'bp-ass'), '<a href="http://wordpress.org/extend/plugins/buddypress-group-email-subscription/" target="_blank">', '</a>'); ?><br>
+		<?php _e('Please make a donation to the team to support ongoing development.', 'bp-ass'); ?><br>
+		<input type="hidden" name="cmd" value="_s-xclick">
+		<input type="hidden" name="hosted_button_id" value="PXD76LU2VQ5AS">
+		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+		<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+				
 	</div>
 	<?php
 }
