@@ -4,8 +4,8 @@ Plugin Name: BuddyPress Group Email Subscription
 Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
 Description: Allows group members to receive email notifications for group activity and forum posts instantly or as daily digest or weekly summary.
 Author: Deryk Wenaus, boonebgorges
-Revision Date: November 24, 2010
-Version: 2.7.6
+Revision Date: November 26, 2010
+Version: 2.7.7
 Requires at least: WPMU 2.9, BuddyPress 1.2
 Tested up to: WP 3.0.1, BuddyPress 1.2.6
 */
@@ -33,12 +33,7 @@ function activitysub_load_buddypress() {
 add_action( 'plugins_loaded', 'activitysub_load_buddypress', 1 );
 
 function activitysub_textdomain() {
-	$locale = get_locale();
-
-	$mofile = WP_PLUGIN_DIR . "/buddypress-group-email-subscription/languages/buddypress-group-email-subscription-$locale.mo";
-
-	if ( file_exists( $mofile ) )
-		load_plugin_textdomain( 'bp-ass', $mofile );
+	load_plugin_textdomain( 'bp-ass', false, dirname( plugin_basename( __FILE__ ) ) );
 }
 add_action( 'init', 'activitysub_textdomain' );
 
