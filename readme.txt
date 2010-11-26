@@ -47,6 +47,7 @@ To protect against spam, you can set a minimum number of days users need to be r
 GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
 Group admins can set the subscription level for existing users in the manage members admin page - either one by one or all at once.
 
+INTERNATIONALIZATION
 The plugin is fully internationalized (thanks to chestnut_jp) Please send language po and mo files to deryk@bluemandala.com and i'll include them.
 
 NOTE TO PLUGIN AUTHORS
@@ -70,6 +71,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.7.7 =
+internationalization bug fixed.
 
 = 2.7.6 =
 the cron schedule is now fully fixed, thanks to gvvaughan. plus the plugin is now fully internationalized thanks to chestnut_jp.
