@@ -1,6 +1,7 @@
 <?php
 
-//Change this to reflect local time as WordPress has changed it to UTC as default.
+// for testing only
+//if you need to add this at the TOP of your wp-config.php file. (Here are the timezones http://us3.php.net/manual/en/timezones.php)
 //date_default_timezone_set('Asia/Tokyo');
 //date_default_timezone_set('America/New_York');
 
