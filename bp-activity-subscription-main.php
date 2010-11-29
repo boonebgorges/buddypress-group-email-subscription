@@ -3,7 +3,6 @@
 require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-functions.php' );
 require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
 
-
 class Group_Activity_Subscription extends BP_Group_Extension {	
 		
 	function group_activity_subscription() {
@@ -76,8 +75,15 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	function widget_display() { 
 		return false;
 	}
+		
 }
 
-bp_register_group_extension( 'Group_Activity_Subscription' );
+//bp_register_group_extension( 'Group_Activity_Subscription' );
+
+function ass_activate_extension() {
+	$extension = new Group_Activity_Subscription;
+	add_action( "wp", array( &$extension, "_register" ), 2 );
+}
+add_action( 'init', 'ass_activate_extension' );
 
 ?>
