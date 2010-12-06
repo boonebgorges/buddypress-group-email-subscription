@@ -80,6 +80,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 
 == Changelog ==
 
+= 2.7.9 =
+now translated in japanese, spanish, french, portuguese, italian and dutch. no changes to the code on this update.
+
 = 2.7.8 =
 internationalization bug finally fixed. Spanish and Italian now included. 'Email Options' is now translatable
 
