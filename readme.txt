@@ -48,7 +48,15 @@ GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
 Group admins can set the subscription level for existing users in the manage members admin page - either one by one or all at once.
 
 INTERNATIONALIZATION
-The plugin is fully internationalized (thanks to chestnut_jp) Please send language po and mo files to deryk@bluemandala.com and i'll include them. Current Languages: Spanish, Italian, Japanese. Soon Swedish and German. 
+The plugin is fully internationalized (thanks to chestnut_jp) Please send language po and mo files to deryk@bluemandala.com and i'll include them.  
+
+TRANSLATORS
+- japanese - http://buddypress.org/community/members/chestnut_jp/
+- spanish - Williams Castillo
+- italian - Stefano Russo
+- french - http://www.claudegagne-photo.com
+- brazilian portuguese - www.congregacao.net
+- dutch - Anja werkgroepen.net/wordpress
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
