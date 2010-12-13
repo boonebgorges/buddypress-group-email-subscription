@@ -37,7 +37,7 @@ function ass_group_notification_new_forum_topic( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = html_entity_decode( strip_tags( stripslashes( $content->content ) ) );
+	$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
 	
 	$message = sprintf( __(
 '%s
@@ -112,7 +112,7 @@ function ass_group_notification_forum_reply( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = html_entity_decode( strip_tags( stripslashes( $content->content ) ) );
+	$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
 	
 	$message = sprintf( __(
 '%s
@@ -152,7 +152,7 @@ To view or reply to this topic, log in and go to:
 		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
 			continue;
 		
-		$send_it = NULL;
+		$send_it = false;
 		//$group_status = $subscribed_users[ $user_id ]; // only need this if we're looping through user_ids
 		$topic_status = $user_topic_status[ $user_id ];
 	
@@ -215,7 +215,7 @@ function ass_group_notification_activity( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = html_entity_decode( strip_tags( stripslashes( $content->content ) ) );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
 	
 	// TODO: if there is no content, perhaps we should not send the email?
 		
