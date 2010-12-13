@@ -62,7 +62,7 @@ To view or reply to this topic, log in and go to:
 		
 		// Does the author want updates of his own posts?	
 		if ( $user_id == $bp->loggedin_user->id ) {
-			if ( get_user_meta( $user_id, 'ass_self_post_notification', true ) != 'yes' )
+			if ( !ass_self_post_notification() )
 				continue;
 		}
 	
@@ -154,8 +154,9 @@ To view or reply to this topic, log in and go to:
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
 		// Does the author want updates of his own posts?	
 		if ( $user_id == $bp->loggedin_user->id ) {
-			if ( get_user_meta( $user_id, 'ass_self_post_notification', true ) != 'yes' )
+			if ( !ass_self_post_notification() ) {
 				continue;
+			}
 		}
 		
 		$send_it = false;
@@ -257,7 +258,7 @@ To view or reply, log in and go to:
 
 		// Does the author want updates of his own posts?	
 		if ( $user_id == $bp->loggedin_user->id ) {
-			if ( get_user_meta( $user_id, 'ass_self_post_notification', true ) != 'yes' )
+			if ( !ass_self_post_notification() )
 				continue;
 		}
 		
@@ -1084,8 +1085,8 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( 'yes' == get_user_meta( $current_user->id, 'ass_self_post_notification', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !get_user_meta( $current_user->id, 'ass_self_post_notification', true ) || 'no' == get_user_meta( $current_user->id, 'ass_self_post_notification', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 	
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
@@ -1097,7 +1098,28 @@ function ass_group_subscription_notification_settings() {
 }
 add_action( 'bp_notification_settings', 'ass_group_subscription_notification_settings' );
 
-
+/**
+ * Determine whether user should receive a notification of their own posts
+ *
+ * The main purpose of the filter is so that admins can override the setting, especially
+ * in cases where the user has not specified a setting (ie you can set the default to true)
+ *
+ * @param int $user_id Optional 
+ * @return string|array Single metadata value, or array of values
+ */
+function ass_self_post_notification( $user_id = false ) {
+	global $bp;
+	
+	if ( empty( $user_id ) )
+		$user_id = $bp->loggedin_user->id;
+	
+	$meta = get_user_meta( $user_id, 'ass_self_post_notification', true );
+	
+	$self_notify = $meta == 'yes' ? true : false;
+	
+	//if ( $user_id == 4  ) { if ( $self_notify) print_r( $bp ); print_r( $meta ); die(); }
+	return apply_filters( 'ass_self_post_notification', $self_notify, $meta, $user_id );
+}
 
 
 
