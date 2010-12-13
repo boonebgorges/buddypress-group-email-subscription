@@ -59,10 +59,13 @@ To view or reply to this topic, log in and go to:
 	
 	// cycle through subscribed members and send an email
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) { 		
-
-		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
-			continue;
 		
+		// Does the author want updates of his own posts?	
+		if ( $user_id == $bp->loggedin_user->id ) {
+			if ( get_user_meta( $user_id, 'ass_self_post_notification', true ) != 'yes' )
+				continue;
+		}
+	
 		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
 		
 			if ( !$ass_item_is_new ) //don't send emails for item edits (but do update the digest)
@@ -149,8 +152,11 @@ To view or reply to this topic, log in and go to:
 	}
 	
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
-		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
-			continue;
+		// Does the author want updates of his own posts?	
+		if ( $user_id == $bp->loggedin_user->id ) {
+			if ( get_user_meta( $user_id, 'ass_self_post_notification', true ) != 'yes' )
+				continue;
+		}
 		
 		$send_it = false;
 		//$group_status = $subscribed_users[ $user_id ]; // only need this if we're looping through user_ids
@@ -249,8 +255,11 @@ To view or reply, log in and go to:
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) { 			
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
 
-		if ( $user_id == $bp->loggedin_user->id )  // don't send email to topic author	
-			continue;
+		// Does the author want updates of his own posts?	
+		if ( $user_id == $bp->loggedin_user->id ) {
+			if ( get_user_meta( $user_id, 'ass_self_post_notification', true ) != 'yes' )
+				continue;
+		}
 		
 		//if ( $type == 'joined_group' ) // a failed attempt at restricting group joins to admins and mods
 		//	if ( !$group_admins_mods[ $user_id ] )
@@ -1063,19 +1072,27 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_usermeta( $current_user->id, 'ass_replies_to_my_topic') || 'yes' == get_usermeta( $current_user->id, 'ass_replies_to_my_topic') ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_usermeta( $current_user->id, 'ass_replies_to_my_topic') ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_user_meta( $current_user->id, 'ass_replies_to_my_topic', true ) || 'yes' == get_user_meta( $current_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_user_meta( $current_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_usermeta( $current_user->id, 'ass_replies_after_me_topic') || 'yes' == get_usermeta( $current_user->id, 'ass_replies_after_me_topic') ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_usermeta( $current_user->id, 'ass_replies_after_me_topic') ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( $current_user->id, 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( $current_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( $current_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
-
+		<tr>
+			<td></td>
+			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
+			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( 'yes' == get_user_meta( $current_user->id, 'ass_self_post_notification', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !get_user_meta( $current_user->id, 'ass_self_post_notification', true ) || 'no' == get_user_meta( $current_user->id, 'ass_self_post_notification', true ) ) { ?>checked="checked" <?php } ?>/></td>
+		</tr>
+	
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
 		</tbody>
 	</table>
+	
+	
 <?php
 }
 add_action( 'bp_notification_settings', 'ass_group_subscription_notification_settings' );
