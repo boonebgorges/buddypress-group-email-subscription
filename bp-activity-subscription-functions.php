@@ -62,6 +62,7 @@ To view or reply to this topic, log in and go to:
 		
 		// Does the author want updates of his own posts?	
 		if ( $user_id == $bp->loggedin_user->id ) {
+		
 			if ( !ass_self_post_notification() )
 				continue;
 		}
@@ -1085,8 +1086,13 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
+<<<<<<< HEAD
 			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
 			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
+=======
+			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( 'yes' == get_user_meta( $current_user->id, 'ass_self_post_notification', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !get_user_meta( $current_user->id, 'ass_self_post_notification', true ) || 'no' == get_user_meta( $current_user->id, 'ass_self_post_notification', true ) ) { ?>checked="checked" <?php } ?>/></td>
+>>>>>>> Adds user setting for receiving email notification of his own forum posts. Fixes #458
 		</tr>
 	
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
