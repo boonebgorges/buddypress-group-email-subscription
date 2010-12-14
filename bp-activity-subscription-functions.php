@@ -1087,9 +1087,6 @@ function ass_group_subscription_notification_settings() {
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
 			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
 			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
-
-			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 	
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
