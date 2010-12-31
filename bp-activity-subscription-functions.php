@@ -1059,7 +1059,7 @@ add_action('wp', 'ass_admin_notice');
 
 // adds forum notification options in the users settings->notifications page 
 function ass_group_subscription_notification_settings() {
-	global $current_user; ?>
+	global $bp; ?>
 	<table class="notification-settings zebra" id="groups-notification-settings">
 	<thead>
 		<tr>
@@ -1073,20 +1073,20 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_user_meta( $current_user->id, 'ass_replies_to_my_topic', true ) || 'yes' == get_user_meta( $current_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_user_meta( $current_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_user_meta( $bp->displayed_user->id, 'ass_replies_to_my_topic', true ) || 'yes' == get_user_meta( $bp->displayed_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_user_meta( $bp->displayed_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( $current_user->id, 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( $current_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( $current_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( $bp->displayed_user->id, 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( $bp->displayed_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( $bp->displayed_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 		<tr>
 			<td></td>
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification() ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification( $bp->displayed_user->id ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification( $bp->displayed_user->id ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 	
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
