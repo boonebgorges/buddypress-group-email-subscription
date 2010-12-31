@@ -338,7 +338,11 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	$phpmailer->ClearBCCs();$phpmailer->ClearCCs();$phpmailer->ClearCustomHeaders();
 	$phpmailer->ClearReplyTos();
 	
-	$phpmailer->From     = apply_filters( 'wp_mail_from'     , $from_email );
+	$admin_email = get_site_option( 'admin_email' );
+	if ( $admin_email == '' )
+		$admin_email = 'support@' . $_SERVER['SERVER_NAME'];
+	$from_name = get_site_option( 'site_name' ) == '' ? 'WordPress' : esc_html( get_site_option( 'site_name' ) );
+	$phpmailer->From     = apply_filters( 'wp_mail_from'     , $admin_email );
 	$phpmailer->FromName = apply_filters( 'wp_mail_from_name', $from_name  );
 			
 	foreach ( (array) $to as $recipient ) {
