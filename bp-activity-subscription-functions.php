@@ -160,15 +160,14 @@ To view or reply to this topic, log in and go to:
 		}
 		
 		$send_it = false;
-		//$group_status = $subscribed_users[ $user_id ]; // only need this if we're looping through user_ids
 		$topic_status = $user_topic_status[ $user_id ];
-	
-	 	//echo '<p>uid:' . $user_id .' | gstat:' . $group_status . ' | tstat:'.$topic_status . ' | owner:'.$topic->topic_poster . ' | prev:'.$previous_posters[ $user_id ];
+
+		//header('HTTP/1.1 200 OK'); echo '<p>uid:' . $user_id .' | gstat:' . $group_status . ' | tstat:'.$topic_status . ' | owner:'.$topic->topic_poster . ' | prev:'.$previous_posters[ $user_id ]; 
 		
 		if ( $topic_status == 'mute' )  // the topic mute button will override the subscription options below
 			continue;
 		
-		if ( $group_status == 'sum' ) // skip if user set to weekly summary
+		if ( $group_status == 'sum' && $topic_status != 'sub' ) // skip if user set to weekly summary (and they're not following this topic) // maybe not neccedary, but good to be cautious
 			continue;
 		
 		if ( $group_status == 'supersub' )
@@ -204,12 +203,18 @@ add_action( 'bp_activity_after_save', 'ass_group_notification_forum_reply' );
 
 
 // The email notification function for all other activity
-// as of right now activity_comment is not caught because it is missing the proper group_id a track request has be added for this feature at http://trac.buddypress.org/ticket/2388
 function ass_group_notification_activity( $content ) {
 	global $bp;
-	$type = $content->type;	
+	$type = $content->type;
 	
-	/* all other activity notifications */	
+	// teeny hack to get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp->groups->current_group)
+	if ( $bp->current_component == 'groups' && $content->component == 'activity' && $type == 'activity_comment' ){
+		$content->component = 'groups';
+		$content->item_id = $bp->groups->current_group->id;
+		$content->action = ass_clean_subject_html( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $bp->groups->current_group->name;
+	}
+		
+	/* all other group activity notifications */	
 	if ( $content->component != 'groups' || $type == 'new_forum_topic' || $type == 'new_forum_post' || $type == 'created_group' )
 		return;
 
@@ -223,9 +228,7 @@ function ass_group_notification_activity( $content ) {
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
-	
-	// TODO: if there is no content, perhaps we should not send the email?
-		
+			
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
 	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $bp->groups->current_group );
 	
@@ -245,11 +248,7 @@ To view or reply, log in and go to:
 	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
 	$group_id = $content->item_id;
-	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
-	
-	//if ( $type == 'joined_group' )  // a failed attempt at restricting group join email to admins and mods
-	//	$group_admins_mods = ass_get_group_admins_mods( $group_id );
-		
+	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );		
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );	
 	
 	// cycle through subscribed users
@@ -262,10 +261,6 @@ To view or reply, log in and go to:
 				continue;
 		}
 		
-		//if ( $type == 'joined_group' ) // a failed attempt at restricting group joins to admins and mods
-		//	if ( !$group_admins_mods[ $user_id ] )
-		//		continue;
-			
 		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
 		
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
@@ -280,7 +275,7 @@ To view or reply, log in and go to:
 	}
 	
 	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message ); echo '</pre>';	
+	//echo '<pre>'; print_r( $message ); echo '</pre>';
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
@@ -1001,6 +996,7 @@ function ass_admin_notice_form() {
 
 
 // This function sends an email out to all group members regardless of subscription status. 
+// TODO: change this function so the separate from is remove from the admin area and make it a checkbox under the 'add new topic' form. that way group admins can simply check off the box and it'll go to everyone. The benefit: notices are stored in the discussion form for later viewing. We should also alert the admin just how many people will get his post. 
 function ass_admin_notice() {
     global $bp;
 
