@@ -3,12 +3,12 @@ Contributors: dwenaus, boonebgorges
 Description: This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
-Tested up to: 3.0.1 BP 1.2.5.2
-Stable tag: trunk
+Tested up to: 3.0.5 BP 1.2.7
+Stable tag: 2.8
 
 == Description ==
 
-Note for BuddyPress 1.2.6 users: due to a bug in BuddyPress 1.2.6 users will not be able to see their email notifications page (see here for a fix http://trac.buddypress.org/changeset/3375)/ This will be fixed in the next version of BuddyPress
+Note for BuddyPress 1.2.6 users: upgrade to BuddyPress version 1.2.7.
 
 This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users.
 
@@ -57,6 +57,7 @@ TRANSLATORS
 - french - http://www.claudegagne-photo.com
 - brazilian portuguese - www.congregacao.net
 - dutch - Anja werkgroepen.net/wordpress
+- swedish - Thomas Schneider
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
@@ -79,6 +80,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.8 =
+bunch of new updates/fixes:  group activity replies are now registered in the plugin and emailed/digested accordingly. Users can now choose to get emails for posts they make (in their settings page). Useful filters were added, you can now add a header or footer to the digest emails. Fixed a bug where group names were sometimes missing for private groups in the digest. Fixed minor bug where people on weekly digest who followed a single topic don't get any emails. 
 
 = 2.7.9 =
 now translated in japanese, spanish, french, portuguese, italian and dutch. no changes to the code on this update.
