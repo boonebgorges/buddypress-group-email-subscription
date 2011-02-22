@@ -82,7 +82,7 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 == Changelog ==
 
 = 2.8 =
-bunch of new updates/fixes:  group activity replies are now registered in the plugin and emailed/digested accordingly. Users can now choose to get emails for posts they make (in their settings page). Useful filters were added, you can now add a header or footer to the digest emails. Fixed a bug where group names were sometimes missing for private groups in the digest. Fixed minor bug where people on weekly digest who followed a single topic don't get any emails. 
+bunch of new updates/fixes:  group activity replies are now registered in the plugin and emailed/digested accordingly. Users can now choose to get emails for posts they make (in their settings page). Useful filters were added, you can now add a header or footer to the digest emails. Fixed a bug where group names were sometimes missing for private groups in the digest. Fixed minor bug where people on weekly digest who followed a single topic don't get any emails. Added swedish translation. 
 
 = 2.7.9 =
 now translated in japanese, spanish, french, portuguese, italian and dutch. no changes to the code on this update.
