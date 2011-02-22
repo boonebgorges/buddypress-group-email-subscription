@@ -49,20 +49,19 @@ function ass_digest_fire( $type ) {
 		$title = sprintf( __( 'Your daily digest of group activity', 'bp-ass' ) );
 	else
 		$title = sprintf( __( 'Your weekly summary of group topics', 'bp-ass' ) );
-
+			
+	$title = apply_filters( 'ass_digest_title', $title, $type );
+	
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );			
 	$subject = "$title [$blogname]";
 
 	$footer = "\n\n<div {$ass_email_css['footer']}>";
-	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
+	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );	
+	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
-	// set user to superadmin so when getting list of groups - they include hidden groups
-	$orig_user_id = $current_user->ID; // save the current user's id
-	$current_user = new WP_User( 1, ''); // set as super admin
-	$all_groups = groups_get_groups();
-	$current_user = new WP_User( $orig_user_id, ''); // back to normal
-	
-	foreach ( $all_groups[ 'groups' ] as $group ) {
+	// get list of all groups so we can look them up quickly in the foreach loop below
+	$all_groups = $wpdb->get_results( $wpdb->prepare( "SELECT id, name, slug FROM {$bp->groups->table_name}" ) );
+	foreach ( $all_groups as $group ) {
 		$group_name = ass_digest_filter( $group->name );
 		$groups_info[ $group->id ] = array( 'name'=>$group_name, 'slug'=>$group->slug );  
 	}
@@ -370,12 +369,18 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 'dig' ) {
 	global $bp;
 	
+	if ( !$activity_id || !$user_id || !$group_id )
+		return;
+	
+	// get the digest/summary items for all groups for this user, if empty create the array
 	if ( !$group_activity_ids = get_usermeta( $user_id, 'ass_digest_items' ) )
 		$group_activity_ids = array();
 	
+	// get the items for just this type (digest/summary) for just the current group
 	if ( !$this_group_activity_ids = $group_activity_ids[$type][$group_id] )
 		$this_group_activity_ids = array();
-		
+	
+	// update with the current activity id and re-save
 	$this_group_activity_ids[] = $activity_id;
 	$group_activity_ids[$type][$group_id] = $this_group_activity_ids;
 	update_usermeta( $user_id, 'ass_digest_items', $group_activity_ids );
