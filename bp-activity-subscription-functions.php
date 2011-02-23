@@ -22,7 +22,7 @@ add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
 
 
 
-// send email notificaitons for new forum topics
+// send email notificaitons for new forum topics. Note that $content is sent as a reference
 function ass_group_notification_new_forum_topic( $content ) {
 	global $bp, $ass_item_is_new;
 
@@ -206,26 +206,37 @@ add_action( 'bp_activity_after_save', 'ass_group_notification_forum_reply' );
 function ass_group_notification_activity( $content ) {
 	global $bp;
 	$type = $content->type;
+	$component = $content->component;
+				
+	// the first two are handled above, the last is skipped entirely
+	if ( $type == 'new_forum_topic' || $type == 'new_forum_post' || $type == 'created_group' )
+		return;
+			
+	// get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp)
+	if ( $type == 'activity_comment' && $bp->current_component == 'groups' && $component == 'activity' )
+		$component = 'groups';
 	
-	// teeny hack to get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp->groups->current_group)
-	if ( $bp->current_component == 'groups' && $content->component == 'activity' && $type == 'activity_comment' ){
-		$content->component = 'groups';
-		$content->item_id = $bp->groups->current_group->id;
-		$content->action = ass_clean_subject_html( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $bp->groups->current_group->name;
-	}
-		
-	/* all other group activity notifications */	
-	if ( $content->component != 'groups' || $type == 'new_forum_topic' || $type == 'new_forum_post' || $type == 'created_group' )
+	// at this point we only want group activity, perhaps later we can make a function and interface for personal activity...
+	if ( $component != 'groups' && ! $is_activity_comment )
 		return;
 
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
 		return;
 	
-	if ( $type == 'joined_group' )	// TODO: in the future, it would be nice for admins to get this message
+	if ( $type == 'joined_group' )	// TODO: in the future, it might be nice for admins to optionally get this message
 		return;
 	
-	/* Subject & Content */
+	$group_id = $content->item_id;
 	$action = ass_clean_subject( $content->action );
+		
+	if ( $type == 'activity_comment' ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
+		$group_id = $bp->groups->current_group->id;
+		$action = ass_clean_subject_html( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $bp->groups->current_group->name;
+	}	
+	
+	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
+	
+	/* Subject & Content */
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
 			
@@ -247,7 +258,6 @@ To view or reply, log in and go to:
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
 	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
-	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );		
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );	
 	
