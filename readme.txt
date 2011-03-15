@@ -4,7 +4,7 @@ Description: This powerful plugin allows people to receive email notifications o
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 BP 1.2
 Tested up to: 3.0.5 BP 1.2.7
-Stable tag: 2.8.1
+Stable tag: 2.8.2
 
 == Description ==
 
@@ -81,6 +81,9 @@ If your plugin posts updates to the standard BuddyPress activity stream, then gr
 7. Admin Settings
 
 == Changelog ==
+
+= 2.8.2 =
+Fixes Dashboard panel to be compatible with WP 3.1/BP 1.2.8 multisite. Also adds a helpful "settings saved" message to dashboard panel.
 
 = 2.8.1 =
 fixed issue when plugin was hiding new group activity update comments

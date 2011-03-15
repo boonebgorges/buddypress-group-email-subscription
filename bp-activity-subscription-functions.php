@@ -1,11 +1,7 @@
 <?php
 
 //
-<<<<<<< HEAD
-// !SEND EMAIL UDPATES FOR FORUM TOPICS AND POSTS
-=======
 // !SEND EMAIL UPDATES FOR FORUM TOPICS AND POSTS
->>>>>>> master
 //
 
 // these hooks are a bit cludgy, but they work to ensure that only new posts get emailed out and post edits don't
@@ -1141,11 +1137,6 @@ function ass_self_post_notification( $user_id = false ) {
 
 
 // Functions to add the backend admin menu to control changing default settings
-<<<<<<< HEAD
-function ass_admin_menu() {
-	add_submenu_page( 'bp-general-settings', __("Group Email Options", 'bp-ass'), __("Group Email Options", 'bp-ass'), 'manage_options', 'ass_admin_options', "ass_admin_options" );
-}
-add_action('admin_menu', 'ass_admin_menu');
 
 /**
  * Adds "Group Email Options" panel under "BuddyPress" in the admin/network admin
@@ -1299,10 +1290,7 @@ function ass_update_dashboard_settings() {
 	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
 		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 	
-<<<<<<< HEAD
-=======
 	return true;
->>>>>>> master
 	//echo '<pre>'; print_r( $_POST ); echo '</pre>';
 }
 
