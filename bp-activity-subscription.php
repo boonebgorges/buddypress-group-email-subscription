@@ -6,8 +6,8 @@ Description: Allows group members to receive email notifications for group activ
 Author: Deryk Wenaus, boonebgorges
 Revision Date: April 1, 2011
 Version: 2.8.3
-Requires at least: 2.9, BuddyPress 1.2
-Tested up to: 3.1, BuddyPress 1.2.8
+Requires at least: WordPress 2.9, BuddyPress 1.2
+Tested up to: WordPress 3.1, BuddyPress 1.2.8
 */
 
 function activitysub_load_buddypress() {
