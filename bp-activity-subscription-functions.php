@@ -231,7 +231,7 @@ function ass_group_notification_activity( $content ) {
 		
 	if ( $type == 'activity_comment' ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
 		$group_id = $bp->groups->current_group->id;
-		$action = ass_clean_subject_html( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $bp->groups->current_group->name;
+		$action = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $bp->groups->current_group->name;
 	}	
 	
 	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
@@ -431,7 +431,7 @@ function ass_update_group_subscribe_settings() {
 				
 			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
 			
-			bp_core_add_message( __( $security.'Your email notifications are set to ' . ass_subscribe_translate( $action ) . ' for this group.', 'bp-ass' ) );
+			bp_core_add_message( sprintf( __( 'Your email notifications are set to %s for this group.', 'bp-ass' ), ass_subscribe_translate( $action ) ) );
 			bp_core_redirect( wp_get_referer() );	
 		}
 	}
