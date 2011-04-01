@@ -8,8 +8,6 @@ Stable tag: 2.8.3
 
 == Description ==
 
-Note for BuddyPress 1.2.6 users: upgrade to BuddyPress version 1.2.7.
-
 This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users.
 
 EMAIL SUBSCRIPTION LEVELS
@@ -85,6 +83,9 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+
+= 2.8.3 =
+Fixed issue where activity updates had html in the email subject line
 
 = 2.8.2 =
 Fixes Dashboard panel to be compatible with WP 3.1/BP 1.2.8 multisite. Also adds a helpful "settings saved" message to dashboard panel.
