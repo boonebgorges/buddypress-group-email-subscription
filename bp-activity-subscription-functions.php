@@ -571,7 +571,7 @@ function ass_join_group_message( $group_id, $user_id ) {
 	if ( $user_id != $bp->loggedin_user->id  )
 		return;
 	
-	$status = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
+	$status = apply_filters( 'ass_default_subscription_level', groups_get_groupmeta( $group_id, 'ass_default_subscription' ), $group_id );
 	
 	if ( !$status )
 		$status = 'no';
