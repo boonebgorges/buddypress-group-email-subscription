@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: BuddyPress Group Email Subscription\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-11-26 13:48-0800\n"
-"PO-Revision-Date: 2011-04-09 13:39+0100\n"
+"PO-Revision-Date: 2011-04-14 11:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: J.T.\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "Ein Thema verfolgen: Um E-Mail-Updates für ein bestimmtes Thema zu beko
 #: bp-activity-subscription-digest.php:119
 #, php-format
 msgid "To disable these notifications please login and go to: %s where you can change your email settings for each group."
-msgstr "Um diese Benachrichtigungen auszuschalten, musst du dich einloggen und auf %s gehen, wo du die Benachrichtigungseinstellungen für jede Gruppe ändern kannst."
+msgstr "Um diese Benachrichtigungen abzuschalten, musst du dich einloggen und auf %s gehen, wo du die Benachrichtigungseinstellungen für jede Gruppe ändern kannst."
 
 #: bp-activity-subscription-digest.php:119
 #: bp-activity-subscription-functions.php:953
@@ -131,13 +131,13 @@ msgstr ""
 #: bp-activity-subscription-functions.php:238
 #, php-format
 msgid "To disable these notifications please log in and go to: %s"
-msgstr "Um diese Benachrichtigungen auszuschalten, bitte einloggen auf: %s"
+msgstr "Um diese Benachrichtigungen abzustellen log dich bitte ein und geh zu: %s"
 
 #: bp-activity-subscription-functions.php:71
 #: bp-activity-subscription-functions.php:177
 #: bp-activity-subscription-functions.php:262
 msgid "Your email setting for this group is: "
-msgstr "Deine E-Mail-Einstellungen für diese Gruppe sind:"
+msgstr "Deine E-Mail-Einstellungen für diese Gruppe sind: "
 
 #: bp-activity-subscription-functions.php:74
 msgid ", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button."
@@ -159,7 +159,7 @@ msgstr ""
 "\n"
 "\"%s\"\n"
 "\n"
-"Zur Anzeige oder um zu antworten, bitte einloggen auf:\n"
+"Um es dir anzusehen oder darauf zu antworten:\n"
 "%s\n"
 "\n"
 "---------------------\n"
@@ -198,7 +198,7 @@ msgstr "Tägliche Übersicht"
 
 #: bp-activity-subscription-functions.php:377
 msgid "Get all the day's activity bundled into a single email"
-msgstr "Erhalte die Aktivitäten eines Tages zusammengefasst in eine einzige E-Mail"
+msgstr "Erhalte die Aktivitäten eines Tages zusammengefasst in einer einzigen E-Mail"
 
 #: bp-activity-subscription-functions.php:381
 msgid "New Topics Email"
@@ -227,7 +227,7 @@ msgstr "Einstellungen speichern"
 
 #: bp-activity-subscription-functions.php:392
 msgid "Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at"
-msgstr "Hinweise: Normalerweise erhältst du Benachrichtigungen für Themen, die du gestartet oder dokumentiert hast. Das kannst du ändern unter"
+msgstr "Hinweise: Normalerweise erhältst du Benachrichtigungen für Forum-Themen, die du gestartet oder kommentiert hast. Das kannst du ändern unter"
 
 #: bp-activity-subscription-functions.php:392
 msgid "email notifications"
@@ -271,7 +271,7 @@ msgstr "Ändere deine E-Mail-Abonnement Optionen für diese Gruppe"
 
 #: bp-activity-subscription-functions.php:487
 msgid "Get a summary of topics each"
-msgstr "Erhalte eine Zusammenfassung jedes einzelnen Themas"
+msgstr "Erhalte eine Zusammenfassung jede Woche am"
 
 #: bp-activity-subscription-functions.php:488
 msgid "Get the day's activity bundled into one email"
@@ -471,6 +471,10 @@ msgstr "Ein Mitglied antwortet in einem Forum-Thema, das du eröffnet hast"
 #: bp-activity-subscription-functions.php:1071
 msgid "A member replies after you in a forum topic"
 msgstr "Ein Mitglied antwortet nach dir in einem Forum-Thema"
+
+#: bp-activity-subscription-functions.php:1077
+msgid "Receive notifications of your own posts?"
+msgstr "Erhalte Benachrichtigungen zu deinen eigenen Posts?"
 
 #: bp-activity-subscription-functions.php:1096
 msgid "Group Email Options"
