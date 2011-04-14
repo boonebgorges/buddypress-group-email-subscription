@@ -445,6 +445,10 @@ msgstr ""
 msgid "A member replies after you in a forum topic"
 msgstr ""
 
+#: bp-activity-subscription-functions.php:1077
+msgid "Receive notifications of your own posts?"
+msgstr ""
+
 #: bp-activity-subscription-functions.php:1096
 msgid "Group Email Options"
 msgstr ""
