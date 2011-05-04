@@ -271,6 +271,32 @@ To view or reply, log in and go to:
 				continue;
 		}
 		
+		// If this is an activity comment, and the $user_id is the user who is being replied
+		// to, check to make sure that the user is not subscribed to BP's native activity
+		// reply notifications
+		if ( 'activity_comment' == $type ) {
+			// First, look at the immediate parent
+			$immediate_parent = new BP_Activity_Activity( $content->secondary_item_id );
+			
+			// Don't send the bp-ass notification if the user is subscribed through BP
+			if ( $user_id == $immediate_parent->user_id && 'no' != get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+				continue;
+			}
+			
+			// We only need to check the root parent if it's different from the
+			// immediate parent
+			if ( $content->secondary_item_id != $content->item_id ) {
+				$root_parent = new BP_Activity_Activity( $content->item_id );
+				
+				// Don't send the bp-ass notification if the user is subscribed through BP
+				if ( $user_id == $root_parent->user_id && 'no' != get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+					continue;
+				}
+			}
+			
+			//if ( $original_activity->user_id != $commenter_id && 'no' != get_user_meta( $original_activity->user_id, 'notification_activity_new_reply', true ) ) {//var_dump( $content ); die();
+		}
+		
 		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
 		
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
