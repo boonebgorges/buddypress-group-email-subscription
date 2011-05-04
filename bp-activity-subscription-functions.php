@@ -37,7 +37,7 @@ function ass_group_notification_new_forum_topic( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
+	$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 	
 	$message = sprintf( __(
 '%s
@@ -115,7 +115,7 @@ function ass_group_notification_forum_reply( $content ) {
 	/* Subject & Content */
 	$action = ass_clean_subject( $content->action );
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
+	$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 	
 	$message = sprintf( __(
 '%s
@@ -238,7 +238,7 @@ function ass_group_notification_activity( $content ) {
 	
 	/* Subject & Content */
 	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ) ), $content );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 			
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
 	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $bp->groups->current_group );
@@ -820,7 +820,7 @@ function ass_clean_subject( $subject ) {
 		$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
 	
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
-	$subject = html_entity_decode( strip_tags( $subject ) );
+	$subject = html_entity_decode( strip_tags( $subject ), ENT_QUOTES );
 		
 	return apply_filters( 'ass_clean_subject', $subject );
 }
