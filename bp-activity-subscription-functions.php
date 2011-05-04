@@ -293,8 +293,6 @@ To view or reply, log in and go to:
 					continue;
 				}
 			}
-			
-			//if ( $original_activity->user_id != $commenter_id && 'no' != get_user_meta( $original_activity->user_id, 'notification_activity_new_reply', true ) ) {//var_dump( $content ); die();
 		}
 		
 		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook. 
