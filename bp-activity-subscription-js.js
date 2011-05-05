@@ -20,13 +20,13 @@ jQuery(document).ready( function() {
 				
 		j.post( ajaxurl, data, function( response ) {
 			if ( response == 'follow' ) {
-				var m = 'Mute';
+				var m = bp_ass.mute;
 				theid = theid.replace( 'follow', 'mute' );
 			} else if ( response == 'mute' ) {
-				var m = 'Follow';
+				var m = bp_ass.follow;
 				theid = theid.replace( 'mute', 'follow' );
 			} else {
-				var m = 'Error';
+				var m = bp_ass.error;
 			}
 					
 			j(it).html(m);
