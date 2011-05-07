@@ -92,6 +92,7 @@ added translation strings for the javascript mute/follow,
 minor code cleanup to how digest/sumaries are stored, 
 Added Russian Translation.
 added filter to digest subject line
+fixed error where only site admins could send out instant emails and not group admins
 
 = 2.8.4 =
 Added German Translation

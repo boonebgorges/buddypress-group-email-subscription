@@ -1006,7 +1006,7 @@ add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 
 //
 
 
-// creata a form that allows admins to email everyone in the group
+// create a form that allows admins to email everyone in the group
 function ass_admin_notice_form() {	
 	global $bp;	
 
@@ -1038,7 +1038,7 @@ function ass_admin_notice() {
     if ( $bp->current_component == 'groups' && $bp->current_action == 'admin' && $bp->action_variables[0] == 'notifications' ) {
     
 	    // Make sure the user is an admin
-		if ( !groups_is_user_admin( $bp->loggedin_user->id , $group_id ) && !is_site_admin() )
+		if ( !groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && !is_site_admin() )
 			return;
 		
 		if ( get_option('ass-admin-can-send-email') == 'no' )

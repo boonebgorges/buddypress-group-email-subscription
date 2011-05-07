@@ -70,7 +70,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 	function edit_screen() {
 		// if ass-admin-can-send-email = no this won't show
-		ass_admin_notice_form();
+		ass_admin_notice_form(); // removed for now because it was broken
 		return true;
 	}
 
