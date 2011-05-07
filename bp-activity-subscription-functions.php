@@ -428,7 +428,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 
 	<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="ass-save" name="ass-save" class="button-primary">
 
-	<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo $bp->loggedin_user->domain . 'settings/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
+	<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo $bp->loggedin_user->domain . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
 	
 	</form>
 	</div><!-- end ass-email-subscriptions-options-page -->
@@ -990,7 +990,7 @@ add_action( 'wp', 'ass_manage_all_members_email_update', 4 );
 // Add a notice at end of email notification about how to change group email subscriptions
 function ass_add_notice_to_notifications_page() {
 	echo '<p><b>'.__('Group Email Settings','bp-ass').'</b></p>';
-	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() .'groups/">'.__('My Groups','bp-ass') .'</a>' );
+	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">'.__('My Groups','bp-ass') .'</a>' );
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
