@@ -4,7 +4,7 @@ Description: This powerful plugin allows people to receive email notifications o
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 (BP 1.2)
 Tested up to: 3.1
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 
 == Description ==
 
@@ -87,7 +87,11 @@ Other supporters: bluedotproductions.com
 == Changelog ==
 
 = 2.8.5 =
-Added Russian Translation
+fixed bug introduced in latest BP version where when an group admin manually removes a group member in Group Admin -> Manage Members -> Remove from group, the user kept getting emails, 
+added translation strings for the javascript mute/follow, 
+minor code cleanup to how digest/sumaries are stored, 
+Added Russian Translation.
+added filter to digest subject line
 
 = 2.8.4 =
 Added German Translation

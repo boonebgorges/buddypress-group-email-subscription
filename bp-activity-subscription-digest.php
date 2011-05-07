@@ -53,7 +53,7 @@ function ass_digest_fire( $type ) {
 	$title = apply_filters( 'ass_digest_title', $title, $type );
 	
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );			
-	$subject = "$title [$blogname]";
+	$subject = apply_filters( 'ass_digest_subject', "$title [$blogname]", $blogname, $title, $type );
 
 	$footer = "\n\n<div {$ass_email_css['footer']}>";
 	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );	
@@ -372,17 +372,13 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 	if ( !$activity_id || !$user_id || !$group_id )
 		return;
 	
-	// get the digest/summary items for all groups for this user, if empty create the array
-	if ( !$group_activity_ids = get_usermeta( $user_id, 'ass_digest_items' ) )
-		$group_activity_ids = array();
+	// get the digest/summary items for all groups for this user
+	$group_activity_ids = get_usermeta( $user_id, 'ass_digest_items' );
 	
-	// get the items for just this type (digest/summary) for just the current group
-	if ( !$this_group_activity_ids = $group_activity_ids[$type][$group_id] )
-		$this_group_activity_ids = array();
+	// update multi-dimensional array with the current activity_id
+	$group_activity_ids[$type][$group_id][] = $activity_id;
 	
-	// update with the current activity id and re-save
-	$this_group_activity_ids[] = $activity_id;
-	$group_activity_ids[$type][$group_id] = $this_group_activity_ids;
+	// re-save it
 	update_usermeta( $user_id, 'ass_digest_items', $group_activity_ids );
 }
 

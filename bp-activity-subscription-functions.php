@@ -555,11 +555,12 @@ function ass_group_ajax_callback() {
 add_action( 'wp_ajax_ass_group_ajax', 'ass_group_ajax_callback' );
 
 
-// if the user leaves the group, delete their subscription status
+// if the user leaves the group or if they are removed by an admin, delete their subscription status
 function ass_unsubscribe_on_leave( $group_id, $user_id ){
 	ass_group_subscription( 'delete', $user_id, $group_id );
 }
 add_action( 'groups_leave_group', 'ass_unsubscribe_on_leave', 100, 2 );
+add_action( 'groups_remove_member', 'ass_unsubscribe_on_leave', 100, 2 );
 
 
 
