@@ -11,6 +11,10 @@ Version: 2.8.5
 function activitysub_load_buddypress() {
 	global $ass_activities;
 	if ( function_exists( 'bp_core_setup_globals' ) ) {
+		// Don't load the plugin if activity and groups are not both active
+		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
+			return false;
+
 		require_once ('bp-activity-subscription-main.php');
 		return true;
 	}
@@ -22,6 +26,10 @@ function activitysub_load_buddypress() {
 
 	if ( isset( $active_sidewide_plugins['buddypress/bp-loader.php'] ) && !function_exists( 'bp_core_setup_globals' ) ) {
 		require_once( WP_PLUGIN_DIR . '/buddypress/bp-loader.php' );
+		// Don't load the plugin if activity and groups are not both active
+		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
+			return false;
+
 		require_once ('bp-activity-subscription-main.php');
 		return true;
 	}
