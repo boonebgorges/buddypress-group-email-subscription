@@ -53,7 +53,7 @@ TRANSLATORS
 - spanish - Williams Castillo
 - italian - Stefano Russo
 - french - http://www.claudegagne-photo.com
-- brazilian portuguese - www.congregacao.net
+- brazilian portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
 - dutch - Anja werkgroepen.net/wordpress
 - swedish - Thomas Schneider
 - german - Peter Peterson
