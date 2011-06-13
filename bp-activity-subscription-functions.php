@@ -77,7 +77,10 @@ To view or reply to this topic, log in and go to:
 				$notice .= __(", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass');
 			
 			$user = bp_core_get_core_userdata( $user_id );
-			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+			
+			if ( $user->user_email )
+				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				
 			//echo '<br>Email: ' . $user->user_email;
 			
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
@@ -182,7 +185,10 @@ To view or reply to this topic, log in and go to:
 		if ( $send_it ) {
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
-			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+			
+			if ( $user->user_email )
+				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				
 			//echo '<br>Email: ' . $user->user_email;
 		} 
 		
@@ -300,7 +306,10 @@ To view or reply, log in and go to:
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id );
-			wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+			
+			if ( $user->user_email )
+				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
@@ -1072,7 +1081,10 @@ If you feel this service is being misused please speak to the website administra
 			// cycle through all group members
 			foreach ( (array)$user_ids as $user_id ) { 		
 				$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
-				wp_mail( $user->user_email, $subject, $message );  // Send the email
+				
+				if ( $user->user_email )
+					wp_mail( $user->user_email, $subject, $message );  // Send the email
+					
 				//echo '<br>Email: ' . $user->user_email;
 			}
 			
