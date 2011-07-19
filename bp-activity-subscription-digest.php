@@ -11,7 +11,7 @@ function ass_digest_schedule_print() {
 	print "<br />";
 	print "<br />";
 
-	ass_digest_fire( 'dig' );
+//	ass_digest_fire( 'dig' );
 	$crons = _get_cron_array();
 	echo "<div style='background: #fff;'>";
 	$sched = wp_next_scheduled( 'ass_digest_event' );
@@ -20,7 +20,7 @@ function ass_digest_schedule_print() {
 	echo " Until: " . $until . " hours";
 	echo "</div>";
 }
-add_action( 'wp_head', 'ass_digest_schedule_print' );
+//add_action( 'wp_head', 'ass_digest_schedule_print' );
 
 
 /* Digest-specific functions */
