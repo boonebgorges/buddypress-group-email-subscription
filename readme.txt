@@ -85,8 +85,11 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+= 2.8.6 =
+Fixed bug that caused hidden items not to be sent in digests
+
 = 2.8.5 =
-addeded better brazilian portugues translation, improved error checking to see if user has email before emailing them
+added better brazilian portuguese translation, improved error checking to see if user has email before emailing them
 
 = 2.8.5 =
 fixed bug introduced in latest BP version where when an group admin manually removes a group member in Group Admin -> Manage Members -> Remove from group, the user kept getting emails, 

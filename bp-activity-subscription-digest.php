@@ -177,7 +177,7 @@ add_action( 'wp', 'ass_digest_fire_test' );
 // displays the introduction for the group and loops through each item
 // note: we should probably cache this and if the next person's ids match spit out the cache
 function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug ) {
-	global $bp, $ass_email_css;
+	global $bp, $ass_email_css, $ass_activity_markup_cache;
 	
 	$group_permalink = $bp->root_domain.'/'.$bp->groups->slug.'/'.$group_slug. '/'; 
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>'; 
@@ -194,11 +194,8 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 	
-	if ( is_array( $activity_ids ) )
-		$activity_ids = implode( ",", $activity_ids );
-		
-	// heavy db use here	
-	$items = bp_activity_get_specific( "sort=ASC&activity_ids=" . $activity_ids );
+	// We want to show hidden items because the user has already been verified a member of the // group. Todo: heavy db use here	
+	$items = bp_activity_get_specific( array( 'sort' => 'ASC', 'activity_ids' => $activity_ids, 'show_hidden' => true ) );
 		
 	// loop through each item in group and create it's markup			
 	foreach ( $items['activities'] as $item ) {
