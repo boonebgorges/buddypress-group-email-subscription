@@ -85,6 +85,9 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+= 2.8.7 =
+Tweaked email text so that contentless notifications don't get empty quotation marks
+
 = 2.8.6 =
 Added simple activity item caching to digests to reduce database queries at digest time
 Fixed bug that caused hidden items not to be sent in digests

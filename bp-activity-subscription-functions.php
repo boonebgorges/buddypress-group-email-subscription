@@ -249,7 +249,19 @@ function ass_group_notification_activity( $content ) {
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
 	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $bp->groups->current_group );
 	
-	$message = sprintf( __(
+	// If message has no content (as in the case of group joins, etc), we'll use a different
+	// $message template
+	if ( empty( $the_content ) ) {
+		$message = sprintf( __(
+'%s
+
+To view or reply, log in and go to:
+%s
+
+---------------------
+', 'bp-ass' ), $action, $activity_permalink );
+	} else {
+		$message = sprintf( __(
 '%s
 
 "%s"
@@ -259,7 +271,8 @@ To view or reply, log in and go to:
 
 ---------------------
 ', 'bp-ass' ), $action, $the_content, $activity_permalink );
-
+	}
+	
 	/* Content footer */
 	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
 	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
