@@ -86,6 +86,7 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 = 2.8.6 =
+Added simple activity item caching to digests to reduce database queries at digest time
 Fixed bug that caused hidden items not to be sent in digests
 
 = 2.8.5 =

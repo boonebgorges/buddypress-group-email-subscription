@@ -11,6 +11,7 @@ function ass_digest_schedule_print() {
 	print "<br />";
 	print "<br />";
 
+	ass_digest_fire( 'dig' );
 	$crons = _get_cron_array();
 	echo "<div style='background: #fff;'>";
 	$sched = wp_next_scheduled( 'ass_digest_event' );
@@ -19,7 +20,7 @@ function ass_digest_schedule_print() {
 	echo " Until: " . $until . " hours";
 	echo "</div>";
 }
-//add_action( 'wp_head', 'ass_digest_schedule_print' );
+add_action( 'wp_head', 'ass_digest_schedule_print' );
 
 
 /* Digest-specific functions */
@@ -173,11 +174,18 @@ add_action( 'wp', 'ass_digest_fire_test' );
 
 
 
-
-// displays the introduction for the group and loops through each item
-// note: we should probably cache this and if the next person's ids match spit out the cache
+/**
+ * Displays the introduction for the group and loops through each item
+ *
+ * I've chosen to cache on an individual-activity basis, instead of a group-by-group basis. This
+ * requires just a touch more overhead (in terms of looping through individual activity_ids), and
+ * doesn't really have any added effect at the moment (since an activity item can only be associated
+ * with a single group). But it provides the greatest amount of flexibility going forward, both in
+ * terms of the possibility that activity items could be associated with more than one group, and
+ * the possibility that users within a single group would want more highly-filtered digests.
+ */
 function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug ) {
-	global $bp, $ass_email_css, $ass_activity_markup_cache;
+	global $bp, $ass_email_css, $ass_activity_cache;
 	
 	$group_permalink = $bp->root_domain.'/'.$bp->groups->slug.'/'.$group_slug. '/'; 
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>'; 
@@ -194,15 +202,39 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 	
-	// We want to show hidden items because the user has already been verified a member of the // group. Todo: heavy db use here	
-	$items = bp_activity_get_specific( array( 'sort' => 'ASC', 'activity_ids' => $activity_ids, 'show_hidden' => true ) );
+	// Loop through the activity items to check whether we've already fetched it
+	$activity_ids_to_fetch = array();
+	foreach ( $activity_ids as $activity_id ) {
+		// Is it in the cache?
+		if ( !isset( $ass_activity_cache[$activity_id] ) ) {
+			// Sanity check: Don't fetch a single item more than once
+			if ( !in_array( $activity_ids_to_fetch[$activity_id] ) )
+				$activity_ids_to_fetch[] = $activity_id;
+		}
+	}
+	
+	// Get the activity items that we need to fetch. Note that we want to show hidden items
+	// because the user has already been verified a member of the group.	
+	$items = bp_activity_get_specific( array( 
+		'sort' 		=> 'ASC', 
+		'activity_ids' 	=> $activity_ids_to_fetch, 
+		'show_hidden' 	=> true 
+	) );
 		
-	// loop through each item in group and create it's markup			
+	// Loop through each fetched item, create its markup, and stash it in the cache			
 	foreach ( $items['activities'] as $item ) {
-		$group_message .= ass_digest_format_item( $item, $type );
+		$ass_activity_cache[$item->id] = array(
+			'data' 	 => $item, // Stored for the convenience of other potential plugins
+			'markup' => ass_digest_format_item( $item, $type )
+		);
+	}
+	
+	// Finally, add the markup to the digest
+	foreach ( $activity_ids as $activity_id ) {
+		$group_message .= $ass_activity_cache[$activity_id]['markup'];
 		//$group_message .= '<pre>'. $item->id .'</pre>';
 	}
-		
+	
 	return apply_filters( 'ass_digest_format_item_group', $group_message, $group_id, $type );
 }
 
