@@ -8,6 +8,20 @@ Revision Date: June 13, 2011
 Version: 2.8.6.1
 */
 
+function ass_loader() {
+	if ( bp_is_active( 'groups' ) && bp_is_active( 'activity' ) ) {
+		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
+	}
+	
+	remove_action( 'plugins_loaded', 'activitysub_load_buddypress', 11 );
+}
+add_action( 'bp_include', 'ass_loader' );
+
+/**
+ * Legacy loader for BP < 1.2
+ *
+ * This function will be unhooked by ass_loader() when possible
+ */
 function activitysub_load_buddypress() {
 	global $ass_activities;
 	if ( function_exists( 'bp_core_setup_globals' ) ) {
@@ -36,7 +50,7 @@ function activitysub_load_buddypress() {
 
 	return false;
 }
-add_action( 'plugins_loaded', 'activitysub_load_buddypress', 1 );
+add_action( 'plugins_loaded', 'activitysub_load_buddypress', 11 );
 
 
 function activitysub_textdomain() {
