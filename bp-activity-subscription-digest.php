@@ -161,7 +161,7 @@ add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 
 // for testing the digest firing in real-time, add /?sum=1 to the url
 function ass_digest_fire_test() {
-	if ( $_GET['sum'] && is_site_admin() ){
+	if ( isset( $_GET['sum'] ) && is_super_admin() ){
 		echo "<h2>".__('DAILY DIGEST:','bp-ass')."</h2>";
 		ass_digest_fire( 'dig' );
 		echo "<h2 style='margin-top:150px'>".__('WEEKLY DIGEST:','bp-ass')."</h2>";

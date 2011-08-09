@@ -368,7 +368,10 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 		$bp->groups->current_group->id;
 	
 	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
-	return $group_user_subscriptions[ $user_id ];
+	
+	$user_subscription = isset( $group_user_subscriptions[$user_id] ) ? $group_user_subscriptions[$user_id] : false;
+	
+	return $user_subscription;
 }
 
 
@@ -407,12 +410,12 @@ function ass_group_subscribe_settings ( $group = false ) {
 	if ( !$group )
 		$group = $bp->groups->current_group;
 	
-	if ( !is_user_logged_in() || $group->is_banned || !$group->is_member )
+	if ( !is_user_logged_in() || !empty( $group->is_banned ) || !$group->is_member )
 		return false;
 		
 	$group_status = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
 	
-	$submit_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications';
+	$submit_link = bp_get_group_permalink( $bp->groups->current_group ) . 'notifications';
 	
 	?>
 	<div id="ass-email-subscriptions-options-page">
@@ -510,9 +513,9 @@ function ass_group_subscribe_button( $group = false ) {
 	if ( !$group )
 		$group =& $groups_template->group;
 
-	if ( !is_user_logged_in() || $group->is_banned || !$group->is_member )
+	if ( !is_user_logged_in() || !empty( $group->is_banned ) || !$group->is_member )
 		return;
-	
+		
 	// if we're looking at someone elses list of groups hide the subscription
 	if ( $bp->displayed_user->id && ( $bp->loggedin_user->id != $bp->displayed_user->id ) )
 		return;
@@ -900,7 +903,7 @@ function ass_show_subscription_status_in_member_list( $user_id='' ) {
 	
 	$group_id = $bp->groups->current_group->id;
 	
-	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_site_admin() ) {
+	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_super_admin() ) {
 		if ( !$user_id ) 
 			$user_id = $members_template->member->user_id;	
 		$sub_type = ass_get_group_subscription_status( $user_id, $group_id );
@@ -966,7 +969,7 @@ add_action( 'wp', 'ass_manage_members_email_update', 4 );
 function ass_change_all_email_sub() {
 	global $groups_template, $bp;
 		
-	if ( !is_site_admin() )
+	if ( !is_super_admin() )
 		return false;
 	
 	$group = &$groups_template->group;
@@ -984,7 +987,7 @@ function ass_manage_all_members_email_update() {
 
 	if ( $bp->current_component == $bp->groups->slug && 'manage-members' == $bp->action_variables[0] ) {
 	
-		if ( !is_site_admin() )
+		if ( !is_super_admin() )
 			return false;
 		
 		$action = $bp->action_variables[2];	
@@ -1032,7 +1035,7 @@ add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 
 function ass_admin_notice_form() {	
 	global $bp;	
 
-	if ( groups_is_user_admin( $bp->loggedin_user->id , $bp->groups->current_group->id ) || is_site_admin() ) {
+	if ( groups_is_user_admin( $bp->loggedin_user->id , $bp->groups->current_group->id ) || is_super_admin() ) {
 		$submit_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications';
 		?> 
 		<h3><?php _e('Send an email notice to everyone in the group', 'bp-ass'); ?></h3>
@@ -1060,7 +1063,7 @@ function ass_admin_notice() {
     if ( $bp->current_component == 'groups' && $bp->current_action == 'admin' && $bp->action_variables[0] == 'notifications' ) {
     
 	    // Make sure the user is an admin
-		if ( !groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && !is_site_admin() )
+		if ( !groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && !is_super_admin() )
 			return;
 		
 		if ( get_option('ass-admin-can-send-email') == 'no' )
@@ -1320,7 +1323,7 @@ function ass_update_dashboard_settings() {
 	if ( !check_admin_referer( 'ass_admin_settings' ) )
 		return;
 	
-	if ( !is_site_admin() )
+	if ( !is_super_admin() )
 		return;
 		
 	/* The daily digest time has been changed */

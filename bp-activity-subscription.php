@@ -8,6 +8,14 @@ Revision Date: June 13, 2011
 Version: 2.8.6.1
 */
 
+/**
+ * Main loader for the plugin.
+ *
+ * This function is hooked to bp_include, which is the recommended method for loading BP plugins
+ * since BP 1.2.5 or so. When this function is loaded properly, it will unhook 
+ * activitysub_load_buddypress(). If bp_include is not fired (because you are running a legacy
+ * version of BP), the legacy function will load the plugin normally.
+ */
 function ass_loader() {
 	if ( bp_is_active( 'groups' ) && bp_is_active( 'activity' ) ) {
 		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
