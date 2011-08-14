@@ -4,11 +4,11 @@ Description: This powerful plugin allows people to receive email notifications o
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 (BP 1.2)
 Tested up to: 3.2.1
-Stable tag: 2.9
+Stable tag: 2.9.1
 
 == Description ==
 
-This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users. Tested up to BuddyPress 1.2.9.
+This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users. Tested up to BuddyPress 1.5-beta-2.
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options: 
@@ -85,6 +85,11 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+= 2.9.1 =
+Fixed bug that may have caused scripts and styles not to be loaded on BP 1.2.x
+Fixed some PHP notices
+Fixed bug that might have caused BPGES javascript to load before jQuery in some cases
+
 = 2.9 =
 Full support for BuddyPress 1.5
 Code cleanup and normalization
