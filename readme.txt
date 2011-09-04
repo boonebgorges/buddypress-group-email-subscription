@@ -4,7 +4,7 @@ Description: This powerful plugin allows people to receive email notifications o
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 (BP 1.2)
 Tested up to: 3.2.1
-Stable tag: 2.9.1
+Stable tag: 2.9.2
 
 == Description ==
 
@@ -85,6 +85,10 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+
+= 2.9.2 =
+Fixed some syntax errors that may have caused problems with digest formatting
+
 = 2.9.1 =
 Fixed bug that may have caused scripts and styles not to be loaded on BP 1.2.x
 Fixed some PHP notices
