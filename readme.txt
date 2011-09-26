@@ -86,6 +86,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 2.9.3 =
+Added updated Spanish translation
+
 = 2.9.2 =
 Fixed some syntax errors that may have caused problems with digest formatting
 
