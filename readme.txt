@@ -50,7 +50,7 @@ The plugin is fully internationalized (thanks to chestnut_jp) Please send langua
 
 TRANSLATORS
 - japanese - http://buddypress.org/community/members/chestnut_jp/
-- spanish - Williams Castillo
+- spanish - Williams Castillo, Gregor Gimmy
 - italian - Stefano Russo
 - french - http://www.claudegagne-photo.com
 - brazilian portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
