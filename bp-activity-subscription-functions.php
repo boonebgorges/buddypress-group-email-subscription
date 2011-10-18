@@ -150,7 +150,7 @@ To view or reply to this topic, log in and go to:
 
 	// consolidate the arrays to speed up processing
 	foreach ( array_keys( $previous_posters) as $previous_poster ) {
-		if ( !$subscribed_users[ $previous_poster ] )
+		if ( empty( $subscribed_users[ $previous_poster ] ) )
 			$subscribed_users[ $previous_poster ] = 'prev-post';
 	}
 
@@ -163,7 +163,7 @@ To view or reply to this topic, log in and go to:
 		}
 
 		$send_it = false;
-		$topic_status = $user_topic_status[ $user_id ];
+		$topic_status = isset( $user_topic_status[ $user_id ] ) ? $user_topic_status[ $user_id ] : '';
 
 		//header('HTTP/1.1 200 OK'); echo '<p>uid:' . $user_id .' | gstat:' . $group_status . ' | tstat:'.$topic_status . ' | owner:'.$topic->topic_poster . ' | prev:'.$previous_posters[ $user_id ];
 
@@ -177,9 +177,9 @@ To view or reply to this topic, log in and go to:
 			$send_it = true;
 		elseif ( $topic_status == 'sub' )
 			$send_it = true;
-		elseif ( $topic->topic_poster == $user_id && $ass_replies_to_my_topic[ $user_id ] != 'no' )
+		elseif ( $topic->topic_poster == $user_id && isset( $ass_replies_to_my_topic[$user_id] ) && $ass_replies_to_my_topic[ $user_id ] != 'no' )
 			$send_it = true;
-		elseif ( $previous_posters[ $user_id ] && $ass_replies_after_me_topic[ $user_id ] != 'no' )
+		elseif ( $previous_posters[ $user_id ] && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[ $user_id ] != 'no' )
 			$send_it = true;
 
 		if ( $send_it ) {
@@ -717,7 +717,7 @@ function ass_get_topic_subscription_status( $user_id, $topic_id ) {
 
 	$user_topic_status = groups_get_groupmeta( $bp->groups->current_group->id, 'ass_user_topic_status_' . $topic_id );
 
-	if ( $user_topic_status[ $user_id ] )
+	if ( is_array( $user_topic_status ) && isset( $user_topic_status[ $user_id ] ) )
 		return ( $user_topic_status[ $user_id ] );
 	else
 		return false;
@@ -752,7 +752,7 @@ function ass_topic_follow_or_mute_link() {
 	if ( $topic_status == 'mute' )
 		$title = __('This conversation is muted. Click to follow it','bp-ass');
 
-	if ( $action && $bp->action_variables[0] == 'topic' ) { // we're viewing one topic
+	if ( $action && isset( $bp->action_variables[0] ) && $bp->action_variables[0] == 'topic' ) { // we're viewing one topic
 		echo '<div class="generic-button ass-topic-subscribe"><a title="'.$title.'"
 			id="'.$action.'-'.$topic_id.'">'.$link_text.' '.__('this topic','bp-ass').'</a></div>';
 	} else if ( $action )  { // we're viewing a list of topics
@@ -845,6 +845,8 @@ function ass_get_previous_posters( $topic_id ) {
 function ass_user_settings_array( $setting ) {
 	global $wpdb;
 	$results = $wpdb->get_results( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key LIKE '{$setting}'" );
+	
+	$settings = array();
 
 	foreach ( $results as $result ) {
 		$settings[ $result->user_id ] = $result->meta_value;
@@ -969,7 +971,32 @@ function ass_manage_members_email_update() {
 }
 add_action( 'wp', 'ass_manage_members_email_update', 4 );
 
-
+/**
+ * Output the group default status
+ *
+ * First tries to get it out of groupmeta. If not found, falls back on supersub. Filter the supersub
+ * default with 'ass_default_subscription_level'
+ *
+ * @param int $group_id ID of the group. Defaults to current group, if present
+ * @return str $status
+ */
+function ass_group_default_status( $group_id = false ) {
+	global $bp;
+	
+	if ( !$group_id )
+		$group_id = bp_is_group() ? $bp->groups->current_group->id : false;
+	
+	if ( !$group_id )
+		return '';
+	
+	$status = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
+	
+	if ( !$status ) {
+		$status = apply_filters( 'ass_default_subscription_level', 'supersub', $group_id );
+	}
+	
+	return apply_filters( 'ass_group_default_status', $status, $group_id );
+}
 
 // Site admin can change the email settings for ALL users in a group
 function ass_change_all_email_sub() {
