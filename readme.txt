@@ -86,6 +86,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 2.9.4 =
+Added additional filters to digest builder
+
 = 2.9.3 =
 Added updated Spanish translation
 

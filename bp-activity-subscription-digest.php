@@ -89,14 +89,15 @@ function ass_digest_fire( $type ) {
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
 
-		$message = "<div {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='{$bp->root_domain}'>$blogname</a></div>\n\n";
+		$header = "<div {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='{$bp->root_domain}'>$blogname</a></div>\n\n";
+		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
 		// loop through each group for this user
 		foreach ( $group_activity_ids as $group_id => $activity_ids ) {
 			$group_name = $groups_info[ $group_id ][ 'name' ];
 			$group_slug = $groups_info[ $group_id ][ 'slug' ];
 			if ( 'dig' == $type ) // might be nice here to link to anchor tags in the message
-				$summary .= "<li {$ass_email_css['summary']}><a href='#{$group_slug}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n";
+				$summary .= apply_filters( 'ass_digest_summary', "<li {$ass_email_css['summary']}><a href='#{$group_slug}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 
 			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug );
 			unset( $group_activity_ids[ $group_id ] );
@@ -107,16 +108,17 @@ function ass_digest_fire( $type ) {
 
 		// show group summary for digest, and follow help text for weekly summary
 		if ( 'dig' == $type )
-			$message .= "\n<ul {$ass_email_css['summary_ul']}>".__( 'Group Summary', 'bp-ass').":\n".$summary."</ul>\n";
+			$message .= apply_filters( 'ass_digest_summary_full', "\n<ul {$ass_email_css['summary_ul']}>" . __( 'Group Summary', 'bp-ass') . ":\n" . $summary . "</ul>\n", $ass_email_css['summary_ul'], $summary );
 
 		$message .= $activity_message; // the meat of the message which we generated above goes here
 
 		if ( 'sum' == $type )
-			$message .= "<div {$ass_email_css['follow_topic']}>". __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'bp-ass' ) . "</div>\n";
+			$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'bp-ass' ) . "</div>\n", $ass_email_css['follow_topic'] );
 
 		$message .= $footer;
 
-		$message .= "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">".__('My Groups', 'bp-ass') ."</a>" );
+		$message .= apply_filters( 'ass_digest_disable_notifications', "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">".__('My Groups', 'bp-ass') ."</a>" ),$userdomain.$bp->groups->slug);
+		
 		$message .= "</div>";
 
 		$message_plaintext = ass_convert_html_to_plaintext( $message );
@@ -290,6 +292,9 @@ function ass_digest_format_item( $item, $type ) {
 		if ( $item->type == 'new_forum_topic' || $item->type == 'new_forum_post' || $item->type == 'new_blog_post' )
 			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
 
+		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' )
+			$item_message .= ' - <a href="' . bp_activity_get_permalink($item->id).'">'.__('View', 'bp-ass').'</a>';
+			
 		/* Cleanup */
 		$item_message .= "</div>\n\n";
 
