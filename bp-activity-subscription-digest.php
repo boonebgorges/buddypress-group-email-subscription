@@ -117,7 +117,7 @@ function ass_digest_fire( $type ) {
 
 		$message .= $footer;
 
-		$message .= apply_filters( 'ass_digest_disable_notifications', "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">".__('My Groups', 'bp-ass') ."</a>" ),$userdomain.$bp->groups->slug);
+		$message .= apply_filters( 'ass_digest_disable_notifications', "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" ), $userdomain . $bp->groups->slug );
 		
 		$message .= "</div>";
 
