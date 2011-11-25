@@ -1093,7 +1093,7 @@ function ass_admin_notice_form() {
 function ass_admin_notice() {
     global $bp;
 
-    if ( $bp->current_component == 'groups' && $bp->current_action == 'admin' && $bp->action_variables[0] == 'notifications' ) {
+    if ( bp_is_groups_component() && bp_is_current_action( 'admin' ) && bp_is_action_variable( 'notifications', 0 ) ) {
 
 	    // Make sure the user is an admin
 		if ( !groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && !is_super_admin() )
@@ -1104,7 +1104,6 @@ function ass_admin_notice() {
 
 		// make sure the correct form variables are here
 		if ( isset( $_POST[ 'ass_admin_notice_send' ] ) && isset( $_POST[ 'ass_admin_notice' ] ) ) {
-			//echo '<pre>'; print_r( $_POST ); echo '</pre>';
 			$group_id = $_POST[ 'ass_group_id' ];
 			$group_name = $bp->groups->current_group->name;
 			$group_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/';
@@ -1138,16 +1137,13 @@ If you feel this service is being misused please speak to the website administra
 			}
 
 			bp_core_add_message( __( 'The email notice was sent successfully.', 'bp-ass' ) );
+			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
 			//echo '<p>Subject: ' . $subject;
 			//echo '<pre>'; print_r( $message ); echo '</pre>';
 		}
 	}
 }
-add_action('wp', 'ass_admin_notice');
-
-
-
-
+add_action( 'bp_actions', 'ass_admin_notice', 1 );
 
 // adds forum notification options in the users settings->notifications page
 function ass_group_subscription_notification_settings() {

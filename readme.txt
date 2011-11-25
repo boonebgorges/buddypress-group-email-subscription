@@ -87,6 +87,10 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 2.9.6 =
+Fixed a number of PHP notices
+Fixed the admin Send To Group functionality in BP 1.5+
+
 = 2.9.5 =
 Added Farsi translation. Thanks, Vahid!
 
