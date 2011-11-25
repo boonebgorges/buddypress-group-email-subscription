@@ -48,3 +48,29 @@ if ( !function_exists( 'bp_is_current_action' ) ) :
 		return apply_filters( 'bp_is_current_action', $action == $bp->current_action );
 	}
 endif;
+
+if ( !function_exists( 'bp_action_variable' ) ) :
+	function bp_action_variable( $position = 0 ) {
+		global $bp;
+		
+		$action_variables = isset( $bp->action_variables ) ? $bp->action_variables : array();
+		$action_variable  = isset( $action_variables[$position] ) ? $action_variables[$position] : false;
+	
+		return apply_filters( 'bp_action_variable', $action_variable, $position );
+	}
+endif;
+
+if ( !function_exists( 'bp_actions' ) ) :
+	function bp_actions() {
+		do_action( 'bp_actions' );
+	}
+	add_action( 'wp', 'bp_actions', 2 );
+endif;
+
+
+if ( !function_exists( 'bp_screens' ) ) :
+	function bp_screens() {
+		do_action( 'bp_screens' );
+	}
+	add_action( 'wp', 'bp_screens', 3 );
+endif;

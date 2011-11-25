@@ -969,7 +969,7 @@ function ass_manage_members_email_update() {
 		}
 	}
 }
-add_action( 'wp', 'ass_manage_members_email_update', 4 );
+add_action( 'bp_actions', 'ass_manage_members_email_update' );
 
 /**
  * Output the group default status
@@ -1023,9 +1023,9 @@ function ass_manage_all_members_email_update() {
 		if ( !is_super_admin() )
 			return false;
 
-		$action = $bp->action_variables[2];
+		$action = bp_action_variable( 2 );
 
-		if ( 'email-all' == $bp->action_variables[1] && ( 'no' == $action || 'sum' == $action || 'dig' == $action || 'sub' == $action || 'supersub' == $action ) ) {
+		if ( bp_is_action_variable( 'email-all', 1 ) && ( 'no' == $action || 'sum' == $action || 'dig' == $action || 'sub' == $action || 'supersub' == $action ) ) {
 
 			if ( !check_admin_referer( 'ass_change_all_email_sub' ) )
 				return false;
@@ -1042,7 +1042,7 @@ function ass_manage_all_members_email_update() {
 		}
 	}
 }
-add_action( 'wp', 'ass_manage_all_members_email_update', 4 );
+add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
 
 
 // Add a notice at end of email notification about how to change group email subscriptions
