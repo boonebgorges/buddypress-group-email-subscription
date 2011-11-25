@@ -517,7 +517,7 @@ function ass_group_subscribe_button( $group = false ) {
 		return;
 
 	// if we're looking at someone elses list of groups hide the subscription
-	if ( $bp->displayed_user->id && ( $bp->loggedin_user->id != $bp->displayed_user->id ) )
+	if ( bp_displayed_user_id() && ( bp_loggedin_user_id() != bp_displayed_user_id() ) )
 		return;
 
 	$group_status = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
@@ -950,12 +950,12 @@ add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_stat
 function ass_manage_members_email_update() {
 	global $bp;
 
-	if ( $bp->current_component == $bp->groups->slug && 'manage-members' == $bp->action_variables[0] ) {
+	if ( bp_is_groups_component() && bp_is_action_variable( 'manage-members', 0 ) ) {
 
 		if ( !$bp->is_item_admin )
 			return false;
 
-		if ( 'email' == $bp->action_variables[1] && ( 'no' == $bp->action_variables[2] || 'sum' == $bp->action_variables[2] || 'dig' == $bp->action_variables[2] || 'sub' == $bp->action_variables[2] || 'supersub' == $bp->action_variables[2] ) && is_numeric( $bp->action_variables[3] ) ) {
+		if ( bp_is_action_variable( 'email', 1 ) && ( bp_is_action_variable( 'no', 2 ) || bp_is_action_variable( 'sum', 2 ) || bp_is_action_variable( 'dig', 2 ) || bp_is_action_variable( 'sub', 2 ) || bp_is_action_variable( 'supersub', 2 ) ) && isset( $bp->action_variable[3] ) && is_numeric( $bp->action_variables[3] ) ) {
 			$user_id = $bp->action_variables[3];
 			$action = $bp->action_variables[2];
 
@@ -1018,7 +1018,7 @@ add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
 function ass_manage_all_members_email_update() {
 	global $bp;
 
-	if ( $bp->current_component == $bp->groups->slug && 'manage-members' == $bp->action_variables[0] ) {
+	if ( bp_is_groups_component() && bp_is_action_variable( 'manage-members', 0 ) ) {
 
 		if ( !is_super_admin() )
 			return false;

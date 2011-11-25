@@ -26,3 +26,25 @@ if ( !function_exists( 'bp_is_groups_component' ) ) :
 		return $is_groups_component;
 	}
 endif;
+
+if ( !function_exists( 'bp_is_action_variable' ) ) :
+	function bp_is_action_variable( $value, $position = false ) {
+		global $bp;
+
+		if ( false === $position ) {
+			$is_action_variable = !empty( $bp->action_variables ) && in_array( $value, $bp->action_variables );
+		} else {
+			$is_action_variable = !empty( $bp->action_variables ) && isset( $bp->action_variables[$position] ) && $value == $bp->action_variables[$position];
+		}
+
+		return apply_filters( 'bp_is_action_variable', $is_action_variable );
+	}
+endif;
+
+if ( !function_exists( 'bp_is_current_action' ) ) :
+	function bp_is_current_action( $action ) {
+		global $bp;
+
+		return apply_filters( 'bp_is_current_action', $action == $bp->current_action );
+	}
+endif;
