@@ -87,6 +87,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 2.9.7 =
+More fixes for 1.5+ compatibility. Props king76
+
 = 2.9.6 =
 Fixed a number of PHP notices
 Fixed the admin Send To Group functionality in BP 1.5+

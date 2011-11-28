@@ -219,7 +219,7 @@ function ass_group_notification_activity( $content ) {
 		return;
 
 	// get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp)
-	if ( $type == 'activity_comment' && $bp->current_component == 'groups' && $component == 'activity' )
+	if ( $type == 'activity_comment' && bp_is_groups_component() && $component == 'activity' )
 		$component = 'groups';
 
 	// at this point we only want group activity, perhaps later we can make a function and interface for personal activity...
@@ -464,7 +464,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 function ass_update_group_subscribe_settings() {
 	global $bp;
 
-	if ( $bp->current_component == 'groups' && $bp->current_action == 'notifications' ) {
+	if ( bp_is_groups_component() && bp_is_current_action( 'notifications' ) ) {
 
 		// If the edit form has been submitted, save the edited details
 		if ( isset( $_POST['ass-save'] ) ) {
@@ -485,7 +485,7 @@ function ass_update_group_subscribe_settings() {
 		}
 	}
 }
-add_action( 'wp', 'ass_update_group_subscribe_settings', 4 );
+add_action( 'bp_actions', 'ass_update_group_subscribe_settings' );
 
 
 
@@ -730,7 +730,7 @@ function ass_topic_follow_or_mute_link() {
 
 	//echo '<pre>'; print_r( $bp ); echo '</pre>';
 
-	if ( !$bp->groups->current_group->is_member )
+	if ( empty( $bp->groups->current_group->is_member ) )
 		return;
 
 	$topic_id = bp_get_the_topic_id();
@@ -769,7 +769,7 @@ add_action( 'bp_after_group_forum_topic_posts', 'ass_topic_follow_or_mute_link' 
 function ass_after_topic_title_head() {
 	global $bp;
 
-	if ( !$bp->groups->current_group->is_member )
+	if ( empty( $bp->groups->current_group->is_member ) )
 		return;
 
 	echo '<th id="th-email-sub">'.__('Email','bp-ass').'</th>';
