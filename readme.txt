@@ -87,6 +87,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 2.9.8 =
+Fixes bug that prevented admin/manage-members/ action links from working
+
 = 2.9.7 =
 More fixes for 1.5+ compatibility. Props king76
 
