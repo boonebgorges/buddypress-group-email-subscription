@@ -35,8 +35,9 @@ function ass_group_notification_new_forum_topic( $content ) {
 		return;
 
 	/* Subject & Content */
-	$action = ass_clean_subject( $content->action );
-	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$action      = ass_clean_subject( $content->action );
+	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
 	$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 
 	$message = sprintf( __(
@@ -116,8 +117,9 @@ function ass_group_notification_forum_reply( $content ) {
 		return;
 
 	/* Subject & Content */
-	$action = ass_clean_subject( $content->action );
-	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$action      = ass_clean_subject( $content->action );
+	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$subject     = apply_filters( 'bp_ass_forum_reply_subject', $action . ' ' . $blogname, $action, $blogname );
 	$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 
 	$message = sprintf( __(
@@ -243,7 +245,8 @@ function ass_group_notification_activity( $content ) {
 	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
 
 	/* Subject & Content */
-	$subject = $action . ' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
@@ -1105,12 +1108,15 @@ function ass_admin_notice() {
 
 		// make sure the correct form variables are here
 		if ( isset( $_POST[ 'ass_admin_notice_send' ] ) && isset( $_POST[ 'ass_admin_notice' ] ) ) {
-			$group_id = $_POST[ 'ass_group_id' ];
+			$group_id   = $_POST[ 'ass_group_id' ];
 			$group_name = $bp->groups->current_group->name;
 			$group_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/';
-			$subject = $_POST[ 'ass_admin_notice_subject' ];
-			$subject .= __(' - sent from the group ', 'bp-ass') . $group_name .' [' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-			$message = sprintf( __(
+
+			$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+			$subject    = $_POST[ 'ass_admin_notice_subject' ];
+			$subject   .= __(' - sent from the group ', 'bp-ass') . $group_name . ' ' . $blogname;
+			$subject    = apply_filters( 'ass_admin_notice_subject', $subject, $_POST[ 'ass_admin_notice_subject' ], $group_name, $blogname );
+			$message    = sprintf( __(
 'This is a notice from the group \'%s\':
 
 "%s"
@@ -1403,5 +1409,3 @@ function ass_testing_func() {
 //add_action('bp_before_container','ass_testing_func');
 add_action('bp_after_container','ass_testing_func');
 
-
-?>
