@@ -87,6 +87,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.0 =
+Adds filter for email digest CSS
+
 = 2.9.9 =
 Added Danish translation, new subject filters
 

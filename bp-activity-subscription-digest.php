@@ -45,6 +45,9 @@ function ass_digest_fire( $type ) {
 	$ass_email_css['item_content'] = 	'style="color:#333;"';
 	$ass_email_css['item_weekly'] = 	'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
 	$ass_email_css['footer'] = 			'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
+	
+	// Allow plugins to filter the CSS
+	$ass_email_css = apply_filters( 'ass_email_css', $ass_email_css );
 
 	if ( $type == 'dig' )
 		$title = sprintf( __( 'Your daily digest of group activity', 'bp-ass' ) );
