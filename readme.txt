@@ -89,6 +89,7 @@ Other supporters: bluedotproductions.com
 
 = 3.0 =
 Adds filter for email digest CSS
+Rewrites digest logic for fewer bugs and greater efficiency
 
 = 2.9.9 =
 Added Danish translation, new subject filters

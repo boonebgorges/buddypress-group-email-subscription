@@ -34,6 +34,7 @@ function ass_digest_fire( $type ) {
 	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
 	$ass_email_css['wrapper'] = 		'style="color:#333;clear:both;'; // use this to style the body
 	$ass_email_css['title'] = 			'style="font-size:130%;"';
+	$ass_email_css['summary']	      = '';
 	$ass_email_css['summary_ul'] = 		'style="padding:12px 0 5px; list-style-type:circle; list-style-position:inside;"';
 	//$ass_email_css['summary'] = 		'style="display:list-item;"';
 	$ass_email_css['follow_topic'] = 	'style="padding:15px 0 0; color: #888;clear:both;"';
@@ -71,11 +72,41 @@ function ass_digest_fire( $type ) {
 	}
 
 	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = 'ass_digest_items' AND meta_value != ''" ) );
-
+	
+	// Do all activity lookups in one single query, and cache the results
+	// Todo: in_array() is slow; isset( array_flip( $array[$id] ) ) is better
+	// but it will take a flip every time
+	$all_activity_items = array();
+	foreach( (array)$user_subscriptions as $us ) {
+		$subs = maybe_unserialize( $us->meta_value );
+		foreach( (array)$subs as $digest_type => $group_subs ) {
+			foreach( (array)$group_subs as $group_id => $sub_ids ) {
+				foreach( (array)$sub_ids as $sid ) {
+					if ( !in_array( $sid, $all_activity_items ) ) {
+						$all_activity_items[] = $sid;
+					}
+				}
+			}
+		}
+	}
+	
+	$items = bp_activity_get_specific( array(
+		'sort' 		=> 'ASC',
+		'activity_ids' 	=> $all_activity_items,
+		'show_hidden' 	=> true
+	) );
+	
+	foreach( (array)$items['activities'] as $activity ) {
+		$key = 'bp_activity_' . $activity->id;
+		if ( !wp_cache_get( $key, 'bp' ) ) {
+			wp_cache_set( $key, $activity, 'bp', 60*60 );
+		}
+	}
+	
 	foreach ( (array)$user_subscriptions as $user ) {
 		$user_id = $user->user_id;
 		$group_activity_ids_array = maybe_unserialize( $user->meta_value );
-		$summary = '';
+		$summary = $activity_message = '';
 
 		// We only want the weekly or daily ones
 		if ( !$group_activity_ids = (array)$group_activity_ids_array[$type] )
@@ -127,7 +158,7 @@ function ass_digest_fire( $type ) {
 
 		$message_plaintext = ass_convert_html_to_plaintext( $message );
 
-		if ( $_GET['sum'] ) {
+		if ( isset( $_GET['sum'] ) ) {
 			// test mode run from the browser, dont send the emails, just show them on screen using domain.com?sum=1
 			echo '<div style="background-color:white; width:75%;padding:20px 10px;">';
 			echo '<p>======================== to: <b>'.$to.'</b> ========================</p>';
@@ -135,7 +166,6 @@ function ass_digest_fire( $type ) {
 			//echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_plaintext ; echo '</pre>';
 			echo '</div>';
 		} else {
-
 			// send out the email
 			ass_send_multipart_email( $to, $subject, $message_plaintext, $message );
 			// update the subscriber's digest list
@@ -191,7 +221,7 @@ add_action( 'wp', 'ass_digest_fire_test' );
  * the possibility that users within a single group would want more highly-filtered digests.
  */
 function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug ) {
-	global $bp, $ass_email_css, $ass_activity_cache;
+	global $bp, $ass_email_css;
 
 	$group_permalink = $bp->root_domain.'/'.$bp->groups->slug.'/'.$group_slug. '/';
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
@@ -208,36 +238,11 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 
-	// Loop through the activity items to check whether we've already fetched it
-	$activity_ids_to_fetch = array();
-	foreach ( $activity_ids as $activity_id ) {
-		// Is it in the cache?
-		if ( !isset( $ass_activity_cache[$activity_id] ) ) {
-			// Sanity check: Don't fetch a single item more than once
-			if ( !isset( $activity_ids_to_fetch[$activity_id] ) )
-				$activity_ids_to_fetch[] = $activity_id;
-		}
-	}
-
-	// Get the activity items that we need to fetch. Note that we want to show hidden items
-	// because the user has already been verified a member of the group.
-	$items = bp_activity_get_specific( array(
-		'sort' 		=> 'ASC',
-		'activity_ids' 	=> $activity_ids_to_fetch,
-		'show_hidden' 	=> true
-	) );
-
-	// Loop through each fetched item, create its markup, and stash it in the cache
-	foreach ( (array)$items['activities'] as $item ) {
-		$ass_activity_cache[$item->id] = array(
-			'data' 	 => $item, // Stored for the convenience of other potential plugins
-			'markup' => ass_digest_format_item( $item, $type )
-		);
-	}
-
 	// Finally, add the markup to the digest
 	foreach ( $activity_ids as $activity_id ) {
-		$group_message .= $ass_activity_cache[$activity_id]['markup'];
+		// Cache is set earlier in ass_digest_fire()
+		$activity_item = wp_cache_get( 'bp_activity_' . $activity_id, 'bp' );
+		$group_message .= ass_digest_format_item( $activity_item, $type );
 		//$group_message .= '<pre>'. $item->id .'</pre>';
 	}
 
@@ -249,6 +254,8 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 // displays each item in a group
 function ass_digest_format_item( $item, $type ) {
 	global $ass_email_css;
+	
+	$replies = '';
 
 	//load from the cache if it exists
 	if ( $item_cached = wp_cache_get( 'digest_item_' . $type . '_' . $item->id, 'ass' ) ) {
