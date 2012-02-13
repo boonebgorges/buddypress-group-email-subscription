@@ -3,7 +3,7 @@
 require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-functions.php' );
 require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
 
-if ( defined( 'BP_VERSION' ) && version_compare( BP_VERSION, '1.5-beta-1', '<' ) ) {
+if ( !defined( 'BP_VERSION' ) || version_compare( BP_VERSION, '1.5-beta-1', '<' ) ) {
 	// Pre-1.5 versions of BuddyPress
 
 	// Load the abstraction files, which define the necessary 1.5 functions
