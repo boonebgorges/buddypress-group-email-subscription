@@ -109,7 +109,7 @@ function ass_digest_fire( $type ) {
 		$summary = $activity_message = '';
 
 		// We only want the weekly or daily ones
-		if ( !$group_activity_ids = (array)$group_activity_ids_array[$type] )
+		if ( empty( $group_activity_ids_array[$type] ) || !$group_activity_ids = (array)$group_activity_ids_array[$type] )
 			continue;
 
 		// Get the details for the user
@@ -202,8 +202,13 @@ function ass_digest_fire_test() {
 		ass_digest_fire( 'dig' );
 		echo "<h2 style='margin-top:150px'>".__('WEEKLY DIGEST:','bp-ass')."</h2>";
 		ass_digest_fire( 'sum' );
+		
+		
+	global $wpdb;
+	echo '<pre>';print_r( $wpdb->queries );
 		die();
 	}
+	
 }
 add_action( 'wp', 'ass_digest_fire_test' );
 
@@ -304,7 +309,7 @@ function ass_digest_format_item( $item, $type ) {
 			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
 
 		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' )
-			$item_message .= ' - <a href="' . bp_activity_get_permalink($item->id).'">'.__('View', 'bp-ass').'</a>';
+			$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
 			
 		/* Cleanup */
 		$item_message .= "</div>\n\n";
