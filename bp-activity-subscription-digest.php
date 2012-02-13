@@ -72,6 +72,7 @@ function ass_digest_fire( $type ) {
 	foreach ( (array)$user_subscriptions as $user ) {
 		$user_id = $user->user_id;
 		$group_activity_ids_array = maybe_unserialize( $user->meta_value );
+		$summary = '';
 
 		// We only want the weekly or daily ones
 		if ( !$group_activity_ids = (array)$group_activity_ids_array[$type] )
