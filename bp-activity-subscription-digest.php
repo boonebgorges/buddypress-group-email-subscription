@@ -135,7 +135,7 @@ function ass_digest_fire( $type ) {
 			// send out the email
 			ass_send_multipart_email( $to, $subject, $message_plaintext, $message );
 			// update the subscriber's digest list
-			update_usermeta( $user_id, 'ass_digest_items', $group_activity_ids_array );
+			update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
 
 		}
 
@@ -407,13 +407,13 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 		return;
 
 	// get the digest/summary items for all groups for this user
-	$group_activity_ids = get_usermeta( $user_id, 'ass_digest_items' );
+	$group_activity_ids = get_user_meta( $user_id, 'ass_digest_items', true );
 
 	// update multi-dimensional array with the current activity_id
 	$group_activity_ids[$type][$group_id][] = $activity_id;
 
 	// re-save it
-	update_usermeta( $user_id, 'ass_digest_items', $group_activity_ids );
+	update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids );
 }
 
 
