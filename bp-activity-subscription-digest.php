@@ -247,7 +247,23 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	foreach ( $activity_ids as $activity_id ) {
 		// Cache is set earlier in ass_digest_fire()
 		$activity_item = wp_cache_get( 'bp_activity_' . $activity_id, 'bp' );
-		$group_message .= ass_digest_format_item( $activity_item, $type );
+		
+		if ( !$activity_item ) {
+			// Try fetching it manually 
+			$activity_items = bp_activity_get_specific( array(
+				'sort' 		=> 'ASC',
+				'activity_ids' 	=> array( $activity_item ),
+				'show_hidden' 	=> true
+			) );
+			
+			if ( !empty( $activity_items ) ) {
+				$activity_item = $activity_items[0];
+			}
+		}
+		
+		if ( !empty( $activity_item ) ) {
+			$group_message .= ass_digest_format_item( $activity_item, $type );
+		}
 		//$group_message .= '<pre>'. $item->id .'</pre>';
 	}
 
@@ -261,7 +277,7 @@ function ass_digest_format_item( $item, $type ) {
 	global $ass_email_css;
 	
 	$replies = '';
-
+	
 	//load from the cache if it exists
 	if ( $item_cached = wp_cache_get( 'digest_item_' . $type . '_' . $item->id, 'ass' ) ) {
 		//$item_cached .= "GENERATED FROM CACHE";
