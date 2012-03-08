@@ -43,18 +43,20 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	public function add_settings_stylesheet() {
-		$style_url = WP_PLUGIN_URL . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
-		$style_file = WP_PLUGIN_DIR . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
-		if (file_exists($style_file)) {
-		    wp_register_style('activity-subscription-style', $style_url);
-		    wp_enqueue_style('activity-subscription-style');
+		if ( bp_is_groups_component() ) {
+			$style_url = plugins_url() . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
+			$style_file = WP_PLUGIN_DIR . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
+			if (file_exists($style_file)) {
+			    wp_register_style('activity-subscription-style', $style_url);
+			    wp_enqueue_style('activity-subscription-style');
+			}
 		}
 	}
 
 	public function ass_add_javascript() {
 		global $bp;
 		if ( bp_is_groups_component() ) {
-			wp_register_script('bp-activity-subscription-js', WP_PLUGIN_URL . '/buddypress-group-email-subscription/bp-activity-subscription-js.js', array( 'jquery' ) );
+			wp_register_script('bp-activity-subscription-js', plugins_url() . '/buddypress-group-email-subscription/bp-activity-subscription-js.js', array( 'jquery' ) );
 			wp_enqueue_script( 'bp-activity-subscription-js' );
 
 			wp_localize_script( 'bp-activity-subscription-js', 'bp_ass', array(
