@@ -89,6 +89,7 @@ Other supporters: bluedotproductions.com
 
 = 3.0.1 =
 Fixes bug that may have caused deleted activity items to appear in digests in some cases
+Fixes some notices
 
 = 3.0 =
 Adds filter for email digest CSS
