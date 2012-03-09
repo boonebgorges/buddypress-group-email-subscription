@@ -225,7 +225,7 @@ function ass_group_notification_activity( $content ) {
 		$component = 'groups';
 
 	// at this point we only want group activity, perhaps later we can make a function and interface for personal activity...
-	if ( $component != 'groups' && ! $is_activity_comment )
+	if ( $component != 'groups' )
 		return;
 
 	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
