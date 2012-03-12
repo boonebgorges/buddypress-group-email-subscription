@@ -152,7 +152,11 @@ function ass_digest_fire( $type ) {
 
 		$message .= $footer;
 
-		$message .= apply_filters( 'ass_digest_disable_notifications', "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" ), $userdomain . $bp->groups->slug );
+		$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
+		$unsubscribe_message = "\n\n<br><br>" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
+		$unsubscribe_message .= "\n\n<br><br>" . sprintf( __( 'To disable these notifications for all your groups at once, %s.', 'bp_ass' ), "<a href='$unsubscribe_link'>click here</a>" );
+
+		$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
 		
 		$message .= "</div>";
 
@@ -378,6 +382,8 @@ function ass_convert_html_to_plaintext( $message ) {
 	$message = preg_replace( "/\n<div class=\"ass-footer\"/i", "--\n<div", $message );
 	// convert My Groups links to http:// links
 	$message = preg_replace( "/<a href=\"(.*)\">My Groups<\/a>/i", "\\1", $message );
+	// convert "click here" links to http:// links
+	$message = preg_replace( "/<a href='(.*)'>click here<\/a>/i", __( 'click here: \\1' ), $message );
 
 	$message = strip_tags( stripslashes( $message ) );
 	// remove uneccesary lines

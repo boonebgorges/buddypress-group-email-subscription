@@ -1056,6 +1056,77 @@ function ass_add_notice_to_notifications_page() {
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
+// Unsubscribe a user from all their groups
+function ass_user_unsubscribe() {
+	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
+
+	if ( 'unsubscribe' != $action )
+		return;
+
+	$user_id = bp_displayed_user_id();
+	$access_key = $_GET['access_key'];
+
+	if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) )
+		return;
+
+	if ( isset( $_GET['submit'] ) ) {
+		$submit = $_GET['submit'];
+
+		if ( __( 'No, close' ) == $submit ) {
+			wp_redirect( site_url() );
+			exit;
+		}
+
+		if ( __( 'Yes, unsubscribe' ) == $submit ) {
+			$groups = groups_get_user_groups( $user_id );
+			foreach ( $groups['groups'] as $group_id ) {
+				ass_group_subscription( 'no', $user_id, $group_id );
+			}
+
+			$unsubscribed = true;
+		}
+	}
+?>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name = "viewport" content="width=640" />
+	<title><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe from all groups notifications' ); ?></title>
+	<style type="text/css">
+		.container {
+			background-color:#fff;
+			width:400px;
+			border:1px solid #999;
+			padding: 20px;
+			margin: 0 auto;
+		}
+	</style>
+	<?php wp_head(); ?>
+</head>
+<body>
+	<div class="container">
+		<h1><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe' ); ?></h1>
+		<?php if ( isset( $unsubscribed ) ) : ?>
+			<p><?php _e( 'Your unsubscription was successful. From now on, you will not receive any group notifications unless you subscribe again.' ); ?></p>
+			<p><a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'Visit the website' ); ?></a></p>
+		<?php else : ?>
+			<p><?php _e( 'Do you really want to unsubscribe from all groups notifications?' ); ?></p>
+
+			<form id="ass-unsubscribe-form" action="" method="get">
+				<input type="hidden" name="bpass-action" value="<?php echo $action; ?>" />
+				<input type="hidden" name="access_key" value="<?php echo $access_key; ?>" />
+				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe' ); ?>" />
+				<input type="submit" name="submit" value="<?php _e( 'No, close' ); ?>" />
+			</form>
+		<?php endif; ?>
+	</div>
+</body>
+</html>
+<?php
+	die;
+}
+add_action( 'bp_init', 'ass_user_unsubscribe' );
+
 
 
 
