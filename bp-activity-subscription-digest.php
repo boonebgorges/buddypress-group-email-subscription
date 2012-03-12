@@ -375,15 +375,15 @@ function ass_digest_filter( $item ) {
 // convert the email to plain text, and fancy it up a bit. these conversion only work in English, but it's ok.
 function ass_convert_html_to_plaintext( $message ) {
 	// convert view links to http:// links
-	$message = preg_replace( "/<a href=\"(.*)\">View<\/a>/i", "\\1", $message );
+	$message = preg_replace( "/<a href=\"(.[^\"]*)\">View<\/a>/i", "\\1", $message );
 	// convert group div to two lines encasing the group name
-	$message = preg_replace( "/<div.*>Group: <a href=\"(.*)\">(.*)<\/a>.*<\/div>/i", "------\n\\2 - \\1\n------", $message );
+	$message = preg_replace( "/<div.*>Group: <a href=\"(.[^\"]*)\">(.*)<\/a>.*<\/div>/i", "------\n\\2 - \\1\n------", $message );
 	// convert footer line to two dashes
 	$message = preg_replace( "/\n<div class=\"ass-footer\"/i", "--\n<div", $message );
 	// convert My Groups links to http:// links
-	$message = preg_replace( "/<a href=\"(.*)\">My Groups<\/a>/i", "\\1", $message );
-	// convert "click here" links to http:// links
-	$message = preg_replace( "/<a href='(.*)'>click here<\/a>/i", __( 'click here: \\1' ), $message );
+	$message = preg_replace( "/<a href=\"(.[^\"]*)\">My Groups<\/a>/i", "\\1", $message );
+
+	$message = preg_replace( "/<a href=\"(.[^\"]*)\">(.*)<\/a>/i", "\\2 (\\1)", $message );
 
 	$message = strip_tags( stripslashes( $message ) );
 	// remove uneccesary lines
