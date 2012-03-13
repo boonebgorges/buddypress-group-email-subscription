@@ -20,7 +20,18 @@ function ass_item_is_update( $item ) {
 }
 add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
 
+function ass_group_unsubscribe_links() {
+	global $bp;
 
+	$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
+	$userdomain = bp_core_get_user_domain( $bp->loggedin_user->id );
+	$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$bp->loggedin_user->id}unsubscribe" . wp_salt() );
+
+	$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+	$links .= "\n\n" . sprintf( __( 'To disable these notifications for all your groups at once, go to: %s', 'bp_ass' ), $global_link );
+
+	return $links;
+}
 
 // send email notificaitons for new forum topics. Note that $content is sent as a reference
 function ass_group_notification_new_forum_topic( $content ) {
@@ -52,8 +63,7 @@ To view or reply to this topic, log in and go to:
 ', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
 	/* Content footer */
-	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+	$message .= ass_group_unsubscribe_links();
 
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
@@ -134,8 +144,7 @@ To view or reply to this topic, log in and go to:
 ', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
 	/* Content footer */
-	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+	$message .= ass_group_unsubscribe_links();
 
 	$group_id = $content->item_id;
 	//$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
@@ -277,8 +286,7 @@ To view or reply, log in and go to:
 	}
 
 	/* Content footer */
-	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+	$message .= ass_group_unsubscribe_links();
 
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );
