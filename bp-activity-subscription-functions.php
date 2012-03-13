@@ -1070,21 +1070,12 @@ function ass_user_unsubscribe() {
 		return;
 
 	if ( isset( $_GET['submit'] ) ) {
-		$submit = $_GET['submit'];
-
-		if ( __( 'No, close' ) == $submit ) {
-			wp_redirect( site_url() );
-			exit;
+		$groups = groups_get_user_groups( $user_id );
+		foreach ( $groups['groups'] as $group_id ) {
+			ass_group_subscription( 'no', $user_id, $group_id );
 		}
 
-		if ( __( 'Yes, unsubscribe' ) == $submit ) {
-			$groups = groups_get_user_groups( $user_id );
-			foreach ( $groups['groups'] as $group_id ) {
-				ass_group_subscription( 'no', $user_id, $group_id );
-			}
-
-			$unsubscribed = true;
-		}
+		$unsubscribed = true;
 	}
 ?>
 <html>
@@ -1115,8 +1106,8 @@ function ass_user_unsubscribe() {
 			<form id="ass-unsubscribe-form" action="" method="get">
 				<input type="hidden" name="bpass-action" value="<?php echo $action; ?>" />
 				<input type="hidden" name="access_key" value="<?php echo $access_key; ?>" />
-				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe' ); ?>" />
-				<input type="submit" name="submit" value="<?php _e( 'No, close' ); ?>" />
+				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe from all my groups' ); ?>" />
+				<a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'No, close' ); ?></a>
 			</form>
 		<?php endif; ?>
 	</div>
