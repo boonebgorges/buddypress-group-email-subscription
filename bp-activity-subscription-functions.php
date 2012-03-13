@@ -1061,11 +1061,42 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
 function ass_add_notice_to_notifications_page() {
 	echo '<p><b>'.__('Group Email Settings','bp-ass').'</b></p>';
 	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">'.__('My Groups','bp-ass') .'</a>' );
+	echo '<p><a href="' . wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ) . '">';
+	echo __( 'Set all your groups email options to No Email' ) . '</a></p>';
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
 // Unsubscribe a user from all their groups
-function ass_user_unsubscribe() {
+function ass_unsubscribe_user( $user_id = 0 ) {
+	if ( empty( $user_id ) )
+		$user_id = bp_displayed_user_id();
+
+	$groups = groups_get_user_groups( $user_id );
+	foreach ( $groups['groups'] as $group_id ) {
+		ass_group_subscription( 'no', $user_id, $group_id );
+	}
+}
+
+// Process request for logged in user unsubscribing via link in notifications settings
+function ass_user_unsubscribe_action() {
+	if ( ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
+		return;
+
+	check_admin_referer( 'ass_unsubscribe_all' );
+
+	ass_unsubscribe_user();
+
+	if ( bp_is_my_profile() )
+		bp_core_add_message( __( 'You have been unsubscribed from all groups notifications.', 'buddypress' ), 'success' );
+	else
+		bp_core_add_message( __( "This user's has been unsubscribed from all groups notifications.", 'buddypress' ), 'success' );
+
+	bp_core_redirect( bp_displayed_user_domain() . bp_get_settings_slug() . '/notifications/' );
+}
+add_action( 'bp_actions', 'ass_user_unsubscribe_action' );
+
+// Form to confirm unsubscription from all groups
+function ass_user_unsubscribe_form() {
 	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
 
 	if ( 'unsubscribe' != $action )
@@ -1078,10 +1109,7 @@ function ass_user_unsubscribe() {
 		return;
 
 	if ( isset( $_GET['submit'] ) ) {
-		$groups = groups_get_user_groups( $user_id );
-		foreach ( $groups['groups'] as $group_id ) {
-			ass_group_subscription( 'no', $user_id, $group_id );
-		}
+		ass_unsubscribe_user( $user_id );
 
 		$unsubscribed = true;
 	}
@@ -1124,7 +1152,7 @@ function ass_user_unsubscribe() {
 <?php
 	die;
 }
-add_action( 'bp_init', 'ass_user_unsubscribe' );
+add_action( 'bp_init', 'ass_user_unsubscribe_form' );
 
 
 
