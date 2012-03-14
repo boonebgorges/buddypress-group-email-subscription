@@ -23,7 +23,7 @@ h4.activity-subscription-settings-title {
 	padding:8px;
 }
 
-#ass-admin-notice-textarea {
+#ass-admin-notice-textarea, #ass-welcome-email-content {
 	height: 250px;
 	margin-bottom: 10px;
 }
