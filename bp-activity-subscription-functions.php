@@ -1252,7 +1252,12 @@ function ass_admin_notice() {
 			return;
 
 		// make sure the correct form variables are here
-		if ( isset( $_POST[ 'ass_admin_notice_send' ] ) && isset( $_POST[ 'ass_admin_notice' ] ) ) {
+		if ( ! isset( $_POST[ 'ass_admin_notice_send' ] ) )
+			return;
+
+		if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
+			bp_core_add_message( __( 'The email notice was sent not sent. Please enter email content.', 'bp-ass' ), 'error' );
+		} else {
 			$group_id   = $_POST[ 'ass_group_id' ];
 			$group_name = $bp->groups->current_group->name;
 			$group_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/';
@@ -1289,10 +1294,11 @@ If you feel this service is being misused please speak to the website administra
 			}
 
 			bp_core_add_message( __( 'The email notice was sent successfully.', 'bp-ass' ) );
-			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
 			//echo '<p>Subject: ' . $subject;
 			//echo '<pre>'; print_r( $message ); echo '</pre>';
 		}
+
+		bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
 	}
 }
 add_action( 'bp_actions', 'ass_admin_notice', 1 );
