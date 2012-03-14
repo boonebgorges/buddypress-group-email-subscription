@@ -1337,7 +1337,13 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 		$message .= "\n\n" . sprintf( __( 'To unsubscribe from all your groups emails, go to: %s', 'bp_ass' ), $global_link );
 	}
 
-	wp_mail( $user->user_email, $subject, $message );
+	$group_admin_ids = groups_get_group_admins( $group_id );
+	$group_admin = bp_core_get_core_userdata( $group_admin_ids[0]->user_id );
+	$headers = array(
+		"From: $group_admin->user_email"
+	);
+
+	wp_mail( $user->user_email, $subject, $message, $headers );
 }
 add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
