@@ -28,7 +28,9 @@ function ass_group_unsubscribe_links() {
 	$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$bp->loggedin_user->id}unsubscribe" . wp_salt() );
 
 	$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-	$links .= "\n\n" . sprintf( __( 'To disable these notifications for all your groups at once, go to: %s', 'bp_ass' ), $global_link );
+
+	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' )
+		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all your groups at once, go to: %s', 'bp_ass' ), $global_link );
 
 	return $links;
 }
@@ -1061,8 +1063,11 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
 function ass_add_notice_to_notifications_page() {
 	echo '<p><b>'.__('Group Email Settings','bp-ass').'</b></p>';
 	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">'.__('My Groups','bp-ass') .'</a>' );
-	echo '<p><a href="' . wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ) . '">';
-	echo __( 'Set all your groups email options to No Email' ) . '</a></p>';
+
+	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+		echo '<p><a href="' . wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ) . '">';
+		echo __( 'Set all your groups email options to No Email' ) . '</a></p>';
+	}
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
@@ -1079,7 +1084,7 @@ function ass_unsubscribe_user( $user_id = 0 ) {
 
 // Process request for logged in user unsubscribing via link in notifications settings
 function ass_user_unsubscribe_action() {
-	if ( ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
+	if ( get_option( 'ass-global-unsubscribe-link' ) != 'yes' || ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
 		return;
 
 	check_admin_referer( 'ass_unsubscribe_all' );
@@ -1097,6 +1102,9 @@ add_action( 'bp_actions', 'ass_user_unsubscribe_action' );
 
 // Form to confirm unsubscription from all groups
 function ass_user_unsubscribe_form() {
+	if ( get_option( 'ass-global-unsubscribe-link' ) != 'yes' )
+		return;
+
 	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
 
 	if ( 'unsubscribe' != $action )
@@ -1413,6 +1421,14 @@ function ass_admin_options() {
 		<br>
 		<br>
 
+		<h3><?php _e( 'Global Unsubscribe Link', 'bp-ass' ); ?></h3>
+		<p><?php _e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'bp-ass' ); ?>
+		<?php $global_unsubscribe_link = get_option( 'ass-global-unsubscribe-link' ); ?>
+		<input<?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php _e( 'yes', 'bp-ass' ); ?> &nbsp;
+		<input<?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php _e( 'no', 'bp-ass' ); ?>
+		<br />
+		<br />
+
 
 		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
 		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'bp-ass'); ?>
@@ -1467,6 +1483,9 @@ function ass_update_dashboard_settings() {
 	/* The weekly digest day has been changed */
 	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) )
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
+
+	if ( $_POST['ass-global-unsubscribe-link'] != get_option( 'ass-global-unsubscribe-link' ) )
+		update_option( 'ass-global-unsubscribe-link', $_POST['ass-global-unsubscribe-link'] );
 
 	if ( $_POST['ass-admin-can-edit-email'] != get_option( 'ass-admin-can-edit-email' ) )
 		update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );

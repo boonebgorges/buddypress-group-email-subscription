@@ -152,9 +152,12 @@ function ass_digest_fire( $type ) {
 
 		$message .= $footer;
 
-		$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
 		$unsubscribe_message = "\n\n<br><br>" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
-		$unsubscribe_message .= "\n\n<br><br><a href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp_ass' ) . '</a>';
+
+		if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+			$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
+			$unsubscribe_message .= "\n\n<br><br><a href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp_ass' ) . '</a>';
+		}
 
 		$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
 		
