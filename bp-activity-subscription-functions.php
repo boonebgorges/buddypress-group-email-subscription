@@ -407,7 +407,7 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	} elseif ( $action == 'supersub' ) {
 		$group_user_subscriptions[ $user_id ] = 'supersub';
 	} elseif ( $action == 'delete' ) {
-		if ( $group_user_subscriptions[ $user_id ] )
+		if ( isset( $group_user_subscriptions[ $user_id ] ) )
 			unset( $group_user_subscriptions[ $user_id ] );
 	}
 
