@@ -20,17 +20,17 @@ function ass_item_is_update( $item ) {
 }
 add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
 
-function ass_group_unsubscribe_links() {
+function ass_group_unsubscribe_links( $user_id ) {
 	global $bp;
 
 	$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
-	$userdomain = bp_core_get_user_domain( $bp->loggedin_user->id );
-	$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$bp->loggedin_user->id}unsubscribe" . wp_salt() );
-
 	$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
-	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' )
+	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+		$userdomain = bp_core_get_user_domain( $user_id );
+		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
 		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all your groups at once, go to: %s', 'bp_ass' ), $global_link );
+	}
 
 	return $links;
 }
@@ -64,9 +64,6 @@ To view or reply to this topic, log in and go to:
 ---------------------
 ', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
-	/* Content footer */
-	$message .= ass_group_unsubscribe_links();
-
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 
@@ -83,6 +80,9 @@ To view or reply to this topic, log in and go to:
 
 			if ( !$ass_item_is_new ) //don't send emails for item edits (but do update the digest)
 				continue;
+
+			/* Content footer */
+			$message .= ass_group_unsubscribe_links( $user_id );
 
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 
@@ -145,9 +145,6 @@ To view or reply to this topic, log in and go to:
 ---------------------
 ', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
-	/* Content footer */
-	$message .= ass_group_unsubscribe_links();
-
 	$group_id = $content->item_id;
 	//$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
@@ -196,6 +193,9 @@ To view or reply to this topic, log in and go to:
 			$send_it = true;
 
 		if ( $send_it ) {
+			/* Content footer */
+			$message .= ass_group_unsubscribe_links( $user_id );
+
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 
@@ -287,9 +287,6 @@ To view or reply, log in and go to:
 ', 'bp-ass' ), $action, $the_content, $activity_permalink );
 	}
 
-	/* Content footer */
-	$message .= ass_group_unsubscribe_links();
-
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );
 
@@ -330,6 +327,9 @@ To view or reply, log in and go to:
 		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook.
 
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
+			/* Content footer */
+			$message .= ass_group_unsubscribe_links( $user_id );
+
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id );
 
