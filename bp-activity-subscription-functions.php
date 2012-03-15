@@ -1331,6 +1331,7 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 	$user = bp_core_get_core_userdata( $user_id );
 
 	$welcome_email = groups_get_groupmeta( $group_id, 'ass_welcome_email' );
+	$welcome_email = apply_filters( 'ass_welcome_email', $welcome_email, $group_id ); // for multilingual filtering
 	$welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : 'no';
 	$subject = $welcome_email['subject'];
 	$message = $welcome_email['content'];
@@ -1346,7 +1347,7 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 	$group_admin_ids = groups_get_group_admins( $group_id );
 	$group_admin = bp_core_get_core_userdata( $group_admin_ids[0]->user_id );
 	$headers = array(
-		"From: $group_admin->user_email"
+		"From: \"{$group_admin->display_name}\" <{$group_admin->user_email}>"
 	);
 
 	wp_mail( $user->user_email, $subject, $message, $headers );
