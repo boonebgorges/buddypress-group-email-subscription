@@ -1101,9 +1101,9 @@ function ass_user_unsubscribe_action() {
 	ass_unsubscribe_user();
 
 	if ( bp_is_my_profile() )
-		bp_core_add_message( __( 'You have been unsubscribed from all groups notifications.', 'buddypress' ), 'success' );
+		bp_core_add_message( __( 'You have been unsubscribed from all groups notifications.', 'bp-ass' ), 'success' );
 	else
-		bp_core_add_message( __( "This user's has been unsubscribed from all groups notifications.", 'buddypress' ), 'success' );
+		bp_core_add_message( __( "This user's has been unsubscribed from all groups notifications.", 'bp-ass' ), 'success' );
 
 	bp_core_redirect( bp_displayed_user_domain() . bp_get_settings_slug() . '/notifications/' );
 }
