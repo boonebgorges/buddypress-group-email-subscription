@@ -134,7 +134,7 @@ function ass_digest_fire( $type ) {
 			if ( 'dig' == $type ) // might be nice here to link to anchor tags in the message
 				$summary .= apply_filters( 'ass_digest_summary', "<li {$ass_email_css['summary']}><a href='#{$group_slug}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 
-			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug );
+			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
 			unset( $group_activity_ids[ $group_id ] );
 		}
 
@@ -232,11 +232,14 @@ add_action( 'wp', 'ass_digest_fire_test' );
  * terms of the possibility that activity items could be associated with more than one group, and
  * the possibility that users within a single group would want more highly-filtered digests.
  */
-function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug ) {
+function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id ) {
 	global $bp, $ass_email_css;
 
 	$group_permalink = $bp->root_domain.'/'.$bp->groups->slug.'/'.$group_slug. '/';
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
+
+	$userdomain = bp_core_get_user_domain( $user_id );
+	$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&group=$group_id&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
 
 	// add the group title bar
 	if ( $type == 'dig' ) {
@@ -246,7 +249,10 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	}
 
 	// add change email settings link
-	$group_message .= "\n<div {$ass_email_css['change_email']}>".__('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ".__('for this group', 'bp-ass')."</div>\n\n";
+	$group_message .= "\n<div {$ass_email_css['change_email']}>";
+	$group_message .= __('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ".__('for this group', 'bp-ass');
+	$group_message .= "\n<br /><a href=\"$unsubscribe_link\">" . __( 'unsubscribe from this group' ) . '</a>';
+	$group_message .= "</div>\n\n";
 
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 

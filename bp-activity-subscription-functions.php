@@ -26,8 +26,13 @@ function ass_group_unsubscribe_links( $user_id ) {
 	$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
 	$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
+	$userdomain = bp_core_get_user_domain( $user_id );
+
+	$group_id = $bp->groups->current_group->id;
+	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
+	$links .= "\n\n" . sprintf( __( 'To disable these notifications for this group, go to: %s', 'bp_ass' ), $group_link );
+
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
-		$userdomain = bp_core_get_user_domain( $user_id );
 		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
 		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all your groups at once, go to: %s', 'bp_ass' ), $global_link );
 	}
@@ -82,7 +87,7 @@ To view or reply to this topic, log in and go to:
 				continue;
 
 			/* Content footer */
-			$message .= ass_group_unsubscribe_links( $user_id );
+			$footer = ass_group_unsubscribe_links( $user_id );
 
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 
@@ -92,7 +97,7 @@ To view or reply to this topic, log in and go to:
 			$user = bp_core_get_core_userdata( $user_id );
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>Email: ' . $user->user_email;
 
@@ -194,13 +199,13 @@ To view or reply to this topic, log in and go to:
 
 		if ( $send_it ) {
 			/* Content footer */
-			$message .= ass_group_unsubscribe_links( $user_id );
+			$footer = ass_group_unsubscribe_links( $user_id );
 
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>Email: ' . $user->user_email;
 		}
@@ -328,13 +333,13 @@ To view or reply, log in and go to:
 
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
 			/* Content footer */
-			$message .= ass_group_unsubscribe_links( $user_id );
+			$footer = ass_group_unsubscribe_links( $user_id );
 
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id );
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
@@ -1071,13 +1076,17 @@ function ass_add_notice_to_notifications_page() {
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
-// Unsubscribe a user from all their groups
-function ass_unsubscribe_user( $user_id = 0 ) {
+// Unsubscribe a user from all or a subset of their groups
+function ass_unsubscribe_user( $user_id = 0, $groups = array() ) {
 	if ( empty( $user_id ) )
 		$user_id = bp_displayed_user_id();
 
-	$groups = groups_get_user_groups( $user_id );
-	foreach ( $groups['groups'] as $group_id ) {
+	if ( empty( $groups ) ) {
+		$groups = groups_get_user_groups( $user_id );
+		$groups = $groups['groups'];
+	}
+
+	foreach ( $groups as $group_id ) {
 		ass_group_subscription( 'no', $user_id, $group_id );
 	}
 }
@@ -1112,6 +1121,20 @@ function ass_user_unsubscribe_form() {
 
 	$user_id = bp_displayed_user_id();
 	$access_key = $_GET['access_key'];
+
+	// if the user is unsubscribing from one group only, don't display the form, simply unsubscribe and redirect
+	if ( isset( $_GET['group'] ) ) {
+		$group = groups_get_group( array( 'group_id' => $_GET['group'] ) );
+
+		if ( $access_key != md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) )
+			return;
+
+		ass_unsubscribe_user( $user_id, (array) $group->id );
+
+		bp_core_add_message( sprintf( __( 'You have been unsubscribed from receiving email notifications for this group.', 'bp-ass' ), $group->name ) );
+
+		bp_core_redirect( bp_get_group_permalink( $group ) );
+	}
 
 	if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) )
 		return;
