@@ -1122,7 +1122,7 @@ function ass_user_unsubscribe_form() {
 	$user_id = bp_displayed_user_id();
 	$access_key = $_GET['access_key'];
 
-	// if the user is unsubscribing from one group only, don't display the form, simply unsubscribe and redirect
+	// unsubscribing from one group only
 	if ( isset( $_GET['group'] ) ) {
 		$group = groups_get_group( array( 'group_id' => $_GET['group'] ) );
 
@@ -1131,18 +1131,17 @@ function ass_user_unsubscribe_form() {
 
 		ass_unsubscribe_user( $user_id, (array) $group->id );
 
-		bp_core_add_message( sprintf( __( 'You have been unsubscribed from receiving email notifications for this group.', 'bp-ass' ), $group->name ) );
-
-		bp_core_redirect( bp_get_group_permalink( $group ) );
-	}
-
-	if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) )
-		return;
-
-	if ( isset( $_GET['submit'] ) ) {
-		ass_unsubscribe_user( $user_id );
-
 		$unsubscribed = true;
+	} else {
+		// unsubscribe from all groups
+		if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) )
+			return;
+
+		if ( isset( $_GET['submit'] ) ) {
+			ass_unsubscribe_user( $user_id );
+
+			$unsubscribed = true;
+		}
 	}
 ?>
 <html>
@@ -1165,7 +1164,7 @@ function ass_user_unsubscribe_form() {
 	<div class="container">
 		<h1><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe' ); ?></h1>
 		<?php if ( isset( $unsubscribed ) ) : ?>
-			<p><?php _e( 'Your unsubscription was successful. From now on, you will not receive any group notifications unless you subscribe again.' ); ?></p>
+			<p><?php _e( 'Your unsubscription was successful. From now on, you will not receive group email notifications.' ); ?></p>
 			<p><a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'Visit the website' ); ?></a></p>
 		<?php else : ?>
 			<p><?php _e( 'Do you really want to unsubscribe from all groups notifications?' ); ?></p>

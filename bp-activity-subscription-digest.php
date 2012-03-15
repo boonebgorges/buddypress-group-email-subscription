@@ -250,8 +250,8 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 	// add change email settings link
 	$group_message .= "\n<div {$ass_email_css['change_email']}>";
-	$group_message .= __('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ".__('for this group', 'bp-ass');
-	$group_message .= "\n<br /><a href=\"$unsubscribe_link\">" . __( 'unsubscribe from this group' ) . '</a>';
+	$group_message .= __('To stop all emails from this group click ', 'bp-ass'). " <a href=\"$unsubscribe_link\">" . __( 'unsubscribe', 'bp-ass' ) . '</a> - ';
+	$group_message .=  __('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ";
 	$group_message .= "</div>\n\n";
 
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
