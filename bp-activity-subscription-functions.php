@@ -20,7 +20,27 @@ function ass_item_is_update( $item ) {
 }
 add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
 
+function ass_group_unsubscribe_links( $user_id ) {
+	global $bp;
 
+	//$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
+	//$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+
+	$userdomain = bp_core_get_user_domain( $user_id );
+
+	$group_id = $bp->groups->current_group->id;
+	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
+	$links = sprintf( __( 'To disable these notifications for this group click: %s', 'bp_ass' ), $group_link );
+
+	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
+		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all my groups at once click: %s', 'bp_ass' ), $global_link );
+	}
+
+	$links .= "\n";
+
+	return $links;
+}
 
 // send email notificaitons for new forum topics. Note that $content is sent as a reference
 function ass_group_notification_new_forum_topic( $content ) {
@@ -51,10 +71,6 @@ To view or reply to this topic, log in and go to:
 ---------------------
 ', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
 
-	/* Content footer */
-	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-
 	$group_id = $content->item_id;
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 
@@ -72,6 +88,9 @@ To view or reply to this topic, log in and go to:
 			if ( !$ass_item_is_new ) //don't send emails for item edits (but do update the digest)
 				continue;
 
+			/* Content footer */
+			$footer = ass_group_unsubscribe_links( $user_id );
+
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 
 			if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
@@ -80,7 +99,7 @@ To view or reply to this topic, log in and go to:
 			$user = bp_core_get_core_userdata( $user_id );
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+			wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>Email: ' . $user->user_email;
 
@@ -92,7 +111,7 @@ To view or reply to this topic, log in and go to:
 
 	}
 	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message . $notice ); echo '</pre>';
+	//echo '<pre>'; print_r( $message . $footer . $notice ); echo '</pre>';
 }
 
 add_action( 'bp_activity_after_save', 'ass_group_notification_new_forum_topic' );
@@ -132,10 +151,6 @@ To view or reply to this topic, log in and go to:
 
 ---------------------
 ', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
-
-	/* Content footer */
-	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
 	$group_id = $content->item_id;
 	//$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
@@ -185,11 +200,14 @@ To view or reply to this topic, log in and go to:
 			$send_it = true;
 
 		if ( $send_it ) {
+			/* Content footer */
+			$footer = ass_group_unsubscribe_links( $user_id );
+
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>Email: ' . $user->user_email;
 		}
@@ -276,10 +294,6 @@ To view or reply, log in and go to:
 ', 'bp-ass' ), $action, $the_content, $activity_permalink );
 	}
 
-	/* Content footer */
-	$settings_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications/';
-	$message .= sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );
 
@@ -320,11 +334,14 @@ To view or reply, log in and go to:
 		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook.
 
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
+			/* Content footer */
+			$footer = ass_group_unsubscribe_links( $user_id );
+
 			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
 			$user = bp_core_get_core_userdata( $user_id );
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $notice );  // Send the email
+				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
 		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
@@ -397,7 +414,7 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	} elseif ( $action == 'supersub' ) {
 		$group_user_subscriptions[ $user_id ] = 'supersub';
 	} elseif ( $action == 'delete' ) {
-		if ( $group_user_subscriptions[ $user_id ] )
+		if ( isset( $group_user_subscriptions[ $user_id ] ) )
 			unset( $group_user_subscriptions[ $user_id ] );
 	}
 
@@ -1053,8 +1070,121 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
 function ass_add_notice_to_notifications_page() {
 	echo '<p><b>'.__('Group Email Settings','bp-ass').'</b></p>';
 	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">'.__('My Groups','bp-ass') .'</a>' );
+
+	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+		echo '<p><a href="' . wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ) . '">';
+		echo __( 'Set all your groups email options to No Email' ) . '</a></p>';
+	}
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
+
+// Unsubscribe a user from all or a subset of their groups
+function ass_unsubscribe_user( $user_id = 0, $groups = array() ) {
+	if ( empty( $user_id ) )
+		$user_id = bp_displayed_user_id();
+
+	if ( empty( $groups ) ) {
+		$groups = groups_get_user_groups( $user_id );
+		$groups = $groups['groups'];
+	}
+
+	foreach ( $groups as $group_id ) {
+		ass_group_subscription( 'no', $user_id, $group_id );
+	}
+}
+
+// Process request for logged in user unsubscribing via link in notifications settings
+function ass_user_unsubscribe_action() {
+	if ( get_option( 'ass-global-unsubscribe-link' ) != 'yes' || ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
+		return;
+
+	check_admin_referer( 'ass_unsubscribe_all' );
+
+	ass_unsubscribe_user();
+
+	if ( bp_is_my_profile() )
+		bp_core_add_message( __( 'You have been unsubscribed from all groups notifications.', 'bp-ass' ), 'success' );
+	else
+		bp_core_add_message( __( "This user's has been unsubscribed from all groups notifications.", 'bp-ass' ), 'success' );
+
+	bp_core_redirect( bp_displayed_user_domain() . bp_get_settings_slug() . '/notifications/' );
+}
+add_action( 'bp_actions', 'ass_user_unsubscribe_action' );
+
+// Form to confirm unsubscription from all groups
+function ass_user_unsubscribe_form() {
+	if ( get_option( 'ass-global-unsubscribe-link' ) != 'yes' )
+		return;
+
+	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
+
+	if ( 'unsubscribe' != $action )
+		return;
+
+	$user_id = bp_displayed_user_id();
+	$access_key = $_GET['access_key'];
+
+	// unsubscribing from one group only
+	if ( isset( $_GET['group'] ) ) {
+		$group = groups_get_group( array( 'group_id' => $_GET['group'] ) );
+
+		if ( $access_key != md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) )
+			return;
+
+		ass_unsubscribe_user( $user_id, (array) $group->id );
+
+		$unsubscribed = true;
+	} else {
+		// unsubscribe from all groups
+		if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) )
+			return;
+
+		if ( isset( $_GET['submit'] ) ) {
+			ass_unsubscribe_user( $user_id );
+
+			$unsubscribed = true;
+		}
+	}
+?>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name = "viewport" content="width=640" />
+	<title><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe from all groups notifications' ); ?></title>
+	<style type="text/css">
+		.container {
+			background-color:#fff;
+			width:400px;
+			border:1px solid #999;
+			padding: 20px;
+			margin: 0 auto;
+		}
+	</style>
+	<?php wp_head(); ?>
+</head>
+<body>
+	<div class="container">
+		<h1><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe' ); ?></h1>
+		<?php if ( isset( $unsubscribed ) ) : ?>
+			<p><?php _e( 'Your unsubscription was successful. From now on, you will not receive group email notifications.' ); ?></p>
+			<p><a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'Visit the website' ); ?></a></p>
+		<?php else : ?>
+			<p><?php _e( 'Do you really want to unsubscribe from all groups notifications?' ); ?></p>
+
+			<form id="ass-unsubscribe-form" action="" method="get">
+				<input type="hidden" name="bpass-action" value="<?php echo $action; ?>" />
+				<input type="hidden" name="access_key" value="<?php echo $access_key; ?>" />
+				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe from all my groups' ); ?>" />
+				<a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'No, close' ); ?></a>
+			</form>
+		<?php endif; ?>
+	</div>
+</body>
+</html>
+<?php
+	die;
+}
+add_action( 'bp_init', 'ass_user_unsubscribe_form' );
 
 
 
@@ -1075,17 +1205,56 @@ function ass_admin_notice_form() {
 	if ( groups_is_user_admin( $bp->loggedin_user->id , $bp->groups->current_group->id ) || is_super_admin() ) {
 		$submit_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications';
 		?>
-		<h3><?php _e('Send an email notice to everyone in the group', 'bp-ass'); ?></h3>
-		<p><?php _e('You can use the form below to send an email notice to all group members.', 'bp-ass'); ?> <br>
-		<b><?php _e('Everyone in the group will receive the email -- regardless of their email settings -- so use with caution', 'bp-ass'); ?></b>.</p>
 		<form action="<?php echo $submit_link ?>" method="post">
-		<?php wp_nonce_field( 'ass_admin_notice' ); ?>
-		<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
-		<?php _e('Email Subject:', 'bp-ass') ?><br>
-		<input type="text" name="ass_admin_notice_subject" value=""/><br><br>
-		<?php _e('Email Content:', 'bp-ass') ?><br>
-		<textarea value="" name="ass_admin_notice" id="ass-admin-notice-textarea"></textarea><br>
-		<input type="submit" name="ass_admin_notice_send" value="<?php _e('Email this notice to everyone in the group', 'bp-ass') ?>" />
+			<?php wp_nonce_field( 'ass_email_options' ); ?>
+			<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
+
+			<h3><?php _e('Send an email notice to everyone in the group', 'bp-ass'); ?></h3>
+			<p><?php _e('You can use the form below to send an email notice to all group members.', 'bp-ass'); ?> <br>
+			<b><?php _e('Everyone in the group will receive the email -- regardless of their email settings -- so use with caution', 'bp-ass'); ?></b>.</p>
+
+			<p>
+				<label for="ass-admin-notice-subject"><?php _e('Email Subject:', 'bp-ass') ?></label>
+				<input type="text" name="ass_admin_notice_subject" id="ass-admin-notice-subject" value="" />
+			</p>
+
+			<p>
+				<label for="ass-admin-notice-textarea"><?php _e('Email Content:', 'bp-ass') ?></label>
+				<textarea value="" name="ass_admin_notice" id="ass-admin-notice-textarea"></textarea>
+			</p>
+
+			<p>
+				<input type="submit" name="ass_admin_notice_send" value="<?php _e('Email this notice to everyone in the group', 'bp-ass') ?>" />
+			</p>
+
+			<br />
+
+			<?php $welcome_email = groups_get_groupmeta( $bp->groups->current_group->id, 'ass_welcome_email' ); ?>
+			<?php $welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : ''; ?>
+
+			<h3><?php _e( 'Welcome Email', 'bp-ass' ); ?></h3>
+			<p><?php _e( 'Send an email when a new member join the group.', 'bp-ass' ); ?></p>
+
+			<p>
+				<label>
+					<input<?php checked( $welcome_email_enabled, 'yes' ); ?> type="checkbox" name="ass_welcome_email[enabled]" id="ass-welcome-email-enabled" value="yes" />
+					<?php _e( 'Enable welcome email', 'bp-ass' ); ?>
+				</label>
+			</p>
+
+			<p class="ass-welcome-email-field<?php if ( $welcome_email_enabled != 'yes' ) echo ' hide-if-js'; ?>">
+				<label for="ass-welcome-email-subject"><?php _e( 'Email Subject:', 'bp-ass' ); ?></label>
+				<input value="<?php echo isset( $welcome_email['subject'] ) ? $welcome_email['subject'] : ''; ?>" type="text" name="ass_welcome_email[subject]" id="ass-welcome-email-subject" />
+			</p>
+
+			<p class="ass-welcome-email-field<?php if ( $welcome_email_enabled != 'yes' ) echo ' hide-if-js'; ?>">
+				<label for="ass-welcome-email-content"><?php _e( 'Email Content:', 'bp-ass'); ?></label>
+				<textarea name="ass_welcome_email[content]" id="ass-welcome-email-content"><?php echo isset( $welcome_email['content'] ) ? $welcome_email['content'] : ''; ?></textarea>
+			</p>
+
+			<p>
+				<input type="submit" name="ass_welcome_email_submit" value="<?php _e( 'Save', 'bp-ass' ); ?>" />
+			</p>
 		</form>
 		<?php
 	}
@@ -1107,7 +1276,12 @@ function ass_admin_notice() {
 			return;
 
 		// make sure the correct form variables are here
-		if ( isset( $_POST[ 'ass_admin_notice_send' ] ) && isset( $_POST[ 'ass_admin_notice' ] ) ) {
+		if ( ! isset( $_POST[ 'ass_admin_notice_send' ] ) )
+			return;
+
+		if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
+			bp_core_add_message( __( 'The email notice was sent not sent. Please enter email content.', 'bp-ass' ), 'error' );
+		} else {
 			$group_id   = $_POST[ 'ass_group_id' ];
 			$group_name = $bp->groups->current_group->name;
 			$group_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/';
@@ -1144,13 +1318,66 @@ If you feel this service is being misused please speak to the website administra
 			}
 
 			bp_core_add_message( __( 'The email notice was sent successfully.', 'bp-ass' ) );
-			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
 			//echo '<p>Subject: ' . $subject;
 			//echo '<pre>'; print_r( $message ); echo '</pre>';
 		}
+
+		bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
 	}
 }
 add_action( 'bp_actions', 'ass_admin_notice', 1 );
+
+// save welcome email option
+function ass_save_welcome_email() {
+	global $bp;
+
+	if ( bp_is_groups_component() && bp_is_current_action( 'admin' ) && bp_is_action_variable( 'notifications', 0 ) ) {
+
+		if ( ! isset( $_POST['ass_welcome_email_submit'] ) )
+			return;
+
+		if ( ! groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && ! is_super_admin() )
+			return;
+
+		check_admin_referer( 'ass_email_options' );
+
+		$values = stripslashes_deep( $_POST['ass_welcome_email'] );
+		groups_update_groupmeta( $bp->groups->current_group->id, 'ass_welcome_email', $values );
+
+		bp_core_add_message( __( 'The welcome email option has been saved.', 'bp-ass' ) );
+		bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
+	}
+}
+add_action( 'bp_actions', 'ass_save_welcome_email', 1 );
+
+// send welcome email to new group members
+function ass_send_welcome_email( $group_id, $user_id ) {
+	$user = bp_core_get_core_userdata( $user_id );
+
+	$welcome_email = groups_get_groupmeta( $group_id, 'ass_welcome_email' );
+	$welcome_email = apply_filters( 'ass_welcome_email', $welcome_email, $group_id ); // for multilingual filtering
+	$welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : 'no';
+	$subject = $welcome_email['subject'];
+	$message = $welcome_email['content'];
+
+	if ( ! $user->user_email || 'yes' != $welcome_email_enabled || empty( $message ) )
+		return;
+
+	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+		$global_link = bp_core_get_user_domain( $user_id ) . '?bpass-action=unsubscribe&access_key=' . md5( "{$user_id}unsubscribe" . wp_salt() );
+		$message .= "\n\n---------------------\n";
+		$message .= sprintf( __( 'To disable emails from all your groups at once click: %s', 'bp_ass' ), $global_link );
+	}
+
+	$group_admin_ids = groups_get_group_admins( $group_id );
+	$group_admin = bp_core_get_core_userdata( $group_admin_ids[0]->user_id );
+	$headers = array(
+		"From: \"{$group_admin->display_name}\" <{$group_admin->user_email}>"
+	);
+
+	wp_mail( $user->user_email, $subject, $message, $headers );
+}
+add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
 // adds forum notification options in the users settings->notifications page
 function ass_group_subscription_notification_settings() {
@@ -1315,6 +1542,14 @@ function ass_admin_options() {
 		<br>
 		<br>
 
+		<h3><?php _e( 'Global Unsubscribe Link', 'bp-ass' ); ?></h3>
+		<p><?php _e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'bp-ass' ); ?>
+		<?php $global_unsubscribe_link = get_option( 'ass-global-unsubscribe-link' ); ?>
+		<input<?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php _e( 'yes', 'bp-ass' ); ?> &nbsp;
+		<input<?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php _e( 'no', 'bp-ass' ); ?>
+		<br />
+		<br />
+
 
 		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
 		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'bp-ass'); ?>
@@ -1369,6 +1604,9 @@ function ass_update_dashboard_settings() {
 	/* The weekly digest day has been changed */
 	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) )
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
+
+	if ( $_POST['ass-global-unsubscribe-link'] != get_option( 'ass-global-unsubscribe-link' ) )
+		update_option( 'ass-global-unsubscribe-link', $_POST['ass-global-unsubscribe-link'] );
 
 	if ( $_POST['ass-admin-can-edit-email'] != get_option( 'ass-admin-can-edit-email' ) )
 		update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );

@@ -134,7 +134,7 @@ function ass_digest_fire( $type ) {
 			if ( 'dig' == $type ) // might be nice here to link to anchor tags in the message
 				$summary .= apply_filters( 'ass_digest_summary', "<li {$ass_email_css['summary']}><a href='#{$group_slug}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 
-			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug );
+			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
 			unset( $group_activity_ids[ $group_id ] );
 		}
 
@@ -152,7 +152,14 @@ function ass_digest_fire( $type ) {
 
 		$message .= $footer;
 
-		$message .= apply_filters( 'ass_digest_disable_notifications', "\n\n<br><br>" . sprintf( __( "To disable these notifications please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" ), $userdomain . $bp->groups->slug );
+		$unsubscribe_message = "\n\n<br><br>" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
+
+		if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+			$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
+			$unsubscribe_message .= "\n\n<br><br><a href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp_ass' ) . '</a>';
+		}
+
+		$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
 		
 		$message .= "</div>";
 
@@ -225,11 +232,14 @@ add_action( 'wp', 'ass_digest_fire_test' );
  * terms of the possibility that activity items could be associated with more than one group, and
  * the possibility that users within a single group would want more highly-filtered digests.
  */
-function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug ) {
+function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id ) {
 	global $bp, $ass_email_css;
 
 	$group_permalink = $bp->root_domain.'/'.$bp->groups->slug.'/'.$group_slug. '/';
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
+
+	$userdomain = bp_core_get_user_domain( $user_id );
+	$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&group=$group_id&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
 
 	// add the group title bar
 	if ( $type == 'dig' ) {
@@ -239,7 +249,10 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	}
 
 	// add change email settings link
-	$group_message .= "\n<div {$ass_email_css['change_email']}>".__('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ".__('for this group', 'bp-ass')."</div>\n\n";
+	$group_message .= "\n<div {$ass_email_css['change_email']}>";
+	$group_message .= __('To disable these notifications for this group click ', 'bp-ass'). " <a href=\"$unsubscribe_link\">" . __( 'unsubscribe', 'bp-ass' ) . '</a> - ';
+	$group_message .=  __('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ";
+	$group_message .= "</div>\n\n";
 
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
 
@@ -371,13 +384,15 @@ function ass_digest_filter( $item ) {
 // convert the email to plain text, and fancy it up a bit. these conversion only work in English, but it's ok.
 function ass_convert_html_to_plaintext( $message ) {
 	// convert view links to http:// links
-	$message = preg_replace( "/<a href=\"(.*)\">View<\/a>/i", "\\1", $message );
+	$message = preg_replace( "/<a href=\"(.[^\"]*)\">View<\/a>/i", "\\1", $message );
 	// convert group div to two lines encasing the group name
-	$message = preg_replace( "/<div.*>Group: <a href=\"(.*)\">(.*)<\/a>.*<\/div>/i", "------\n\\2 - \\1\n------", $message );
+	$message = preg_replace( "/<div.*>Group: <a href=\"(.[^\"]*)\">(.*)<\/a>.*<\/div>/i", "------\n\\2 - \\1\n------", $message );
 	// convert footer line to two dashes
 	$message = preg_replace( "/\n<div class=\"ass-footer\"/i", "--\n<div", $message );
 	// convert My Groups links to http:// links
-	$message = preg_replace( "/<a href=\"(.*)\">My Groups<\/a>/i", "\\1", $message );
+	$message = preg_replace( "/<a href=\"(.[^\"]*)\">My Groups<\/a>/i", "\\1", $message );
+
+	$message = preg_replace( "/<a href=\"(.[^\"]*)\">(.*)<\/a>/i", "\\2 (\\1)", $message );
 
 	$message = strip_tags( stripslashes( $message ) );
 	// remove uneccesary lines
