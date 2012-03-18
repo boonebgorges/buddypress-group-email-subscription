@@ -4,11 +4,16 @@ Description: This powerful plugin allows people to receive email notifications o
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 (BP 1.2)
 Tested up to: 3.3.1 (BP 1.5.4)
-Stable tag: 2.9.9
+Stable tag: 3.1
 
 == Description ==
 
 This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users. Tested up to BuddyPress 1.5.4.
+
+NEW IN VERSION 3.1:
+* Added the ability to unsubscribe from single group notifications directly from the email without needing to be logged in (enabled by default).
+* Added the ability to unsubscribe from all group email notifications, this feature needs to be enabled in the plugin admin page.
+* Added a new group welcome email that gets sent out the moment someone joins a group - regardless of the email subscription setting. Set this message in the group admin -> email options page.
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options: 
@@ -86,6 +91,9 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+
+= 3.1 =
+NEW FEATURES: added the ability to unsubscribe from single group notifications directly from the email without needing to be logged in. This is on by default. Also added the ability to unsubscribe from all group email notifications, this feature needs to be enabled in the plugin admin page. Added a new group welcome email that gets sent out the moment someone joins a group - regardless of the email subscription setting. Edit this in the group admin -> email options.
 
 = 3.0.1 =
 Fixes bug that may have caused deleted activity items to appear in digests in some cases

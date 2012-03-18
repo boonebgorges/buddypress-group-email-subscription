@@ -86,5 +86,14 @@ jQuery(document).ready( function() {
 	//});
 	
 	j('.group-subscription-options').hide();
+
+	// Toggle welcome email fields on group email options page
+	j('#ass-welcome-email-enabled').change(function() {
+		if ( j(this).prop('checked') ) {
+			j('.ass-welcome-email-field').show();
+		} else {
+			j('.ass-welcome-email-field').hide();
+		}
+	});
 	
 });
