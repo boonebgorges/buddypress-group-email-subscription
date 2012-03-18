@@ -23,19 +23,21 @@ add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
 function ass_group_unsubscribe_links( $user_id ) {
 	global $bp;
 
-	$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
-	$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+	//$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
+	//$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
 	$userdomain = bp_core_get_user_domain( $user_id );
 
 	$group_id = $bp->groups->current_group->id;
 	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
-	$links .= "\n\n" . sprintf( __( 'To disable these notifications for this group, go to: %s', 'bp_ass' ), $group_link );
+	$links = sprintf( __( 'To disable these notifications for this group click: %s', 'bp_ass' ), $group_link );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
-		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all your groups at once, go to: %s', 'bp_ass' ), $global_link );
+		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all my groups at once click: %s', 'bp_ass' ), $global_link );
 	}
+
+	$links .= "\n";
 
 	return $links;
 }
@@ -97,7 +99,7 @@ To view or reply to this topic, log in and go to:
 			$user = bp_core_get_core_userdata( $user_id );
 
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
+			wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>Email: ' . $user->user_email;
 
@@ -109,7 +111,7 @@ To view or reply to this topic, log in and go to:
 
 	}
 	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message . $notice ); echo '</pre>';
+	//echo '<pre>'; print_r( $message . $footer . $notice ); echo '</pre>';
 }
 
 add_action( 'bp_activity_after_save', 'ass_group_notification_new_forum_topic' );
@@ -1363,7 +1365,8 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$global_link = bp_core_get_user_domain( $user_id ) . '?bpass-action=unsubscribe&access_key=' . md5( "{$user_id}unsubscribe" . wp_salt() );
-		$message .= "\n\n" . sprintf( __( 'To unsubscribe from all your groups emails, go to: %s', 'bp_ass' ), $global_link );
+		$message .= "\n\n---------------------\n";
+		$message .= sprintf( __( 'To disable emails from all your groups at once click: %s', 'bp_ass' ), $global_link );
 	}
 
 	$group_admin_ids = groups_get_group_admins( $group_id );
