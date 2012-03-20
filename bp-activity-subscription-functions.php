@@ -1133,6 +1133,10 @@ function ass_user_unsubscribe_form() {
 
 		ass_unsubscribe_user( $user_id, (array) $group->id );
 
+		$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'bp-ass' ), '<a href="' . bp_get_group_permalink( $group ) . '">' . $group->name . '</a>' );
+		
+		$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_group_permalink( $group ), esc_html( $group->name ) );  
+
 		$unsubscribed = true;
 	} else {
 		// unsubscribe from all groups
@@ -1141,6 +1145,10 @@ function ass_user_unsubscribe_form() {
 
 		if ( isset( $_GET['submit'] ) ) {
 			ass_unsubscribe_user( $user_id );
+
+			$message = __( 'Your unsubscription was successful. You will no longer receive email notifications from any of your groups.', 'bp-ass' );
+		
+			$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_root_domain(), get_option( 'blogname' ) );
 
 			$unsubscribed = true;
 		}
@@ -1166,8 +1174,8 @@ function ass_user_unsubscribe_form() {
 	<div class="container">
 		<h1><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe' ); ?></h1>
 		<?php if ( isset( $unsubscribed ) ) : ?>
-			<p><?php _e( 'Your unsubscription was successful. From now on, you will not receive group email notifications.' ); ?></p>
-			<p><a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'Visit the website' ); ?></a></p>
+			<p><?php echo $message ?></p>
+			<p><?php echo $continue_link ?></p>
 		<?php else : ?>
 			<p><?php _e( 'Do you really want to unsubscribe from all groups notifications?' ); ?></p>
 
