@@ -1113,12 +1113,12 @@ add_action( 'bp_actions', 'ass_user_unsubscribe_action' );
 
 // Form to confirm unsubscription from all groups
 function ass_user_unsubscribe_form() {
-	if ( get_option( 'ass-global-unsubscribe-link' ) != 'yes' )
-		return;
-
 	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
 
 	if ( 'unsubscribe' != $action )
+		return;
+
+	if ( empty( $_GET['group'] ) && get_option( 'ass-global-unsubscribe-link' ) != 'yes' )
 		return;
 
 	$user_id = bp_displayed_user_id();
