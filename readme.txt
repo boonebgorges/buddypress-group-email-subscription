@@ -92,6 +92,10 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.1.1 =
+Improved styling of subscription settings popup on My Groups pages
+More attempts at improving the loading of JS and CSS across BP versions
+
 = 3.1 =
 NEW FEATURES: added the ability to unsubscribe from single group notifications directly from the email without needing to be logged in. This is on by default. Also added the ability to unsubscribe from all group email notifications, this feature needs to be enabled in the plugin admin page. Added a new group welcome email that gets sent out the moment someone joins a group - regardless of the email subscription setting. Edit this in the group admin -> email options.
 

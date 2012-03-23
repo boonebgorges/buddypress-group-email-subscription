@@ -58,17 +58,20 @@ h4.activity-subscription-settings-title {
 	z-index: 1;
 }
 
-#groups-dir-list .group-subscription-options {
+#groups-dir-list .group-subscription-options,
+#groups-list .group-subscription-options {
 	position: relative;	
 	z-index: 1;
 	right: 0;
 	text-align: left;
 }
-#groups-dir-list .group-subscription-div {
+#groups-dir-list .group-subscription-div,
+#groups-list .group-subscription-div {
 	padding-top: 6px;
 	font-size: 11px;
 }
-#groups-dir-list .group-subscription-status-desc {
+#groups-dir-list .group-subscription-status-desc,
+#groups-list .group-subscription-status-desc {
 	display: none;
 }
 
