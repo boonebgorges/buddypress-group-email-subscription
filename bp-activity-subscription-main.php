@@ -3,19 +3,6 @@
 require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-functions.php' );
 require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
 
-if ( !defined( 'BP_VERSION' ) || version_compare( BP_VERSION, '1.5-beta-1', '<' ) ) {
-	// Pre-1.5 versions of BuddyPress
-
-	// Load the abstraction files, which define the necessary 1.5 functions
-	require_once( dirname( __FILE__ ) . '/1.5-abstraction.php' );
-
-	// Load the group extension in the legacy fashion
-	add_action( 'init', 'ass_activate_extension' );
-} else {
-	// Load the group extension in the proper fashion
-	bp_register_group_extension( 'Group_Activity_Subscription' );
-}
-
 class Group_Activity_Subscription extends BP_Group_Extension {
 
 	function group_activity_subscription() {
@@ -38,7 +25,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 			$this->enable_edit_item = false;
 
 		// hook in the css and js
-		add_action ( 'wp_print_styles' , array( &$this , 'add_settings_stylesheet' ) );
+		add_action( 'wp_print_styles' , array( &$this , 'add_settings_stylesheet' ) );
 		add_action( 'wp_enqueue_scripts', array( &$this , 'ass_add_javascript' ),1 );
 	}
 
@@ -97,6 +84,32 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 		return false;
 	}
 
+}
+
+// Determine the BP version. It's been historically difficult in this plugin, so provide 
+// a fallback when not found
+if ( defined( 'BP_VERSION' ) ) {
+	$bpges_bp_version = (float) BP_VERSION;
+} else {
+	// Let's guess
+	if ( function_exists( 'bp_is_action_variable' ) ) {
+		$bpges_bp_version = (float) '1.5';
+	} else {
+		$bpges_bp_version = (float) '1.2.10';
+	}
+}
+
+if ( $bpges_bp_version < 1.5 ) {
+	// Pre-1.5 versions of BuddyPress
+
+	// Load the abstraction files, which define the necessary 1.5 functions
+	require_once( dirname( __FILE__ ) . '/1.5-abstraction.php' );
+
+	// Load the group extension in the legacy fashion
+	add_action( 'init', 'ass_activate_extension' );
+} else {
+	// Load the group extension in the proper fashion
+	bp_register_group_extension( 'Group_Activity_Subscription' );
 }
 
 function ass_activate_extension() {
