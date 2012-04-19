@@ -92,6 +92,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.1.2 =
+Corrected a bug in the way digest links are constructed
+
 = 3.1.1 =
 Improved styling of subscription settings popup on My Groups pages
 More attempts at improving the loading of JS and CSS across BP versions
