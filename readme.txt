@@ -95,6 +95,7 @@ Other supporters: bluedotproductions.com
 
 = 3.1.2 =
 Corrected a bug in the way digest links are constructed
+Added Lithuanian translation
 
 = 3.1.1 =
 Improved styling of subscription settings popup on My Groups pages
