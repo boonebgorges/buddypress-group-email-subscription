@@ -16,21 +16,21 @@ NEW IN VERSION 3.1:
 * Added a new group welcome email that gets sent out the moment someone joins a group - regardless of the email subscription setting. Set this message in the group admin -> email options page.
 
 EMAIL SUBSCRIPTION LEVELS
-There are 5 levels of email subscription options: 
+There are 5 levels of email subscription options:
 1. No Email - Read this group on the web
 2. Weekly Summary Email - A summary of new topics each week
 3. Daily Digest Email - All the day's activity bundled into a single email
 4. New Topics Email - Send new topics as they arrive (but don't send replies)
-5. All Email - Send all group activity as it arrives 
+5. All Email - Send all group activity as it arrives
 
 DEFAULT SUBSCRIPTION STATUS
-Group admins can choose one of the 5 subscription levels as a default that gets applied when new members join. 
+Group admins can choose one of the 5 subscription levels as a default that gets applied when new members join.
 
 DIGEST AND SUMMARY EMAILS
 The daily digest email is sent every morning and contains all the emails from all the groups a user is subscribed to. The digest begins with a helpful topic summary. The weekly summary email contains just the topic titles from the past week. Summary and digest timing can be configured in the back end. (The admin can view a sample of the digests and summaries in the queue by going adding this to your url: mydomain.com/sum=1. This won't send emails just show what will be sent)
 
 HTML EMAILS
-The digest and summary emails are sent out in multipart HTML and plain text email format. This makes the digest much more readable with better links. The email is multipart so users who need only plain text will get plain text. 
+The digest and summary emails are sent out in multipart HTML and plain text email format. This makes the digest much more readable with better links. The email is multipart so users who need only plain text will get plain text.
 
 EMAILS FOR TOPICS I'VE STARTED OR COMMENTED ON
 Users receive email notifications when someone replies to a topic they create or comment on (similar to Facebook). This happens whether they are subscribed or not. Users can control this behaviour in their notifications page.
@@ -42,7 +42,7 @@ ADMIN NOTIFICATION
 Group admins can send out an email to all group members from the group's admin section. The email will be sent to all group members regardless of subscription status. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
 
 MOVING AN EXISTING SITE
-Site admins can reset the subscription level for CURRENT group members by clicking the link at the bottom of the manage members admin page. 
+Site admins can reset the subscription level for CURRENT group members by clicking the link at the bottom of the manage members admin page.
 
 SPAM PROTECTION
 To protect against spam, you can set a minimum number of days users need to be registered before their group activity will be emailed to other users. This feature is off by default, but can be enabled in the admin.
@@ -51,7 +51,7 @@ GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
 Group admins can set the subscription level for existing users in the manage members admin page - either one by one or all at once.
 
 INTERNATIONALIZATION
-The plugin is fully internationalized (thanks to chestnut_jp) Please send language po and mo files to deryk@bluemandala.com and i'll include them.  
+The plugin is fully internationalized (thanks to chestnut_jp) Please send language po and mo files to deryk@bluemandala.com and i'll include them.
 
 TRANSLATORS
 - japanese - http://buddypress.org/community/members/chestnut_jp/
@@ -64,11 +64,12 @@ TRANSLATORS
 - german - Peter Peterson
 - russian - http://www.viaestvita.net/groups/
 - farsi - Vahid Masoomi http://www.AzUni.ir
+- lithuanian - Vincent G http://www.Host1Free.com
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
 
-PLUGIN SUPPORTERS: 
+PLUGIN SUPPORTERS:
 Major supporters: shambhalanetwork.org & commons.gc.cuny.edu
 Other supporters: bluedotproductions.com
 
@@ -155,9 +156,9 @@ Fixed bug that caused hidden items not to be sent in digests
 added better brazilian portuguese translation, improved error checking to see if user has email before emailing them
 
 = 2.8.5 =
-fixed bug introduced in latest BP version where when an group admin manually removes a group member in Group Admin -> Manage Members -> Remove from group, the user kept getting emails, 
-added translation strings for the javascript mute/follow, 
-minor code cleanup to how digest/sumaries are stored, 
+fixed bug introduced in latest BP version where when an group admin manually removes a group member in Group Admin -> Manage Members -> Remove from group, the user kept getting emails,
+added translation strings for the javascript mute/follow,
+minor code cleanup to how digest/sumaries are stored,
 Added Russian Translation.
 added filter to digest subject line
 fixed error where only site admins could send out instant emails and not group admins
@@ -175,7 +176,7 @@ Fixes Dashboard panel to be compatible with WP 3.1/BP 1.2.8 multisite. Also adds
 fixed issue when plugin was hiding new group activity update comments
 
 = 2.8 =
-bunch of new updates/fixes:  group activity replies are now registered in the plugin and emailed/digested accordingly. Users can now choose to get emails for posts they make (in their settings page). Useful filters were added, you can now add a header or footer to the digest emails. Fixed a bug where group names were sometimes missing for private groups in the digest. Fixed minor bug where people on weekly digest who followed a single topic don't get any emails. Added swedish translation. 
+bunch of new updates/fixes:  group activity replies are now registered in the plugin and emailed/digested accordingly. Users can now choose to get emails for posts they make (in their settings page). Useful filters were added, you can now add a header or footer to the digest emails. Fixed a bug where group names were sometimes missing for private groups in the digest. Fixed minor bug where people on weekly digest who followed a single topic don't get any emails. Added swedish translation.
 
 = 2.7.9 =
 now translated in japanese, spanish, french, portuguese, italian and dutch. no changes to the code on this update.
@@ -205,16 +206,16 @@ fixed bug where digests were not fired - the next digest will combine all missed
 Major re-write to the digest code, implemented caching and drastically sped up processing, other minor changes. see (but not send) what is in the digest queue by visiting mydomain.com/sum=1
 
 = 2.6.4 =
-added 'change email options' link under each group in digest 
+added 'change email options' link under each group in digest
 
 = 2.6.3 =
-rewrote the email sending so digest emails are read properly in Outlook. Added a link at bottom of digests to go to my groups to edit notification settings. 
+rewrote the email sending so digest emails are read properly in Outlook. Added a link at bottom of digests to go to my groups to edit notification settings.
 
 = 2.6.2 =
 fixed sneaky bug where people who requested access to a private group were subscribed to default setting.
 
 = 2.6.1 =
-improves wording of join pull down menu, fix bad follow/mute link. 
+improves wording of join pull down menu, fix bad follow/mute link.
 
 = 2.6 =
 allow site admins to set the subscription level for all current users of a group (in manage members)
@@ -235,10 +236,10 @@ fixed silly bug where th tag was not showing up in group forum directory to matc
 fixed a bug where digest emails were cumulative. fixed bug where editing an item would resend the notification email. added filter hooks to digest section
 
 = 2.4.4 =
-improved the follow this topic text in New Topic subscription emails so the user knows they won't get replies and gives them instructions if they do. 
+improved the follow this topic text in New Topic subscription emails so the user knows they won't get replies and gives them instructions if they do.
 
 = 2.4.3 =
-Added ability for group admins to change the subscription settings for users in their group. Added backend options to enable or disable this function. Also added backend options to enable group admin override emails. 
+Added ability for group admins to change the subscription settings for users in their group. Added backend options to enable or disable this function. Also added backend options to enable group admin override emails.
 
 = 2.4.2 =
 Fixed minor bug about leaving groups your not subscribed to
