@@ -258,13 +258,17 @@ function ass_group_notification_activity( $content ) {
 
 	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
 
+	// get the group object
+	// if the group is already set in the $bp global use that, otherwise get the group
+	$group  = groups_get_current_group() ? groups_get_current_group() : groups_get_group( 'group_id=' . $group_id );
+
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
-	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $bp->groups->current_group );
+	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $group );
 
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
