@@ -6,50 +6,48 @@ require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-su
 class Group_Activity_Subscription extends BP_Group_Extension {
 
 	function group_activity_subscription() {
-		global $bp;
-
 		$this->name = __('Email Options', 'bp-ass');
 		$this->slug = 'notifications';
 
 		// Only enable the notifications nav item if the user is a member of the group
-		if ( bp_is_group() && groups_is_user_member( $bp->loggedin_user->id , $bp->groups->current_group->id )  ) {
+		if ( bp_is_group() && groups_is_user_member( bp_loggedin_user_id() , bp_get_current_group_id() )  ) {
 			$this->enable_nav_item = true;
 		} else {
 			$this->enable_nav_item = false;
 		}
 
-		$this->nav_item_position = 91;
+		$this->nav_item_position  = 91;
 		$this->enable_create_step = false;
 
 		if ( get_option('ass-admin-can-send-email') == 'no' )
 			$this->enable_edit_item = false;
 
 		// hook in the css and js
-		add_action( 'wp_print_styles' , array( &$this , 'add_settings_stylesheet' ) );
+		add_action( 'wp_print_styles',    array( &$this , 'add_settings_stylesheet' ) );
 		add_action( 'wp_enqueue_scripts', array( &$this , 'ass_add_javascript' ),1 );
 	}
 
 	public function add_settings_stylesheet() {
 		if ( bp_is_groups_component() ) {
-			$style_url = plugins_url() . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
+			$style_url  = plugins_url() . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
 			$style_file = WP_PLUGIN_DIR . '/buddypress-group-email-subscription/css/bp-activity-subscription-css.css';
+
 			if (file_exists($style_file)) {
-			    wp_register_style('activity-subscription-style', $style_url);
-			    wp_enqueue_style('activity-subscription-style');
+				wp_register_style('activity-subscription-style', $style_url);
+				wp_enqueue_style('activity-subscription-style');
 			}
 		}
 	}
 
 	public function ass_add_javascript() {
-		global $bp;
 		if ( bp_is_groups_component() ) {
 			wp_register_script('bp-activity-subscription-js', plugins_url() . '/buddypress-group-email-subscription/bp-activity-subscription-js.js', array( 'jquery' ) );
 			wp_enqueue_script( 'bp-activity-subscription-js' );
 
 			wp_localize_script( 'bp-activity-subscription-js', 'bp_ass', array(
-				'mute' 		=> __( 'Mute', 'bp-ass' ),
-				'follow'	=> __( 'Follow', 'bp-ass' ),
-				'error'		=> __( 'Error', 'bp-ass' )
+				'mute'   => __( 'Mute', 'bp-ass' ),
+				'follow' => __( 'Follow', 'bp-ass' ),
+				'error'  => __( 'Error', 'bp-ass' )
 			) );
 		}
 	}
@@ -86,7 +84,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 }
 
-// Determine the BP version. It's been historically difficult in this plugin, so provide 
+// Determine the BP version. It's been historically difficult in this plugin, so provide
 // a fallback when not found
 if ( defined( 'BP_VERSION' ) ) {
 	$bpges_bp_version = (float) BP_VERSION;
