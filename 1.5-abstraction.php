@@ -100,12 +100,32 @@ if ( !function_exists( 'bp_get_groups_action_link' ) ) :
 	}
 endif;
 
+if ( !function_exists( 'groups_get_current_group' ) ) :
+	function groups_get_current_group() {
+		global $bp;
+	
+		$current_group = isset( $bp->groups->current_group ) ? $bp->groups->current_group : false;
+	
+		return apply_filters( 'groups_get_current_group', $current_group );
+	}
+endif;
+
 if ( !function_exists( 'bp_get_current_group_name' ) ) :
 	function bp_get_current_group_name() {
 		global $bp;
 
 		$name = apply_filters( 'bp_get_group_name', $bp->groups->current_group->name );
 		return apply_filters( 'bp_get_current_group_name', $name );
+	}
+endif;
+
+if ( !function_exists( 'groups_get_current_group' ) ) :
+	function bp_get_current_group_id() {
+		$current_group = groups_get_current_group();
+
+		$current_group_id = isset( $current_group->id ) ? (int)$current_group->id : 0;
+
+		return apply_filters( 'bp_get_current_group_id', $current_group_id, $current_group );
 	}
 endif;
 
