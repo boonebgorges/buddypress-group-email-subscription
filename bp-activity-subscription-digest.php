@@ -89,7 +89,7 @@ function ass_digest_fire( $type ) {
 			}
 		}
 	}
-
+	
 	$items = bp_activity_get_specific( array(
 		'sort' 		=> 'ASC',
 		'activity_ids' 	=> $all_activity_items,
@@ -210,9 +210,8 @@ function ass_digest_fire_test() {
 		echo "<h2 style='margin-top:150px'>".__('WEEKLY DIGEST:','bp-ass')."</h2>";
 		ass_digest_fire( 'sum' );
 
-
-		global $wpdb;
-		echo '<pre>';print_r( $wpdb->queries );
+		//global $wpdb;
+		//echo '<pre>';print_r( $wpdb->queries );
 		die();
 	}
 

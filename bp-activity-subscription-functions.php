@@ -30,9 +30,11 @@ function ass_group_unsubscribe_links( $user_id ) {
 }
 
 /**
- * When a forum topic or post is recorded, either:
+ * When a new forum topic or post is posted in bbPress, either:
  * 	1) Send emails to all group subscribers
- *	2) Record it for digest purposes
+ *	2) Prepares to record it for digest purposes - see {@link ass_group_forum_record_digest()}.
+ *
+ * Hooks into the bbPress action - 'bb_new_post' - to easily identify new forum posts vs edits.
  */
 function ass_group_notification_forum_posts( $post_id ) {
 	global $bp;
@@ -211,8 +213,12 @@ To view or reply to this topic, log in and go to:
 		}
 
 		// otherwise if digest or summary, record it!
+		// temporarily save some variables to pass to groups_record_activity()
+		// actual digest recording occurs in ass_group_forum_record_digest()
 		if ( $group_status == 'dig' || ( $is_topic && $group_status == 'sum' ) ) {
-			ass_digest_record_activity( $post_id, $user_id, bp_get_current_group_id(), $group_status );
+			$bp->ges->temp->user_id      = $user_id;
+			$bp->ges->temp->group_id     = bp_get_current_group_id();
+			$bp->ges->temp->group_status = $group_status;
 		}
 
 		unset( $notice );
@@ -220,6 +226,27 @@ To view or reply to this topic, log in and go to:
 
 }
 add_action( 'bb_new_post', 'ass_group_notification_forum_posts' );
+
+/**
+ * Records group forum digest items in GES after the activity item is posted.
+ *
+ * {@link ass_group_notification_forum_posts()} handles non-digest sendouts, but
+ * for digest items, we have to wait for the corresponding activity item to be posted
+ * before we can record it.
+ */
+function ass_group_forum_record_digest( $activity ) {
+	global $bp;
+
+	// see if our temporary GES variable is set via ass_group_notification_forum_posts()
+	if ( ! empty( $bp->ges->temp ) ) {
+		// okay, we're good to go! let's record this digest item!
+		ass_digest_record_activity( $activity->id, $bp->ges->temp->user_id, $bp->ges->temp->group_id, $bp->ges->temp->group_status );
+
+		// unset the temporary variable
+		unset( $bp->ges );
+	}
+}
+add_action( 'bp_activity_after_save', 'ass_group_forum_record_digest' );
 
 /**
  * The email notification function for all other activity
