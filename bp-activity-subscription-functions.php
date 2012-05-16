@@ -189,7 +189,7 @@ To view or reply to this topic, log in and go to:
 			}
 
 			// User posted in this topic and wants to receive all subsequent replies
-			elseif ( $previous_posters[$user_id] && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[$user_id] != 'no' ) {
+			elseif ( isset( $previous_posters[$user_id] ) && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[$user_id] != 'no' ) {
 				$send_it = true;
 
 				// override settings link to user's notifications
