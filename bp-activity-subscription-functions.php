@@ -1409,13 +1409,22 @@ function ass_save_welcome_email() {
 }
 add_action( 'bp_actions', 'ass_save_welcome_email', 1 );
 
-// send welcome email to new group members
+/**
+ * Send welcome email to new group members
+ *
+ * @uses apply_filters() Filter 'ass_welcome_email' to change the content/subject of the email
+ */
 function ass_send_welcome_email( $group_id, $user_id ) {
 	$user = bp_core_get_core_userdata( $user_id );
 
 	$welcome_email = groups_get_groupmeta( $group_id, 'ass_welcome_email' );
 	$welcome_email = apply_filters( 'ass_welcome_email', $welcome_email, $group_id ); // for multilingual filtering
 	$welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : 'no';
+
+	if ( 'no' == $welcome_email_enabled ) {
+		return;
+	}
+
 	$subject = $welcome_email['subject'];
 	$message = $welcome_email['content'];
 
