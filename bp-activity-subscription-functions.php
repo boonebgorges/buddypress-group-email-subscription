@@ -4,22 +4,9 @@
 // !SEND EMAIL UPDATES FOR FORUM TOPICS AND POSTS
 //
 
-// these hooks are a bit cludgy, but they work to ensure that only new posts get emailed out and post edits don't
-// if the topic is new, set $ass_item_is_new to true and it will get sent, otherwise if an update it won't
-function ass_item_is_new( $item ) {
-	global $ass_item_is_new;
-	$ass_item_is_new = true;
-	return $item;
-}
-add_filter( 'group_forum_topic_forum_id_before_save', 'ass_item_is_new' );
-// if the post is an update, set $ass_item_is_update to true and it will not get sent, otherwise it will
-function ass_item_is_update( $item ) {
-	global $ass_item_is_update;
-	$ass_item_is_update = true;
-	return $item;
-}
-add_filter( 'bp_activity_get_activity_id', 'ass_item_is_update' );
-
+/**
+ * Returns an unsubscribe link to disable email notifications for a given group and/or all groups.
+ */
 function ass_group_unsubscribe_links( $user_id ) {
 	global $bp;
 
@@ -28,13 +15,13 @@ function ass_group_unsubscribe_links( $user_id ) {
 
 	$userdomain = bp_core_get_user_domain( $user_id );
 
-	$group_id = $bp->groups->current_group->id;
+	$group_id = bp_get_current_group_id();
 	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
-	$links = sprintf( __( 'To disable these notifications for this group click: %s', 'bp_ass' ), $group_link );
+	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp_ass' ), $group_link );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
-		$links .= "\n\n" . sprintf( __( 'To disable these notifications for all my groups at once click: %s', 'bp_ass' ), $global_link );
+		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp_ass' ), $global_link );
 	}
 
 	$links .= "\n";
@@ -42,26 +29,57 @@ function ass_group_unsubscribe_links( $user_id ) {
 	return $links;
 }
 
-// send email notificaitons for new forum topics. Note that $content is sent as a reference
-function ass_group_notification_new_forum_topic( $content ) {
-	global $bp, $ass_item_is_new;
+/**
+ * When a new forum topic or post is posted in bbPress, either:
+ * 	1) Send emails to all group subscribers
+ *	2) Prepares to record it for digest purposes - see {@link ass_group_forum_record_digest()}.
+ *
+ * Hooks into the bbPress action - 'bb_new_post' - to easily identify new forum posts vs edits.
+ */
+function ass_group_notification_forum_posts( $post_id ) {
+	global $bp;
 
-	/* New forum topics only */
-	if ( $content->type != 'new_forum_topic' )
+	// Check to see if user has been registered long enough
+	if ( !ass_registered_long_enough( bp_loggedin_user_id() ) )
 		return;
 
-	/* Check to see if user has been registered long enough */
-	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
-		return;
+	$post         = bb_get_post( $post_id );
+	$topic        = get_topic( $post->topic_id );
 
-	/* Subject & Content */
-	$action      = ass_clean_subject( $content->action );
-	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
-	$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
+	$primary_link = bp_get_groups_action_link( 'forum/topic/' . $topic->topic_slug );
+	$blogname     = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 
-	$message = sprintf( __(
-'%s
+	$is_topic = false;
+
+	// this is a new topic
+	if ( $post->post_position == 1 ) {
+		$is_topic    = true;
+
+		$action      = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, bp_get_current_group_name() );
+
+		$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
+		$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $post->post_text );
+
+	}
+	// this is a forum reply
+	else {
+		$action = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, bp_get_current_group_name() );
+
+		// calculate the topic page for pagination purposes
+		$pag_num = apply_filters( 'bp_ass_topic_pag_num', 15 );
+		$page	 = ceil( $topic->topic_posts / $pag_num );
+
+		if ( $page > 1 )
+			$primary_link .= '?topic_page=' . $page;
+
+		$primary_link .= "#post-" . $post_id;
+
+		$subject     = apply_filters( 'bp_ass_forum_reply_subject', $action . ' ' . $blogname, $action, $blogname );
+		$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $post->post_text );
+	}
+
+	// setup the email meessage
+	$message = sprintf(__('%s
 
 "%s"
 
@@ -69,169 +87,174 @@ To view or reply to this topic, log in and go to:
 %s
 
 ---------------------
-', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
+', 'bp-ass'), $action . ':', $the_content, $primary_link);
 
-	$group_id = $content->item_id;
-	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
+	// get subscribed users
+	$subscribed_users = groups_get_groupmeta( bp_get_current_group_id(), 'ass_subscribed_users' );
 
-	// cycle through subscribed members and send an email
-	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
+	// do this for forum replies only
+	if ( ! $is_topic ) {
+		// pre-load these arrays to reduce db calls in the loop
+		$ass_replies_to_my_topic    = ass_user_settings_array( 'ass_replies_to_my_topic' );
+		$ass_replies_after_me_topic = ass_user_settings_array( 'ass_replies_after_me_topic' );
+		$previous_posters           = ass_get_previous_posters( $post->topic_id );
 
-		// Does the author want updates of his own posts?
-		if ( $user_id == $bp->loggedin_user->id ) {
-			if ( !ass_self_post_notification() )
-				continue;
+		// make sure manually-subscribed topic users and regular group subscribed users are combined
+		$user_topic_status = groups_get_groupmeta( bp_get_current_group_id(), 'ass_user_topic_status_' . $topic->topic_id );
+
+		if ( ! empty( $subscribed_users ) && ! empty( $user_topic_status ) )
+			$subscribed_users = $subscribed_users + $user_topic_status;
+
+		// consolidate the arrays to speed up processing
+		foreach ( array_keys( $previous_posters ) as $previous_poster ) {
+			if ( empty( $subscribed_users[$previous_poster] ) )
+				$subscribed_users[$previous_poster] = 'prev-post';
 		}
-
-		if ( $group_status == 'sub' || $group_status == 'supersub' )  {
-
-			if ( !$ass_item_is_new ) //don't send emails for item edits (but do update the digest)
-				continue;
-
-			/* Content footer */
-			$footer = ass_group_unsubscribe_links( $user_id );
-
-			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
-
-			if ( $group_status == 'sub' ) // until we get a real follow link, this will have to do
-				$notice .= __(", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass');
-
-			$user = bp_core_get_core_userdata( $user_id );
-
-			if ( $user->user_email )
-			wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
-
-			//echo '<br>Email: ' . $user->user_email;
-
-		} elseif ( $group_status == 'dig' || $group_status == 'sum' ) {
-
-			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
-
-		}
-
-	}
-	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message . $footer . $notice ); echo '</pre>';
-}
-
-add_action( 'bp_activity_after_save', 'ass_group_notification_new_forum_topic' );
-
-
-
-
-// send email notificaitons for forum replies (or store for digest)
-function ass_group_notification_forum_reply( $content ) {
-	global $bp, $ass_item_is_update;
-
-	/* New forum posts only */
-	if ( $content->type != 'new_forum_post' )
-		return;
-
-	/* skip item edits */
-	if ( $ass_item_is_update )
-		return;
-
-	/* Check to see if user has been registered long enough */
-	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
-		return;
-
-	/* Subject & Content */
-	$action      = ass_clean_subject( $content->action );
-	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$subject     = apply_filters( 'bp_ass_forum_reply_subject', $action . ' ' . $blogname, $action, $blogname );
-	$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
-
-	$message = sprintf( __(
-'%s
-
-"%s"
-
-To view or reply to this topic, log in and go to:
-%s
-
----------------------
-', 'bp-ass' ), $action . ':', $the_content, $content->primary_link );
-
-	$group_id = $content->item_id;
-	//$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
-	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
-
-	$post = bp_forums_get_post( $content->secondary_item_id );
-	$topic = get_topic( $post->topic_id );
-
-	// pre-load these arrays to reduce db calls in the loop
-	$ass_replies_to_my_topic = ass_user_settings_array( 'ass_replies_to_my_topic' );
-	$ass_replies_after_me_topic = ass_user_settings_array( 'ass_replies_after_me_topic' );
-	$user_topic_status = groups_get_groupmeta( $bp->groups->current_group->id , 'ass_user_topic_status_' . $topic->topic_id );
-	$previous_posters = ass_get_previous_posters( $post->topic_id );
-
-	// consolidate the arrays to speed up processing
-	foreach ( array_keys( $previous_posters) as $previous_poster ) {
-		if ( empty( $subscribed_users[ $previous_poster ] ) )
-			$subscribed_users[ $previous_poster ] = 'prev-post';
 	}
 
-	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
+	// now let's either send the email or record it for digest purposes
+	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
 		// Does the author want updates of his own posts?
-		if ( $user_id == $bp->loggedin_user->id ) {
+		if ($user_id == bp_loggedin_user_id() ) {
 			if ( !ass_self_post_notification() ) {
 				continue;
 			}
 		}
 
-		$send_it = false;
-		$topic_status = isset( $user_topic_status[ $user_id ] ) ? $user_topic_status[ $user_id ] : '';
+		$send_it = $notice = false;
 
-		//header('HTTP/1.1 200 OK'); echo '<p>uid:' . $user_id .' | gstat:' . $group_status . ' | tstat:'.$topic_status . ' | owner:'.$topic->topic_poster . ' | prev:'.$previous_posters[ $user_id ];
+		// default settings link
+		$settings_link = bp_get_groups_action_link( 'notifications' );
 
-		if ( $topic_status == 'mute' )  // the topic mute button will override the subscription options below
-			continue;
+		// do the following for new topics
+		if ( $is_topic ) {
+			if ( $group_status == 'sub' || $group_status == 'supersub' ) {
+				$send_it = true;
 
-		if ( $group_status == 'sum' && $topic_status != 'sub' ) // skip if user set to weekly summary (and they're not following this topic) // maybe not neccedary, but good to be cautious
-			continue;
+				$notice .= "\n" . __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
 
-		if ( $group_status == 'supersub' )
-			$send_it = true;
-		elseif ( $topic_status == 'sub' )
-			$send_it = true;
-		elseif ( $topic->topic_poster == $user_id && isset( $ass_replies_to_my_topic[$user_id] ) && $ass_replies_to_my_topic[ $user_id ] != 'no' )
-			$send_it = true;
-		elseif ( $previous_posters[ $user_id ] && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[ $user_id ] != 'no' )
-			$send_it = true;
+				// until we get a real follow link, this will have to do
+				if ( $group_status == 'sub' )
+					$notice .= __( ", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass' );
 
+				$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+			}
+		}
+		// do the following for forum replies
+		else {
+			$topic_status = isset( $user_topic_status[$user_id] ) ? $user_topic_status[$user_id] : '';
+
+			// the topic mute button will override the subscription options below
+			if ( $topic_status == 'mute' )
+				continue;
+
+			// skip if user set to weekly summary and they're not following this topic
+			// maybe not neccesary, but good to be cautious
+			if ( $group_status == 'sum' && $topic_status != 'sub' )
+				continue;
+
+			// User's group setting is "All Mail", so we should send this
+			if ( $group_status == 'supersub' ) {
+				$send_it = true;
+
+				$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
+				$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+				$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+			}
+
+			// User is manually subscribed to this topic
+			elseif ( $topic_status == 'sub' ) {
+				$send_it = true;
+
+				// change settings link to the forum thread
+				// get rid of any query args and anchors from the thread permalink
+				$settings_link = trailingslashit( strtok( $primary_link, '?' ) );
+
+				// let's change the notice to accurately reflect that the user is following this topic
+				$notice  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+				$notice .= "\n" . __( 'Once you are logged in, click on the "Mute this topic" button to unsubscribe from the forum thread.', 'bp-ass' );
+			}
+
+			// User started the topic and wants to receive email replies to his/her topic
+			elseif ( $topic->topic_poster == $user_id && isset( $ass_replies_to_my_topic[$user_id] ) && $ass_replies_to_my_topic[$user_id] != 'no' ) {
+				$send_it = true;
+
+				// override settings link to user's notifications
+				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+
+				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
+				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'bp-ass' );
+				$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+				$notice .= "\n" . __( 'Once you are logged in, uncheck "A member replies in a forum topic you\'ve started".', 'bp-ass' );
+			}
+
+			// User posted in this topic and wants to receive all subsequent replies
+			elseif ( $previous_posters[$user_id] && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[$user_id] != 'no' ) {
+				$send_it = true;
+
+				// override settings link to user's notifications
+				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+
+				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
+				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'bp-ass' );
+				$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+				$notice .= "\n" . __( 'Once you are logged in, uncheck "A member replies after you in a forum topic".', 'bp-ass' );
+			}
+		}
+
+		// if we're good to send, send the email!
 		if ( $send_it ) {
-			/* Content footer */
-			$footer = ass_group_unsubscribe_links( $user_id );
+			// Get the details for the user
+			$user = bp_core_get_core_userdata( $user_id );
 
-			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
-			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
-
+			// Send the email
 			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
-
-			//echo '<br>Email: ' . $user->user_email;
+				wp_mail( $user->user_email, $subject, $message . $notice );
 		}
 
-		if ( $group_status == 'dig' ) {
-			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
-			//echo '<br>Digest: ' . $user_id;
+		// otherwise if digest or summary, record it!
+		// temporarily save some variables to pass to groups_record_activity()
+		// actual digest recording occurs in ass_group_forum_record_digest()
+		if ( $group_status == 'dig' || ( $is_topic && $group_status == 'sum' ) ) {
+			$bp->ges->temp->user_id      = $user_id;
+			$bp->ges->temp->group_id     = bp_get_current_group_id();
+			$bp->ges->temp->group_status = $group_status;
 		}
 
+		unset( $notice );
 	}
 
-	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message ); echo '</pre>';
 }
-add_action( 'bp_activity_after_save', 'ass_group_notification_forum_reply' );
+add_action( 'bb_new_post', 'ass_group_notification_forum_posts' );
 
+/**
+ * Records group forum digest items in GES after the activity item is posted.
+ *
+ * {@link ass_group_notification_forum_posts()} handles non-digest sendouts, but
+ * for digest items, we have to wait for the corresponding activity item to be posted
+ * before we can record it.
+ */
+function ass_group_forum_record_digest( $activity ) {
+	global $bp;
 
+	// see if our temporary GES variable is set via ass_group_notification_forum_posts()
+	if ( ! empty( $bp->ges->temp ) ) {
+		// okay, we're good to go! let's record this digest item!
+		ass_digest_record_activity( $activity->id, $bp->ges->temp->user_id, $bp->ges->temp->group_id, $bp->ges->temp->group_status );
 
+		// unset the temporary variable
+		unset( $bp->ges );
+	}
+}
+add_action( 'bp_activity_after_save', 'ass_group_forum_record_digest' );
 
-
-// The email notification function for all other activity
+/**
+ * The email notification function for all other activity
+ */
 function ass_group_notification_activity( $content ) {
 	global $bp;
-	$type = $content->type;
+
+	$type      = $content->type;
 	$component = $content->component;
 
 	// the first two are handled above, the last is skipped entirely
@@ -246,21 +269,25 @@ function ass_group_notification_activity( $content ) {
 	if ( $component != 'groups' )
 		return;
 
-	if ( !ass_registered_long_enough( $bp->loggedin_user->id ) )
+	if ( !ass_registered_long_enough( bp_loggedin_user_id() ) )
 		return;
 
 	if ( $type == 'joined_group' )	// TODO: in the future, it might be nice for admins to optionally get this message
 		return;
 
 	$group_id = $content->item_id;
-	$action = ass_clean_subject( $content->action );
+	$action   = ass_clean_subject( $content->action );
 
 	if ( $type == 'activity_comment' ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
-		$group_id = $bp->groups->current_group->id;
-		$action = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $bp->groups->current_group->name;
+		$group_id = bp_get_current_group_id();
+		$action = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
 	}
 
 	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
+
+	// get the group object
+	// if the group is already set in the $bp global use that, otherwise get the group
+	$group  = groups_get_current_group() ? groups_get_current_group() : groups_get_group( 'group_id=' . $group_id );
 
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
@@ -268,7 +295,7 @@ function ass_group_notification_activity( $content ) {
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
 
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
-	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $bp->groups->current_group );
+	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $group );
 
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
@@ -302,7 +329,7 @@ To view or reply, log in and go to:
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
 
 		// Does the author want updates of his own posts?
-		if ( $user_id == $bp->loggedin_user->id ) {
+		if ( $user_id == bp_loggedin_user_id() ) {
 			if ( !ass_self_post_notification() )
 				continue;
 		}
@@ -382,10 +409,10 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 	global $bp;
 
 	if ( !$user_id )
-		$bp->loggedin_user->id;
+		$user_id = bp_loggedin_user_id();
 
 	if ( !$group_id )
-		$bp->groups->current_group->id;
+		$group_id = bp_get_current_group_id();
 
 	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
 
@@ -419,23 +446,25 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	}
 
 	groups_update_groupmeta( $group_id , 'ass_subscribed_users', $group_user_subscriptions );
+
+	// add a hook for 3rd-party plugin devs
+	do_action( 'ass_group_subscription', $user_id, $group_id, $action );
 }
 
 
 
 // show group subscription settings on the notification page.
-function ass_group_subscribe_settings ( $group = false ) {
-	global $bp, $groups_template;
+function ass_group_subscribe_settings () {
+	global $bp;
 
-	if ( !$group )
-		$group = $bp->groups->current_group;
+	$group = groups_get_current_group();
 
 	if ( !is_user_logged_in() || !empty( $group->is_banned ) || !$group->is_member )
 		return false;
 
-	$group_status = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
+	$group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), $group->id );
 
-	$submit_link = bp_get_group_permalink( $bp->groups->current_group ) . 'notifications';
+	$submit_link = bp_get_groups_action_link( 'notifications' );
 
 	?>
 	<div id="ass-email-subscriptions-options-page">
@@ -473,7 +502,7 @@ function ass_group_subscribe_settings ( $group = false ) {
 
 	<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="ass-save" name="ass-save" class="button-primary">
 
-	<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo $bp->loggedin_user->domain . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
+	<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo bp_loggedin_user_domain() . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
 
 	</form>
 	</div><!-- end ass-email-subscriptions-options-page -->
@@ -491,7 +520,7 @@ function ass_update_group_subscribe_settings() {
 
 			//if ( !wp_verify_nonce( $nonce, 'ass_subscribe' ) ) die( 'A Security check failed' );
 
-			$user_id = $bp->loggedin_user->id;
+			$user_id = bp_loggedin_user_id();
 			$group_id = $_POST[ 'ass_group_id' ];
 			$action = $_POST[ 'ass_group_subscribe' ];
 
@@ -527,11 +556,15 @@ function ass_subscribe_translate( $status ){
 
 
 // this adds the ajax-based subscription option in the group header, or group directory
-function ass_group_subscribe_button( $group = false ) {
+function ass_group_subscribe_button() {
 	global $bp, $groups_template;
 
-	if ( !$group )
+	if( ! empty( $groups_template ) ) {
 		$group =& $groups_template->group;
+	}
+	else {
+		$group = groups_get_current_group();
+	}
 
 	if ( !is_user_logged_in() || !empty( $group->is_banned ) || !$group->is_member )
 		return;
@@ -540,7 +573,7 @@ function ass_group_subscribe_button( $group = false ) {
 	if ( bp_displayed_user_id() && ( bp_loggedin_user_id() != bp_displayed_user_id() ) )
 		return;
 
-	$group_status = ass_get_group_subscription_status( $bp->loggedin_user->id, $group->id );
+	$group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), $group->id );
 
 	if ( $group_status == 'no' )
 		$group_status = NULL;
@@ -589,7 +622,7 @@ function ass_group_ajax_callback() {
 	//check_ajax_referer( "ass_group_subscribe" );
 
 	$action = $_POST['a'];
-	$user_id = $bp->loggedin_user->id;
+	$user_id = bp_loggedin_user_id();
 	$group_id = $_POST['group_id'];
 
 	ass_group_subscription( $action, $user_id, $group_id );
@@ -638,7 +671,7 @@ add_action( 'groups_member_after_save', 'ass_set_default_subscription', 20, 1 );
 function ass_join_group_message( $group_id, $user_id ) {
 	global $bp;
 
-	if ( $user_id != $bp->loggedin_user->id  )
+	if ( $user_id != bp_loggedin_user_id()  )
 		return;
 
 	$status = apply_filters( 'ass_default_subscription_level', groups_get_groupmeta( $group_id, 'ass_default_subscription' ), $group_id );
@@ -735,7 +768,7 @@ function ass_get_topic_subscription_status( $user_id, $topic_id ) {
 	if ( !$user_id || !$topic_id )
 		return false;
 
-	$user_topic_status = groups_get_groupmeta( $bp->groups->current_group->id, 'ass_user_topic_status_' . $topic_id );
+	$user_topic_status = groups_get_groupmeta( bp_get_current_group_id(), 'ass_user_topic_status_' . $topic_id );
 
 	if ( is_array( $user_topic_status ) && isset( $user_topic_status[ $user_id ] ) )
 		return ( $user_topic_status[ $user_id ] );
@@ -754,8 +787,8 @@ function ass_topic_follow_or_mute_link() {
 		return;
 
 	$topic_id = bp_get_the_topic_id();
-	$topic_status = ass_get_topic_subscription_status( $bp->loggedin_user->id, $topic_id );
-	$group_status = ass_get_group_subscription_status( $bp->loggedin_user->id, $bp->groups->current_group->id );
+	$topic_status = ass_get_topic_subscription_status( bp_loggedin_user_id(), $topic_id );
+	$group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), bp_get_current_group_id() );
 
 	if ( $topic_status == 'mute' || ( $group_status != 'supersub' && !$topic_status ) ) {
 		$action = 'follow';
@@ -772,12 +805,12 @@ function ass_topic_follow_or_mute_link() {
 	if ( $topic_status == 'mute' )
 		$title = __('This conversation is muted. Click to follow it','bp-ass');
 
-	if ( $action && isset( $bp->action_variables[0] ) && $bp->action_variables[0] == 'topic' ) { // we're viewing one topic
+	if ( $action && bp_is_action_variable( 'topic', 0 ) ) { // we're viewing one topic
 		echo '<div class="generic-button ass-topic-subscribe"><a title="'.$title.'"
-			id="'.$action.'-'.$topic_id.'">'.$link_text.' '.__('this topic','bp-ass').'</a></div>';
+			id="'.$action.'-'.$topic_id.'-'.bp_get_current_group_id().'">'.$link_text.' '.__('this topic','bp-ass').'</a></div>';
 	} else if ( $action )  { // we're viewing a list of topics
 		echo '<td class="td-email-sub"><div class="generic-button ass-topic-subscribe"><a title="'.$title.'"
-			id="'.$action.'-'.$topic_id.'">'.$link_text.'</a></div></td>';
+			id="'.$action.'-'.$topic_id.'-'.bp_get_current_group_id().'">'.$link_text.'</a></div></td>';
 	}
 }
 add_action( 'bp_directory_forums_extra_cell', 'ass_topic_follow_or_mute_link', 50 );
@@ -804,10 +837,11 @@ function ass_ajax_callback() {
 	//check_ajax_referer( "ass_subscribe" );
 
 	$action = $_POST['a'];  // action is used by ajax, so we use a here
-	$user_id = $bp->loggedin_user->id;
+	$user_id = bp_loggedin_user_id();
 	$topic_id = $_POST['topic_id'];
+	$group_id = $_POST['group_id'];
 
-	ass_topic_subscribe_or_mute( $action, $user_id, $topic_id );
+	ass_topic_subscribe_or_mute( $action, $user_id, $topic_id, $group_id );
 
 	echo $action;
 	die();
@@ -816,14 +850,14 @@ add_action( 'wp_ajax_ass_ajax', 'ass_ajax_callback' );
 
 
 // Adds/removes a $topic_id from the $user_id's mute list.
-function ass_topic_subscribe_or_mute( $action, $user_id, $topic_id ) {
+function ass_topic_subscribe_or_mute( $action, $user_id, $topic_id, $group_id ) {
 	global $bp;
 
-	if ( !$action || !$user_id || !$topic_id )
+	if ( !$action || !$user_id || !$topic_id || !$group_id )
 		return false;
 
 	//$mute_list = get_usermeta( $user_id, 'ass_topic_mute' );
-	$user_topic_status = groups_get_groupmeta( $bp->groups->current_group->id, 'ass_user_topic_status_' . $topic_id );
+	$user_topic_status = groups_get_groupmeta( $group_id, 'ass_user_topic_status_' . $topic_id );
 
 	if ( $action == 'unsubscribe' ||  $action == 'mute' ) {
 		//$mute_list[ $topic_id ] = 'mute';
@@ -834,8 +868,11 @@ function ass_topic_subscribe_or_mute( $action, $user_id, $topic_id ) {
 	}
 
 	//update_usermeta( $user_id, 'ass_topic_mute', $mute_list );
-	groups_update_groupmeta( $bp->groups->current_group->id , 'ass_user_topic_status_' . $topic_id, $user_topic_status );
+	groups_update_groupmeta( $group_id , 'ass_user_topic_status_' . $topic_id, $user_topic_status );
 	//bb_update_topicmeta( $topic_id, 'ass_mute_users', $user_id );
+
+	// add a hook for 3rd-party plugin devs
+	do_action( 'ass_topic_subscribe_or_mute', $user_id, $group_id, $topic_id, $action );
 }
 
 
@@ -865,7 +902,7 @@ function ass_get_previous_posters( $topic_id ) {
 function ass_user_settings_array( $setting ) {
 	global $wpdb;
 	$results = $wpdb->get_results( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key LIKE '{$setting}'" );
-	
+
 	$settings = array();
 
 	foreach ( $results as $result ) {
@@ -929,9 +966,9 @@ function ass_registered_long_enough( $activity_user_id ) {
 function ass_show_subscription_status_in_member_list( $user_id='' ) {
 	global $bp, $members_template;
 
-	$group_id = $bp->groups->current_group->id;
+	$group_id = bp_get_current_group_id();
 
-	if ( groups_is_user_admin( $bp->loggedin_user->id , $group_id ) || groups_is_user_mod( $bp->loggedin_user->id , $group_id ) || is_super_admin() ) {
+	if ( groups_is_user_admin( bp_loggedin_user_id() , $group_id ) || groups_is_user_mod( bp_loggedin_user_id() , $group_id ) || is_super_admin() ) {
 		if ( !$user_id )
 			$user_id = $members_template->member->user_id;
 		$sub_type = ass_get_group_subscription_status( $user_id, $group_id );
@@ -974,7 +1011,7 @@ function ass_manage_members_email_update() {
 
 		if ( !$bp->is_item_admin )
 			return false;
-			
+
 		if ( bp_is_action_variable( 'email', 1 ) && ( bp_is_action_variable( 'no', 2 ) || bp_is_action_variable( 'sum', 2 ) || bp_is_action_variable( 'dig', 2 ) || bp_is_action_variable( 'sub', 2 ) || bp_is_action_variable( 'supersub', 2 ) ) && isset( $bp->action_variables[3] ) && is_numeric( $bp->action_variables[3] ) ) {
 
 			$user_id = $bp->action_variables[3];
@@ -984,7 +1021,7 @@ function ass_manage_members_email_update() {
 			if ( !check_admin_referer( 'ass_member_email_status' ) )
 				return false;
 
-			ass_group_subscription( $action, $user_id, $bp->groups->current_group->id );
+			ass_group_subscription( $action, $user_id, bp_get_current_group_id() );
 			bp_core_add_message( __( 'User email status changed successfully', 'bp-ass' ) );
 			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/manage-members/' );
 		}
@@ -1003,19 +1040,19 @@ add_action( 'bp_actions', 'ass_manage_members_email_update' );
  */
 function ass_group_default_status( $group_id = false ) {
 	global $bp;
-	
+
 	if ( !$group_id )
-		$group_id = bp_is_group() ? $bp->groups->current_group->id : false;
-	
+		$group_id = bp_is_group() ? bp_get_current_group_id() : false;
+
 	if ( !$group_id )
 		return '';
-	
+
 	$status = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
-	
+
 	if ( !$status ) {
 		$status = apply_filters( 'ass_default_subscription_level', 'supersub', $group_id );
 	}
-	
+
 	return apply_filters( 'ass_group_default_status', $status, $group_id );
 }
 
@@ -1051,15 +1088,15 @@ function ass_manage_all_members_email_update() {
 			if ( !check_admin_referer( 'ass_change_all_email_sub' ) )
 				return false;
 
-			$result = BP_Groups_Member::get_all_for_group( $bp->groups->current_group->id, 0, 0, 0 ); // set the last value to 1 to exclude admins
+			$result = BP_Groups_Member::get_all_for_group( bp_get_current_group_id(), 0, 0, 0 ); // set the last value to 1 to exclude admins
 			$members = $result['members'];
 
 			foreach ( $members as $member ) {
-				ass_group_subscription( $action, $member->user_id, $bp->groups->current_group->id );
+				ass_group_subscription( $action, $member->user_id, bp_get_current_group_id() );
 			}
 
 			bp_core_add_message( __( 'All user email status\'s changed successfully', 'bp-ass' ) );
-			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/manage-members/' );
+			bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/manage-members/' );
 		}
 	}
 }
@@ -1068,13 +1105,31 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
 
 // Add a notice at end of email notification about how to change group email subscriptions
 function ass_add_notice_to_notifications_page() {
-	echo '<p><b>'.__('Group Email Settings','bp-ass').'</b></p>';
-	echo '<p>' . sprintf( __('To change the email notification settings for your groups go to %s and click change for each group.','bp-ass') . '</p>', '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">'.__('My Groups','bp-ass') .'</a>' );
+?>
+		<div id="group-email-settings">
+			<table class="notification-settings zebra">
+				<thead>
+					<tr>
+						<th class="icon">&nbsp;</th>
+						<th class="title"><?php _e( 'Individual Group Email Settings', 'bp-ass' ); ?></th>
+					</tr>
+				</thead>
 
-	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
-		echo '<p><a href="' . wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ) . '">';
-		echo __( 'Set all your groups email options to No Email' ) . '</a></p>';
-	}
+				<tbody>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+							<p><?php printf( __('To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'bp-ass' ), '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">' . __( 'My Groups' ,'bp-ass' ) . '</a>' ); ?></p>
+
+							<?php if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) : ?>
+								<p><a href="<?php echo wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ); ?>"><?php _e( "Or set all your group's email options to No Email", 'bp-ass' ); ?></a></p>
+							<?php endif; ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+<?php
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
 
@@ -1134,8 +1189,8 @@ function ass_user_unsubscribe_form() {
 		ass_unsubscribe_user( $user_id, (array) $group->id );
 
 		$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'bp-ass' ), '<a href="' . bp_get_group_permalink( $group ) . '">' . $group->name . '</a>' );
-		
-		$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_group_permalink( $group ), esc_html( $group->name ) );  
+
+		$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_group_permalink( $group ), esc_html( $group->name ) );
 
 		$unsubscribed = true;
 	} else {
@@ -1147,7 +1202,7 @@ function ass_user_unsubscribe_form() {
 			ass_unsubscribe_user( $user_id );
 
 			$message = __( 'Your unsubscription was successful. You will no longer receive email notifications from any of your groups.', 'bp-ass' );
-		
+
 			$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_root_domain(), get_option( 'blogname' ) );
 
 			$unsubscribed = true;
@@ -1210,12 +1265,12 @@ add_action( 'bp_init', 'ass_user_unsubscribe_form' );
 function ass_admin_notice_form() {
 	global $bp;
 
-	if ( groups_is_user_admin( $bp->loggedin_user->id , $bp->groups->current_group->id ) || is_super_admin() ) {
-		$submit_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/notifications';
+	if ( groups_is_user_admin( bp_loggedin_user_id() , bp_get_current_group_id() ) || is_super_admin() ) {
+		$submit_link = bp_get_groups_action_link( 'notifications' );
 		?>
 		<form action="<?php echo $submit_link ?>" method="post">
 			<?php wp_nonce_field( 'ass_email_options' ); ?>
-			<input type="hidden" name="ass_group_id" value="<?php echo $bp->groups->current_group->id; ?>"/>
+			<input type="hidden" name="ass_group_id" value="<?php echo bp_get_current_group_id(); ?>"/>
 
 			<h3><?php _e('Send an email notice to everyone in the group', 'bp-ass'); ?></h3>
 			<p><?php _e('You can use the form below to send an email notice to all group members.', 'bp-ass'); ?> <br>
@@ -1237,7 +1292,7 @@ function ass_admin_notice_form() {
 
 			<br />
 
-			<?php $welcome_email = groups_get_groupmeta( $bp->groups->current_group->id, 'ass_welcome_email' ); ?>
+			<?php $welcome_email = groups_get_groupmeta( bp_get_current_group_id(), 'ass_welcome_email' ); ?>
 			<?php $welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : ''; ?>
 
 			<h3><?php _e( 'Welcome Email', 'bp-ass' ); ?></h3>
@@ -1272,12 +1327,10 @@ function ass_admin_notice_form() {
 // This function sends an email out to all group members regardless of subscription status.
 // TODO: change this function so the separate from is remove from the admin area and make it a checkbox under the 'add new topic' form. that way group admins can simply check off the box and it'll go to everyone. The benefit: notices are stored in the discussion form for later viewing. We should also alert the admin just how many people will get his post.
 function ass_admin_notice() {
-    global $bp;
-
     if ( bp_is_groups_component() && bp_is_current_action( 'admin' ) && bp_is_action_variable( 'notifications', 0 ) ) {
 
 	    // Make sure the user is an admin
-		if ( !groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && !is_super_admin() )
+		if ( !groups_is_user_admin( bp_loggedin_user_id(), bp_get_current_group_id() ) && ! is_super_admin() )
 			return;
 
 		if ( get_option('ass-admin-can-send-email') == 'no' )
@@ -1291,8 +1344,8 @@ function ass_admin_notice() {
 			bp_core_add_message( __( 'The email notice was sent not sent. Please enter email content.', 'bp-ass' ), 'error' );
 		} else {
 			$group_id   = $_POST[ 'ass_group_id' ];
-			$group_name = $bp->groups->current_group->name;
-			$group_link = $bp->root_domain . '/' . $bp->groups->slug . '/' . $bp->groups->current_group->slug . '/';
+			$group_name = bp_get_current_group_name();
+			$group_link = bp_get_group_permalink( groups_get_current_group() );
 
 			$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 			$subject    = $_POST[ 'ass_admin_notice_subject' ];
@@ -1330,30 +1383,28 @@ If you feel this service is being misused please speak to the website administra
 			//echo '<pre>'; print_r( $message ); echo '</pre>';
 		}
 
-		bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
+		bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );
 	}
 }
 add_action( 'bp_actions', 'ass_admin_notice', 1 );
 
 // save welcome email option
 function ass_save_welcome_email() {
-	global $bp;
-
 	if ( bp_is_groups_component() && bp_is_current_action( 'admin' ) && bp_is_action_variable( 'notifications', 0 ) ) {
 
 		if ( ! isset( $_POST['ass_welcome_email_submit'] ) )
 			return;
 
-		if ( ! groups_is_user_admin( $bp->loggedin_user->id, $bp->groups->current_group->id ) && ! is_super_admin() )
+		if ( ! groups_is_user_admin( bp_loggedin_user_id(), bp_get_current_group_id() ) && ! is_super_admin() )
 			return;
 
 		check_admin_referer( 'ass_email_options' );
 
 		$values = stripslashes_deep( $_POST['ass_welcome_email'] );
-		groups_update_groupmeta( $bp->groups->current_group->id, 'ass_welcome_email', $values );
+		groups_update_groupmeta( bp_get_current_group_id(), 'ass_welcome_email', $values );
 
 		bp_core_add_message( __( 'The welcome email option has been saved.', 'bp-ass' ) );
-		bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/notifications/' );
+		bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );
 	}
 }
 add_action( 'bp_actions', 'ass_save_welcome_email', 1 );
@@ -1389,8 +1440,8 @@ add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
 // adds forum notification options in the users settings->notifications page
 function ass_group_subscription_notification_settings() {
-	global $bp; ?>
-	<table class="notification-settings zebra" id="groups-notification-settings">
+?>
+	<table class="notification-settings zebra" id="groups-subscription-notification-settings">
 	<thead>
 		<tr>
 			<th class="icon"></th>
@@ -1403,20 +1454,20 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_user_meta( $bp->displayed_user->id, 'ass_replies_to_my_topic', true ) || 'yes' == get_user_meta( $bp->displayed_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_user_meta( $bp->displayed_user->id, 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) || 'yes' == get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( $bp->displayed_user->id, 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( $bp->displayed_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( $bp->displayed_user->id, 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 		<tr>
 			<td></td>
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification( $bp->displayed_user->id ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification( $bp->displayed_user->id ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
 
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
@@ -1441,7 +1492,7 @@ function ass_self_post_notification( $user_id = false ) {
 	global $bp;
 
 	if ( empty( $user_id ) )
-		$user_id = $bp->loggedin_user->id;
+		$user_id = bp_loggedin_user_id();
 
 	$meta = get_user_meta( $user_id, 'ass_self_post_notification', true );
 
@@ -1590,7 +1641,7 @@ function ass_admin_options() {
 		<input type="hidden" name="cmd" value="_s-xclick">
 		<input type="hidden" name="hosted_button_id" value="PXD76LU2VQ5AS">
 		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-		<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+		<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 
 	</div>
 	<?php
