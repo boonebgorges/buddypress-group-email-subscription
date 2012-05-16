@@ -39,14 +39,18 @@ function ass_group_unsubscribe_links( $user_id ) {
 function ass_group_notification_forum_posts( $post_id ) {
 	global $bp;
 
+	$post = bb_get_post( $post_id );
+
 	// Check to see if user has been registered long enough
-	if ( !ass_registered_long_enough( bp_loggedin_user_id() ) )
+	if ( !ass_registered_long_enough( $post->poster_id ) )
 		return;
 
-	$post         = bb_get_post( $post_id );
 	$topic        = get_topic( $post->topic_id );
 
-	$primary_link = bp_get_groups_action_link( 'forum/topic/' . $topic->topic_slug );
+	// this will need to be filtered by 3rd-party plugins manually adding forum posts
+	$group        = groups_get_current_group();
+
+	$primary_link = trailingslashit( bp_get_group_permalink( $group ) . 'forum/topic/' . $topic->topic_slug );
 	$blogname     = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 
 	$is_topic = false;
@@ -55,7 +59,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 	if ( $post->post_position == 1 ) {
 		$is_topic    = true;
 
-		$action      = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, bp_get_current_group_name() );
+		$action      = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
 		$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $post->post_text );
@@ -63,7 +67,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 	}
 	// this is a forum reply
 	else {
-		$action = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, bp_get_current_group_name() );
+		$action = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		// calculate the topic page for pagination purposes
 		$pag_num = apply_filters( 'bp_ass_topic_pag_num', 15 );
@@ -90,7 +94,7 @@ To view or reply to this topic, log in and go to:
 ', 'bp-ass'), $action . ':', $the_content, $primary_link);
 
 	// get subscribed users
-	$subscribed_users = groups_get_groupmeta( bp_get_current_group_id(), 'ass_subscribed_users' );
+	$subscribed_users = groups_get_groupmeta( $group->id, 'ass_subscribed_users' );
 
 	// do this for forum replies only
 	if ( ! $is_topic ) {
@@ -100,7 +104,7 @@ To view or reply to this topic, log in and go to:
 		$previous_posters           = ass_get_previous_posters( $post->topic_id );
 
 		// make sure manually-subscribed topic users and regular group subscribed users are combined
-		$user_topic_status = groups_get_groupmeta( bp_get_current_group_id(), 'ass_user_topic_status_' . $topic->topic_id );
+		$user_topic_status = groups_get_groupmeta( $group->id, 'ass_user_topic_status_' . $topic->topic_id );
 
 		if ( ! empty( $subscribed_users ) && ! empty( $user_topic_status ) )
 			$subscribed_users = $subscribed_users + $user_topic_status;
@@ -115,7 +119,7 @@ To view or reply to this topic, log in and go to:
 	// now let's either send the email or record it for digest purposes
 	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
 		// Does the author want updates of his own posts?
-		if ($user_id == bp_loggedin_user_id() ) {
+		if ($user_id == $post->poster_id ) {
 			if ( !ass_self_post_notification() ) {
 				continue;
 			}
@@ -189,7 +193,7 @@ To view or reply to this topic, log in and go to:
 			}
 
 			// User posted in this topic and wants to receive all subsequent replies
-			elseif ( isset( $previous_posters[$user_id] ) && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[$user_id] != 'no' ) {
+			elseif ( $previous_posters[$user_id] && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[$user_id] != 'no' ) {
 				$send_it = true;
 
 				// override settings link to user's notifications
@@ -217,7 +221,7 @@ To view or reply to this topic, log in and go to:
 		// actual digest recording occurs in ass_group_forum_record_digest()
 		if ( $group_status == 'dig' || ( $is_topic && $group_status == 'sum' ) ) {
 			$bp->ges->temp->user_id      = $user_id;
-			$bp->ges->temp->group_id     = bp_get_current_group_id();
+			$bp->ges->temp->group_id     = $group->id;
 			$bp->ges->temp->group_status = $group_status;
 		}
 
@@ -256,6 +260,7 @@ function ass_group_notification_activity( $content ) {
 
 	$type      = $content->type;
 	$component = $content->component;
+	$sender_id = $content->user_id;
 
 	// the first two are handled above, the last is skipped entirely
 	if ( $type == 'new_forum_topic' || $type == 'new_forum_post' || $type == 'created_group' )
@@ -269,7 +274,7 @@ function ass_group_notification_activity( $content ) {
 	if ( $component != 'groups' )
 		return;
 
-	if ( !ass_registered_long_enough( bp_loggedin_user_id() ) )
+	if ( !ass_registered_long_enough( $sender_id ) )
 		return;
 
 	if ( $type == 'joined_group' )	// TODO: in the future, it might be nice for admins to optionally get this message
@@ -279,8 +284,10 @@ function ass_group_notification_activity( $content ) {
 	$action   = ass_clean_subject( $content->action );
 
 	if ( $type == 'activity_comment' ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
+		// this will need to be filtered for plugins manually adding group activity comments
 		$group_id = bp_get_current_group_id();
-		$action = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
+
+		$action   = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
 	}
 
 	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
@@ -329,7 +336,7 @@ To view or reply, log in and go to:
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
 
 		// Does the author want updates of his own posts?
-		if ( $user_id == bp_loggedin_user_id() ) {
+		if ( $user_id == $sender_id ) {
 			if ( !ass_self_post_notification() )
 				continue;
 		}
