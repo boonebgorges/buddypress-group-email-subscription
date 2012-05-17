@@ -37,7 +37,7 @@ function ass_group_unsubscribe_links( $user_id ) {
  * Hooks into the bbPress action - 'bb_new_post' - to easily identify new forum posts vs edits.
  */
 function ass_group_notification_forum_posts( $post_id ) {
-	global $bp;
+	global $bp, $wpdb;
 
 	$post = bb_get_post( $post_id );
 
@@ -45,10 +45,29 @@ function ass_group_notification_forum_posts( $post_id ) {
 	if ( !ass_registered_long_enough( $post->poster_id ) )
 		return;
 
-	$topic        = get_topic( $post->topic_id );
+	$topic = get_topic( $post->topic_id );
 
-	// this will need to be filtered by 3rd-party plugins manually adding forum posts
-	$group        = groups_get_current_group();
+	$group = groups_get_current_group();
+
+	// if the current group isn't available, grab it
+	if ( empty( $group ) ) {
+		// get the group ID by looking up the forum ID in the groupmeta table
+		$group_id = $wpdb->get_var( $wpdb->prepare(
+			"
+				SELECT group_id
+				FROM {$bp->groups->table_name_groupmeta}
+				WHERE meta_key = %s
+				AND meta_value = %d
+			",
+			'forum_id',
+			$topic->forum_id
+		) );
+
+		// now get the group
+		$group = groups_get_group( array(
+			'group_id' => $group_id
+		) );
+	}
 
 	$primary_link = trailingslashit( bp_get_group_permalink( $group ) . 'forum/topic/' . $topic->topic_slug );
 	$blogname     = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
