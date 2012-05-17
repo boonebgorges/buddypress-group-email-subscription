@@ -119,7 +119,7 @@ if ( !function_exists( 'bp_get_current_group_name' ) ) :
 	}
 endif;
 
-if ( !function_exists( 'groups_get_current_group' ) ) :
+if ( !function_exists( 'bp_get_current_group_id' ) ) :
 	function bp_get_current_group_id() {
 		$current_group = groups_get_current_group();
 
