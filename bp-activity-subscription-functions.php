@@ -147,7 +147,7 @@ To view or reply to this topic, log in and go to:
 		$send_it = $notice = false;
 
 		// default settings link
-		$settings_link = bp_get_groups_action_link( 'notifications' );
+		$settings_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
 
 		// do the following for new topics
 		if ( $is_topic ) {
