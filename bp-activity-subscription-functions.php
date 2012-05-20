@@ -155,10 +155,15 @@ To view or reply to this topic, log in and go to:
 				$send_it = true;
 
 				$notice .= "\n" . __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
-
+				
 				// until we get a real follow link, this will have to do
-				if ( $group_status == 'sub' )
+				if ( $group_status == 'sub' ) {
 					$notice .= __( ", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass' );
+				}
+				// user's group setting is "All Mail"
+				elseif ( $group_status == 'supersub' ) {
+					$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+				}
 
 				$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
 			}
