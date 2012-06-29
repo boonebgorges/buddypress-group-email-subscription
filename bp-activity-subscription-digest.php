@@ -89,7 +89,7 @@ function ass_digest_fire( $type ) {
 			}
 		}
 	}
-	
+
 	$items = bp_activity_get_specific( array(
 		'sort' 		=> 'ASC',
 		'activity_ids' 	=> $all_activity_items,
@@ -105,7 +105,8 @@ function ass_digest_fire( $type ) {
 
 	foreach ( (array)$user_subscriptions as $user ) {
 		$user_id = $user->user_id;
-		$group_activity_ids_array = maybe_unserialize( $user->meta_value );
+
+		$group_activity_ids_array = unserialize( $user->meta_value );
 		$summary = $activity_message = '';
 
 		// We only want the weekly or daily ones
@@ -401,46 +402,32 @@ function ass_convert_html_to_plaintext( $message ) {
 	return $message;
 }
 
-// formats and sends a MIME multipart email with both HTML and plaintext using PHPMailer to get better control
+/**
+ * Formats and sends a MIME multipart email with both HTML and plaintext
+ *
+ * We have to use some fancy filters from the wp_mail function to configure the $phpmailer object
+ * properly
+ */
 function ass_send_multipart_email( $to, $subject, $message_plaintext, $message ) {
-	global $phpmailer;
-
-	// (Re)create it, if it's gone missing
-	if ( !is_object( $phpmailer ) || !is_a( $phpmailer, 'PHPMailer' ) ) {
-		require_once ABSPATH . WPINC . '/class-phpmailer.php';
-		require_once ABSPATH . WPINC . '/class-smtp.php';
-		$phpmailer = new PHPMailer();
-	}
-
-	// clear up stuff
-	$phpmailer->ClearAddresses();$phpmailer->ClearAllRecipients();$phpmailer->ClearAttachments();
-	$phpmailer->ClearBCCs();$phpmailer->ClearCCs();$phpmailer->ClearCustomHeaders();
-	$phpmailer->ClearReplyTos();
 
 	$admin_email = get_site_option( 'admin_email' );
 	if ( $admin_email == '' )
 		$admin_email = 'support@' . $_SERVER['SERVER_NAME'];
 	$from_name = get_site_option( 'site_name' ) == '' ? 'WordPress' : esc_html( get_site_option( 'site_name' ) );
-	$phpmailer->From     = apply_filters( 'wp_mail_from'     , $admin_email );
-	$phpmailer->FromName = apply_filters( 'wp_mail_from_name', $from_name  );
 
-	foreach ( (array) $to as $recipient ) {
-		$phpmailer->AddAddress( trim( $recipient ) );
-	}
+	add_filter( 'wp_mail_from',      create_function( '$admin_email', 'return $admin_email;' ) );
+	add_filter( 'wp_mail_from_name', create_function( '$from_name', 'return $from_name;' ) );
 
-	$phpmailer->Subject = $subject;
-	$phpmailer->Body    = "<html><body>\n".$message."\n</body></html>";
-	$phpmailer->AltBody	= $message_plaintext;
-	$phpmailer->IsHTML( true );
-	$phpmailer->IsMail();
-	$charset = get_bloginfo( 'charset' );
+	add_action( 'phpmailer_init', create_function( '$phpmailer', '
+		$phpmailer->Body = "<html><body>' . addslashes( $message ) . '</body></html>";
+		$phpmailer->AltBody = "' . $message_plaintext . '";
+	' ) );
 
-	$phpmailer->CharSet = apply_filters( 'wp_mail_charset', $charset );
+	$headers = array(
+		'content_type' => 'text/html'
+	);
 
-	//do_action_ref_array( 'phpmailer_init', array( &$phpmailer ) );
-
-	// Send!
-	$result = @$phpmailer->Send();
+	$result = wp_mail( $to, $subject, $message_plaintext, $headers );
 
 	return $result;
 }

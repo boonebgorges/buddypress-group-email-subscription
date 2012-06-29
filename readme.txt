@@ -93,6 +93,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.2 =
+Rewrote digest emailer to use wp_mail(), for better compatibility with WP SMTP plugins
+
 = 3.1.2 =
 Corrected a bug in the way digest links are constructed
 Added Lithuanian translation

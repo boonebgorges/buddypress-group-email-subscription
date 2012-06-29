@@ -155,7 +155,7 @@ To view or reply to this topic, log in and go to:
 				$send_it = true;
 
 				$notice .= "\n" . __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
-				
+
 				// until we get a real follow link, this will have to do
 				if ( $group_status == 'sub' ) {
 					$notice .= __( ", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass' );
