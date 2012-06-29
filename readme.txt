@@ -95,6 +95,8 @@ Other supporters: bluedotproductions.com
 
 = 3.2 =
 Rewrote digest emailer to use wp_mail(), for better compatibility with WP SMTP plugins
+Better compatibility with BP 1.5+ native functions
+Refactored forum notification function, to work around bugs related to double posts. Many thanks to r-a-y for his work on this
 
 = 3.1.2 =
 Corrected a bug in the way digest links are constructed
