@@ -1399,6 +1399,9 @@ If you feel this service is being misused please speak to the website administra
 
 			$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
 
+			// allow others to perform an action when this type of email is sent, like adding to the activity feed
+			do_action( 'ass_admin_notice', $group_id, $subject, $_POST['ass_admin_notice'] ); 
+			
 			// cycle through all group members
 			foreach ( (array)$user_ids as $user_id ) {
 				$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
