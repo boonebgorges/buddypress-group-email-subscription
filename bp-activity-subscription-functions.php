@@ -555,13 +555,21 @@ function ass_update_group_subscribe_settings() {
 			$group_id = $_POST[ 'ass_group_id' ];
 			$action = $_POST[ 'ass_group_subscribe' ];
 
+			//print_r( 'here' ); die();
+			
 			if ( !groups_is_user_member( $user_id, $group_id ) )
 				return;
 
 			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
 
 			bp_core_add_message( sprintf( __( 'Your email notifications are set to %s for this group.', 'bp-ass' ), ass_subscribe_translate( $action ) ) );
-			bp_core_redirect( wp_get_referer() );
+			
+			/* 
+			Redirect commented out because:
+			"If page "refered" (form posted) to itself, returns false"
+			http://codex.wordpress.org/Function_Reference/wp_get_referer
+			*/
+			//bp_core_redirect( wp_get_referer() );
 		}
 	}
 }
