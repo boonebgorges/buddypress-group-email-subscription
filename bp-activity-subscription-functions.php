@@ -555,13 +555,21 @@ function ass_update_group_subscribe_settings() {
 			$group_id = $_POST[ 'ass_group_id' ];
 			$action = $_POST[ 'ass_group_subscribe' ];
 
+			//print_r( 'here' ); die();
+			
 			if ( !groups_is_user_member( $user_id, $group_id ) )
 				return;
 
 			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
 
 			bp_core_add_message( sprintf( __( 'Your email notifications are set to %s for this group.', 'bp-ass' ), ass_subscribe_translate( $action ) ) );
-			bp_core_redirect( wp_get_referer() );
+			
+			/* 
+			Redirect commented out because:
+			"If page "refered" (form posted) to itself, returns false"
+			http://codex.wordpress.org/Function_Reference/wp_get_referer
+			*/
+			//bp_core_redirect( wp_get_referer() );
 		}
 	}
 }
@@ -1023,14 +1031,14 @@ function ass_manage_members_email_status(  $user_id='' ) {
 	$group = &$groups_template->group;
 	$group_url = bp_get_group_permalink( $group ) . 'admin/manage-members/email';
 	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
-	echo '<div class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';
+	echo '<span class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';
 	echo ' &nbsp; '.__('Change to:','bp-ass').' ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
-	echo '</div>';
+	echo '</span>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
 
@@ -1099,7 +1107,7 @@ function ass_change_all_email_sub() {
 	if (! $default_email_sub = ass_get_default_subscription( $group ) )
 		$default_email_sub = 'no';
 
-	echo '<p><br>'.__('Site Admin Only: update email subscription settings for ALL members to the default:', 'bp-ass').' <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  '.__('Warning: this is not reversible so use with caution.', 'bp-ass').' <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">'.__('Make it so!', 'bp-ass').'</a>';
+	echo '<p><br>'.__('Site Admin Only: update email subscription settings for ALL members to the default:', 'bp-ass').' <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  '.__('Warning: this is not reversible so use with caution.', 'bp-ass').' <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">'.__('Make it so!', 'bp-ass').'</a></p>';
 }
 add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
 
