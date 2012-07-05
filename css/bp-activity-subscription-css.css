@@ -104,4 +104,10 @@ h4.activity-subscription-settings-title {
 
 .ass_members_status { font-size:11px; color:#aaa; margin-top:5px; } /* only admins see this */
 
-.ass_manage_members_links { font-size:11px; color:#888; } /* only admins see this */
+/* only admins see this */
+.ass_manage_members_links {
+	display:block;
+	padding-top: 8px;
+	font-size:11px; 
+	color:#888; 
+}

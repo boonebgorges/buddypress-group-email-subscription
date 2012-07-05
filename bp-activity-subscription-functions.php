@@ -1023,14 +1023,14 @@ function ass_manage_members_email_status(  $user_id='' ) {
 	$group = &$groups_template->group;
 	$group_url = bp_get_group_permalink( $group ) . 'admin/manage-members/email';
 	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
-	echo '<div class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';
+	echo '<span class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';
 	echo ' &nbsp; '.__('Change to:','bp-ass').' ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
-	echo '</div>';
+	echo '</span>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
 
