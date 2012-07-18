@@ -277,7 +277,7 @@ function ass_group_forum_record_digest( $activity ) {
 	global $bp;
 
 	// see if our temporary GES variable is set via ass_group_notification_forum_posts()
-	if ( ! empty( $bp->ges->temp ) ) {
+	if ( ! empty( $bp->ges->items ) ) {
 
 		// okay, we're good to go! let's record this digest item!
 		foreach ( $bp->ges->items as $item ) {
