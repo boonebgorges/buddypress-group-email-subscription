@@ -96,7 +96,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		// more faux activity items!
 		$activity->type              = 'new_forum_topic';
 		$activity->secondary_item_id = $topic->topic_id;
-		$actvitiy->primary_link      = $primary_link;
+		$activity->primary_link      = $primary_link;
 
 		$action = $activity->action  = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
