@@ -95,6 +95,7 @@ Other supporters: bluedotproductions.com
 
 = 3.2.1 =
 Fixes bug in the implementation of forum post digests
+Fixes backward compatibility issue with filters in forum reply and topic functions
 
 = 3.2 =
 Rewrote digest emailer to use wp_mail(), for better compatibility with WP SMTP plugins
