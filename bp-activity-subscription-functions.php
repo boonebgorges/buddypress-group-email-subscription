@@ -74,19 +74,43 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 	$is_topic = false;
 
+	// initialize faux activity object for backpat filter reasons
+	//
+	// due to r-a-y being an idiot here:
+	// https://github.com/boonebgorges/buddypress-group-email-subscription/commit/526b80c617fe9058a859ac4eb4cfb1d42d333aa0
+	//
+	// because we moved the email recording process to 'bb_new_post' from the BP activity save hook,
+	// we need to ensure that 3rd-party code will continue to work as-is
+	//
+	// we can't add the 'id' because we're firing the filters before the activity item is created :(
+	$activity = new stdClass;
+	$activity->user_id   = $post->poster_id;
+	$activity->component = 'groups';
+	$activity->item_id   = $group->id;
+	$activity->content   = $post->post_text;
+
 	// this is a new topic
 	if ( $post->post_position == 1 ) {
 		$is_topic    = true;
 
-		$action      = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
+		// more faux activity items!
+		$activity->type              = 'new_forum_topic';
+		$activity->secondary_item_id = $topic->topic_id;
+		$actvitiy->primary_link      = $primary_link;
+
+		$action = $activity->action  = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
-		$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $post->post_text );
+		$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $activity );
 
 	}
 	// this is a forum reply
 	else {
-		$action = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
+		// more faux activity items!
+		$activity->type              = 'new_forum_post';
+		$activity->secondary_item_id = $post_id;
+
+		$action = $activity->action  = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		// calculate the topic page for pagination purposes
 		$pag_num = apply_filters( 'bp_ass_topic_pag_num', 15 );
@@ -97,8 +121,10 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 		$primary_link .= "#post-" . $post_id;
 
+		$activity->primary_link = $primary_link;
+
 		$subject     = apply_filters( 'bp_ass_forum_reply_subject', $action . ' ' . $blogname, $action, $blogname );
-		$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $post->post_text );
+		$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $activity );
 	}
 
 	// setup the email meessage
