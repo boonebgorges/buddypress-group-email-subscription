@@ -316,6 +316,7 @@ function ass_digest_format_item( $item, $type ) {
 //	$timestamp = strtotime( $item->date_recorded );
 
 	/* Because BuddyPress core set gmt = true, timezone must be added */
+	date_default_timezone_set(get_option('timezone_string'));//ensure php's timezone is in sync with wordpress'
 	$timestamp = strtotime( $item->date_recorded ) +date('Z');
 
 	$time_posted = date( get_option( 'time_format' ), $timestamp );
