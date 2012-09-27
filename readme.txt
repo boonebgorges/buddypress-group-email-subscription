@@ -93,6 +93,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.2.2 =
+Fixes main site link in digest emails
+
 = 3.2.1 =
 Fixes bug in the implementation of forum post digests
 Fixes backward compatibility issue with filters in forum reply and topic functions
