@@ -125,7 +125,7 @@ function ass_digest_fire( $type ) {
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
 
-		$header = "<div {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='{$bp->root_domain}'>$blogname</a></div>\n\n";
+		$header = "<div {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
 		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
 		// loop through each group for this user
