@@ -101,8 +101,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$action = $activity->action  = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
-		$the_content = apply_filters( 'bp_ass_new_topic_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $activity );
-
+		$the_content = apply_filters( 'bp_ass_new_topic_content', $post->post_text, $activity );
 	}
 	// this is a forum reply
 	else {
@@ -124,8 +123,11 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$activity->primary_link = $primary_link;
 
 		$subject     = apply_filters( 'bp_ass_forum_reply_subject', $action . ' ' . $blogname, $action, $blogname );
-		$the_content = apply_filters( 'bp_ass_forum_reply_content', html_entity_decode( strip_tags( stripslashes( $post->post_text ) ), ENT_QUOTES ), $activity );
+		$the_content = apply_filters( 'bp_ass_forum_reply_content', $post->post_text, $activity );
 	}
+
+	// Convert entities and do other cleanup
+	$the_content = ass_clean_content( $the_content );
 
 	// setup the email meessage
 	$message = sprintf(__('%s
@@ -364,7 +366,8 @@ function ass_group_notification_activity( $content ) {
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
-	$the_content = apply_filters( 'bp_ass_activity_notification_content', html_entity_decode( strip_tags( stripslashes( $content->content ) ), ENT_QUOTES ), $content );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', $content->content, $content );
+	$the_content = ass_clean_content( $the_content );
 
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
 	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $group );
@@ -995,7 +998,22 @@ function ass_get_group_admins_mods( $group_id ) {
 }
 */
 
-
+/**
+ * Cleans up the email content
+ *
+ * By default we do the following to outgoing email content:
+ *   - strip slashes
+ *   - strip HTML tags
+ *   - convert HTML entities
+ *
+ * @uses apply_filters() Filter 'ass_clean_content' to modify our cleaning routine
+ * @param string $content The email content
+ * @return string $clean_content The email content, cleaned up for plaintext email
+ */
+function ass_clean_content( $content ) {
+	$clean_content = html_entity_decode( strip_tags( stripslashes( $content ) ), ENT_QUOTES );
+	return apply_filters( 'ass_clean_content', $clean_content, $content );
+}
 
 // cleans up the subject for email, strips trailing colon, add quotes to topic name, strips html
 function ass_clean_subject( $subject ) {

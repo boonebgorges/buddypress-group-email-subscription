@@ -95,6 +95,7 @@ Other supporters: bluedotproductions.com
 
 = 3.2.2 =
 Fixes main site link in digest emails
+Breaks up email content cleanup for better control by plugins
 
 = 3.2.1 =
 Fixes bug in the implementation of forum post digests
