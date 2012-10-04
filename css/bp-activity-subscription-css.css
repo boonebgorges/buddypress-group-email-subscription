@@ -100,7 +100,7 @@ h4.activity-subscription-settings-title {
 	display: none;  
 }
 
-.group-forum-topic .ass-topic-subscribe  { width: 100%; text-align: right; margin: 10px 0; }
+.group-forum-topic .ass-topic-subscribe  { width: 100%; text-align: right; margin: 30px 0; }
 
 .ass_members_status { font-size:11px; color:#aaa; margin-top:5px; } /* only admins see this */
 
