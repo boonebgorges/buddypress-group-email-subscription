@@ -486,6 +486,8 @@ function ass_group_activity_edits( $activity ) {
 		// Make sure GES doesn't fire
 		remove_action( 'bp_activity_after_save', 'ass_group_notification_activity', 50 );
 	}
+
+	$run_once = true;
 }
 add_action( 'bp_activity_before_save', 'ass_group_activity_edits' );
 
