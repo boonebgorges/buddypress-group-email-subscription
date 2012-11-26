@@ -898,6 +898,21 @@ function ass_get_default_subscription( $group = false ) {
 //	!TOPIC SUBSCRIPTION
 //
 
+/**
+ * Disables bbPress 2's subscription block.
+ *
+ * GES already covers group email subscription, so disable bbPress 2's
+ * functionality when on a BuddyPress group page.
+ *
+ * @since 3.2.2
+ */
+function ass_disable_bbp_subscriptions( $retval ) {
+	if ( bp_is_group() )
+		return false;
+
+	return $retval;
+}
+add_filter( 'bbp_is_subscriptions_active', 'ass_disable_bbp_subscriptions' );
 
 function ass_get_topic_subscription_status( $user_id, $topic_id ) {
 	global $bp;
