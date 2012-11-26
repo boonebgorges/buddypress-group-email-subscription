@@ -320,7 +320,12 @@ function ass_group_forum_record_digest( $activity ) {
 add_action( 'bp_activity_after_save', 'ass_group_forum_record_digest' );
 
 /**
- * The email notification function for all other activity
+ * Records group activity items in GES for all activity except:
+ *  - group forum posts (handled in ass_group_notification_forum_posts())
+ *  - created and joined group entries (irrelevant)
+ *
+ * You can do more fine-grained activity filtering with the
+ * 'ass_block_group_activity_types' filter.
  */
 function ass_group_notification_activity( $content ) {
 	global $bp;
@@ -328,10 +333,6 @@ function ass_group_notification_activity( $content ) {
 	$type      = $content->type;
 	$component = $content->component;
 	$sender_id = $content->user_id;
-
-	// the first two are handled above, the last is skipped entirely
-	if ( $type == 'new_forum_topic' || $type == 'new_forum_post' || $type == 'created_group' )
-		return;
 
 	// get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp)
 	if ( $type == 'activity_comment' && bp_is_groups_component() && $component == 'activity' )
@@ -341,10 +342,12 @@ function ass_group_notification_activity( $content ) {
 	if ( $component != 'groups' )
 		return;
 
-	if ( !ass_registered_long_enough( $sender_id ) )
+	// if you want to conditionally block certain activity types from appearing,
+	// use the filter below
+	if ( false === apply_filters( 'ass_block_group_activity_types', true, $type ) )
 		return;
 
-	if ( $type == 'joined_group' )	// TODO: in the future, it might be nice for admins to optionally get this message
+	if ( !ass_registered_long_enough( $sender_id ) )
 		return;
 
 	$group_id = $content->item_id;
@@ -457,7 +460,68 @@ To view or reply, log in and go to:
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
+/**
+ * Activity edit checker.
+ *
+ * Catch attempts to save activity entries to see if they already exist.
+ * If they do exist, stop GES from doing its thang.
+ *
+ * @since 3.2.2
+ */
+function ass_group_activity_edits( $activity ) {
+	// hack to avoid duplicate action firing during activity saving
+	// @see https://buddypress.trac.wordpress.org/ticket/3980
+	static $run_once = false;
 
+	if ( ! empty( $run_once ) )
+		return;
+
+	// if the activity doesn't match the groups component, stop now
+	if ( $activity->component != 'groups' )
+		return;
+
+	// if the activity ID already exists, this means this is an edit
+	// we don't want GES to send emails for edits!
+	if ( ! empty( $activity->id ) ) {
+		// Make sure GES doesn't fire
+		remove_action( 'bp_activity_after_save', 'ass_group_notification_activity', 50 );
+	}
+
+	$run_once = true;
+}
+add_action( 'bp_activity_before_save', 'ass_group_activity_edits' );
+
+/**
+ * Block some activity types from being sent / recorded in groups.
+ *
+ * @since 3.2.2
+ */
+function ass_default_block_group_activity_types( $retval, $type ) {
+
+	switch( $type ) {
+		/** ACTIVITY TYPES TO BLOCK **************************************/
+
+		// we handle these in ass_group_notification_forum_posts()
+		case 'new_forum_topic' :
+		case 'new_forum_post' :
+
+		// @todo in the future, it might be nice for admins to optionally get this message
+		case 'joined_group' :
+
+		case 'created_group' :
+			return false;
+
+			break;
+
+		/** ALL OTHER TYPES **********************************************/
+
+		default :
+			return $retval;
+
+			break;
+	}
+}
+add_filter( 'ass_block_group_activity_types', 'ass_default_block_group_activity_types', 10, 2 );
 
 
 // this funciton is used to include important activity updates from plugins for Topic only and Weekly Summary emails
