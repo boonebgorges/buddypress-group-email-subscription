@@ -96,6 +96,8 @@ Other supporters: bluedotproductions.com
 = 3.2.2 =
 Fixes main site link in digest emails
 Breaks up email content cleanup for better control by plugins
+Abstracts activity_type checking into a separate function, for greater control by plugins and themes
+Disables topic subscription in bbPress 2.x when inside of a group, to avoid duplicate messages
 
 = 3.2.1 =
 Fixes bug in the implementation of forum post digests
