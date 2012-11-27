@@ -65,6 +65,7 @@ TRANSLATORS
 - russian - http://www.viaestvita.net/groups/
 - farsi - Vahid Masoomi http://www.AzUni.ir
 - lithuanian - Vincent G http://www.Host1Free.com
+- danish - Morten Nalholm
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members them, then you can filter  'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.php for code you can copy and use. An example: adding a new wiki page would be considered important and should be filtered in, whereas a comment on a wiki page would be less important and should not be hooked in.
@@ -92,6 +93,10 @@ Other supporters: bluedotproductions.com
 7. Admin Settings
 
 == Changelog ==
+
+= 3.2.3 = 
+Fixes lame duplicate bug reintroduced in 3.2.2
+Updates Danish translation
 
 = 3.2.2 =
 Fixes main site link in digest emails
