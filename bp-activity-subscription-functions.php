@@ -521,7 +521,7 @@ function ass_default_block_group_activity_types( $retval, $type ) {
 			break;
 	}
 }
-add_filter( 'ass_block_group_activity_types', 'ass_default_block_group_activity_types', 10, 2 );
+add_filter( 'ass_block_group_activity_types', 'ass_default_block_group_activity_types', 5, 2 );
 
 
 // this funciton is used to include important activity updates from plugins for Topic only and Weekly Summary emails
