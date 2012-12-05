@@ -70,7 +70,8 @@ function ass_group_notification_forum_posts( $post_id ) {
 	}
 
 	$primary_link = trailingslashit( bp_get_group_permalink( $group ) . 'forum/topic/' . $topic->topic_slug );
-	$blogname     = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+
+	$blogname = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 
 	$is_topic = false;
 
@@ -129,16 +130,34 @@ function ass_group_notification_forum_posts( $post_id ) {
 	// Convert entities and do other cleanup
 	$the_content = ass_clean_content( $the_content );
 
+	// if group is not public, change primary link to login URL to verify
+	// authentication and for easier redirection after logging in
+	if ( $group->status != 'public' ) {
+		$query_args = array(
+			'action'      => 'bpnoaccess',
+			'auth'        => 1,
+			'redirect_to' => urlencode( $primary_link )
+		);
+
+		$primary_link = add_query_arg( $query_args, wp_login_url() );
+
+		$text_before_primary = __( 'To view or reply to this topic, go to:', 'bp-ass' );
+
+	// if public, show standard text
+	} else {
+		$text_before_primary = __( 'To view or reply to this topic, log in and go to:', 'bp-ass' );
+	}
+
 	// setup the email meessage
 	$message = sprintf(__('%s
 
 "%s"
 
-To view or reply to this topic, log in and go to:
+%s
 %s
 
 ---------------------
-', 'bp-ass'), $action . ':', $the_content, $primary_link);
+', 'bp-ass'), $action . ':', $the_content, $text_before_primary, $primary_link);
 
 	// get subscribed users
 	$subscribed_users = groups_get_groupmeta( $group->id, 'ass_subscribed_users' );
@@ -535,6 +554,38 @@ function ass_default_important_things( $is_important, $type ) {
 	return $is_important;
 }
 add_filter( 'ass_this_activity_is_important', 'ass_default_important_things', 1, 2 );
+
+/**
+ * Login redirector.
+ *
+ * If group is not public, the group link in the email will use {@link wp_login_url()}.
+ *
+ * If a user clicks on this link and is already logged in, we should attempt
+ * to redirect the user to the authorized content instead of forcing the user
+ * to re-authenticate.
+ *
+ * @since 3.2.4
+ *
+ * @uses bp_loggedin_user_id() To see if a user is logged in
+ */
+function ass_login_redirector() {
+	// see if a redirect link was passed
+	if ( empty( $_GET['redirect_to'] ) )
+		return;
+
+	// see if our special 'auth' variable was passed
+	if( empty( $_GET['auth'] ) )
+		return;
+
+	// if user is *not* logged in, stop now!
+	if ( ! bp_loggedin_user_id() )
+		return;
+
+	// user is logged in, so let's redirect them to the content
+	wp_safe_redirect( esc_url_raw( $_GET['redirect_to'] ) );
+	exit;
+}
+add_action( 'login_init', 'ass_login_redirector', 1 );
 
 
 
