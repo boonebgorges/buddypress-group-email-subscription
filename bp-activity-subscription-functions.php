@@ -418,7 +418,17 @@ To view or reply, log in and go to:
 ', 'bp-ass' ), $action, $the_content, $activity_permalink );
 	}
 
+	// get subscribed users for the group
 	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
+
+	// this is used if a user is subscribed to the "Weekly Summary" option.
+	// the weekly summary shouldn't record everything, so we have a filter:
+	//
+	// 'ass_this_activity_is_important'
+	//
+	// this hook can be used by plugin authors to record important activity items
+	// into the weekly summary
+	// @see ass_default_weekly_summary_activity_types()
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );
 
 	// cycle through subscribed users
@@ -455,8 +465,7 @@ To view or reply, log in and go to:
 			}
 		}
 
-		// activity update notifications only go to Email and Digest. However plugin authors can make important activity updates get emailed out to Weekly summary and New topics by using the ass_group_notification_activity action hook.
-
+		// User is subscribed to "All Mail"
 		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
 			/* Content footer */
 			$footer = ass_group_unsubscribe_links( $user_id );
@@ -468,7 +477,11 @@ To view or reply, log in and go to:
 				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
 
 			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
-		} elseif ( $group_status == 'dig' || $group_status == 'sum' && $this_activity_is_important ) {
+
+		// User is subscribed to "Daily Digest" so record item in digest!
+		// OR user is subscribed to "Weekly Summary" and activity item is important
+		// enough to be recorded
+		} elseif ( $group_status == 'dig' || ( $group_status == 'sum' && $this_activity_is_important ) ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
 			//echo '<br>DIGEST: ' . $user_id . "<br>";
 		}
@@ -542,18 +555,44 @@ function ass_default_block_group_activity_types( $retval, $type ) {
 }
 add_filter( 'ass_block_group_activity_types', 'ass_default_block_group_activity_types', 5, 2 );
 
+/**
+ * Allow certain activity types to be recorded for users subscribed to the
+ * "Weekly Summary" option.
+ *
+ * The rationale behind this is the weekly summary shouldn't record every
+ * single activity item because the summary could get rather long.
+ *
+ * @since 3.2.4
+ */
+function ass_default_weekly_summary_activity_types( $retval, $type ) {
 
-// this funciton is used to include important activity updates from plugins for Topic only and Weekly Summary emails
-// plugin developers can write a similar one to include important updates such as adding documents, wiki pages, calenar events
-// editing of these itmes or comments on them SHOULD NOT be included
-function ass_default_important_things( $is_important, $type ) {
-	// group documents send out their own email for adding new docs
-	if ( $type == 'wiki_group_page_create' || $type == 'new_calendar_event' )
-		$is_important = true;
+	switch( $type ) {
+		/** ACTIVITY TYPES TO RECORD FOR WEEKLY SUMMARY ******************/
 
-	return $is_important;
+		// backpat items
+		case 'wiki_group_page_create' :
+		case 'new_calendar_event' :
+
+		// bbPress 2 forum topic
+		case 'bbp_topic_create' :
+
+		// activity update
+		case 'activity_update' :
+
+			return true;
+
+			break;
+
+		/** ALL OTHER TYPES **********************************************/
+
+		default :
+			return $retval;
+
+			break;
+	}
+
 }
-add_filter( 'ass_this_activity_is_important', 'ass_default_important_things', 1, 2 );
+add_filter( 'ass_this_activity_is_important', 'ass_default_weekly_summary_activity_types', 1, 2 );
 
 /**
  * Login redirector.

@@ -148,7 +148,9 @@ function ass_digest_fire( $type ) {
 
 		$message .= $activity_message; // the meat of the message which we generated above goes here
 
-		if ( 'sum' == $type )
+		// user is subscribed to "New Topics"
+		// add follow help text only if bundled forums are enabled
+		if ( 'sum' == $type && class_exists( 'BP_Forums_Component' ) )
 			$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'bp-ass' ) . "</div>\n", $ass_email_css['follow_topic'] );
 
 		$message .= $footer;
@@ -298,7 +300,14 @@ function ass_digest_format_item( $item, $type ) {
 	}
 
 	/* Action text - This technique will not translate well */
-	$action_split = explode( ' in the group', ass_clean_subject_html( $item->action ) );
+	// bbPress 2 support
+	if ( strpos( $item->type, 'bbp_' ) !== false ) {
+		$action_split = explode( ' in the forum', ass_clean_subject_html( $item->action ) );
+
+	// regular group activity items
+	} else {
+		$action_split = explode( ' in the group', ass_clean_subject_html( $item->action ) );
+	}
 
 	if ( $action_split[1] )
 		$action = $action_split[0];
@@ -330,17 +339,17 @@ function ass_digest_format_item( $item, $type ) {
 		$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
 		$item_message .=  "</span>\n";
 
-		if ( $item->content )
+		// activity content
+		if ( ! empty( $item->content ) )
 			$item_message .= "<br><span {$ass_email_css['item_content']}>" . ass_digest_filter( $item->content ) . "</span>";
 
-		/* Permalink */
-		if ( $item->type == 'new_forum_topic' || $item->type == 'new_forum_post' || $item->type == 'new_blog_post' )
-			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
-
-		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' )
+		// view link
+		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
 			$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
+		} else {
+			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
+		}
 
-		/* Cleanup */
 		$item_message .= "</div>\n\n";
 
 
@@ -348,6 +357,7 @@ function ass_digest_format_item( $item, $type ) {
 	} elseif ( $type == 'sum' ) {
 
 		// count the number of replies
+		// @todo Remove this... only works for bundled forums and is hella ugly
 		if ( $item->type == 'new_forum_topic' ) {
 			if ( $posts = bp_forums_get_topic_posts( 'per_page=10000&topic_id='. $item->secondary_item_id ) ) {
 				foreach ( $posts as $post ) {
@@ -361,7 +371,19 @@ function ass_digest_format_item( $item, $type ) {
 
 		$item_message = "<div {$ass_email_css['item_weekly']}>" . $action . $replies;
 		$item_message .= " <span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
-		$item_message .= "</div>\n";
+
+		// activity content
+		if ( ! empty( $item->content ) )
+			$item_message .= "<br><span {$ass_email_css['item_content']}>" . ass_digest_filter( $item->content ) . "</span>";
+
+		// view link
+		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
+			$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
+		} else {
+			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
+		}
+
+		$item_message .= "</div>\n\n";
 	}
 
 	$item_message = apply_filters( 'ass_digest_format_item', $item_message, $item, $action, $timestamp, $type, $replies );
@@ -378,6 +400,7 @@ function ass_digest_format_item( $item, $type ) {
 function ass_digest_filter( $item ) {
 	$item = wptexturize( $item );
 	$item = convert_chars( $item );
+	$item = stripslashes( $item );
 	return $item;
 }
 
