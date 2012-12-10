@@ -341,7 +341,7 @@ function ass_digest_format_item( $item, $type ) {
 
 		// activity content
 		if ( ! empty( $item->content ) )
-			$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $type ) . "</span>";
+			$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
 
 		// view link
 		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
@@ -374,7 +374,7 @@ function ass_digest_format_item( $item, $type ) {
 
 		// activity content
 		if ( ! empty( $item->content ) )
-			$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $type ) . "</span>";
+			$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
 
 		// view link
 		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
