@@ -465,8 +465,9 @@ To view or reply, log in and go to:
 			}
 		}
 
-		// User is subscribed to "All Mail"
-		if ( $group_status == 'supersub' || $group_status == 'sub' && $this_activity_is_important ) {
+		// User is subscribed to "All Mail" 
+		// OR user is subscribed to "New Topics" (bbPress 2) so send email about this item now!
+		if ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
 			/* Content footer */
 			$footer = ass_group_unsubscribe_links( $user_id );
 
