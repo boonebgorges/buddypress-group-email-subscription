@@ -94,7 +94,11 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
-= 3.2.4 =
+= 3.3 =
+Better support for bbPress 2.x group forums
+Fixes Weekly Summary emails
+Improves redirect behavior in View links related to forum topics in private/hidden groups
+Added filters to digest content for improved customizability
 Improved behavior with BP_ENABLE_MULTIBLOG mode
 
 = 3.2.3 = 
