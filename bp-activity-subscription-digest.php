@@ -378,6 +378,7 @@ function ass_digest_format_item( $item, $type ) {
 function ass_digest_filter( $item ) {
 	$item = wptexturize( $item );
 	$item = convert_chars( $item );
+	$item = stripslashes( $item );
 	return $item;
 }
 
