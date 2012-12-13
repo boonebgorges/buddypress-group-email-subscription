@@ -103,9 +103,9 @@ endif;
 if ( !function_exists( 'groups_get_current_group' ) ) :
 	function groups_get_current_group() {
 		global $bp;
-	
+
 		$current_group = isset( $bp->groups->current_group ) ? $bp->groups->current_group : false;
-	
+
 		return apply_filters( 'groups_get_current_group', $current_group );
 	}
 endif;
