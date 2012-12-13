@@ -8,12 +8,7 @@ Stable tag: 3.2.3
 
 == Description ==
 
-This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users. Tested up to BuddyPress 1.5.6.
-
-NEW IN VERSION 3.1:
-* Added the ability to unsubscribe from single group notifications directly from the email without needing to be logged in (enabled by default).
-* Added the ability to unsubscribe from all group email notifications, this feature needs to be enabled in the plugin admin page.
-* Added a new group welcome email that gets sent out the moment someone joins a group - regardless of the email subscription setting. Set this message in the group admin -> email options page.
+This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available. Each user can choose how they want to subscribe to their groups. The plugin works for hundreds of groups and users. Tested up to BuddyPress 1.6.2.
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options:
