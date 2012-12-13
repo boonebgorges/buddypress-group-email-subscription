@@ -148,7 +148,9 @@ function ass_digest_fire( $type ) {
 
 		$message .= $activity_message; // the meat of the message which we generated above goes here
 
-		if ( 'sum' == $type )
+		// user is subscribed to "New Topics"
+		// add follow help text only if bundled forums are enabled
+		if ( 'sum' == $type && class_exists( 'BP_Forums_Component' ) )
 			$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'bp-ass' ) . "</div>\n", $ass_email_css['follow_topic'] );
 
 		$message .= $footer;
