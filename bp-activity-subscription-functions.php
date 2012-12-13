@@ -1705,7 +1705,7 @@ function ass_self_post_notification( $user_id = false ) {
 function ass_admin_menu() {
 	add_submenu_page( 'bp-general-settings', __("Group Email Options", 'bp-ass'), __("Group Email Options", 'bp-ass'), 'manage_options', 'ass_admin_options', "ass_admin_options" );
 }
-add_action( is_multisite() && function_exists( 'is_network_admin' ) ? 'network_admin_menu' : 'admin_menu', 'ass_admin_menu' );
+add_action( bp_core_admin_hook(), 'ass_admin_menu' );
 
 
 // function to create the back end admin form

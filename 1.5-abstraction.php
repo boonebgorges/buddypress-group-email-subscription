@@ -150,3 +150,17 @@ if ( !function_exists( 'bp_screens' ) ) :
 	}
 	add_action( 'wp', 'bp_screens', 3 );
 endif;
+
+if ( ! function_exists( 'bp_core_admin_hook' ) ) :
+	// This is a bit imprecise. Won't work properly when BP activated on
+	// a single site in a network
+	function bp_core_admin_hook() {
+		if ( is_multisite() ) {
+			$retval = defined( 'BP_ENABLE_MULTIBLOG' ) && BP_ENABLE_MULTIBLOG ? 'admin_menu' : 'network_admin_menu';
+		} else {
+			$retval = 'network_admin_menu';
+		}
+
+		return $retval;
+	}
+endif;

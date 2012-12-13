@@ -94,6 +94,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.2.4 =
+Improved behavior with BP_ENABLE_MULTIBLOG mode
+
 = 3.2.3 = 
 Fixes lame duplicate bug reintroduced in 3.2.2
 Updates Danish translation
