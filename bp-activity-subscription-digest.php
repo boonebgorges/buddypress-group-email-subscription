@@ -65,13 +65,13 @@ function ass_digest_fire( $type ) {
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
 	// get list of all groups so we can look them up quickly in the foreach loop below
-	$all_groups = $wpdb->get_results( $wpdb->prepare( "SELECT id, name, slug FROM {$bp->groups->table_name}" ) );
+	$all_groups = $wpdb->get_results( "SELECT id, name, slug FROM {$bp->groups->table_name}" );
 	foreach ( $all_groups as $group ) {
 		$group_name = ass_digest_filter( $group->name );
 		$groups_info[ $group->id ] = array( 'name'=>$group_name, 'slug'=>$group->slug );
 	}
 
-	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key = 'ass_digest_items' AND meta_value != ''" ) );
+	$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
 
 	// Do all activity lookups in one single query, and cache the results
 	// Todo: in_array() is slow; isset( array_flip( $array[$id] ) ) is better
