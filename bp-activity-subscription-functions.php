@@ -465,7 +465,7 @@ To view or reply, log in and go to:
 			}
 		}
 
-		// User is subscribed to "All Mail" 
+		// User is subscribed to "All Mail"
 		// OR user is subscribed to "New Topics" (bbPress 2) so send email about this item now!
 		if ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
 			/* Content footer */
@@ -529,7 +529,7 @@ add_action( 'bp_activity_before_save', 'ass_group_activity_edits' );
  *
  * @since 3.2.2
  */
-function ass_default_block_group_activity_types( $retval, $type ) {
+function ass_default_block_group_activity_types( $retval, $type, $activity ) {
 
 	switch( $type ) {
 		/** ACTIVITY TYPES TO BLOCK **************************************/
@@ -546,6 +546,49 @@ function ass_default_block_group_activity_types( $retval, $type ) {
 
 			break;
 
+		/** bbPress 2 ****************************************************/
+
+		// groan! bbPress 2 hacks!
+		//
+		// when bbPress first records an item into the group activity stream, it is
+		// incomplete as it is first recorded on the 'wp_insert_post' action
+		//
+		// it is later updated on the 'bbp_new_reply' / 'bbp_new_topic' action
+		//
+		// we want to block the first instance, so GES doesn't record or send this
+		// incomplete activity item
+
+		// reply
+		case 'bbp_reply_create' :
+
+			// to determine if the reply activity item is incomplete, the primary link
+			// will be missing the scheme (HTTP) and host (example.com), so our hack does
+			// a search for '://' because the site could be using HTTPS.
+			if ( strpos( $activity->primary_link, '://' ) === false ) {
+				return false;
+
+			// we're okay again!
+			} else {
+				return $retval;
+			}
+
+			break;
+
+		// topic
+		case 'bbp_topic_create' :
+
+			// to determine if the topic activity item is incomplete, the primary link
+			// will be missing the groups root slug
+			if ( strpos( $activity->primary_link, '/' . bp_get_groups_root_slug() . '/' ) === false ) {
+				return false;
+
+			// we're okay again!
+			} else {
+				return $retval;
+			}
+
+			break;
+
 		/** ALL OTHER TYPES **********************************************/
 
 		default :
@@ -554,7 +597,7 @@ function ass_default_block_group_activity_types( $retval, $type ) {
 			break;
 	}
 }
-add_filter( 'ass_block_group_activity_types', 'ass_default_block_group_activity_types', 5, 2 );
+add_filter( 'ass_block_group_activity_types', 'ass_default_block_group_activity_types', 5, 3 );
 
 /**
  * Allow certain activity types to be recorded for users subscribed to the
