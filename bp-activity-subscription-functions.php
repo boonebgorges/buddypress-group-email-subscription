@@ -363,7 +363,7 @@ function ass_group_notification_activity( $content ) {
 
 	// if you want to conditionally block certain activity types from appearing,
 	// use the filter below
-	if ( false === apply_filters( 'ass_block_group_activity_types', true, $type ) )
+	if ( false === apply_filters( 'ass_block_group_activity_types', true, $type, $content ) )
 		return;
 
 	if ( !ass_registered_long_enough( $sender_id ) )
