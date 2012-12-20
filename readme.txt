@@ -89,6 +89,10 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.3.1 =
+Fixes a bug that caused duplicate bbPress 2.x digest notifications
+Improved compatibility with PHP 5.4 and WP 3.5
+
 = 3.3 =
 Better support for bbPress 2.x group forums
 Fixes Weekly Summary emails
