@@ -54,7 +54,7 @@ TRANSLATORS
 - italian - Stefano Russo
 - french - http://www.claudegagne-photo.com
 - brazilian portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
-- dutch - Anja werkgroepen.net/wordpress
+- dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
 - swedish - Thomas Schneider
 - german - Peter Peterson
 - russian - http://www.viaestvita.net/groups/
