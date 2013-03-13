@@ -17,11 +17,11 @@ function ass_group_unsubscribe_links( $user_id ) {
 
 	$group_id = bp_get_current_group_id();
 	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
-	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp_ass' ), $group_link );
+	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp-ass' ), $group_link );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
-		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp_ass' ), $global_link );
+		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp-ass' ), $global_link );
 	}
 
 	$links .= "\n";
@@ -1740,7 +1740,7 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$global_link = bp_core_get_user_domain( $user_id ) . '?bpass-action=unsubscribe&access_key=' . md5( "{$user_id}unsubscribe" . wp_salt() );
 		$message .= "\n\n---------------------\n";
-		$message .= sprintf( __( 'To disable emails from all your groups at once click: %s', 'bp_ass' ), $global_link );
+		$message .= sprintf( __( 'To disable emails from all your groups at once click: %s', 'bp-ass' ), $global_link );
 	}
 
 	$group_admin_ids = groups_get_group_admins( $group_id );
