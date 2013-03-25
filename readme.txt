@@ -56,7 +56,7 @@ TRANSLATORS
 - brazilian portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
 - dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
 - swedish - Thomas Schneider
-- german - Peter Peterson
+- german - Peter Peterson, Thorsten Wollenhöfer
 - russian - http://www.viaestvita.net/groups/
 - farsi - Vahid Masoomi http://www.AzUni.ir
 - lithuanian - Vincent G http://www.Host1Free.com
