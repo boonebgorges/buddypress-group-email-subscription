@@ -89,6 +89,9 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.3.3 =
+Updatad nl_NL translation
+
 = 3.3.2 =
 Updated nl_NL translation
 Updated de_DE translation
