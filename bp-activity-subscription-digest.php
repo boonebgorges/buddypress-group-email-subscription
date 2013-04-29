@@ -101,17 +101,28 @@ function ass_digest_fire( $type ) {
 		}
 	}
 
-	$items = bp_activity_get_specific( array(
-		'sort' 		=> 'ASC',
-		'activity_ids' 	=> array_keys( $all_activity_items ),
-		'show_hidden' 	=> true
-	) );
+	// setup the IN query
+	$in = implode( ",", array_keys( $all_activity_items ) );
 
-	foreach( (array)$items['activities'] as $activity ) {
-		$key = 'bp_activity_' . $activity->id;
-		if ( !wp_cache_get( $key, 'bp' ) ) {
-			wp_cache_set( $key, $activity, 'bp', 60*60 );
-		}
+	// get only the activity data we need
+	//
+	// we're not using bp_activity_get_specific() to avoid an extra query with the
+	// xprofile table
+	//
+	// @todo MySQL IN query doesn't scale well when querying a ton of IDs
+	$items = $wpdb->get_results( "
+		SELECT id, type, action, content, primary_link, secondary_item_id, date_recorded
+			FROM {$bp->activity->table_name}
+			WHERE id IN ({$in})
+	" );
+
+	// cache some stuff
+	$bp->ass = new stdClass;
+	$bp->ass->items = array();
+
+	// cache activity items
+	foreach ( $items as $item ) {
+		$bp->ass->items[$item->id] = $item;
 	}
 
 	// start the digest loop for each user
@@ -278,22 +289,9 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	// Finally, add the markup to the digest
 	foreach ( $activity_ids as $activity_id ) {
 		// Cache is set earlier in ass_digest_fire()
-		$activity_item = wp_cache_get( 'bp_activity_' . $activity_id, 'bp' );
+		$activity_item = ! empty( $bp->ass->items[$activity_id] ) ? $bp->ass->items[$activity_id] : false;
 
-		if ( !$activity_item ) {
-			// Try fetching it manually
-			$activity_items = bp_activity_get_specific( array(
-				'sort' 		=> 'ASC',
-				'activity_ids' 	=> array( $activity_item ),
-				'show_hidden' 	=> true
-			) );
-
-			if ( !empty( $activity_items ) ) {
-				$activity_item = $activity_items[0];
-			}
-		}
-
-		if ( !empty( $activity_item ) ) {
+		if ( ! empty( $activity_item ) ) {
 			$group_message .= ass_digest_format_item( $activity_item, $type );
 		}
 		//$group_message .= '<pre>'. $item->id .'</pre>';
