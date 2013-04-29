@@ -1280,19 +1280,45 @@ function ass_show_subscription_status_in_member_list( $user_id='' ) {
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
 
+/**
+ * Allow group admins and mods to manage each group member's email
+ * subscription settings.
+ *
+ * This is only enabled if this option is enabled under the main "Group Email
+ * Options" settings page.
+ *
+ * This is hooked to:
+ *  - The frontend group's "Admin > Members" page
+ *  - The backend group's "Manage Members" metabox (only in BP 1.8+)
+ *
+ * @param int $user_id The user ID of the group member
+ * @param obj $group The BP Group object
+ */
+function ass_manage_members_email_status(  $user_id = '', $group = '' ) {
+	global $members_template, $groups_template;
 
-
-// add links to the group admin manage members section so admins can change user's email status
-function ass_manage_members_email_status(  $user_id='' ) {
-	global $members_template, $groups_template, $bp;
-
-	if ( get_option('ass-admin-can-edit-email') == 'no' )
+	// if group admins / mods cannot manage email subscription settings, stop now!
+	if ( get_option('ass-admin-can-edit-email') == 'no' ) {
 		return;
+	}
 
-	if ( !$user_id )
-		$user_id = $members_template->member->user_id;
+	// no user ID? fallback on members loop user ID if it exists
+	if ( ! $user_id ) {
+		$user_id = ! empty( $members_template->member->user_id ) ? $members_template->member->user_id : false;
+	}
 
-	$group = &$groups_template->group;
+	// no user ID? fallback on group loop if it exists
+	if( ! $group ) {
+		$group = ! empty( $groups_template->group ) ? $groups_template->group : false;
+	}
+
+	// no user or group? stop now!
+	if ( ! $user_id || ! is_object( $group ) ) {
+		return;
+	}
+
+	$user_id = (int) $user_id;
+
 	$group_url = bp_get_group_permalink( $group ) . 'admin/manage-members/email';
 	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
 	echo '<span class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';
@@ -1305,6 +1331,19 @@ function ass_manage_members_email_status(  $user_id='' ) {
 	echo '</span>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
+
+/**
+ * Manage each group member's email subscription settings from the "Groups"
+ * dashboard page.
+ *
+ * Only works in BP 1.8+.
+ *
+ * @uses ass_manage_members_email_status()
+ */
+function ass_groups_admin_manage_member_row( $user_id, $group ) {
+	ass_manage_members_email_status( $user_id, $group );
+}
+add_action( 'bp_groups_admin_manage_member_row', 'ass_groups_admin_manage_member_row', 10, 2 );
 
 // make the change to the users' email status based on the function above
 function ass_manage_members_email_update() {
