@@ -92,8 +92,9 @@ function ass_digest_fire( $type ) {
 		foreach( (array) $subs as $digest_type => $group_subs ) {
 			foreach( (array) $group_subs as $group_id => $sub_ids ) {
 				foreach( (array) $sub_ids as $sid ) {
-					if ( ! in_array( $sid, $all_activity_items ) ) {
-						$all_activity_items[] = $sid;
+					// note: activity ID is added as the key for performance reasons
+					if ( ! isset( $all_activity_items[$sid] ) ) {
+						$all_activity_items[$sid] = 1; 
 					}
 				}
 			}
@@ -102,7 +103,7 @@ function ass_digest_fire( $type ) {
 
 	$items = bp_activity_get_specific( array(
 		'sort' 		=> 'ASC',
-		'activity_ids' 	=> $all_activity_items,
+		'activity_ids' 	=> array_keys( $all_activity_items ),
 		'show_hidden' 	=> true
 	) );
 
