@@ -118,6 +118,7 @@ function ass_digest_fire( $type ) {
 
 	// cache some stuff
 	$bp->ass = new stdClass;
+	$bp->ass->massdata = ass_get_mass_userdata( wp_list_pluck( $user_subscriptions, 'user_id' ) );
 	$bp->ass->items = array();
 
 	// cache activity items
@@ -139,14 +140,18 @@ function ass_digest_fire( $type ) {
 		if ( empty( $group_activity_ids_array[$type] ) || !$group_activity_ids = (array)$group_activity_ids_array[$type] )
 			continue;
 
-		// Get the details for the user
-		if ( !$userdata = bp_core_get_core_userdata( $user_id ) )
+		// get userdata
+		// @see ass_get_mass_userdata()
+		$userdata = $bp->ass->massdata[$user_id];
+
+		// sanity check!
+		if ( empty( $userdata ) )
 			continue;
 
-		if ( !$to = $userdata->user_email )
-			continue;
+		// email address of user
+		$to = $userdata['email'];
 
-		$userdomain = bp_core_get_user_domain( $user_id );
+		$userdomain = ass_digest_get_user_domain( $user_id );
 
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
@@ -268,7 +273,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	$group_permalink = bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/' . $group_slug . '/';
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
 
-	$userdomain = bp_core_get_user_domain( $user_id );
+	$userdomain = ass_digest_get_user_domain( $user_id );
 	$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&group=$group_id&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
 
 	// add the group title bar
@@ -542,5 +547,92 @@ function ass_custom_digest_frequency( $schedules ) {
 }
 add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
 */
+
+/**
+ * Gets the user_login, user_nicename and email address for an array of user IDs
+ * all in one fell swoop!
+ *
+ * This is designed to avoid pinging the DB over and over in a foreach loop.
+ */
+function ass_get_mass_userdata( $user_ids = array() ) {
+	if ( empty( $user_ids ) )
+		return false;
+
+	global $wpdb;
+
+	// implode user IDs
+	$in = implode( ',', wp_parse_id_list( $user_ids ) );
+
+	// get our results
+	$results = $wpdb->get_results( "
+		SELECT ID, user_login, user_nicename, user_email
+			FROM {$wpdb->users}
+			WHERE ID IN ({$in})
+	", ARRAY_A );
+
+	if ( empty( $results ) )
+		return false;
+
+	$users = array();
+
+	// setup associative array
+	foreach( (array) $results as $result ) {
+		$users[ $result['ID'] ]['user_login']    = $result['user_login'];
+		$users[ $result['ID'] ]['user_nicename'] = $result['user_nicename'];
+		$users[ $result['ID'] ]['email']         = $result['user_email'];
+	}
+
+	return $users;
+}
+
+/**
+ * Get user domain.
+ *
+ * Do not use this outside of digests!
+ *
+ * This is almost a duplicate of bp_core_get_user_domain(), but references
+ * our already-fetched mass-userdata array to avoid pinging the DB over and
+ * over again in a foreach loop.
+ */
+function ass_digest_get_user_domain( $user_id ) {
+	global $bp;
+
+	if ( empty( $bp->ass->massdata ) )
+		return false;
+
+	$mass_userdata = $bp->ass->massdata;
+
+	$username = bp_is_username_compatibility_mode() ? $mass_userdata[ $user_id ]['user_login'] : $mass_userdata[ $user_id ]['user_nicename'];
+
+	if ( bp_core_enable_root_profiles() ) {
+		$after_domain = $username;
+	} else {
+		$after_domain =  bp_get_members_root_slug() . '/';
+		$after_domain .= bp_is_username_compatibility_mode() ? rawurlencode( $username ) : $username;
+	}
+
+	$domain = trailingslashit( bp_get_root_domain() . '/' . $after_domain );
+
+	$domain = apply_filters( 'bp_core_get_user_domain_pre_cache', $domain, $user_id, $mass_userdata[ $user_id ]['user_nicename'], $mass_userdata[ $user_id ]['user_login'] );
+
+	return apply_filters( 'bp_core_get_user_domain', $domain, $user_id, $mass_userdata[ $user_id ]['user_nicename'], $mass_userdata[ $user_id ]['user_login'] );
+}
+
+if ( ! function_exists( 'bp_core_enable_root_profiles' ) ) :
+/**
+ * Backpat version of bp_core_enable_root_profiles().
+ *
+ * This function is only available in BP 1.6+.
+ */
+function bp_core_enable_root_profiles() {
+
+	$retval = false;
+
+	if ( defined( 'BP_ENABLE_ROOT_PROFILES' ) && ( true == BP_ENABLE_ROOT_PROFILES ) )
+		$retval = true;
+
+	return apply_filters( 'bp_core_enable_root_profiles', $retval );
+}
+endif;
 
 ?>
