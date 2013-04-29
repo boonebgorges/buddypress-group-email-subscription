@@ -26,7 +26,7 @@ function ass_digest_schedule_print() {
 /* Digest-specific functions */
 
 function ass_digest_fire( $type ) {
-	global $bp, $wpdb, $groups_template, $ass_email_css, $current_user;
+	global $bp, $wpdb, $groups_template, $ass_email_css;
 
 	if ( !is_string($type) )
 		$type = 'sum';
