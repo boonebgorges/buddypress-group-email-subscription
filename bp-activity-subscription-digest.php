@@ -118,7 +118,8 @@ function ass_digest_fire( $type ) {
 
 	// cache some stuff
 	$bp->ass = new stdClass;
-	$bp->ass->massdata = ass_get_mass_userdata( wp_list_pluck( $user_subscriptions, 'user_id' ) );
+	$bp->ass->massdata     = ass_get_mass_userdata( wp_list_pluck( $user_subscriptions, 'user_id' ) );
+	$bp->ass->activity_ids = array_flip( (array) wp_list_pluck( $items, 'id' ) );
 	$bp->ass->items = array();
 
 	// cache activity items
@@ -161,9 +162,10 @@ function ass_digest_fire( $type ) {
 
 		// loop through each group for this user
 		foreach ( $group_activity_ids as $group_id => $activity_ids ) {
-			// remove duplicate activity IDs as a precaution
-			// faster using array_flip() + array_keys() than using array_unique()
-			$activity_ids = array_keys( array_flip( $activity_ids ) );
+			// check to see if our activity IDs exist
+			// intersect against our master activity IDs array
+			$activity_ids = array_intersect_key( array_flip( $activity_ids ), $bp->ass->activity_ids );
+			$activity_ids = array_keys( $activity_ids );
 
 			$group_name = $groups_info[ $group_id ][ 'name' ];
 			$group_slug = $groups_info[ $group_id ][ 'slug' ];
