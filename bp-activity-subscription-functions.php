@@ -139,7 +139,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 			'redirect_to' => urlencode( $primary_link )
 		);
 
-		$primary_link = add_query_arg( $query_args, wp_login_url() );
+		$primary_link = add_query_arg( $query_args, apply_filters( 'ass_login_url', wp_login_url() ) );
 
 		$text_before_primary = __( 'To view or reply to this topic, go to:', 'bp-ass' );
 
