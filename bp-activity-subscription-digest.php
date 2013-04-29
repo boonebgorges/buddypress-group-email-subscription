@@ -381,7 +381,11 @@ function ass_digest_format_item( $item, $type ) {
 	} elseif ( $type == 'sum' ) {
 
 		// count the number of replies
-		// @todo Remove this... only works for bundled forums and is hella ugly
+		//
+		// commented out for now
+		// if we want to bring this back we should use a direct DB query to the
+		// wp_bb_topics table and locally cache the value
+		/*
 		if ( $item->type == 'new_forum_topic' ) {
 			if ( $posts = bp_forums_get_topic_posts( 'per_page=10000&topic_id='. $item->secondary_item_id ) ) {
 				foreach ( $posts as $post ) {
@@ -392,6 +396,7 @@ function ass_digest_format_item( $item, $type ) {
 			}
 			$replies = ' ' . sprintf( __( '(%s replies)', 'bp-ass' ), $counter );
 		}
+		*/
 
 		$item_message = "<div {$ass_email_css['item_weekly']}>" . $action . $replies;
 		$item_message .= " <span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
