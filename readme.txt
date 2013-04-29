@@ -3,7 +3,7 @@ Contributors: dwenaus, boonebgorges, r-a-y
 Description: This powerful plugin allows people to receive email notifications of group activity, especially forum posts. Weekly or daily digests available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 (BP 1.2)
-Tested up to: 3.5.1 (BP 1.6.5)
+Tested up to: 3.5.1 (BP 1.7)
 Stable tag: 3.3.2
 
 == Description ==
@@ -89,8 +89,11 @@ Other supporters: bluedotproductions.com
 
 == Changelog ==
 
+= 3.4 =
+Performance improvements in daily and weekly digests
+
 = 3.3.3 =
-Updatad nl_NL translation
+Updated nl_NL translation
 
 = 3.3.2 =
 Updated nl_NL translation
