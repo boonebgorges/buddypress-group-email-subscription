@@ -398,8 +398,10 @@ function ass_digest_format_item( $item, $type ) {
 		}
 		*/
 
-		$item_message = "<div {$ass_email_css['item_weekly']}>" . $action . $replies;
-		$item_message .= " <span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
+		$item_message =  "<div {$ass_email_css['item_div']}>";
+		$item_message .=  "<span {$ass_email_css['item_action']}>" . $action . ": ";
+		$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
+		$item_message .=  "</span>\n";
 
 		// activity content
 		if ( ! empty( $item->content ) )
