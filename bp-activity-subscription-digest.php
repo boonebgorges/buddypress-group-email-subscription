@@ -84,6 +84,11 @@ function ass_digest_fire( $type ) {
 	// get all user subscription data
 	$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
 
+	// no subscription data? stop now!
+	if ( empty( $user_subscriptions ) ) {
+		return;
+	}
+
 	// get all activity IDs for everyone subscribed to a digest
 	$all_activity_items = array();
 
