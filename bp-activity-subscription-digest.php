@@ -71,23 +71,28 @@ function ass_digest_fire( $type ) {
 
 	// get list of all groups so we can look them up quickly in the foreach loop below
 	$all_groups = $wpdb->get_results( "SELECT id, name, slug FROM {$bp->groups->table_name}" );
+
+	// setup group info array that we'll reference later
+	$groups_info = array();
 	foreach ( $all_groups as $group ) {
-		$group_name = ass_digest_filter( $group->name );
-		$groups_info[ $group->id ] = array( 'name'=>$group_name, 'slug'=>$group->slug );
+		$groups_info[ $group->id ] = array(
+			'name' => ass_digest_filter( $group->name ),
+			'slug' => $group->slug
+		);
 	}
 
+	// get all user subscription data
 	$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
 
-	// Do all activity lookups in one single query, and cache the results
-	// Todo: in_array() is slow; isset( array_flip( $array[$id] ) ) is better
-	// but it will take a flip every time
+	// get all activity IDs for everyone subscribed to a digest
 	$all_activity_items = array();
-	foreach( (array)$user_subscriptions as $us ) {
+
+	foreach( (array) $user_subscriptions as $us ) {
 		$subs = maybe_unserialize( $us->meta_value );
-		foreach( (array)$subs as $digest_type => $group_subs ) {
-			foreach( (array)$group_subs as $group_id => $sub_ids ) {
-				foreach( (array)$sub_ids as $sid ) {
-					if ( !in_array( $sid, $all_activity_items ) ) {
+		foreach( (array) $subs as $digest_type => $group_subs ) {
+			foreach( (array) $group_subs as $group_id => $sub_ids ) {
+				foreach( (array) $sub_ids as $sid ) {
+					if ( ! in_array( $sid, $all_activity_items ) ) {
 						$all_activity_items[] = $sid;
 					}
 				}
@@ -108,10 +113,14 @@ function ass_digest_fire( $type ) {
 		}
 	}
 
-	foreach ( (array)$user_subscriptions as $user ) {
+	// start the digest loop for each user
+	foreach ( (array) $user_subscriptions as $user ) {
 		$user_id = $user->user_id;
 
+		// get the group subscriptions for the user
 		$group_activity_ids_array = unserialize( $user->meta_value );
+
+		// initialize some strings
 		$summary = $activity_message = '';
 
 		// We only want the weekly or daily ones
@@ -144,19 +153,21 @@ function ass_digest_fire( $type ) {
 			unset( $group_activity_ids[ $group_id ] );
 		}
 
-		// reset the user's sub array removing those sent sent
+		// reset the user's sub array removing those sent
 		$group_activity_ids_array[$type] = $group_activity_ids;
 
 		// show group summary for digest, and follow help text for weekly summary
 		if ( 'dig' == $type )
 			$message .= apply_filters( 'ass_digest_summary_full', "\n<ul {$ass_email_css['summary_ul']}>" . __( 'Group Summary', 'bp-ass') . ":\n" . $summary . "</ul>\n", $ass_email_css['summary_ul'], $summary );
 
-		$message .= $activity_message; // the meat of the message which we generated above goes here
+		// the meat of the message which we generated above goes here
+		$message .= $activity_message;
 
 		// user is subscribed to "New Topics"
 		// add follow help text only if bundled forums are enabled
-		if ( 'sum' == $type && class_exists( 'BP_Forums_Component' ) )
+		if ( 'sum' == $type && class_exists( 'BP_Forums_Component' ) ) {
 			$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'bp-ass' ) . "</div>\n", $ass_email_css['follow_topic'] );
+		}
 
 		$message .= $footer;
 
