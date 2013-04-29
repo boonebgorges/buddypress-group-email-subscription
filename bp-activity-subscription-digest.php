@@ -28,6 +28,11 @@ function ass_digest_schedule_print() {
 function ass_digest_fire( $type ) {
 	global $bp, $wpdb, $groups_template, $ass_email_css;
 
+	// If safe mode isn't on, then let's set the execution time to unlimited
+	if ( ! ini_get( 'safe_mode' ) ) {
+		set_time_limit(0);
+	}
+
 	if ( !is_string($type) )
 		$type = 'sum';
 
