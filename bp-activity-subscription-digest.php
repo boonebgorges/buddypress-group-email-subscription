@@ -161,6 +161,10 @@ function ass_digest_fire( $type ) {
 
 		// loop through each group for this user
 		foreach ( $group_activity_ids as $group_id => $activity_ids ) {
+			// remove duplicate activity IDs as a precaution
+			// faster using array_flip() + array_keys() than using array_unique()
+			$activity_ids = array_keys( array_flip( $activity_ids ) );
+
 			$group_name = $groups_info[ $group_id ][ 'name' ];
 			$group_slug = $groups_info[ $group_id ][ 'slug' ];
 			if ( 'dig' == $type ) // might be nice here to link to anchor tags in the message
