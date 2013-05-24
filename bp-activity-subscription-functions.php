@@ -1794,6 +1794,14 @@ add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
 // adds forum notification options in the users settings->notifications page
 function ass_group_subscription_notification_settings() {
+	// if we're not using BP's forums, do not show these settings as these
+	// options currently do not work with bbPress 2
+	//
+	// will bring these back in the future for bbPress 2
+	if ( ! class_exists( 'BP_Forums_Component' ) ) {
+		return;
+	}
+
 ?>
 	<table class="notification-settings zebra" id="groups-subscription-notification-settings">
 	<thead>
