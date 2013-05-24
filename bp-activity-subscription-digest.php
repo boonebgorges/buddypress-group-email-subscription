@@ -69,18 +69,6 @@ function ass_digest_fire( $type ) {
 	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
-	// get list of all groups so we can look them up quickly in the foreach loop below
-	$all_groups = $wpdb->get_results( "SELECT id, name, slug FROM {$bp->groups->table_name}" );
-
-	// setup group info array that we'll reference later
-	$groups_info = array();
-	foreach ( $all_groups as $group ) {
-		$groups_info[ $group->id ] = array(
-			'name' => ass_digest_filter( $group->name ),
-			'slug' => $group->slug
-		);
-	}
-
 	// get all user subscription data
 	$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
 
@@ -135,6 +123,18 @@ function ass_digest_fire( $type ) {
 	// cache activity items
 	foreach ( $items as $item ) {
 		$bp->ass->items[$item->id] = $item;
+	}
+
+	// get list of all groups so we can look them up quickly in the foreach loop below
+	$all_groups = $wpdb->get_results( "SELECT id, name, slug FROM {$bp->groups->table_name}" );
+
+	// setup group info array that we'll reference later
+	$groups_info = array();
+	foreach ( $all_groups as $group ) {
+		$groups_info[ $group->id ] = array(
+			'name' => ass_digest_filter( $group->name ),
+			'slug' => $group->slug
+		);
 	}
 
 	// start the digest loop for each user
