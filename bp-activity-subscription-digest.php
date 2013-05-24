@@ -106,6 +106,11 @@ function ass_digest_fire( $type ) {
 		}
 	}
 
+	// no activity IDs? stop now!
+	if ( empty( $all_activity_items ) ) {
+		return;
+	}
+
 	// setup the IN query
 	$in = implode( ",", array_keys( $all_activity_items ) );
 
