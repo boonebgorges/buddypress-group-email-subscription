@@ -164,3 +164,16 @@ if ( ! function_exists( 'bp_core_admin_hook' ) ) :
 		return $retval;
 	}
 endif;
+
+if ( ! function_exists( 'bp_is_username_compatibility_mode' ) ) :
+	function bp_is_username_compatibility_mode() {
+		return apply_filters( 'bp_is_username_compatibility_mode', defined( 'BP_ENABLE_USERNAME_COMPATIBILITY_MODE' ) && BP_ENABLE_USERNAME_COMPATIBILITY_MODE );
+	}
+endif;
+
+
+if ( ! function_exists( 'bp_get_members_root_slug' ) ) :
+	function bp_get_members_root_slug() {
+		return constant( 'BP_MEMBERS_SLUG' );
+	}
+endif;
