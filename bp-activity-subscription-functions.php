@@ -1035,20 +1035,78 @@ function ass_get_default_subscription( $group = false ) {
 //
 
 /**
- * Disables bbPress 2's subscription block.
+ * Disables bbPress 2's subscription block if the user's group setting is set
+ * to "All Mail".
  *
- * GES already covers group email subscription, so disable bbPress 2's
- * functionality when on a BuddyPress group page.
+ * All other group subscription settings (New Topics, Digests) should be able
+ * to use bbP's topic subscription functionality.  This emulates GES' old
+ * "Follow / Mute" functionality.  However, these emails are managed by bbP,
+ * not GES.
  *
  * @since 3.2.2
  */
-function ass_disable_bbp_subscriptions( $retval ) {
-	if ( bp_is_group() )
-		return false;
+function ass_bbp_subscriptions( $retval ) {
+	// make sure we're on a BP group page
+	if ( bp_is_group() ) {
+		// not logged in? stop now!
+		if ( ! is_user_logged_in() ) {
+			return $retval;
+		}
+
+		// only do this check if BP's theme compat has run on the group page
+		if ( ! did_action( 'bp_template_content' ) ) {
+			return $retval;
+		}
+
+		// get group sub status
+		$group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), bp_get_current_group_id() );
+
+		// if group sub status is anything but "All Mail", let the member use bbP's
+		// native subscriptions - this emulates GES' old "Follow / Mute" functionality
+		if ( $group_status != 'supersub' ) {
+			return true;
+		
+		// the member's setting is "All Mail" so we shouldn't allow them to subscribe
+		// to prevent duplicates
+		} else {
+			return false;
+		}
+	}
 
 	return $retval;
 }
-add_filter( 'bbp_is_subscriptions_active', 'ass_disable_bbp_subscriptions' );
+add_filter( 'bbp_is_subscriptions_active', 'ass_bbp_subscriptions' );
+
+/**
+ * Disable bbP's subscription email blast if group user is already subscribed
+ * to "All Mail".
+ *
+ * This scenario might happen if a user subscribed to a bunch of bbP group
+ * topics and later switched to the group's "All Mail" subscription.
+ *
+ * @since 3.4
+ */
+function ass_bbp_disable_email( $message, $reply_id, $topic_id, $user_id ) {
+
+	// make sure we're on a BP group page
+	if ( bp_is_group() ) {
+		global $bp;
+
+		// get group sub status
+		// we're using the direct, global reference for sanity's sake
+		$group_status = ass_get_group_subscription_status( $user_id, $bp->groups->current_group->id );
+
+		// if user's group sub status is "All Mail", stop bbP's email from sending
+		// by blanking out the message
+		if ( $group_status == 'supersub' ) {
+			return false;
+		}
+	}
+
+	return $message;
+}
+add_filter( 'bbp_subscription_mail_message', 'ass_bbp_disable_email', 10, 4 );
+
 
 function ass_get_topic_subscription_status( $user_id, $topic_id ) {
 	global $bp;
