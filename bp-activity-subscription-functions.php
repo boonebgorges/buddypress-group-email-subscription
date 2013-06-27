@@ -1850,8 +1850,56 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 }
 add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
+/**
+ * Determine what type of forums are running on this BP install.
+ *
+ * Returns either 'bbpress' or 'buddypress' on success.
+ * Boolean false if neither forums are enabled.
+ *
+ * @since 3.4
+ *
+ * @return mixed String of forum type on success; boolean false if forums aren't installed.
+ */
+function ass_get_forum_type() {
+	// sanity check
+	if ( ! bp_is_active( 'groups' ) ) {
+		return false;
+	}
+
+	$type = false;
+
+	// check if bbP is installed
+	if ( class_exists( 'bbpress' ) ) {
+		// check if bbP group forum support is active
+		if ( ! bbp_is_group_forums_active() ) {
+			return false;
+		}
+
+		$type = 'bbpress';
+
+	// check for BP's bundled forums
+	} else {
+		// BP's bundled forums aren't active, so stop!
+		if ( ! bp_forums_is_installed_correctly() ) {
+			return false;
+		}
+
+		$type = 'buddypress';
+	}
+
+	return $type;
+}
+
 // adds forum notification options in the users settings->notifications page
 function ass_group_subscription_notification_settings() {
+	// get forum type
+	$forums = ass_get_forum_type();
+
+	// no forums installed? stop now!
+	if ( ! $forums ) {
+		return;
+	}
+
 ?>
 	<table class="notification-settings zebra" id="groups-subscription-notification-settings">
 	<thead>
@@ -1863,6 +1911,13 @@ function ass_group_subscription_notification_settings() {
 		</tr>
 	</thead>
 	<tbody>
+
+	<?php
+		// only add the following options if BP's bundled forums are installed...
+		// @todo add back these options for bbPress if possible.
+	?>
+
+	<?php if ( $forums == 'buddypress' ) : ?>
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
@@ -1875,6 +1930,8 @@ function ass_group_subscription_notification_settings() {
 			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
 		</tr>
+	<?php endif; ?>
+
 		<tr>
 			<td></td>
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
