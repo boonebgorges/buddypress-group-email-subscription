@@ -449,7 +449,7 @@ To view or reply, log in and go to:
 			$immediate_parent = new BP_Activity_Activity( $content->secondary_item_id );
 
 			// Don't send the bp-ass notification if the user is subscribed through BP
-			if ( $user_id == $immediate_parent->user_id && 'no' != get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+			if ( $user_id == $immediate_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 				continue;
 			}
 
@@ -459,7 +459,7 @@ To view or reply, log in and go to:
 				$root_parent = new BP_Activity_Activity( $content->item_id );
 
 				// Don't send the bp-ass notification if the user is subscribed through BP
-				if ( $user_id == $root_parent->user_id && 'no' != get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+				if ( $user_id == $root_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 					continue;
 				}
 			}
@@ -1917,19 +1917,30 @@ function ass_group_subscription_notification_settings() {
 		// @todo add back these options for bbPress if possible.
 	?>
 
-	<?php if ( $forums == 'buddypress' ) : ?>
+	<?php if ( $forums == 'buddypress' ) :
+		if ( ! $replies_to_topic = bp_get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) ) {
+			$replies_to_topic = 'yes';
+		}
+
+		if ( ! $replies_after_me = bp_get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) {
+			$replies_after_me = 'yes';
+		}
+	?>
+
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php if ( !get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) || 'yes' == get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php if ( 'no' == get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php checked( $replies_to_topic, 'yes', true ); ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php checked( $replies_to_topic, 'no', true ); ?>/></td>
 		</tr>
+
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php if ( !get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) || 'yes' == get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php if ( 'no' == get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php checked( $replies_after_me, 'yes', true ); ?>/></td>
+			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php checked( $replies_after_me, 'no', true ); ?>/></td>
 		</tr>
+
 	<?php endif; ?>
 
 		<tr>
@@ -1963,7 +1974,7 @@ function ass_self_post_notification( $user_id = false ) {
 	if ( empty( $user_id ) )
 		$user_id = bp_loggedin_user_id();
 
-	$meta = get_user_meta( $user_id, 'ass_self_post_notification', true );
+	$meta = bp_get_user_meta( $user_id, 'ass_self_post_notification', true );
 
 	$self_notify = $meta == 'yes' ? true : false;
 
