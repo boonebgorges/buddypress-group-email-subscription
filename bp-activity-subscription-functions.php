@@ -191,9 +191,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 	// now let's either send the email or record it for digest purposes
 	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
-		// Does the author want updates of his own posts?
-		if ($user_id == $post->poster_id ) {
-			if ( !ass_self_post_notification() ) {
+		// Does the author want updates of their own posts?
+		if ( $user_id == $post->poster_id ) {
+			if ( ! ass_self_post_notification( $user_id ) ) {
 				continue;
 			}
 		}
@@ -435,9 +435,9 @@ To view or reply, log in and go to:
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
 
-		// Does the author want updates of his own posts?
+		// Does the author want updates of their own posts?
 		if ( $user_id == $sender_id ) {
-			if ( !ass_self_post_notification() )
+			if ( ! ass_self_post_notification( $user_id ) )
 				continue;
 		}
 
