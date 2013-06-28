@@ -177,3 +177,21 @@ if ( ! function_exists( 'bp_get_members_root_slug' ) ) :
 		return constant( 'BP_MEMBERS_SLUG' );
 	}
 endif;
+
+if ( ! function_exists( 'bp_get_user_meta_key' ) ) :
+	function bp_get_user_meta_key( $key = false ) {
+		return apply_filters( 'bp_get_user_meta_key', $key );
+	}
+endif;
+
+if ( ! function_exists( 'bp_get_user_meta' ) ) :
+	function bp_get_user_meta( $user_id, $key, $single = false ) {
+		return get_user_meta( $user_id, bp_get_user_meta_key( $key ), $single );
+	}
+endif;
+
+if ( ! function_exists( 'bp_update_user_meta' ) ) :
+	function bp_update_user_meta( $user_id, $key, $value, $prev_value = '' ) {
+		return update_user_meta( $user_id, bp_get_user_meta_key( $key ), $value, $prev_value );
+	}
+endif;
