@@ -476,24 +476,61 @@ function ass_convert_html_to_plaintext( $message ) {
  */
 function ass_send_multipart_email( $to, $subject, $message_plaintext, $message ) {
 
+	// setup HTML body
+	$message = "<html><body>{$message}</body></html>";
+
+	// get admin email
 	$admin_email = get_site_option( 'admin_email' );
-	if ( $admin_email == '' )
+
+	// if no admin email, use a dummy 'from' email address
+	if ( $admin_email == '' ) {
 		$admin_email = 'support@' . $_SERVER['SERVER_NAME'];
-	$from_name = get_site_option( 'site_name' ) == '' ? 'WordPress' : esc_html( get_site_option( 'site_name' ) );
+	}
 
-	add_filter( 'wp_mail_from',      create_function( '$admin_email', 'return $admin_email;' ) );
-	add_filter( 'wp_mail_from_name', create_function( '$from_name', 'return $from_name;' ) );
+	// get from name
+	$from_name = get_site_option( 'site_name' );
 
-	add_action( 'phpmailer_init', create_function( '$phpmailer', '
-		$phpmailer->Body = "<html><body>' . addslashes( $message ) . '</body></html>";
-		$phpmailer->AltBody = "' . $message_plaintext . '";
-	' ) );
+	// if no site name, use WordPress as dummy 'from' name
+	if ( empty( $from_name ) ) {
+		$from_name = 'WordPress';
+	}
 
-	$headers = array(
-		'content_type' => 'text/html'
-	);
+	// set up anonymous functions to be used to override some WP mail stuff
+	//
+	// due to a bug with wp_mail(), we should reset some $phpmailer properties
+	// (see http://core.trac.wordpress.org/ticket/18493#comment:13).
+	//
+	// we're doing this during the 'wp_mail_from' filter because this runs before
+	// 'phpmailer_init'
+	$admin_email_filter = create_function( '$admin_email', '
+		global $phpmailer;
 
-	$result = wp_mail( $to, $subject, $message_plaintext, $headers );
+		$phpmailer->Body    = "";
+		$phpmailer->AltBody = "";
+
+		return $admin_email;
+	' );
+
+	$from_name_filter = create_function( '$from_name', 'return $from_name;' );
+
+        // set the WP email overrides
+        add_filter( 'wp_mail_from',      $admin_email_filter );
+        add_filter( 'wp_mail_from_name', $from_name_filter );
+ 
+        // setup plain-text body
+        add_action( 'phpmailer_init', create_function( '$phpmailer', '
+                $phpmailer->AltBody = "' . $message_plaintext . '";
+        ' ) );
+ 
+        // set content type as HTML
+        $headers = array( 'Content-type: text/html' );
+ 
+        // send the email!
+        $result = wp_mail( $to, $subject, $message, $headers );
+
+	// remove our custom hooks
+	remove_filter( 'wp_mail_from',      $admin_email_filter );
+	remove_filter( 'wp_mail_from_name', $from_name_filter );
 
 	return $result;
 }
