@@ -87,7 +87,7 @@ function ass_digest_fire( $type ) {
 				foreach( (array) $sub_ids as $sid ) {
 					// note: activity ID is added as the key for performance reasons
 					if ( ! isset( $all_activity_items[$sid] ) ) {
-						$all_activity_items[$sid] = 1; 
+						$all_activity_items[$sid] = 1;
 					}
 				}
 			}
@@ -513,20 +513,20 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 
 	$from_name_filter = create_function( '$from_name', 'return $from_name;' );
 
-        // set the WP email overrides
-        add_filter( 'wp_mail_from',      $admin_email_filter );
-        add_filter( 'wp_mail_from_name', $from_name_filter );
- 
-        // setup plain-text body
-        add_action( 'phpmailer_init', create_function( '$phpmailer', '
-                $phpmailer->AltBody = "' . $message_plaintext . '";
-        ' ) );
- 
-        // set content type as HTML
-        $headers = array( 'Content-type: text/html' );
- 
-        // send the email!
-        $result = wp_mail( $to, $subject, $message, $headers );
+	// set the WP email overrides
+	add_filter( 'wp_mail_from',      $admin_email_filter );
+	add_filter( 'wp_mail_from_name', $from_name_filter );
+
+	// setup plain-text body
+	add_action( 'phpmailer_init', create_function( '$phpmailer', '
+		$phpmailer->AltBody = "' . $message_plaintext . '";
+	' ) );
+
+	// set content type as HTML
+	$headers = array( 'Content-type: text/html' );
+
+	// send the email!
+	$result = wp_mail( $to, $subject, $message, $headers );
 
 	// remove our custom hooks
 	remove_filter( 'wp_mail_from',      $admin_email_filter );
