@@ -92,7 +92,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 	// this is a new topic
 	if ( $post->post_position == 1 ) {
-		$is_topic    = true;
+		$is_topic = true;
 
 		// more faux activity items!
 		$activity->type              = 'new_forum_topic';
@@ -191,9 +191,14 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 	// now let's either send the email or record it for digest purposes
 	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
-		// Does the author want updates of their own posts?
+		$self_notify = '';
+
+		// Does the author want updates of their own forum posts?
 		if ( $user_id == $post->poster_id ) {
-			if ( ! ass_self_post_notification( $user_id ) ) {
+			$self_notify = ass_self_post_notification( $user_id );
+
+			// Author does not want notifications of their own posts
+			if ( ! $self_notify ) {
 				continue;
 			}
 		}
@@ -203,8 +208,20 @@ function ass_group_notification_forum_posts( $post_id ) {
 		// default settings link
 		$settings_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
 
+		// Self-notification emails
+		if ( $self_notify === true ) {
+			$send_it = true;
+
+			// notification settings link
+			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+
+			// set notice
+			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
+			$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$notice .= "\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+
 		// do the following for new topics
-		if ( $is_topic ) {
+		} elseif ( $is_topic ) {
 			if ( $group_status == 'sub' || $group_status == 'supersub' ) {
 				$send_it = true;
 
@@ -221,9 +238,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 				$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
 			}
-		}
+
 		// do the following for forum replies
-		else {
+		} else {
 			$topic_status = isset( $user_topic_status[$user_id] ) ? $user_topic_status[$user_id] : '';
 
 			// the topic mute button will override the subscription options below
@@ -290,8 +307,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 			$user = bp_core_get_core_userdata( $user_id );
 
 			// Send the email
-			if ( $user->user_email )
+			if ( $user->user_email ) {
 				wp_mail( $user->user_email, $subject, $message . $notice );
+			}
 		}
 
 		// otherwise if digest or summary, record it!
@@ -435,16 +453,24 @@ To view or reply, log in and go to:
 	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
 		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
 
-		// Does the author want updates of their own posts?
-		if ( $user_id == $sender_id ) {
-			if ( ! ass_self_post_notification( $user_id ) )
-				continue;
-		}
+		$self_notify = '';
+
+		// Does the author want updates of their own forum posts?
+		if ( $type == 'bbp_topic_create' || $type == 'bbp_reply_create' ) {
+
+			if ( $user_id == $sender_id ) {
+				$self_notify = ass_self_post_notification( $user_id );
+
+				// Author does not want notifications of their own posts
+				if ( ! $self_notify ) {
+					continue;
+				}
+			}
 
 		// If this is an activity comment, and the $user_id is the user who is being replied
 		// to, check to make sure that the user is not subscribed to BP's native activity
 		// reply notifications
-		if ( 'activity_comment' == $type ) {
+		} elseif ( 'activity_comment' == $type ) {
 			// First, look at the immediate parent
 			$immediate_parent = new BP_Activity_Activity( $content->secondary_item_id );
 
@@ -465,27 +491,52 @@ To view or reply, log in and go to:
 			}
 		}
 
-		// User is subscribed to "All Mail"
-		// OR user is subscribed to "New Topics" (bbPress 2) so send email about this item now!
-		if ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
-			/* Content footer */
-			$footer = ass_group_unsubscribe_links( $user_id );
+		$send_it = false;
 
-			$notice = "\n" . __('Your email setting for this group is: ', 'bp-ass') . ass_subscribe_translate( $group_status );
+		// Self-notification email for bbPress posts
+		if ( $self_notify === true ) {
+			$send_it = true;
+
+			// notification settings link
+			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+
+			// set notice
+			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
+			$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$notice .= "\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+
+		// User is subscribed to "All Mail"
+		// OR user is subscribed to "New Topics" (bbPress 2)
+		} elseif ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
+			$send_it = true;
+
+			$settings_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
+
+			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
+			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+
+		}
+
+		// if we're good to send, send the email!
+		if ( $send_it ) {
+			// Get the details for the user
 			$user = bp_core_get_core_userdata( $user_id );
 
-			if ( $user->user_email )
-				wp_mail( $user->user_email, $subject, $message . $footer . $notice );  // Send the email
+			// Send the email
+			if ( $user->user_email ) {
+				wp_mail( $user->user_email, $subject, $message . $notice );
+			}
 
-			//echo '<br>EMAIL: ' . $user->user_email . "<br>";
+		}
 
-		// User is subscribed to "Daily Digest" so record item in digest!
+		// otherwise, user is subscribed to "Daily Digest" so record item in digest!
 		// OR user is subscribed to "Weekly Summary" and activity item is important
 		// enough to be recorded
-		} elseif ( $group_status == 'dig' || ( $group_status == 'sum' && $this_activity_is_important ) ) {
+		if ( $group_status == 'dig' || ( $group_status == 'sum' && $this_activity_is_important ) ) {
 			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
-			//echo '<br>DIGEST: ' . $user_id . "<br>";
 		}
+
 	}
 
 	//echo '<p>Subject: ' . $subject;
@@ -1065,7 +1116,7 @@ function ass_bbp_subscriptions( $retval ) {
 		// native subscriptions - this emulates GES' old "Follow / Mute" functionality
 		if ( $group_status != 'supersub' ) {
 			return true;
-		
+
 		// the member's setting is "All Mail" so we shouldn't allow them to subscribe
 		// to prevent duplicates
 		} else {
