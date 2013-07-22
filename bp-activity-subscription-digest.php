@@ -291,6 +291,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 	$userdomain = ass_digest_get_user_domain( $user_id );
 	$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&group=$group_id&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
+	$gnotifications_link = ass_get_login_redirect_url( $group_permalink . 'notifications/' );
 
 	// add the group title bar
 	if ( $type == 'dig' ) {
@@ -302,7 +303,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	// add change email settings link
 	$group_message .= "\n<div {$ass_email_css['change_email']}>";
 	$group_message .= __('To disable these notifications for this group click ', 'bp-ass'). " <a href=\"$unsubscribe_link\">" . __( 'unsubscribe', 'bp-ass' ) . '</a> - ';
-	$group_message .=  __('change ', 'bp-ass')."<a href=\"". $group_permalink . "notifications/\">".__( 'email options', 'bp-ass' )."</a> ";
+	$group_message .=  __('change ', 'bp-ass') . '<a href="' . $gnotifications_link . '">' . __( 'email options', 'bp-ass' ) . '</a>';
 	$group_message .= "</div>\n\n";
 
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );

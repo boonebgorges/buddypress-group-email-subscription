@@ -133,13 +133,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 	// if group is not public, change primary link to login URL to verify
 	// authentication and for easier redirection after logging in
 	if ( $group->status != 'public' ) {
-		$query_args = array(
-			'action'      => 'bpnoaccess',
-			'auth'        => 1,
-			'redirect_to' => urlencode( $primary_link )
-		);
-
-		$primary_link = add_query_arg( $query_args, apply_filters( 'ass_login_url', wp_login_url() ) );
+		$primary_link = ass_get_login_redirect_url( $primary_link );
 
 		$text_before_primary = __( 'To view or reply to this topic, go to:', 'bp-ass' );
 
@@ -206,14 +200,14 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$send_it = $notice = false;
 
 		// default settings link
-		$settings_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
+		$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
 
 		// Self-notification emails
 		if ( $self_notify === true ) {
 			$send_it = true;
 
 			// notification settings link
-			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
@@ -279,7 +273,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$send_it = true;
 
 				// override settings link to user's notifications
-				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+				$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'bp-ass' );
@@ -292,7 +286,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$send_it = true;
 
 				// override settings link to user's notifications
-				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+				$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'bp-ass' );
@@ -498,7 +492,7 @@ To view or reply, log in and go to:
 			$send_it = true;
 
 			// notification settings link
-			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
@@ -510,7 +504,7 @@ To view or reply, log in and go to:
 		} elseif ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
 			$send_it = true;
 
-			$settings_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
+			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
 
 			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
 			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
@@ -721,6 +715,37 @@ function ass_login_redirector() {
 }
 add_action( 'login_init', 'ass_login_redirector', 1 );
 
+/**
+ * Returns the login URL with a redirect link.
+ *
+ * Pass the link you want the user to redirect to when authenticated.
+ *
+ * Redirection occurs in {@link ass_login_redirector()}.
+ *
+ * @since 3.4
+ *
+ * @param string $url The URL you want to redirect to.
+ * @return mixed String of the login URL with the passed redirect link.
+ */
+function ass_get_login_redirect_url( $url = '' ) {
+	$url = esc_url_raw( $url );
+
+	if ( empty( $url ) ) {
+		return false;
+	}
+
+	// setup query args
+	$query_args = array(
+		'action'      => 'bpnoaccess',
+		'auth'        => 1,
+		'redirect_to' => urlencode( $url )
+	);
+
+	return add_query_arg(
+		$query_args,
+		apply_filters( 'ass_login_url', wp_login_url() )
+	);
+}
 
 
 //
