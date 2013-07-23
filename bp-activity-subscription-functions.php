@@ -1855,7 +1855,8 @@ function ass_admin_notice() {
 			$subject   .= __(' - sent from the group ', 'bp-ass') . $group_name . ' ' . $blogname;
 			$subject    = apply_filters( 'ass_admin_notice_subject', $subject, $_POST[ 'ass_admin_notice_subject' ], $group_name, $blogname );
 			$subject    = ass_clean_subject( $subject, false );
-			$notice     = ass_clean_content( $_POST['ass_admin_notice'] );
+			$notice     = apply_filters( 'ass_admin_notice_message', $_POST['ass_admin_notice'] );
+			$notice     = ass_clean_content( $notice );
 
 			$message    = sprintf( __(
 'This is a notice from the group \'%s\':
