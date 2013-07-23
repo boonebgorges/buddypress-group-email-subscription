@@ -1369,17 +1369,33 @@ function ass_clean_content( $content ) {
 	return apply_filters( 'ass_clean_content', $clean_content, $content );
 }
 
-// cleans up the subject for email, strips trailing colon, add quotes to topic name, strips html
-function ass_clean_subject( $subject ) {
+/**
+ * Cleans up the subject for email.
+ *
+ * This function does a few things:
+ *  - Add quotes to topic name
+ *  - Strips trailing colon
+ *  - Strips slashes, HTML
+ *  - Convert HTML entities
+ *
+ * @param string $subject The email subject line to clean
+ * @param bool $add_quotes Should we try to add quotes to forum topics?
+ * @return string
+ */
+function ass_clean_subject( $subject, $add_quotes = true ) {
 
-	// this feature of adding quotes only happens in english installs // and is not that useful in the HTML digest
-	$subject_quotes = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
-	$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );
-	if ( $subject != $subject_quotes )
-		$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
+	// this feature of adding quotes only happens in english installs
+	// and is not that useful in the HTML digest
+	if ( $add_quotes === true ) {
+		$subject_quotes = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
+		$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );
+		if ( $subject != $subject_quotes )
+			$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
 
-	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
-	$subject = html_entity_decode( strip_tags( $subject ), ENT_QUOTES );
+		$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
+	}
+
+	$subject = html_entity_decode( strip_tags( stripslashes( $subject ) ), ENT_QUOTES );
 
 	return apply_filters( 'ass_clean_subject', $subject );
 }
@@ -1834,6 +1850,9 @@ function ass_admin_notice() {
 			$subject    = $_POST[ 'ass_admin_notice_subject' ];
 			$subject   .= __(' - sent from the group ', 'bp-ass') . $group_name . ' ' . $blogname;
 			$subject    = apply_filters( 'ass_admin_notice_subject', $subject, $_POST[ 'ass_admin_notice_subject' ], $group_name, $blogname );
+			$subject    = ass_clean_subject( $subject, false );
+			$notice     = ass_clean_content( $_POST['ass_admin_notice'] );
+
 			$message    = sprintf( __(
 'This is a notice from the group \'%s\':
 
@@ -1844,7 +1863,7 @@ To view this group log in and follow the link below:
 %s
 
 ---------------------
-', 'bp-ass' ), $group_name,  $_POST[ 'ass_admin_notice' ], $group_link );
+', 'bp-ass' ), $group_name,  $notice, $group_link );
 
 			$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
 If you feel this service is being misused please speak to the website administrator.', 'bp-ass' );
@@ -1852,7 +1871,7 @@ If you feel this service is being misused please speak to the website administra
 			$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
 
 			// allow others to perform an action when this type of email is sent, like adding to the activity feed
-			do_action( 'ass_admin_notice', $group_id, $subject, $_POST['ass_admin_notice'] );
+			do_action( 'ass_admin_notice', $group_id, $subject, $notice );
 
 			// cycle through all group members
 			foreach ( (array)$user_ids as $user_id ) {
@@ -1911,8 +1930,8 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 		return;
 	}
 
-	$subject = $welcome_email['subject'];
-	$message = $welcome_email['content'];
+	$subject = ass_clean_subject( $welcome_email['subject'], false );
+	$message = ass_clean_content( $welcome_email['content'] );
 
 	if ( ! $user->user_email || 'yes' != $welcome_email_enabled || empty( $message ) )
 		return;
