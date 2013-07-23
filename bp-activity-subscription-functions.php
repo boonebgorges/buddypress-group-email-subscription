@@ -1846,6 +1846,10 @@ function ass_admin_notice() {
 			$group_name = bp_get_current_group_name();
 			$group_link = bp_get_group_permalink( $group );
 
+			if ( $group->status != 'public' ) {
+				$group_link = ass_get_login_redirect_url( $group_link );
+			}
+
 			$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 			$subject    = $_POST[ 'ass_admin_notice_subject' ];
 			$subject   .= __(' - sent from the group ', 'bp-ass') . $group_name . ' ' . $blogname;
