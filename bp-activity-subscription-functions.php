@@ -1769,7 +1769,6 @@ function ass_admin_notice_form() {
 		?>
 		<form action="<?php echo $submit_link ?>" method="post">
 			<?php wp_nonce_field( 'ass_email_options' ); ?>
-			<input type="hidden" name="ass_group_id" value="<?php echo bp_get_current_group_id(); ?>"/>
 
 			<h3><?php _e('Send an email notice to everyone in the group', 'bp-ass'); ?></h3>
 			<p><?php _e('You can use the form below to send an email notice to all group members.', 'bp-ass'); ?> <br>
@@ -1828,7 +1827,7 @@ function ass_admin_notice_form() {
 function ass_admin_notice() {
     if ( bp_is_groups_component() && bp_is_current_action( 'admin' ) && bp_is_action_variable( 'notifications', 0 ) ) {
 
-	    // Make sure the user is an admin
+	    	// Make sure the user is an admin
 		if ( !groups_is_user_admin( bp_loggedin_user_id(), bp_get_current_group_id() ) && ! is_super_admin() )
 			return;
 
@@ -1842,9 +1841,10 @@ function ass_admin_notice() {
 		if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
 			bp_core_add_message( __( 'The email notice was sent not sent. Please enter email content.', 'bp-ass' ), 'error' );
 		} else {
-			$group_id   = $_POST[ 'ass_group_id' ];
+			$group      = groups_get_current_group();
+			$group_id   = $group->id;
 			$group_name = bp_get_current_group_name();
-			$group_link = bp_get_group_permalink( groups_get_current_group() );
+			$group_link = bp_get_group_permalink( $group );
 
 			$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 			$subject    = $_POST[ 'ass_admin_notice_subject' ];
