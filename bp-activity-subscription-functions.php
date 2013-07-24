@@ -207,7 +207,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 			$send_it = true;
 
 			// notification settings link
-			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
+			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
@@ -273,7 +273,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$send_it = true;
 
 				// override settings link to user's notifications
-				$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
+				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'bp-ass' );
@@ -286,7 +286,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$send_it = true;
 
 				// override settings link to user's notifications
-				$settings_link = ass_get_login_redirect_url( trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/' );
+				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'bp-ass' );
