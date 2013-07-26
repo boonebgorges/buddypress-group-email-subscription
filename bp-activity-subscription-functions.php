@@ -839,10 +839,12 @@ function ass_group_subscribe_settings () {
 	<div class="ass-email-explain"><?php _e('Get all the day\'s activity bundled into a single email', 'bp-ass'); ?></div>
 	</div>
 
-	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="sub" <?php if ( $group_status == "sub" ) echo 'checked="checked"'; ?>><?php _e('New Topics Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Send new topics as they arrive (but don\'t send replies)', 'bp-ass'); ?></div>
-	</div>
+	<?php if ( ass_get_forum_type() ) : ?>
+		<div class="ass-email-type">
+		<label><input type="radio" name="ass_group_subscribe" value="sub" <?php if ( $group_status == "sub" ) echo 'checked="checked"'; ?>><?php _e('New Topics Email', 'bp-ass'); ?></label>
+		<div class="ass-email-explain"><?php _e('Send new topics as they arrive (but don\'t send replies)', 'bp-ass'); ?></div>
+		</div>
+	<?php endif; ?>
 
 	<div class="ass-email-type">
 	<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('All Email', 'bp-ass'); ?></label>
@@ -954,7 +956,11 @@ function ass_group_subscribe_button() {
 		<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'bp-ass') ?></a> <?php _e('I will read this group on the web', 'bp-ass') ?><br>
 		<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'bp-ass') ?></a> <?php _e('Get a summary of topics each', 'bp-ass') ?> <?php echo ass_weekly_digest_week(); ?><br>
 		<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'bp-ass') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'bp-ass') ?><br>
-		<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'bp-ass') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'bp-ass') ?><br>
+
+		<?php if ( ass_get_forum_type() ) : ?>
+			<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'bp-ass') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'bp-ass') ?><br>
+		<?php endif; ?>
+
 		<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'bp-ass') ?></a> <?php _e('Send all group activity as it arrives', 'bp-ass') ?><br>
 		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php _e('close', 'bp-ass') ?></a>
 	</div>
@@ -1050,8 +1056,12 @@ function ass_default_subscription_settings_form() {
 			<?php _e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'bp-ass' ) ?></label>
 		<label><input type="radio" name="ass-default-subscription" value="dig" <?php ass_default_subscription_settings( 'dig' ) ?> />
 			<?php _e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'bp-ass' ) ?></label>
-		<label><input type="radio" name="ass-default-subscription" value="sub" <?php ass_default_subscription_settings( 'sub' ) ?> />
+
+		<?php if ( ass_get_forum_type() ) : ?>
+			<label><input type="radio" name="ass-default-subscription" value="sub" <?php ass_default_subscription_settings( 'sub' ) ?> />
 			<?php _e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'bp-ass' ) ?></label>
+		<?php endif; ?>
+
 		<label><input type="radio" name="ass-default-subscription" value="supersub" <?php ass_default_subscription_settings( 'supersub' ) ?> />
 			<?php _e( 'All Email (send emails about everything - recommended only for working groups)', 'bp-ass' ) ?></label>
 	</div>
@@ -1483,7 +1493,11 @@ function ass_manage_members_email_status(  $user_id = '', $group = '' ) {
 	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
 	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
+
+	if ( ass_get_forum_type() ) {
+		echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
+	}
+
 	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
 	echo '</span>';
 }
