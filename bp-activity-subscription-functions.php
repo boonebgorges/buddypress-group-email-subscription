@@ -2000,8 +2000,8 @@ function ass_get_forum_type() {
 
 	// check for BP's bundled forums
 	} else {
-		// BP's bundled forums aren't active, so stop!
-		if ( ! bp_forums_is_installed_correctly() ) {
+		// BP's bundled forums aren't installed correctly, so stop!
+		if ( ! bp_is_active( 'forums' ) || ! bp_forums_is_installed_correctly() ) {
 			return false;
 		}
 
