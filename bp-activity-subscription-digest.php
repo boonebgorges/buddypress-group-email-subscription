@@ -533,6 +533,13 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	remove_filter( 'wp_mail_from',      $admin_email_filter );
 	remove_filter( 'wp_mail_from_name', $from_name_filter );
 
+	// clean up after ourselves
+	// reset $phpmailer->AltBody after we set it in the 'phpmailer_init' hook
+	// this is so subsequent calls to wp_mail() by other plugins will be clean
+	global $phpmailer;
+
+	$phpmailer->AltBody = "";
+
 	return $result;
 }
 
