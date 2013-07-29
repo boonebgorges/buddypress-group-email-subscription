@@ -79,34 +79,25 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	// Display the notification settings form
-	function display() {
+	public function display() {
 		ass_group_subscribe_settings();
 	}
 
-
-	// The remaining group API functions aren't used for this plugin but have to be overriden or api won't work
-
-	function create_screen() {
-		return false;
-	}
-
-	function create_screen_save() {
-		return false;
-	}
-
-	function edit_screen() {
+	// "Admin > Email Options" screen
+	public function edit_screen( $group_id = null ) {
 		// if ass-admin-can-send-email = no this won't show
 		ass_admin_notice_form(); // removed for now because it was broken
-		return true;
 	}
 
-	function edit_screen_save() {
-		return false;
-	}
+	// The remaining group API functions aren't used for this plugin but have to
+	// be overriden or api won't work
+	public function create_screen( $group_id = null ) {}
 
-	function widget_display() {
-		return false;
-	}
+	public function create_screen_save( $group_id = null ) {}
+
+	public function edit_screen_save( $group_id = null ) {}
+
+	public function widget_display() {}
 
 }
 
