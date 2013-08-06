@@ -13,8 +13,15 @@ if ( defined( 'BP_VERSION' ) ) {
 	}
 }
 
+// Install is using BP 1.5
+// Need abstraction for BP 1.6
+if ( $bpges_bp_version < 1.6 ) {
+	require_once( dirname( __FILE__ ) . '/1.6-abstraction.php' );
+}
+
+// Install is using BP 1.2
+// Need abstraction for BP 1.5
 if ( $bpges_bp_version < 1.5 ) {
-	// Pre-1.5 versions of BuddyPress
 
 	// Load the abstraction files, which define the necessary 1.5 functions
 	require_once( dirname( __FILE__ ) . '/1.5-abstraction.php' );
