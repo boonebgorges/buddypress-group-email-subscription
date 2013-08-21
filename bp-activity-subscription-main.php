@@ -58,6 +58,13 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 		// hook in the css and js
 		add_action( 'wp_print_styles',    array( &$this , 'add_settings_stylesheet' ) );
 		add_action( 'wp_enqueue_scripts', array( &$this , 'ass_add_javascript' ),1 );
+		
+		// hook in the new user forum notification default settings initialization
+		$forums = ass_get_forum_type();
+		if( $forums == 'buddypress' ) {
+			require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-forum-notif-inits.php' );
+			add_action('user_register', 'ass_forum_notif_new_user_init');
+		}
 	}
 
 	public function add_settings_stylesheet() {

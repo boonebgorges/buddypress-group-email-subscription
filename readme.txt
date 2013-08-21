@@ -88,6 +88,10 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.5 =
+* Initializes forum subscription default settings of existing users upon plugin installation
+* Initializes forum subscription default settings of new registered users after plugin installation
+
 = 3.4 =
 * Reinstate bbPress "Subscribe" option in forum threads for group members not subscribed to "All Mail"
 * Performance improvements in daily and weekly digests
