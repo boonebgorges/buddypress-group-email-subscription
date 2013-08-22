@@ -37,7 +37,7 @@ function activitysub_load_buddypress() {
 		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
 			return false;
 
-		require_once ('bp-activity-subscription-main.php');
+		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
 		return true;
 	}
 	/* Get the list of active sitewide plugins */
@@ -52,7 +52,7 @@ function activitysub_load_buddypress() {
 		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
 			return false;
 
-		require_once ('bp-activity-subscription-main.php');
+		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
 		return true;
 	}
 
@@ -68,7 +68,7 @@ add_action( 'init', 'activitysub_textdomain' );
 
 
 function activitysub_setup_digest_defaults() {
-	require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
+	require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 	ass_set_daily_digest_time( '05', '00' );
 	ass_set_weekly_digest_time( '4' );
 }

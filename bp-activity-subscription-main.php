@@ -33,8 +33,8 @@ if ( $bpges_bp_version < 1.5 ) {
 	bp_register_group_extension( 'Group_Activity_Subscription' );
 }
 
-require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-functions.php' );
-require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
+require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
+require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
 class Group_Activity_Subscription extends BP_Group_Extension {
 
