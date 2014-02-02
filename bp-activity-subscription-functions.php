@@ -502,6 +502,12 @@ To view or reply, log in and go to:
 		// User is subscribed to "All Mail"
 		// OR user is subscribed to "New Topics" (bbPress 2)
 		} elseif ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
+
+            // if someone is signed up for all email and they post a group update, they should not receive an email
+            if ( 'activity_update' == $type && $sender_id === $user_id ) {
+                continue;
+            }
+
 			$send_it = true;
 
 			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
