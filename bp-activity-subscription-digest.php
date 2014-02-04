@@ -704,14 +704,11 @@ function bp_core_enable_root_profiles() {
 endif;
 
 // if the WP_Better_Emails plugin is installed, don't wrap the message with <html><body>$message</body></html>
-// put this in your functions.php in your theme
-/*
-function ass_play_nice_with_WP_Better_Emails_plugin( $message, $message_pre_html_wrap ) {
+function ass_digest_support_wp_better_emails( $message, $message_pre_html_wrap ) {
     if ( class_exists( 'WP_Better_Emails' ) ) {
         $message = $message_pre_html_wrap;
     }
 
     return $message;
 }
-add_filter( 'ass_digest_message_html', 'ass_play_nice_with_WP_Better_Emails_plugin', 10, 2 );
-*/
+add_filter( 'ass_digest_message_html', 'ass_digest_support_wp_better_emails', 10, 2 );
