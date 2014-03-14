@@ -249,8 +249,8 @@ function ass_weekly_digest_fire() {
 add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 
 // Use these two lines for testing the digest firing in real-time
-//add_action( 'bp_after_container', 'ass_daily_digest_fire' ); // for testing only
-//add_action( 'bp_after_container', 'ass_weekly_digest_fire' ); // for testing only
+//add_action( 'bp_actions', 'ass_daily_digest_fire' ); // for testing only
+//add_action( 'bp_actions', 'ass_weekly_digest_fire' ); // for testing only
 
 
 
@@ -286,7 +286,7 @@ add_action( 'bp_actions', 'ass_digest_fire_test' );
 function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id ) {
 	global $bp, $ass_email_css;
 
-	$group_permalink = bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/' . $group_slug . '/';
+	$group_permalink = apply_filters( 'bp_get_group_permalink', bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/' . $group_slug . '/' );
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
 
 	$userdomain = ass_digest_get_user_domain( $user_id );
@@ -477,10 +477,10 @@ function ass_convert_html_to_plaintext( $message ) {
  */
 function ass_send_multipart_email( $to, $subject, $message_plaintext, $message ) {
 
-	// setup HTML body
-	$message = "<html><body>{$message}</body></html>";
+     // setup HTML body. plugins that wrap emails with HTML templates can filter this
+	$message = apply_filters( 'ass_digest_message_html', "<html><body>{$message}</body></html>", $message );
 
-	// get admin email
+    // get admin email
 	$admin_email = get_site_option( 'admin_email' );
 
 	// if no admin email, use a dummy 'from' email address
@@ -703,4 +703,12 @@ function bp_core_enable_root_profiles() {
 }
 endif;
 
-?>
+// if the WP_Better_Emails plugin is installed, don't wrap the message with <html><body>$message</body></html>
+function ass_digest_support_wp_better_emails( $message, $message_pre_html_wrap ) {
+    if ( class_exists( 'WP_Better_Emails' ) ) {
+        $message = $message_pre_html_wrap;
+    }
+
+    return $message;
+}
+add_filter( 'ass_digest_message_html', 'ass_digest_support_wp_better_emails', 10, 2 );
