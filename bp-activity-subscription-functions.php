@@ -1373,7 +1373,7 @@ function ass_get_group_admins_mods( $group_id ) {
  *
  * By default we do the following to outgoing email content:
  *   - strip slashes
- *   - strip HTML tags
+ *   - convert anchor tags to "Link Text <URL>" format, then strip other HTML tags
  *   - convert HTML entities
  *
  * @uses apply_filters() Filter 'ass_clean_content' to modify our cleaning routine
@@ -1381,8 +1381,24 @@ function ass_get_group_admins_mods( $group_id ) {
  * @return string $clean_content The email content, cleaned up for plaintext email
  */
 function ass_clean_content( $content ) {
-	$clean_content = html_entity_decode( strip_tags( stripslashes( $content ) ), ENT_QUOTES );
+	$clean_content = stripslashes( $content );
+	$clean_content = ass_convert_links( $clean_content );
+	$clean_content = html_entity_decode( $clean_content, ENT_QUOTES );
 	return apply_filters( 'ass_clean_content', $clean_content, $content );
+}
+
+/**
+ * Convert <a> tags to a plain-text version.
+ *
+ * Links like <a href="http://foo.com">Foo</a> become Foo <http://foo.com>
+ *
+ * @param string $content
+ * @return string
+ */
+function ass_convert_links( $content ) {
+	$pattern = '|<a .*?href=["\']([a-zA-Z0-9\-_\./:]+?)["\'].*?>([^<]+)</a>|';
+	$content = preg_replace( $pattern, '\2 <\1>', $content );
+	return $content;
 }
 
 /**
