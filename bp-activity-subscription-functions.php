@@ -1381,10 +1381,23 @@ function ass_get_group_admins_mods( $group_id ) {
  * @return string $clean_content The email content, cleaned up for plaintext email
  */
 function ass_clean_content( $content ) {
-	$clean_content = stripslashes( $content );
-	$clean_content = ass_convert_links( $clean_content );
-	$clean_content = html_entity_decode( $clean_content, ENT_QUOTES );
-	return apply_filters( 'ass_clean_content', $clean_content, $content );
+	return apply_filters( 'ass_clean_content', $content );
+}
+
+// By default, we run content through these filters, which can be individually removed
+add_filter( 'ass_clean_content', 'stripslashes', 2 );
+add_filter( 'ass_clean_content', 'strip_tags', 4 );
+add_filter( 'ass_clean_content', 'ass_convert_links', 6 );
+add_filter( 'ass_clean_content', 'ass_html_entity_decode', 8 );
+
+/**
+ * Wrapper for html_entity_decode() that can be used as an apply_filters() callback
+ *
+ * @param string
+ * @return string
+ */
+function ass_html_entity_decode( $content ) {
+	return html_entity_decode( $content, ENT_QUOTES );
 }
 
 /**
