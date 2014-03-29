@@ -295,6 +295,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 			}
 		}
 
+		// One last chance to filter the message content
+		$message = apply_filters( 'bp_ass_forum_notification_message', $message . $notice, $message, $notice, $user_id, $group_status, $the_content, $text_before_primary, $primary_link, $settings_link );
+
 		// if we're good to send, send the email!
 		if ( $send_it ) {
 			// Get the details for the user
