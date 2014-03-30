@@ -102,7 +102,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$action = $activity->action  = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
-		$the_content = apply_filters( 'bp_ass_new_topic_content', $post->post_text, $activity );
+		$the_content = apply_filters( 'bp_ass_new_topic_content', $post->post_text, $activity, $topic, $group );
 	}
 	// this is a forum reply
 	else {
@@ -124,7 +124,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$activity->primary_link = $primary_link;
 
 		$subject     = apply_filters( 'bp_ass_forum_reply_subject', $action . ' ' . $blogname, $action, $blogname );
-		$the_content = apply_filters( 'bp_ass_forum_reply_content', $post->post_text, $activity );
+		$the_content = apply_filters( 'bp_ass_forum_reply_content', $post->post_text, $activity, $topic, $group );
 	}
 
 	// Convert entities and do other cleanup
