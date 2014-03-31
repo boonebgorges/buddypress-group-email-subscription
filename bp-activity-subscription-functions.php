@@ -504,7 +504,8 @@ To view or reply, log in and go to:
 
 		// Self-notification email for bbPress posts
 		if ( $self_notify === true ) {
-			$send_it = true;
+			$send_it      = true;
+			$group_status = 'self_notify';
 
 			// notification settings link
 			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
