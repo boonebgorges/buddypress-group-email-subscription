@@ -299,17 +299,25 @@ function ass_group_notification_forum_posts( $post_id ) {
 			}
 		}
 
-		// One last chance to filter the message content
-		$message = apply_filters( 'bp_ass_forum_notification_message', $message . $notice, $message, $notice, $user_id, $group_status, $the_content, $text_before_primary, $primary_link, $settings_link );
-
 		// if we're good to send, send the email!
 		if ( $send_it ) {
+			// One last chance to filter the message content
+			$message = apply_filters( 'bp_ass_forum_notification_message', $message . $notice, array(
+				'message'           => $message,
+				'notice'            => $notice,
+				'user_id'           => $user_id,
+				'subscription_type' => $group_status,
+				'content'           => $the_content,
+				'view_link'         => $primary_link,
+				'settings_link'     => $settings_link
+			) );
+
 			// Get the details for the user
 			$user = bp_core_get_core_userdata( $user_id );
 
 			// Send the email
 			if ( $user->user_email ) {
-				wp_mail( $user->user_email, $subject, $message . $notice );
+				wp_mail( $user->user_email, $subject, $message );
 			}
 		}
 
