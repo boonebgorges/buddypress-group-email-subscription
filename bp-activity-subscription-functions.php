@@ -1455,10 +1455,13 @@ function ass_clean_subject( $subject, $add_quotes = true ) {
 		$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
 	}
 
-	$subject = html_entity_decode( strip_tags( stripslashes( $subject ) ), ENT_QUOTES );
-
 	return apply_filters( 'ass_clean_subject', $subject );
 }
+
+// By default, we run content through these filters, which can be individually removed
+add_filter( 'ass_clean_subject', 'stripslashes', 2 );
+add_filter( 'ass_clean_subject', 'strip_tags', 4 );
+add_filter( 'ass_clean_subject', 'ass_html_entity_decode', 8 );
 
 function ass_clean_subject_html( $subject ) {
 	$subject = preg_replace( '/:$/', '', $subject ); // remove trailing colon
