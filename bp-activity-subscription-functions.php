@@ -536,12 +536,22 @@ To view or reply, log in and go to:
 
 		// if we're good to send, send the email!
 		if ( $send_it ) {
+			// One last chance to filter the message content
+			$message = apply_filters( 'bp_ass_activity_notification_message', $message . $notice, array(
+				'message'           => $message,
+				'notice'            => $notice,
+				'user_id'           => $user_id,
+				'subscription_type' => $group_status,
+				'content'           => $the_content,
+				'settings_link'     => ! empty( $settings_link ) ? $settings_link : '',
+			) );
+
 			// Get the details for the user
 			$user = bp_core_get_core_userdata( $user_id );
 
 			// Send the email
 			if ( $user->user_email ) {
-				wp_mail( $user->user_email, $subject, $message . $notice );
+				wp_mail( $user->user_email, $subject, $message );
 			}
 
 		}
