@@ -415,7 +415,7 @@ function ass_group_notification_activity( $content ) {
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
-	$the_content = apply_filters( 'bp_ass_activity_notification_content', $content->content, $content );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', $content->content, $content, $action, $group );
 	$the_content = ass_clean_content( $the_content );
 
 	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
