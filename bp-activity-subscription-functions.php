@@ -205,6 +205,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		// Self-notification emails
 		if ( $self_notify === true ) {
 			$send_it = true;
+			$group_status = 'self_notify';
 
 			// notification settings link
 			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
@@ -258,6 +259,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 			// User is manually subscribed to this topic
 			elseif ( $topic_status == 'sub' ) {
 				$send_it = true;
+				$group_status = 'manual_topic';
 
 				// change settings link to the forum thread
 				// get rid of any query args and anchors from the thread permalink
@@ -271,6 +273,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 			// User started the topic and wants to receive email replies to his/her topic
 			elseif ( $topic->topic_poster == $user_id && isset( $ass_replies_to_my_topic[$user_id] ) && $ass_replies_to_my_topic[$user_id] != 'no' ) {
 				$send_it = true;
+				$group_status = 'replies_to_my_topic';
 
 				// override settings link to user's notifications
 				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
@@ -284,6 +287,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 			// User posted in this topic and wants to receive all subsequent replies
 			elseif ( isset( $previous_posters[$user_id] ) && isset( $ass_replies_after_me_topic[$user_id] ) && $ass_replies_after_me_topic[$user_id] != 'no' ) {
 				$send_it = true;
+				$group_status = 'replies_after_me_topic';
 
 				// override settings link to user's notifications
 				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
