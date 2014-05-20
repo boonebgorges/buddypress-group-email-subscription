@@ -103,9 +103,9 @@ endif;
 if ( !function_exists( 'groups_get_current_group' ) ) :
 	function groups_get_current_group() {
 		global $bp;
-	
+
 		$current_group = isset( $bp->groups->current_group ) ? $bp->groups->current_group : false;
-	
+
 		return apply_filters( 'groups_get_current_group', $current_group );
 	}
 endif;
@@ -149,4 +149,49 @@ if ( !function_exists( 'bp_screens' ) ) :
 		do_action( 'bp_screens' );
 	}
 	add_action( 'wp', 'bp_screens', 3 );
+endif;
+
+if ( ! function_exists( 'bp_core_admin_hook' ) ) :
+	// This is a bit imprecise. Won't work properly when BP activated on
+	// a single site in a network
+	function bp_core_admin_hook() {
+		if ( is_multisite() ) {
+			$retval = defined( 'BP_ENABLE_MULTIBLOG' ) && BP_ENABLE_MULTIBLOG ? 'admin_menu' : 'network_admin_menu';
+		} else {
+			$retval = 'network_admin_menu';
+		}
+
+		return $retval;
+	}
+endif;
+
+if ( ! function_exists( 'bp_is_username_compatibility_mode' ) ) :
+	function bp_is_username_compatibility_mode() {
+		return apply_filters( 'bp_is_username_compatibility_mode', defined( 'BP_ENABLE_USERNAME_COMPATIBILITY_MODE' ) && BP_ENABLE_USERNAME_COMPATIBILITY_MODE );
+	}
+endif;
+
+
+if ( ! function_exists( 'bp_get_members_root_slug' ) ) :
+	function bp_get_members_root_slug() {
+		return constant( 'BP_MEMBERS_SLUG' );
+	}
+endif;
+
+if ( ! function_exists( 'bp_get_user_meta_key' ) ) :
+	function bp_get_user_meta_key( $key = false ) {
+		return apply_filters( 'bp_get_user_meta_key', $key );
+	}
+endif;
+
+if ( ! function_exists( 'bp_get_user_meta' ) ) :
+	function bp_get_user_meta( $user_id, $key, $single = false ) {
+		return get_user_meta( $user_id, bp_get_user_meta_key( $key ), $single );
+	}
+endif;
+
+if ( ! function_exists( 'bp_update_user_meta' ) ) :
+	function bp_update_user_meta( $user_id, $key, $value, $prev_value = '' ) {
+		return update_user_meta( $user_id, bp_get_user_meta_key( $key ), $value, $prev_value );
+	}
 endif;

@@ -3,16 +3,16 @@
 Plugin Name: BuddyPress Group Email Subscription
 Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
 Description: Allows group members to receive email notifications for group activity and forum posts instantly or as daily digest or weekly summary.
-Author: Deryk Wenaus, boonebgorges
-Revision Date: June 29, 2012
-Version: 3.2
+Author: Deryk Wenaus, boonebgorges, r-a-y
+Revision Date: July 24, 2013
+Version: 3.4.1-alpha
 */
 
 /**
  * Main loader for the plugin.
  *
  * This function is hooked to bp_include, which is the recommended method for loading BP plugins
- * since BP 1.2.5 or so. When this function is loaded properly, it will unhook 
+ * since BP 1.2.5 or so. When this function is loaded properly, it will unhook
  * activitysub_load_buddypress(). If bp_include is not fired (because you are running a legacy
  * version of BP), the legacy function will load the plugin normally.
  */
@@ -20,7 +20,7 @@ function ass_loader() {
 	if ( bp_is_active( 'groups' ) && bp_is_active( 'activity' ) ) {
 		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
 	}
-	
+
 	remove_action( 'plugins_loaded', 'activitysub_load_buddypress', 11 );
 }
 add_action( 'bp_include', 'ass_loader' );
@@ -37,7 +37,7 @@ function activitysub_load_buddypress() {
 		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
 			return false;
 
-		require_once ('bp-activity-subscription-main.php');
+		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
 		return true;
 	}
 	/* Get the list of active sitewide plugins */
@@ -52,7 +52,7 @@ function activitysub_load_buddypress() {
 		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
 			return false;
 
-		require_once ('bp-activity-subscription-main.php');
+		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
 		return true;
 	}
 
@@ -68,7 +68,7 @@ add_action( 'init', 'activitysub_textdomain' );
 
 
 function activitysub_setup_digest_defaults() {
-	require_once( WP_PLUGIN_DIR.'/buddypress-group-email-subscription/bp-activity-subscription-digest.php' );
+	require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 	ass_set_daily_digest_time( '05', '00' );
 	ass_set_weekly_digest_time( '4' );
 }
