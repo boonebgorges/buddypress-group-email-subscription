@@ -2056,7 +2056,7 @@ function ass_get_forum_type() {
 	$type = false;
 
 	// check if bbP is installed
-	if ( class_exists( 'bbpress' ) ) {
+	if ( class_exists( 'bbpress' ) AND function_exists( 'bbp_is_group_forums_active' ) ) {
 		// check if bbP group forum support is active
 		if ( ! bbp_is_group_forums_active() ) {
 			return false;
