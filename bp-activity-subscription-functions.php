@@ -130,6 +130,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 	// Convert entities and do other cleanup
 	$the_content = ass_clean_content( $the_content );
 
+	// allow plugin overrides
+	$primary_link = apply_filters( 'ass_forum_posts_redirect_url', $primary_link );
+	
 	// if group is not public, change primary link to login URL to verify
 	// authentication and for easier redirection after logging in
 	if ( $group->status != 'public' ) {
@@ -200,7 +203,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$send_it = $notice = false;
 
 		// default settings link
-		$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
+		$target_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
+		$target_link = apply_filters( 'ass_forum_default_redirect_url', $target_link );
+		$settings_link = ass_get_login_redirect_url( $target_link );
 
 		// Self-notification emails
 		if ( $self_notify === true ) {
@@ -209,6 +214,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 			// notification settings link
 			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = apply_filters( 'ass_forum_self_notify_redirect_url', $settings_link );
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
@@ -264,6 +270,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 				// change settings link to the forum thread
 				// get rid of any query args and anchors from the thread permalink
 				$settings_link = trailingslashit( strtok( $primary_link, '?' ) );
+				$settings_link = apply_filters( 'ass_forum_manual_topic_redirect_url', $settings_link );
 
 				// let's change the notice to accurately reflect that the user is following this topic
 				$notice  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
@@ -277,6 +284,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 				// override settings link to user's notifications
 				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+				$settings_link = apply_filters( 'ass_forum_replies_to_my_topic_redirect_url', $settings_link );
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'bp-ass' );
@@ -291,6 +299,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 				// override settings link to user's notifications
 				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+				$settings_link = apply_filters( 'ass_forum_replies_after_me_topic_redirect_url', $settings_link );
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'bp-ass' );
@@ -509,6 +518,7 @@ To view or reply, log in and go to:
 
 			// notification settings link
 			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = apply_filters( 'ass_group_self_notify_login_redirect_url', $settings_link );
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
@@ -526,7 +536,9 @@ To view or reply, log in and go to:
 
 			$send_it = true;
 
-			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
+			$target_link = trailingslashit( bp_get_group_permalink( $group ) . 'notifications' );
+			$target_link = apply_filters( 'ass_group_all_mail_login_redirect_url', $target_link );
+			$settings_link = ass_get_login_redirect_url( $target_link );
 
 			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
 			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
@@ -1924,6 +1936,9 @@ function ass_admin_notice() {
 			$group_name = bp_get_current_group_name();
 			$group_link = bp_get_group_permalink( $group );
 
+			// allow plugin overrides
+			$group_link = apply_filters( 'ass_admin_notice_redirect_url', $group_link );
+	
 			if ( $group->status != 'public' ) {
 				$group_link = ass_get_login_redirect_url( $group_link );
 			}
