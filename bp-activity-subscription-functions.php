@@ -302,7 +302,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		// if we're good to send, send the email!
 		if ( $send_it ) {
 			// One last chance to filter the message content
-			$message = apply_filters( 'bp_ass_forum_notification_message', $message . $notice, array(
+			$user_message = apply_filters( 'bp_ass_forum_notification_message', $message . $notice, array(
 				'message'           => $message,
 				'notice'            => $notice,
 				'user_id'           => $user_id,
@@ -317,7 +317,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 
 			// Send the email
 			if ( $user->user_email ) {
-				wp_mail( $user->user_email, $subject, $message );
+				wp_mail( $user->user_email, $subject, $user_message );
 			}
 		}
 
