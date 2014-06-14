@@ -133,7 +133,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 	// if group is not public, change primary link to login URL to verify
 	// authentication and for easier redirection after logging in
 	if ( $group->status != 'public' ) {
-		$primary_link = ass_get_login_redirect_url( $primary_link );
+		$primary_link = ass_get_login_redirect_url( $primary_link, 'legacy_forums_view' );
 
 		$text_before_primary = __( 'To view or reply to this topic, go to:', 'bp-ass' );
 
@@ -200,7 +200,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$send_it = $notice = false;
 
 		// default settings link
-		$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
+		$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), 'legacy_forums_settings' );
 
 		// Self-notification emails
 		if ( $self_notify === true ) {
@@ -526,7 +526,7 @@ To view or reply, log in and go to:
 
 			$send_it = true;
 
-			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ) );
+			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), $group_status );
 
 			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
 			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
@@ -759,7 +759,7 @@ add_action( 'login_init', 'ass_login_redirector', 1 );
  * @param string $url The URL you want to redirect to.
  * @return mixed String of the login URL with the passed redirect link. Boolean false on failure.
  */
-function ass_get_login_redirect_url( $url = '' ) {
+function ass_get_login_redirect_url( $url = '', $context = '' ) {
 	$url = esc_url_raw( $url );
 
 	if ( empty( $url ) ) {
@@ -770,7 +770,7 @@ function ass_get_login_redirect_url( $url = '' ) {
 	$query_args = array(
 		'action'      => 'bpnoaccess',
 		'auth'        => 1,
-		'redirect_to' => urlencode( $url )
+		'redirect_to' => apply_filters( 'ass_login_redirect_to', urlencode( $url ), $context )
 	);
 
 	return add_query_arg(
@@ -1925,7 +1925,7 @@ function ass_admin_notice() {
 			$group_link = bp_get_group_permalink( $group );
 
 			if ( $group->status != 'public' ) {
-				$group_link = ass_get_login_redirect_url( $group_link );
+				$group_link = ass_get_login_redirect_url( $group_link, 'admin_notice' );
 			}
 
 			$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
