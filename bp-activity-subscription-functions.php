@@ -757,6 +757,7 @@ add_action( 'login_init', 'ass_login_redirector', 1 );
  * @since 3.4
  *
  * @param string $url The URL you want to redirect to.
+ * @param string $context The context of the redirect.
  * @return mixed String of the login URL with the passed redirect link. Boolean false on failure.
  */
 function ass_get_login_redirect_url( $url = '', $context = '' ) {
