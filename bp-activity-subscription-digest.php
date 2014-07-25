@@ -86,7 +86,7 @@ function ass_digest_fire( $type ) {
 			foreach( (array) $group_subs as $group_id => $sub_ids ) {
 				foreach( (array) $sub_ids as $sid ) {
 					// note: activity ID is added as the key for performance reasons
-					if ( ! isset( $all_activity_items[$sid] ) ) {
+					if ( ! isset( $all_activity_items[$sid] ) && ! empty( $sid ) ) {
 						$all_activity_items[$sid] = 1;
 					}
 				}
