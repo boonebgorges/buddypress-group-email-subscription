@@ -44,11 +44,12 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 		// Only enable the notifications nav item if the user is a member of the group
 		if ( bp_is_group() && groups_is_user_member( bp_loggedin_user_id() , bp_get_current_group_id() )  ) {
-			$this->enable_nav_item = true;
+			$enable_nav_item = true;
 		} else {
-			$this->enable_nav_item = false;
+			$enable_nav_item = false;
 		}
 
+		$this->enable_nav_item = apply_filters( 'bp_group_email_subscription_enable_nav_item', $enable_nav_item );
 		$this->nav_item_position  = 91;
 		$this->enable_create_step = false;
 
