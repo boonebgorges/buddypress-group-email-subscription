@@ -91,6 +91,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 = 3.4.1 =
 * Fixes bug so that user no longer gets an email for their own group activity update
 * Improved email content parsing, so that the URLs contained in links are not completed removed from the email
+* Update JS not to use deprecated jQuery.live()
 
 = 3.4 =
 * Reinstate bbPress "Subscribe" option in forum threads for group members not subscribed to "All Mail"
