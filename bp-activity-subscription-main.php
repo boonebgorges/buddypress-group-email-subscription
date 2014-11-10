@@ -98,7 +98,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	// Display the notification settings form
-	public function display() {
+	public function display( $group_id = null ) {
 		ass_group_subscribe_settings();
 	}
 
