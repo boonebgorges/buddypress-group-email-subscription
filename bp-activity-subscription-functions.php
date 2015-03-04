@@ -425,21 +425,21 @@ function ass_group_notification_activity( $content ) {
 	// $message template
 	if ( empty( $the_content ) ) {
 		$message = sprintf( __(
-'%s
+'%1$s
 
 To view or reply, log in and go to:
-%s
+%2$s
 
 ---------------------
 ', 'bp-ass' ), $action, $activity_permalink );
 	} else {
 		$message = sprintf( __(
-'%s
+'%1$s
 
-"%s"
+"%2$s"
 
 To view or reply, log in and go to:
-%s
+%3$s
 
 ---------------------
 ', 'bp-ass' ), $action, $the_content, $activity_permalink );
