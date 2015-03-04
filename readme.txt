@@ -88,6 +88,10 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.5.1 =
+* Localization improvements
+* Fixes bug that could cause fatal error in some bbPress configurations
+
 = 3.5 =
 * Fixes bug so that user no longer gets an email for their own group activity update
 * Improved email content parsing, so that the URLs contained in links are not completed removed from the email
