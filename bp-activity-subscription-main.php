@@ -33,6 +33,7 @@ if ( $bpges_bp_version < 1.5 ) {
 	bp_register_group_extension( 'Group_Activity_Subscription' );
 }
 
+require_once( dirname( __FILE__ ) . '/lib/wp-async-task.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
