@@ -5,6 +5,97 @@
 //
 
 /**
+ * Offload GES email sending and digest recording to another page process.
+ *
+ * Uses the awesome TechCrunch WP Async Task library.  Licensed under the MIT.
+ *
+ * @since 3.6.0
+ */
+class BP_GES_Async_Task extends WP_Async_Task {
+
+	/**
+	 * Hook that WP Async Task should attach itself to.
+	 *
+	 * @var string
+	 */
+	protected $action = 'bp_activity_after_save';
+
+	/**
+	 * Priority to run the hook.
+	 *
+	 * @var int
+	 */
+	protected $priority = 50;
+
+	/**
+	 * How many arguments are we passing to the hook?
+	 *
+	 * @var int
+	 */
+	protected $argument_count = 1;
+
+	/**
+	 * Static initializer.
+	 */
+	public static function init() {
+		return new self();
+	}
+
+	/**
+	 * Prepare data for the asynchronous request
+	 *
+	 * @param  array $data Function arguments from our hook as an array.
+	 * @return array Data to pass to the next pageload.
+	 */
+	protected function prepare_data( $data ) {
+		$activity = $data[0];
+
+		$component = $activity->component;
+		$group_id  = 0;
+
+		// special case for activity comments
+		if ( 'activity_comment' === $activity->type && bp_is_groups_component() && 'activity' === $component ) {
+			$component = 'groups';
+			$group_id  = bp_get_current_group_id();
+		}
+
+		// bail if not group activity
+		if ( 'groups' !== $component ) {
+			throw new Exception( 'BP GES Async Task: This activity item is not from the groups component.' );
+		}
+
+		// bail if we should not record certain activity types into GES
+		if ( false === apply_filters( 'ass_block_group_activity_types', true, $activity->type, $activity ) ) {
+			throw new Exception( 'BP GES Async Task: The {$activity->type} activity type is blocked from sending.' );
+		}
+
+		// bail if user has not been registered long enough yet
+		if ( ! ass_registered_long_enough( $activity->user_id ) ) {
+			throw new Exception( 'BP GES Async Task: User ID {$activity->user_id} has not been registered long enough to receive emails.' );
+		}
+
+		// prepare data for offloading
+		return array(
+			'activity_id' => $activity->id,
+			'group_id'    => $group_id
+		);
+	}
+
+	/**
+	 * Run the async task action.
+	 *
+	 * Uses the data passed from prepare_data().
+	 */
+	protected function run_action() {
+		$activity = new BP_Activity_Activity( $_POST['activity_id'] );
+
+		do_action( "wp_async_{$this->action}", $activity );
+	}
+
+}
+add_action( 'bp_init', array( 'BP_GES_Async_Task', 'init' ) );
+
+/**
  * Returns an unsubscribe link to disable email notifications for a given group and/or all groups.
  */
 function ass_group_unsubscribe_links( $user_id ) {
@@ -374,43 +465,24 @@ add_action( 'bp_activity_after_save', 'ass_group_forum_record_digest' );
  * 'ass_block_group_activity_types' filter.
  */
 function ass_group_notification_activity( $content ) {
-	global $bp;
-
 	$type      = $content->type;
-	$component = $content->component;
 	$sender_id = $content->user_id;
-
-	// get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp)
-	if ( $type == 'activity_comment' && bp_is_groups_component() && $component == 'activity' )
-		$component = 'groups';
-
-	// at this point we only want group activity, perhaps later we can make a function and interface for personal activity...
-	if ( $component != 'groups' )
-		return;
-
-	// if you want to conditionally block certain activity types from appearing,
-	// use the filter below
-	if ( false === apply_filters( 'ass_block_group_activity_types', true, $type, $content ) )
-		return;
-
-	if ( !ass_registered_long_enough( $sender_id ) )
-		return;
+	$action    = ass_clean_subject( $content->action );
 
 	$group_id = $content->item_id;
-	$action   = ass_clean_subject( $content->action );
-
-	if ( $type == 'activity_comment' ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
-		// this will need to be filtered for plugins manually adding group activity comments
-		$group_id = bp_get_current_group_id();
-
-		$action   = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
+	if ( 'activity_comment' === $type ) {
+		$group_id = ! empty( $_POST['group_id'] ) ? (int) $_POST['group_id'] : bp_get_current_group_id();
 	}
-
-	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
 
 	// get the group object
 	// if the group is already set in the $bp global use that, otherwise get the group
 	$group  = groups_get_current_group() ? groups_get_current_group() : groups_get_group( 'group_id=' . $group_id );
+
+	if ( 'activity_comment' === $type ) {
+		$action = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $group->name;
+	}
+
+	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
 
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
@@ -568,7 +640,7 @@ To view or reply, log in and go to:
 	//echo '<p>Subject: ' . $subject;
 	//echo '<pre>'; print_r( $message ); echo '</pre>';
 }
-add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
+add_action( 'wp_async_bp_activity_after_save' , 'ass_group_notification_activity', 50 );
 
 /**
  * Activity edit checker.
@@ -594,7 +666,7 @@ function ass_group_activity_edits( $activity ) {
 	// we don't want GES to send emails for edits!
 	if ( ! empty( $activity->id ) ) {
 		// Make sure GES doesn't fire
-		remove_action( 'bp_activity_after_save', 'ass_group_notification_activity', 50 );
+		remove_action( 'wp_async_bp_activity_after_save', 'ass_group_notification_activity', 50 );
 	}
 
 	$run_once = true;
