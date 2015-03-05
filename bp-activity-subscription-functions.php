@@ -97,8 +97,12 @@ add_action( 'bp_init', array( 'BP_GES_Async_Task', 'init' ) );
 
 /**
  * Returns an unsubscribe link to disable email notifications for a given group and/or all groups.
+ *
+ * @param  int $user_id  The user ID to set the unsubscribe links to.
+ * @param  int $group_id The group ID to set the unsubscribe links to.
+ * @return string
  */
-function ass_group_unsubscribe_links( $user_id ) {
+function ass_group_unsubscribe_links( $user_id = 0, $group_id = 0 ) {
 	global $bp;
 
 	//$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
@@ -106,7 +110,10 @@ function ass_group_unsubscribe_links( $user_id ) {
 
 	$userdomain = bp_core_get_user_domain( $user_id );
 
-	$group_id = bp_get_current_group_id();
+	if ( empty( $group_id ) ) {
+		$group_id = bp_get_current_group_id();
+	}
+
 	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
 	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp-ass' ), $group_link );
 
@@ -602,7 +609,7 @@ To view or reply, log in and go to:
 
 			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
 			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
-			$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+			$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id, $group_id );
 
 		}
 
