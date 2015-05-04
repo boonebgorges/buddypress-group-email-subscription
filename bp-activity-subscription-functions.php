@@ -534,6 +534,17 @@ To view or reply, log in and go to:
 
 		}
 
+		/**
+		 * Filter whether a given user should receive immediate notification of the current activity.
+		 *
+		 * @since 3.6.0
+		 *
+		 * @param bool   $send_it True to send an immediate email notification, false otherwise.
+		 * @param object $content Activity object.
+		 * @param int    $user_id ID of the user.
+		 */
+		$send_it = apply_filters( 'bp_ass_send_activity_notification_for_user', $send_it, $content, $user_id );
+
 		// if we're good to send, send the email!
 		if ( $send_it ) {
 			// One last chance to filter the message content

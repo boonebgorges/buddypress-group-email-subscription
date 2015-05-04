@@ -88,6 +88,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.6 =
+* Adds a filter to control whether a specific user should receive immediate email notification of a given item.
+
 = 3.5.1 =
 * Localization improvements
 * Fixes bug that could cause fatal error in some bbPress configurations
