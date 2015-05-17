@@ -95,6 +95,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 * Localization improvements
 * Fixes bug that could cause fatal error in some bbPress configurations
 * Fixes bug that caused incorrect links in some digest emails
+* Fixes bug that caused some email subscription settings not to be saved in some cases
 
 = 3.5 =
 * Fixes bug so that user no longer gets an email for their own group activity update
