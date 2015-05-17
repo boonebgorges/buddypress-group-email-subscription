@@ -1095,7 +1095,7 @@ function ass_default_subscription_settings_form() {
 	<p><?php _e('When new users join this group, their default email notification settings will be:', 'bp-ass'); ?></p>
 	<div class="radio">
 		<label><input type="radio" name="ass-default-subscription" value="no" <?php ass_default_subscription_settings( 'no' ) ?> />
-			<?php _e( 'No Email (users will read this group on the web - good for any group - the default)', 'bp-ass' ) ?></label>
+			<?php _e( 'No Email (users will read this group on the web - good for any group)', 'bp-ass' ) ?></label>
 		<label><input type="radio" name="ass-default-subscription" value="sum" <?php ass_default_subscription_settings( 'sum' ) ?> />
 			<?php _e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'bp-ass' ) ?></label>
 		<label><input type="radio" name="ass-default-subscription" value="dig" <?php ass_default_subscription_settings( 'dig' ) ?> />
@@ -1129,16 +1129,13 @@ function ass_default_subscription_settings( $setting ) {
 // Save the default group subscription setting in the group meta, if no, delete it
 function ass_save_default_subscription( $group ) {
 	if ( isset( $_POST['ass-default-subscription'] ) && $postval = $_POST['ass-default-subscription'] ) {
-		if ( $postval && $postval != 'no' ) {
+		if ( $postval ) {
 			groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
 
 			// during group creation, also save the sub level for the group creator
 			if ( 'group-settings' == bp_get_groups_current_create_step() ) {
 				ass_group_subscription( $postval, $group->creator_id, $group->id );
 			}
-
-		} elseif ( $postval == 'no' ) {
-			groups_delete_groupmeta( $group->id, 'ass_default_subscription' );
 		}
 	}
 }
