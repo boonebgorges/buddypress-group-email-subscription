@@ -90,6 +90,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 = 3.6 =
 * Adds a filter to control whether a specific user should receive immediate email notification of a given item.
+* Reorders the way the group extension is bootstrapped.
 
 = 3.5.1 =
 * Localization improvements
