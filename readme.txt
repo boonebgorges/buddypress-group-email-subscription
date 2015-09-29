@@ -88,9 +88,12 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
-= 3.6 =
+= 3.5.2 =
 * Adds a filter to control whether a specific user should receive immediate email notification of a given item.
+* Fixes bug that prevented users from saving the "No email" setting in some cases.
 * Reorders the way the group extension is bootstrapped.
+* Removes hardcoded reference to default group setting, in case this value is filtered by a plugin.
+* Fix incorrect group link in digest emails.
 
 = 3.5.1 =
 * Localization improvements
