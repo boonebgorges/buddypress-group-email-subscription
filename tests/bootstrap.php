@@ -1,13 +1,20 @@
 <?php
 
 if ( ! defined( 'BP_TESTS_DIR' ) ) {
-	define( 'BP_TESTS_DIR', dirname( __FILE__ ) . '/../../buddypress/tests' );
+	define( 'BP_TESTS_DIR', dirname( __FILE__ ) . '/../../buddypress/tests/phpunit' );
 }
 
 if ( file_exists( BP_TESTS_DIR . '/bootstrap.php' ) ) {
-	$_tests_dir = getenv('WP_TESTS_DIR');
-	if ( ! $_tests_dir ) {
-		$_tests_dir = '/tmp/wordpress-tests-lib';
+	$develop_dir = getenv( 'WP_DEVELOP_DIR' );
+	if ( ! $develop_dir ) {
+		echo "Cannot find develop.wordpress checkout.\n";
+		die();
+	}
+
+	$_tests_dir = $develop_dir . '/tests/phpunit';
+	if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+		echo "Cannot find develop.wordpress tests.\n";
+		die();
 	}
 
 	require_once $_tests_dir . '/includes/functions.php';
