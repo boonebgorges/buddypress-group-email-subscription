@@ -3,8 +3,8 @@ Contributors: dwenaus, boonebgorges, r-a-y
 Description: Allow users to receive email notifications of group activity. Weekly or daily digests are available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 2.9.1 (BP 1.2)
-Tested up to: 4.1.1 (BP 2.2.1)
-Stable tag: 3.5.1
+Tested up to: 4.3.1 (BP 2.3.3)
+Stable tag: 3.5.2
 
 == Description ==
 
