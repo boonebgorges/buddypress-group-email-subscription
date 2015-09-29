@@ -124,5 +124,3 @@ if ( $bpges_bp_version < 1.5 ) {
 	// Load the group extension in the proper fashion
 	bp_register_group_extension( 'Group_Activity_Subscription' );
 }
-
-?>
