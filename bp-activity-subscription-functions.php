@@ -373,53 +373,103 @@ add_action( 'bp_activity_after_save', 'ass_group_forum_record_digest' );
  * You can do more fine-grained activity filtering with the
  * 'ass_block_group_activity_types' filter.
  */
-function ass_group_notification_activity( $content ) {
+function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 	global $bp;
 
-	$type      = $content->type;
-	$component = $content->component;
-	$sender_id = $content->user_id;
+	$component = $activity->component;
+	$sender_id = $activity->user_id;
 
 	// get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp)
-	if ( $type == 'activity_comment' && bp_is_groups_component() && $component == 'activity' )
+	if ( $activity->type == 'activity_comment' && bp_is_groups_component() && $component == 'activity' ) {
 		$component = 'groups';
+	}
 
 	// at this point we only want group activity, perhaps later we can make a function and interface for personal activity...
-	if ( $component != 'groups' )
+	if ( $component != 'groups' ) {
 		return;
+	}
 
 	// if you want to conditionally block certain activity types from appearing,
 	// use the filter below
-	if ( false === apply_filters( 'ass_block_group_activity_types', true, $type, $content ) )
+	if ( false === apply_filters( 'ass_block_group_activity_types', true, $activity->type, $activity ) )
 		return;
 
 	if ( !ass_registered_long_enough( $sender_id ) )
 		return;
 
-	$group_id = $content->item_id;
-	$action   = ass_clean_subject( $content->action );
 
-	if ( $type == 'activity_comment' ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
+	if ( 'activity_comment' === $activity->type ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
 		// this will need to be filtered for plugins manually adding group activity comments
 		$group_id = bp_get_current_group_id();
 
-		$action   = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
+		$action   = ass_clean_subject( $activity->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
+	} else {
+		$group_id = $activity->item_id;
+		$action = ass_clean_subject( $activity->action );
 	}
 
-	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
+	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $activity );
 
-	// get the group object
-	// if the group is already set in the $bp global use that, otherwise get the group
-	$group  = groups_get_current_group() ? groups_get_current_group() : groups_get_group( 'group_id=' . $group_id );
+	$group = groups_get_group( array( 'group_id' => $group_id ) );
+
+	/*
+	 * If it's an activity item, switch the activity permalink to the group homepage
+	 * rather than the user's homepage.
+	 */
+	$link = bp_get_group_permalink( $group );
+	if ( $activity->primary_link && $activity->primary_link !== bp_core_get_user_domain( $sender_id ) ) {
+		$link = $activity->primary_link;
+	}
+
+	$send_args = array(
+		'group_id'    => $group_id,
+		'sender_id'   => $sender_id,
+		'activity_id' => $activity->id,
+		'action'      => $action,
+		'content'     => $activity->content,
+		'link'        => $link,
+	);
+
+	ass_generate_notification( $send_args );
+}
+add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
+
+/**
+ * Generate and send a group notification.
+ *
+ * @since 3.6.0
+ *
+ * @param array $args {
+ *     @type int $group_id ID of the group.
+ *     @type int $sender_id ID of the user triggering the activity.
+ *     @type int $activity_id ID of the activity item being triggered.
+ *     @type string $action Activity action. Used to generate the email subject.
+ *     @type string $content Activity content. Used to generate the email content.
+ *     @type string $link Primary link for the activity item.
+ * }
+ */
+function ass_generate_notification( $args = array() ) {
+	$r = wp_parse_args( $args, array(
+		'group_id' => null,
+		'sender_id' => null,
+		'activity_id' => null,
+		'action' => null,
+		'content' => null,
+		'link' => null,
+	) );
+
+	$group = groups_get_group( array( 'group_id' => $r['group_id'] ) );
+	if ( ! $group->id ) {
+		return;
+	}
+
+	$activity_obj = new BP_Activity_Activity( $r['activity_id'] );
 
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
-	$the_content = apply_filters( 'bp_ass_activity_notification_content', $content->content, $content, $action, $group );
+	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $r['action'] . ' ' . $blogname, $r['action'], $blogname );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', $r['content'], $activity_obj, $r['action'], $group );
 	$the_content = ass_clean_content( $the_content );
-
-	/* If it's an activity item, switch the activity permalink to the group homepage rather than the user's homepage */
-	$activity_permalink = ( isset( $content->primary_link ) && $content->primary_link != bp_core_get_user_domain( $content->user_id ) ) ? $content->primary_link : bp_get_group_permalink( $group );
 
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
@@ -431,7 +481,7 @@ To view or reply, log in and go to:
 %2$s
 
 ---------------------
-', 'bp-ass' ), $action, $activity_permalink );
+', 'bp-ass' ), $r['action'], $r['link'] );
 	} else {
 		$message = sprintf( __(
 '%1$s
@@ -442,11 +492,11 @@ To view or reply, log in and go to:
 %3$s
 
 ---------------------
-', 'bp-ass' ), $action, $the_content, $activity_permalink );
+', 'bp-ass' ), $r['action'], $the_content, $r['link'] );
 	}
 
 	// get subscribed users for the group
-	$subscribed_users = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
+	$subscribed_users = groups_get_groupmeta( $r['group_id'], 'ass_subscribed_users' );
 
 	// this is used if a user is subscribed to the "Weekly Summary" option.
 	// the weekly summary shouldn't record everything, so we have a filter:
@@ -456,18 +506,16 @@ To view or reply, log in and go to:
 	// this hook can be used by plugin authors to record important activity items
 	// into the weekly summary
 	// @see ass_default_weekly_summary_activity_types()
-	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $type );
+	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $activity_obj->type );
 
 	// cycle through subscribed users
-	foreach ( (array)$subscribed_users as $user_id => $group_status ) {
-		//echo '<p>uid: ' . $user_id .' | gstat: ' . $group_status ;
-
-		$self_notify = '';
+	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
+		$self_notify = false;
 
 		// Does the author want updates of their own forum posts?
-		if ( $type == 'bbp_topic_create' || $type == 'bbp_reply_create' ) {
+		if ( $activity_obj->type == 'bbp_topic_create' || $activity_obj->type == 'bbp_reply_create' ) {
 
-			if ( $user_id == $sender_id ) {
+			if ( $user_id == $r['sender_id'] ) {
 				$self_notify = ass_self_post_notification( $user_id );
 
 				// Author does not want notifications of their own posts
@@ -476,22 +524,22 @@ To view or reply, log in and go to:
 				}
 			}
 
-		// If this is an activity comment, and the $user_id is the user who is being replied
-		// to, check to make sure that the user is not subscribed to BP's native activity
-		// reply notifications
-		} elseif ( 'activity_comment' == $type ) {
+		/*
+		 * If this is an activity comment, and the $user_id is the user who is being replied
+		 * to, check to make sure that the user is not subscribed to BP's native activity reply notifications.
+		 */
+		} elseif ( 'activity_comment' == $activity_obj->type ) {
 			// First, look at the immediate parent
-			$immediate_parent = new BP_Activity_Activity( $content->secondary_item_id );
+			$immediate_parent = new BP_Activity_Activity( $activity_obj->secondary_item_id );
 
 			// Don't send the bp-ass notification if the user is subscribed through BP
 			if ( $user_id == $immediate_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 				continue;
 			}
 
-			// We only need to check the root parent if it's different from the
-			// immediate parent
-			if ( $content->secondary_item_id != $content->item_id ) {
-				$root_parent = new BP_Activity_Activity( $content->item_id );
+			// We only need to check the root parent if it's different from the immediate parent.
+			if ( $activity_obj->secondary_item_id != $activity_obj->item_id ) {
+				$root_parent = new BP_Activity_Activity( $activity_obj->item_id );
 
 				// Don't send the bp-ass notification if the user is subscribed through BP
 				if ( $user_id == $root_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
@@ -517,12 +565,15 @@ To view or reply, log in and go to:
 
 		// User is subscribed to "All Mail"
 		// OR user is subscribed to "New Topics" (bbPress 2)
-		} elseif ( $group_status == 'supersub' || ( $group_status == 'sub' && $type == 'bbp_topic_create' ) ) {
+		} elseif ( $group_status == 'supersub' || ( $group_status == 'sub' && $activity_obj->type == 'bbp_topic_create' ) ) {
 
-            // if someone is signed up for all email and they post a group update, they should not receive an email
-            if ( 'activity_update' == $type && $sender_id === $user_id ) {
-                continue;
-            }
+			/*
+			 * If someone is signed up for all email and they post a group update,
+			 * they should not receive an email.
+			 */
+			if ( 'activity_update' == $activity_obj->type && $r['sender_id'] === $user_id ) {
+				continue;
+			}
 
 			$send_it = true;
 
@@ -543,7 +594,7 @@ To view or reply, log in and go to:
 		 * @param object $content Activity object.
 		 * @param int    $user_id ID of the user.
 		 */
-		$send_it = apply_filters( 'bp_ass_send_activity_notification_for_user', $send_it, $content, $user_id );
+		$send_it = apply_filters( 'bp_ass_send_activity_notification_for_user', $send_it, $activity_obj, $user_id );
 
 		// if we're good to send, send the email!
 		if ( $send_it ) {
@@ -571,15 +622,10 @@ To view or reply, log in and go to:
 		// OR user is subscribed to "Weekly Summary" and activity item is important
 		// enough to be recorded
 		if ( $group_status == 'dig' || ( $group_status == 'sum' && $this_activity_is_important ) ) {
-			ass_digest_record_activity( $content->id, $user_id, $group_id, $group_status );
+			ass_digest_record_activity( $r['activity_id'], $user_id, $r['group_id'], $group_status );
 		}
-
 	}
-
-	//echo '<p>Subject: ' . $subject;
-	//echo '<pre>'; print_r( $message ); echo '</pre>';
 }
-add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
 /**
  * Activity edit checker.
