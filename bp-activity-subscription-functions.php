@@ -2187,6 +2187,19 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
 /**
+ * Send welcome email to new group members when they join via accepting an invitation
+ * or having their membership request is approved.
+ *
+ * @param int $user_id  ID of the user who joined the group.
+ * @param int $group_id ID of the group the member has joined.
+ */
+function ass_send_welcome_email_on_accept_invite_or_request( $user_id, $group_id ) {
+	ass_send_welcome_email( $group_id, $user_id );
+}
+add_action( 'groups_accept_invite', 'ass_send_welcome_email_on_accept_invite_or_request', 10, 2 );
+add_action( 'groups_membership_accepted', 'ass_send_welcome_email_on_accept_invite_or_request', 10, 2 );
+
+/**
  * Determine what type of forums are running on this BP install.
  *
  * Returns either 'bbpress' or 'buddypress' on success.
