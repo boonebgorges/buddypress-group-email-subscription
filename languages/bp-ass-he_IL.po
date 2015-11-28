@@ -1,0 +1,875 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BuddyPress Group Email Subscription 3.5.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-email-"
+"subscription\n"
+"POT-Creation-Date: 2015-09-29 15:12:27+00:00\n"
+"PO-Revision-Date: 2015-11-24 04:22+0200\n"
+"Last-Translator: Webmaster <accounts@web-design.co.il>\n"
+"Language: he\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;__:1;_e:1;"
+"_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;_x:1,2c;_ex:1,2c;"
+"_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;esc_attr__:1;esc_html__:1;"
+"esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;esc_html_x:1,2c;comments_number_link:2,3;"
+"t:1;st:1;trans:1;transChoice:1,2\n"
+"X-Loco-Target-Locale: he_IL\n"
+"Language-Team: \n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: bp-activity-subscription-digest.php:59
+msgid "Your daily digest of group activity"
+msgstr "התקציר היומי של פעילות קבוצה"
+
+#: bp-activity-subscription-digest.php:61
+msgid "Your weekly summary of group topics"
+msgstr "הסיכום השבועי שלך של נושאי קבוצה"
+
+#: bp-activity-subscription-digest.php:69
+#, c-format
+msgid ""
+"You have received this message because you are subscribed to receive a digest of "
+"activity in some of your groups on %s."
+msgstr "קיבלת הודעה זו מכיוון שאתה מנוי לקבלת תקציר של פעילות בחלק מהקבוצות שלך ב-%s."
+
+#: bp-activity-subscription-digest.php:170
+msgid "at"
+msgstr "ב-"
+
+#: bp-activity-subscription-digest.php:184
+#, c-format
+msgid "(%s items)"
+msgstr "(%s פריטים)"
+
+#: bp-activity-subscription-digest.php:195
+msgid "Group Summary"
+msgstr "סיכום קבוצה"
+
+#: bp-activity-subscription-digest.php:203
+msgid ""
+"How to follow a topic: to get email updates for a specific topic, click the topic "
+"title - then on the webpage click the <i>Follow this topic</i> button. (If you don't "
+"see the button you need to login first.)"
+msgstr ""
+"כיצד לעקוב אחרי נושא: כדי לקבל עדכונים בדוא\"ל לנושא מסוים, לחץ על הכותרת בנושא - אז "
+"בדף האינטרנט לחץ <i> עקוב אחרי נושא זה </ i> כפתור. (אם אתה לא רואה את הכפתור צריכים "
+"להתחבר קודם.)"
+
+#: bp-activity-subscription-digest.php:208
+#, c-format
+msgid ""
+"To disable these notifications per group please login and go to: %s where you can "
+"change your email settings for each group."
+msgstr ""
+"כדי להשבית הודעות אלה לקבוצה בבקשה להתחבר ולהמשיך ל: %s שם ניתן לשנות את הגדרות "
+"הדואר האלקטרוני שלך לכל קבוצה."
+
+#: bp-activity-subscription-digest.php:208 bp-activity-subscription-functions.php:1804
+msgid "My Groups"
+msgstr "הקבוצות שלי"
+
+#: bp-activity-subscription-digest.php:212
+msgid "Disable these notifications for all my groups at once."
+msgstr "השבת הודעות עבור כל הקבוצות שלי בבת אחת."
+
+#: bp-activity-subscription-digest.php:261
+msgid "DAILY DIGEST:"
+msgstr "תקציר יומי:"
+
+#: bp-activity-subscription-digest.php:263
+msgid "WEEKLY DIGEST:"
+msgstr "תקציר שבועי:"
+
+#: bp-activity-subscription-digest.php:299
+#, c-format
+msgid "Group: %s"
+msgstr "קבוצה: %s"
+
+#: bp-activity-subscription-digest.php:301
+#, c-format
+msgid "Group: %s weekly summary"
+msgstr "קבוצה: %s תקציר שבועי"
+
+#: bp-activity-subscription-digest.php:306
+msgid "To disable these notifications for this group click "
+msgstr "כדי להשבית הודעות אלה לקבוצה זו הקלק "
+
+#: bp-activity-subscription-digest.php:306
+msgid "unsubscribe"
+msgstr "בטל מנוי"
+
+#: bp-activity-subscription-digest.php:307
+msgid "change "
+msgstr "שנוי"
+
+#: bp-activity-subscription-digest.php:307
+msgid "email options"
+msgstr "אפשרויות דואר אלקטרוני"
+
+#: bp-activity-subscription-digest.php:377 bp-activity-subscription-digest.php:417
+#, c-format
+msgid "at %s, %s"
+msgstr "ב-%s, %s"
+
+#: bp-activity-subscription-digest.php:386 bp-activity-subscription-digest.php:388
+#: bp-activity-subscription-digest.php:426 bp-activity-subscription-digest.php:428
+msgid "View"
+msgstr "עיין"
+
+#: bp-activity-subscription-digest.php:567
+msgid "Once Weekly"
+msgstr "פעם בשבוע"
+
+#: bp-activity-subscription-functions.php:20
+#, c-format
+msgid "To disable all notifications for this group, click: %s"
+msgstr "כדי להשבית את כל ההודעות לקבוצה זו, לחץ על: %s"
+
+#: bp-activity-subscription-functions.php:24
+#, c-format
+msgid "Or to disable notifications for *all* your groups, click: %s"
+msgstr "או להשבית הודעות לכל הקבוצות שלך, לחצו על: %s"
+
+#: bp-activity-subscription-functions.php:102
+#, c-format
+msgid "%s started the forum topic \"%s\" in the group \"%s\""
+msgstr "%s התחיל את הנושא בפורום \"%s\" בקבוצה \"%s\""
+
+#: bp-activity-subscription-functions.php:113
+#, c-format
+msgid "%s replied to the forum topic \"%s\" in the group \"%s\""
+msgstr "%s ענה לנושא הפורום \"%s\" בקבוצה  \"%s\""
+
+#: bp-activity-subscription-functions.php:138
+msgid "To view or reply to this topic, go to:"
+msgstr "כדי להציג או להגיב לנושא זה נא לעבור ל:"
+
+#: bp-activity-subscription-functions.php:142
+msgid "To view or reply to this topic, log in and go to:"
+msgstr "כדי להציג או להגיב לנושא זה, להתחבר ולעבור ל:"
+
+#: bp-activity-subscription-functions.php:146
+#, c-format
+msgid ""
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+
+#: bp-activity-subscription-functions.php:214
+#: bp-activity-subscription-functions.php:514
+msgid "You are currently receiving notifications for your own posts."
+msgstr "כרגע אתה מקבל התראות להודעות שלך."
+
+#: bp-activity-subscription-functions.php:215
+#: bp-activity-subscription-functions.php:269
+#: bp-activity-subscription-functions.php:283
+#: bp-activity-subscription-functions.php:297
+#: bp-activity-subscription-functions.php:515
+#, c-format
+msgid "To disable these notifications please log in and go to: %s"
+msgstr "כדי להשבית הודעות אלה אנא היכנסו ולעבור ל: %s"
+
+#: bp-activity-subscription-functions.php:216
+#: bp-activity-subscription-functions.php:516
+msgid "Once you are logged in, uncheck \"Receive notifications of your own posts?\"."
+msgstr "ברגע שאתה מחובר, בטל \"לקבל הודעות על התגובות שלך?\"."
+
+#: bp-activity-subscription-functions.php:223
+#: bp-activity-subscription-functions.php:254
+#: bp-activity-subscription-functions.php:531
+msgid "Your email setting for this group is: "
+msgstr "הגדרת הדוא\"ל שלך לקבוצה זו הוא:"
+
+#: bp-activity-subscription-functions.php:231
+#: bp-activity-subscription-functions.php:255
+#: bp-activity-subscription-functions.php:532
+#, c-format
+msgid "To change your email setting for this group, please log in and go to: %s"
+msgstr "כדי לשנות את הגדרת הדואר האלקטרוני שלך לקבוצה זו, אנא היכנס ולעבור ל: %s"
+
+#: bp-activity-subscription-functions.php:270
+msgid ""
+"Once you are logged in, click on the \"Mute this topic\" button to unsubscribe from "
+"the forum thread."
+msgstr "ברגע שאתה מחובר, לחץ על הכפתור \"השתק נושא זה\" כדי לבטל את המנוי לפורום."
+
+#: bp-activity-subscription-functions.php:282
+msgid "You are currently receiving notifications to topics that you have started."
+msgstr "מקבל הודעות לנושאים שתחלת בעצמך."
+
+#: bp-activity-subscription-functions.php:284
+msgid ""
+"Once you are logged in, uncheck \"A member replies in a forum topic you've started\"."
+msgstr "ברגע שאתה מחובר, בטל \"חבר משיב בנושא פורום שהתחלת\"."
+
+#: bp-activity-subscription-functions.php:296
+msgid "You are currently receiving notifications to topics that you have replied in."
+msgstr "כרגע אתה מקבל הודעות לנושאים שהשארת תגובה."
+
+#: bp-activity-subscription-functions.php:298
+msgid ""
+"Once you are logged in, uncheck \"A member replies after you in a forum topic\"."
+msgstr "ברגע שאתה מחובר, בטל \"חבר הגיב אחריך בנושא\"."
+
+#: bp-activity-subscription-functions.php:406
+msgid "in the group"
+msgstr "בקבוצה"
+
+#: bp-activity-subscription-functions.php:427
+#, c-format
+msgid ""
+"%1$s\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%2$s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%1$s\n"
+" \n"
+"כדי להציג או להשיב, חייבים להתחבר ולעבור ל:\n"
+"%2$s\n"
+"\n"
+"---------------------\n"
+
+#: bp-activity-subscription-functions.php:436
+#, c-format
+msgid ""
+"%1$s\n"
+"\n"
+"\"%2$s\"\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%1$s\n"
+"\n"
+"\"%2$s\"\n"
+"\n"
+"כדי להציג או להשיב, חייבים להתחבר ולעבור ל:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
+
+#: bp-activity-subscription-functions.php:864
+msgid "Email Subscription Options"
+msgstr "אפשרויות מנוי אימייל"
+
+#: bp-activity-subscription-functions.php:869
+msgid "How do you want to read this group?"
+msgstr "איך אתה רוצה לקרוא את הקבוצה זו?"
+
+#: bp-activity-subscription-functions.php:872
+#: bp-activity-subscription-functions.php:941
+#: bp-activity-subscription-functions.php:1000
+#: bp-activity-subscription-functions.php:1662
+msgid "No Email"
+msgstr "ללא דוא\"ל"
+
+#: bp-activity-subscription-functions.php:873
+#: bp-activity-subscription-functions.php:1000
+msgid "I will read this group on the web"
+msgstr "אני אקרא קבוצה זו אונליין באינטרנט"
+
+#: bp-activity-subscription-functions.php:877
+msgid "Weekly Summary Email"
+msgstr "דוא\"ל סיכום שבועי"
+
+#: bp-activity-subscription-functions.php:878
+msgid "Get a summary of new topics each week"
+msgstr "קבל סיכום של נושאים חדשים בכל שבוע"
+
+#: bp-activity-subscription-functions.php:882
+msgid "Daily Digest Email"
+msgstr "דוא\"ל תקציר יומי"
+
+#: bp-activity-subscription-functions.php:883
+msgid "Get all the day's activity bundled into a single email"
+msgstr "קבל ארוזות מכל הפעילות של היום לדוא\"ל בהודעה אחת"
+
+#: bp-activity-subscription-functions.php:888
+msgid "New Topics Email"
+msgstr "דוא\"ל נושאים חדשים"
+
+#: bp-activity-subscription-functions.php:889
+msgid "Send new topics as they arrive (but don't send replies)"
+msgstr "שלח נושאים חדשים כפי שהם מגיעים (אבל לא לשלוח תגובות)"
+
+#: bp-activity-subscription-functions.php:895
+#: bp-activity-subscription-functions.php:1008
+msgid "Send all group activity as it arrives"
+msgstr "שלח את כל פעילות מהקבוצה כפי שהיא מגיעה"
+
+#: bp-activity-subscription-functions.php:898
+#: bp-activity-subscription-functions.php:2402
+msgid "Save Settings"
+msgstr "שמור הגדרות"
+
+#: bp-activity-subscription-functions.php:901
+msgid ""
+"Note: Normally, you receive email notifications for topics you start or comment on. "
+"This can be changed at"
+msgstr ""
+"הערה: בדרך כלל, אתה מקבל הודעות דוא\"ל לנושאים אתה מתחיל או מגיב. ניתן לשנות זאת "
+"בלינק"
+
+#: bp-activity-subscription-functions.php:901
+msgid "email notifications"
+msgstr "הודעות דוא\"ל"
+
+#: bp-activity-subscription-functions.php:929
+#, c-format
+msgid "Your email notifications are set to %s for this group."
+msgstr "הודעות דוא\"ל שלך מוגדרות %s לקבוצה זו."
+
+#: bp-activity-subscription-functions.php:943
+#: bp-activity-subscription-functions.php:1001
+msgid "Weekly Summary"
+msgstr "סיכום שבועי"
+
+#: bp-activity-subscription-functions.php:945
+#: bp-activity-subscription-functions.php:1002
+msgid "Daily Digest"
+msgstr "תקציר יומי"
+
+#: bp-activity-subscription-functions.php:947
+#: bp-activity-subscription-functions.php:1005
+#: bp-activity-subscription-functions.php:1667
+msgid "New Topics"
+msgstr "נושאים חדשים"
+
+#: bp-activity-subscription-functions.php:978
+msgid "Your email status is "
+msgstr "הגדרת קבלת הדוא\"ל שלך הוא"
+
+#: bp-activity-subscription-functions.php:979
+msgid "change"
+msgstr "שנוי"
+
+#: bp-activity-subscription-functions.php:985
+msgid "Get email updates"
+msgstr "קבל עדכונים בדוא\"ל"
+
+#: bp-activity-subscription-functions.php:996
+msgid "Change your email subscription options for this group"
+msgstr "לשנות את הגדרות מנויים הדוא\"ל שלך לקבוצה זו"
+
+#: bp-activity-subscription-functions.php:1001
+msgid "Get a summary of topics each"
+msgstr "קבל סיכום של נושאים כל"
+
+#: bp-activity-subscription-functions.php:1002
+msgid "Get the day's activity bundled into one email"
+msgstr "קבל ארוזות הפעילות של היום לדואר אלקטרוני בהודעה אחת"
+
+#: bp-activity-subscription-functions.php:1005
+msgid "Send new topics as they arrive (but no replies)"
+msgstr "שלח נושאים חדשים כפי שהם מגיעים (אך לא תגובות)"
+
+#: bp-activity-subscription-functions.php:1009
+msgid "close"
+msgstr "סגירה"
+
+#: bp-activity-subscription-functions.php:1083
+msgid "You successfully joined the group. Your group email status is: "
+msgstr "הצטרפת בהצלחה לקבוצה. הגדרת קבלת הדוא\"ל מהקבוצה שלך הוא:"
+
+#: bp-activity-subscription-functions.php:1094
+msgid "Email Subscription Defaults"
+msgstr "ברירות מחדל מנוי אימייל"
+
+#: bp-activity-subscription-functions.php:1095
+msgid ""
+"When new users join this group, their default email notification settings will be:"
+msgstr ""
+"כאשר משתמשים חדשים מצטרפים לקבוצה זו, הגדרות ברירת מחדל של הודעות דוא\"ל שלהם תהיו:"
+
+#: bp-activity-subscription-functions.php:1098
+msgid "No Email (users will read this group on the web - good for any group)"
+msgstr "אין דוא\"ל (משתמשים יקראו קבוצה זו באינטרנט - טוב לכל קבוצה)"
+
+#: bp-activity-subscription-functions.php:1100
+msgid "Weekly Summary Email (the week's topics - good for large groups)"
+msgstr "דוא\"ל סיכום שבועי (נושאים של השבוע - טוב לקבוצות גדולות)"
+
+#: bp-activity-subscription-functions.php:1102
+msgid ""
+"Daily Digest Email (all daily activity bundles in one email - good for medium-size "
+"groups)"
+msgstr ""
+"דוא\"ל תקציר יומי (כל חבילות הפעילות יומיות בדואר אלקטרוני אחת - טוב לקבוצות "
+"בינוניות)"
+
+#: bp-activity-subscription-functions.php:1106
+msgid ""
+"New Topics Email (new topics are sent as they arrive, but not replies - good for "
+"small groups)"
+msgstr "דוא\"ל נושאים חדשים (נשלחים כפי שהם מגיעים, אבל לא תגובות - טוב לקבוצות קטנות)"
+
+#: bp-activity-subscription-functions.php:1110
+msgid "All Email (send emails about everything - recommended only for working groups)"
+msgstr "כל הדוא\"ל (לשלוח מיילים על הכל - מומלצים רק לקבוצות עבודה)"
+
+#: bp-activity-subscription-functions.php:1371 bp-activity-subscription-main.php:74
+msgid "Follow"
+msgstr "לעקוב"
+
+#: bp-activity-subscription-functions.php:1372
+msgid ""
+"You are not following this topic. Click to follow it and get email updates for new "
+"posts"
+msgstr ""
+"אתה לא עוקב אחרי נושא זה. לחץ כדי לעקוב אחריו ולקבל עדכונים בדוא\"ל להודעות חדשות"
+
+#: bp-activity-subscription-functions.php:1375 bp-activity-subscription-main.php:73
+msgid "Mute"
+msgstr "השתקה"
+
+#: bp-activity-subscription-functions.php:1376
+msgid "You are following this topic. Click to stop getting email updates"
+msgstr "אתה עוקב אחרי נושא זה. הקלק כדי להפסיק לקבל עדכונים בדוא\"ל"
+
+#: bp-activity-subscription-functions.php:1382
+msgid "This conversation is muted. Click to follow it"
+msgstr "השיחה הזאת מושתקת. לחץ כדי לעקוב אחריה"
+
+#: bp-activity-subscription-functions.php:1386
+msgid "this topic"
+msgstr "נושא זה"
+
+#: bp-activity-subscription-functions.php:1404
+msgid "Email"
+msgstr "דוא\"ל"
+
+#: bp-activity-subscription-functions.php:1614
+#: bp-activity-subscription-functions.php:1660
+msgid "Email status:"
+msgstr "הגדרת קבלת דוא\"ל:"
+
+#: bp-activity-subscription-functions.php:1661
+msgid "Change to:"
+msgstr "לשנות ל:"
+
+#: bp-activity-subscription-functions.php:1663
+msgid "Weekly"
+msgstr "שבועי"
+
+#: bp-activity-subscription-functions.php:1664
+msgid "Daily"
+msgstr "יום יומי"
+
+#: bp-activity-subscription-functions.php:1707
+msgid "User email status changed successfully"
+msgstr "הגדרת קבלת דוא\"ל למשתמש שונתה בהצלחה"
+
+#: bp-activity-subscription-functions.php:1753
+msgid ""
+"Site Admin Only: update email subscription settings for ALL members to the default:"
+msgstr "מנהל אתר בלבד: עדכון הגדרות מנויי דוא\"ל לכל החברים לברירת המחדל:"
+
+#: bp-activity-subscription-functions.php:1753
+msgid "Warning: this is not reversible so use with caution."
+msgstr "אזהרה: זה לא הפיך, להשתמש בזהירות."
+
+#: bp-activity-subscription-functions.php:1753
+msgid "Make it so!"
+msgstr "עשה את זה כך!"
+
+#: bp-activity-subscription-functions.php:1780
+msgid "All user email status's changed successfully"
+msgstr "הגדרת הדוא\"ל של כל משתמש השתנה בהצלחה"
+
+#: bp-activity-subscription-functions.php:1796
+msgid "Individual Group Email Settings"
+msgstr "הגדרות דואר אלקטרוני לקבוצה מסוימת"
+
+#: bp-activity-subscription-functions.php:1804
+#, c-format
+msgid ""
+"To change the email notification settings for your groups, go to %s and click "
+"\"Change\" for each group."
+msgstr ""
+"כדי לשנות את הגדרות הודעות דוא\"ל לקבוצות שלך, עבור ל%s ולחץ על \"שינוי\" לכל קבוצה."
+
+#: bp-activity-subscription-functions.php:1807
+msgid "Or set all your group's email options to No Email"
+msgstr "או ניתן להגדיר את כל אפשרויות הדוא\"ל של הקבוצה שלך ללא דוא\"ל"
+
+#: bp-activity-subscription-functions.php:1843
+msgid "You have been unsubscribed from all groups notifications."
+msgstr "הסרת מנוי מכל הודעות הקבוצות."
+
+#: bp-activity-subscription-functions.php:1845
+msgid "This user's has been unsubscribed from all groups notifications."
+msgstr "מנוי של המשתמש הוסר מכל ההודעות בקבוצות."
+
+#: bp-activity-subscription-functions.php:1873
+#, c-format
+msgid ""
+"Your unsubscription was successful. You will no longer receive email notifications "
+"from the group %s."
+msgstr "ביטול המנוי שלך היה מוצלח. אתה לא תקבל עוד הודעות דוא\"ל מהקבוצה %s."
+
+#: bp-activity-subscription-functions.php:1875
+#: bp-activity-subscription-functions.php:1888
+#, c-format
+msgid "<a href=\"%1$s\">Continue to %2$s</a>"
+msgstr "<a href=\"%1$s\">המשך ל%2$s</a>"
+
+#: bp-activity-subscription-functions.php:1886
+msgid ""
+"Your unsubscription was successful. You will no longer receive email notifications "
+"from any of your groups."
+msgstr "ביטול המנוי שלך היה מוצלח. לא תקבל עוד הודעות דוא\"ל מכל הקבוצות שלך."
+
+#: bp-activity-subscription-functions.php:1898
+msgid "Unsubscribe from all groups notifications"
+msgstr "לבטל את המנוי מכל הודעות בקבוצות"
+
+#: bp-activity-subscription-functions.php:1912
+msgid "Unsubscribe"
+msgstr "ביטול מנוי"
+
+#: bp-activity-subscription-functions.php:1917
+msgid "Do you really want to unsubscribe from all groups notifications?"
+msgstr "האם באמת רצוי לבטל את מנוי ההודעות מכל הקבוצות?"
+
+#: bp-activity-subscription-functions.php:1922
+msgid "Yes, unsubscribe from all my groups"
+msgstr "כן, לבטל את המנוי מכל הקבוצות שלי"
+
+#: bp-activity-subscription-functions.php:1923
+msgid "No, close"
+msgstr "לא, סגירה"
+
+#: bp-activity-subscription-functions.php:1956
+msgid "Send an email notice to everyone in the group"
+msgstr "שלח הודעת דוא\"ל לכולם בקבוצה"
+
+#: bp-activity-subscription-functions.php:1957
+msgid "You can use the form below to send an email notice to all group members."
+msgstr "ניתן להשתמש בטופס שלהלן כדי לשלוח הודעת דואר אלקטרוני לכל חברי הקבוצה."
+
+#: bp-activity-subscription-functions.php:1958
+msgid ""
+"Everyone in the group will receive the email -- regardless of their email settings "
+"-- so use with caution"
+msgstr ""
+"כל אחד בקבוצה יקבל את הדוא\"ל - ללא קשר להגדרות הדואר האלקטרוני שלהם - נא להשתמש "
+"בזהירות"
+
+#: bp-activity-subscription-functions.php:1961
+#: bp-activity-subscription-functions.php:1990
+msgid "Email Subject:"
+msgstr "נושא האימייל:"
+
+#: bp-activity-subscription-functions.php:1966
+#: bp-activity-subscription-functions.php:1995
+msgid "Email Content:"
+msgstr "תוכן האימיילי:"
+
+#: bp-activity-subscription-functions.php:1971
+msgid "Email this notice to everyone in the group"
+msgstr "שלח הודעה זו לכולם בקבוצה"
+
+#: bp-activity-subscription-functions.php:1979
+msgid "Welcome Email"
+msgstr "דוא\"ל \"ברוכים הבאים\""
+
+#: bp-activity-subscription-functions.php:1980
+msgid "Send an email when a new member join the group."
+msgstr "שלח הודעה כאשר חבר חדש מצטרף לקבוצה."
+
+#: bp-activity-subscription-functions.php:1985
+msgid "Enable welcome email"
+msgstr "אפשר דוא\"ל \"ברוכים הבאים\""
+
+#: bp-activity-subscription-functions.php:2000
+msgid "Save"
+msgstr "שמירה"
+
+#: bp-activity-subscription-functions.php:2025
+msgid "The email notice was sent not sent. Please enter email content."
+msgstr "הודעת הדואר האלקטרוני לא נשלחה. נא להזין את תוכן הדואר."
+
+#: bp-activity-subscription-functions.php:2044
+#, c-format
+msgid ""
+"This is a notice from the group '%s':\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"\n"
+"To view this group log in and follow the link below:\n"
+"%s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"זוהי הודעה מהקבוצה '%s':\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"\n"
+"כדי להציג קבוצה זו דרוש התחברות ואז יש ללחוץ על הקישור למטה:\n"
+"%s\n"
+"\n"
+"---------------------\n"
+
+#: bp-activity-subscription-functions.php:2056
+msgid ""
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"If you feel this service is being misused please speak to the website administrator."
+msgstr ""
+"שים לב: הודעות מנהל נשלחות לכולם בקבוצה ולא ניתנות לביטול. \n"
+"אם אתה מרגיש ששירות זה משמש לרעה נא לפנות למנהל האתר."
+
+#: bp-activity-subscription-functions.php:2074
+msgid "The email notice was sent successfully."
+msgstr "הודעת הדוא\"ל נשלחה בהצלחה."
+
+#: bp-activity-subscription-functions.php:2099
+msgid "The welcome email option has been saved."
+msgstr "אפשרות לדוא\"ל \"ברוכים הבאים\" נשמרה."
+
+#: bp-activity-subscription-functions.php:2130
+#, c-format
+msgid "To disable emails from all your groups at once click: %s"
+msgstr "כדי להשבית את מיילים מכל הקבוצות שלך לחץ פעם אחת: %s"
+
+#: bp-activity-subscription-functions.php:2198
+msgid "Group Forum"
+msgstr "פורום של קבוצה"
+
+#: bp-activity-subscription-functions.php:2199
+msgid "Yes"
+msgstr "כן"
+
+#: bp-activity-subscription-functions.php:2200
+msgid "No"
+msgstr "לא"
+
+#: bp-activity-subscription-functions.php:2222
+msgid "A member replies in a forum topic you've started"
+msgstr "תגובות חבר בנושא פורום שהתחלת"
+
+#: bp-activity-subscription-functions.php:2229
+msgid "A member replies after you in a forum topic"
+msgstr "חבר הגיב אחריך בנושא פורום"
+
+#: bp-activity-subscription-functions.php:2238
+msgid "Receive notifications of your own posts?"
+msgstr "לקבל הודעות על התגובות שלך?"
+
+#: bp-activity-subscription-functions.php:2295
+msgid "Group Email Options"
+msgstr "אפשרויות דוא\"ל בקבוצה"
+
+#: bp-activity-subscription-functions.php:2309
+msgid "Settings saved."
+msgstr "הגדרות נשמרו."
+
+#: bp-activity-subscription-functions.php:2327
+msgid "Group Email Subscription Settings"
+msgstr "הגדרות מנוי דוא\"ל קבוצה"
+
+#: bp-activity-subscription-functions.php:2332
+msgid "Digests & Summaries"
+msgstr "מעכל וסיכומים"
+
+#: bp-activity-subscription-functions.php:2334
+msgid ""
+"View queued digest items</a></b> (in new window)<br>As admin, you can see what is "
+"currently in the email queue by adding ?sum=1 to your url. This will not fire the "
+"digest, it will just show you what is waiting to be sent."
+msgstr ""
+"צפה בתור הודעות </a> </ b> (בחלון החדש) <br> כמנהל, אתה יכול לראות מה נמצא כעת בתור "
+"דוא\"ל על ידי הוספה ?sum=1 לכתובת האתר שלך. זה לא ישלח הודעות מייד, זה פשוט יראה לכם "
+"את מה שממתין לשליחה."
+
+#: bp-activity-subscription-functions.php:2338
+msgid "<strong>Daily Digests</strong> should be sent at this time:"
+msgstr "<strong>מעכל היומי </ strong> יש לשלוח בזמן הזה:"
+
+#: bp-activity-subscription-functions.php:2355
+msgid "<strong>Weekly Summaries</strong> should be sent on:"
+msgstr "<strong> סיכומים שבועיים </ strong> יש לשלוח ב:"
+
+#: bp-activity-subscription-functions.php:2359
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2458
+msgid "Monday"
+msgstr "יום שני"
+
+#: bp-activity-subscription-functions.php:2360
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2460
+msgid "Tuesday"
+msgstr "יום שלישי"
+
+#: bp-activity-subscription-functions.php:2361
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2462
+msgid "Wednesday"
+msgstr "יום רביעי"
+
+#: bp-activity-subscription-functions.php:2362
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2464
+msgid "Thursday"
+msgstr "יום חמישי"
+
+#: bp-activity-subscription-functions.php:2363
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2466
+msgid "Friday"
+msgstr "יום שישי"
+
+#: bp-activity-subscription-functions.php:2364
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2468
+msgid "Saturday"
+msgstr "שבת"
+
+#: bp-activity-subscription-functions.php:2365
+#: bp-activity-subscription-functions.php:2370
+#: bp-activity-subscription-functions.php:2470
+msgid "Sunday"
+msgstr "יום ראשון"
+
+#: bp-activity-subscription-functions.php:2370
+#, c-format
+msgid ""
+"The server timezone is %s (%s); the current server time is %s (%s); and the day is "
+"%s."
+msgstr "אזור הזמן הוא השרת %s (%s); זמן השרת הנוכחי הוא %s (%s); והיום הוא %s."
+
+#: bp-activity-subscription-functions.php:2374
+msgid "Global Unsubscribe Link"
+msgstr "קישור לביטול מנוים כללי"
+
+#: bp-activity-subscription-functions.php:2375
+msgid ""
+"Add a link in the emails and on the notifications settings page allowing users to "
+"unsubscribe from all their groups at once:"
+msgstr ""
+"הוסף קישור בדואר האלקטרוני ובעמוד הגדרות הודעות מאפשר למשתמשים לבטל את המנוי מכל "
+"הקבוצות שלהם בבת אחת:"
+
+#: bp-activity-subscription-functions.php:2377
+#: bp-activity-subscription-functions.php:2386
+#: bp-activity-subscription-functions.php:2391
+msgid "yes"
+msgstr "כן"
+
+#: bp-activity-subscription-functions.php:2378
+#: bp-activity-subscription-functions.php:2387
+#: bp-activity-subscription-functions.php:2392
+msgid "no"
+msgstr "לא"
+
+#: bp-activity-subscription-functions.php:2383
+msgid "Group Admin Abilities"
+msgstr "יכולות ניהול הקבוצה"
+
+#: bp-activity-subscription-functions.php:2384
+msgid "Allow group admins and mods to change members' email subscription settings: "
+msgstr "אפשר למנהלים בקבוצה ולמנחים לשנות הגדרות מנויים הדוא\"ל של חברים:"
+
+#: bp-activity-subscription-functions.php:2389
+msgid ""
+"Allow group admins to override subscription settings and send an email to everyone "
+"in their group: "
+msgstr "אפשר למנהלים בקבוצה לעקוף הגדרות מנויים, ולשלוח דוא\"ל לכולם בקבוצה שלהם:"
+
+#: bp-activity-subscription-functions.php:2396
+msgid "Spam Prevention"
+msgstr "מניעת דואר זבל"
+
+#: bp-activity-subscription-functions.php:2397
+msgid ""
+"To help protect against spam, you may wish to require a user to have been a member "
+"of the site for a certain amount of days before any group updates are emailed to the "
+"other group members. This is disabled by default."
+msgstr ""
+"כדי לסייע בהגנה מפני דואר זבל, ייתכן שתרצו לדרוש שהמשתמש יהיה חבר באתר למספר מסוים "
+"של ימים לפני כל עדכוני קבוצה שלו ישלחו בדוא\"ל לחברי הקבוצה אחרים. הגדרה זו מושבתת "
+"כברירת מחדל."
+
+#: bp-activity-subscription-functions.php:2398
+msgid "Member must be registered for"
+msgstr "חבר חייב להיות רשום באתר"
+
+#: bp-activity-subscription-functions.php:2398
+msgid "days"
+msgstr "ימים"
+
+#: bp-activity-subscription-functions.php:2409
+#, c-format
+msgid "If you enjoy using this plugin %s please rate it %s."
+msgstr "אם אתה נהנה באמצעות תוסף %s זה אנא דרג אותו %s."
+
+#: bp-activity-subscription-functions.php:2410
+msgid "Please make a donation to the team to support ongoing development."
+msgstr "אנא לתרום לצוות שיתמוך בפיתוח מתמשך."
+
+#: bp-activity-subscription-main.php:22
+msgid "Email Options"
+msgstr "אפשרויות דוא\"ל"
+
+#: bp-activity-subscription-main.php:75
+msgid "Error"
+msgstr "שגיאה"
+
+#. Plugin Name of the plugin/theme
+msgid "BuddyPress Group Email Subscription"
+msgstr "מנויי אימייל לקבוצות BuddyPress"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wordpress.org/extend/plugins/buddypress-group-email-subscription/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Allows group members to receive email notifications for group activity and forum "
+"posts instantly or as daily digest or weekly summary."
+msgstr ""
+"אפשר לחברי קבוצה לקבל הודעות אימייל להודעות פעילות הקבוצה ופורום באופן מיידי או "
+"כתקציר יום יומי או בסיכום שבועי."
+
+#. Author of the plugin/theme
+msgid "Deryk Wenaus, boonebgorges, r-a-y"
+msgstr ""
+
+#: bp-activity-subscription-functions.php:227
+msgid ""
+", therefore you won't receive replies to this topic. To get them, click the link to "
+"view this topic on the web then click the 'Follow this topic' button."
+msgstr ""
+", לכן לא קיבלת תגובות לנושא זה. כדי לקבל אותם, לחץ על הקישור כדי להציג נושא זה "
+"באינטרנט ולאחר מכן לחץ על לחצן 'בצע את נושא זה'."
+
+#: bp-activity-subscription-functions.php:894
+#: bp-activity-subscription-functions.php:949
+#: bp-activity-subscription-functions.php:1008
+#: bp-activity-subscription-functions.php:1670
+msgid "All Email"
+msgstr "כל הדוא''ל"
+
+#: bp-activity-subscription-functions.php:2038
+msgid " - sent from the group "
+msgstr "- נשלח מהקבוצה"

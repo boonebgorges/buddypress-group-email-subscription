@@ -57,6 +57,7 @@ TRANSLATORS
 - Farsi - Vahid Masoomi http://www.AzUni.ir
 - Lithuanian - Vincent G http://www.Host1Free.com
 - Danish - Morten Nalholm
+- Hebrew - Iggy Pritzker
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members receive them, you can filter 'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.phpfor more info.
@@ -90,6 +91,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 = 3.6.0 =
 * Introduce `ass_generate_notification()`, a generic handler for sending notifications.
+* Add Hebrew translation.
 
 = 3.5.2 =
 * Adds a filter to control whether a specific user should receive immediate email notification of a given item.
