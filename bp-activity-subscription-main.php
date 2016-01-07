@@ -18,7 +18,7 @@ require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
 class Group_Activity_Subscription extends BP_Group_Extension {
 
-	function group_activity_subscription() {
+	public function __construct() {
 		$this->name = __('Email Options', 'bp-ass');
 		$this->slug = 'notifications';
 
