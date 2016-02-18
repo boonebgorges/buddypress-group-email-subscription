@@ -687,23 +687,6 @@ function ass_digest_get_user_domain( $user_id ) {
 	return apply_filters( 'bp_core_get_user_domain', $domain, $user_id, $mass_userdata[ $user_id ]['user_nicename'], $mass_userdata[ $user_id ]['user_login'] );
 }
 
-if ( ! function_exists( 'bp_core_enable_root_profiles' ) ) :
-/**
- * Backpat version of bp_core_enable_root_profiles().
- *
- * This function is only available in BP 1.6+.
- */
-function bp_core_enable_root_profiles() {
-
-	$retval = false;
-
-	if ( defined( 'BP_ENABLE_ROOT_PROFILES' ) && ( true == BP_ENABLE_ROOT_PROFILES ) )
-		$retval = true;
-
-	return apply_filters( 'bp_core_enable_root_profiles', $retval );
-}
-endif;
-
 // if the WP_Better_Emails plugin is installed, don't wrap the message with <html><body>$message</body></html>
 function ass_digest_support_wp_better_emails( $message, $message_pre_html_wrap ) {
     if ( class_exists( 'WP_Better_Emails' ) ) {
