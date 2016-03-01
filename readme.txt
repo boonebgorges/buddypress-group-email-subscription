@@ -51,7 +51,7 @@ TRANSLATORS
 - French - http://www.claudegagne-photo.com
 - Brazilian Portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
 - Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
-- Swedish - Thomas Schneider
+- Swedish - Thomas Schneider, Joakim Hising
 - German - Peter Peterson, Thorsten Wollenhöfer
 - Russian - http://www.viaestvita.net/groups/
 - Farsi - Vahid Masoomi http://www.AzUni.ir
@@ -88,6 +88,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 3.6.1 =
+* Update Swedish translation.
 
 = 3.6.0 =
 * Introduce `ass_generate_notification()`, a generic handler for sending notifications.
