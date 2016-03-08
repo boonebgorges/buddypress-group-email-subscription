@@ -687,7 +687,7 @@ msgid "this topic"
 msgstr "diese Thema"
 
 msgid "unsubscribe"
-msgstr "Abonnement läschen"
+msgstr "Abonnement löschen"
 
 msgid "yes"
 msgstr "Ja"
