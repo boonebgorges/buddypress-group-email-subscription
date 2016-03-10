@@ -52,7 +52,7 @@ TRANSLATORS
 - Brazilian Portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
 - Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
 - Swedish - Thomas Schneider, Joakim Hising
-- German - Peter Peterson, Thorsten Wollenhöfer
+- German - Peter Peterson, Thorsten Wollenhöfer, Jörg Lohrer
 - Russian - http://www.viaestvita.net/groups/
 - Farsi - Vahid Masoomi http://www.AzUni.ir
 - Lithuanian - Vincent G http://www.Host1Free.com
