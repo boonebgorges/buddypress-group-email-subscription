@@ -91,6 +91,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 = 3.6.1 =
 * Update Swedish translation.
+* Update German translation.
 
 = 3.6.0 =
 * Introduce `ass_generate_notification()`, a generic handler for sending notifications.
