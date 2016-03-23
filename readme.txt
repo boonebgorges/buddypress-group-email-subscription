@@ -90,6 +90,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 == Changelog ==
 
 = 3.6.1 =
+* Fix bug that could cause fatal error when sending digests in some cases.
 * Update Swedish translation.
 * Update German translation.
 
