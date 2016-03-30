@@ -554,6 +554,21 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 	if ( !$activity_id || !$user_id || !$group_id )
 		return;
 
+	/**
+	 * Prevent the addition of specific activity item IDs for specific users.
+	 *
+	 * @since 3.6.1
+	 *
+	 * @param bool   $proceed     Whether to continue adding this activity item to a user's digest.
+	 * @param int    $activity_id ID of activity item to be added.
+	 * @param int    $user_id     ID of user whose digest record is being modified.
+	 * @param int    $group_id    ID of the group where the action took place.
+	 * @param string $type        Type of digest.
+	 */
+	if ( false === apply_filters( 'ass_digest_record_activity_allow', true, $activity_id, $user_id, $group_id, $type ) ) {
+		return;
+	}
+
 	// get the digest/summary items for all groups for this user
 	$group_activity_ids = bp_get_user_meta( $user_id, 'ass_digest_items', true );
 
