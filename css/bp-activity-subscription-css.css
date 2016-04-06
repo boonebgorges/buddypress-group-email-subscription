@@ -104,6 +104,12 @@ h4.activity-subscription-settings-title {
 
 .ass_members_status { font-size:11px; color:#aaa; margin-top:5px; } /* only admins see this */
 
+/* Companion stylesheet override */
+#buddypress ul.item-list li div.action div a.group-subscription-options-link {
+       display: inline;
+       width: auto;
+}
+
 /* only admins see this */
 .ass_manage_members_links {
 	display:block;
