@@ -1,4 +1,4 @@
- 
+
 h4.activity-subscription-settings-title {
 	margin:15px auto;
 	border-bottom:1px solid #EAEAEA;
@@ -60,7 +60,7 @@ h4.activity-subscription-settings-title {
 
 #groups-dir-list .group-subscription-options,
 #groups-list .group-subscription-options {
-	position: relative;	
+	position: relative;
 	z-index: 1;
 	right: 0;
 	text-align: left;
@@ -76,7 +76,7 @@ h4.activity-subscription-settings-title {
 }
 
 .group-subscription-close {
-	float: right; 
+	float: right;
 	display: block;
 	line-height: 12px;
 	height: 12px;
@@ -87,17 +87,17 @@ h4.activity-subscription-settings-title {
 	padding-top: 12px;
 }
 .single-item .group-subscription-options {
-	float: left !important; 
+	float: left !important;
 }
-.gemail_icon{ 
-	background: url(email.png) top left no-repeat !important; 
-	padding-left: 20px !important; 
+.gemail_icon{
+	background: url(email.png) top left no-repeat !important;
+	padding-left: 20px !important;
 	margin-left: 2px;
 	font-weight: bold;
 }
 
 .notifications .group-subscription-div { /* hide ajax buttons when we're on the group notification page. */
-	display: none;  
+	display: none;
 }
 
 .group-forum-topic .ass-topic-subscribe  { width: 100%; text-align: right; margin: 10px 0; }
@@ -108,6 +108,6 @@ h4.activity-subscription-settings-title {
 .ass_manage_members_links {
 	display:block;
 	padding-top: 8px;
-	font-size:11px; 
-	color:#888; 
+	font-size:11px;
+	color:#888;
 }
