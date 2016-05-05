@@ -13,20 +13,56 @@ function ass_group_unsubscribe_links( $user_id ) {
 	//$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
 	//$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
-	$userdomain = bp_core_get_user_domain( $user_id );
-
-	$group_id = bp_get_current_group_id();
-	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
-	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp-ass' ), $group_link );
+	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp-ass' ), ass_get_group_unsubscribe_link_for_user( $user_id ) );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
-		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
-		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp-ass' ), $global_link );
+		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp-ass' ), ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) );
 	}
 
 	$links .= "\n";
 
 	return $links;
+}
+
+/**
+ * Get the group unsubscribe link for a user.
+ *
+ * @since 3.7.0
+ *
+ * @param  int  $user_id  WP user ID.
+ * @param  int  $group_id BuddyPress group ID.
+ * @param  bool $global   Should we use the global unsubscribe link? If 'false', we will use the
+  *                       single group's unsubscribe link. Default: false.
+ * @return string|bool URL for unsubscribe link on success; boolean false on failure.
+ */
+function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $global = false ) {
+	if ( empty( $user_id ) ) {
+		return false;
+	}
+
+	$args = array(
+		'bpass-action' => 'unsubscribe',
+	);
+
+	// Use global unsubscribe link.
+	if ( true === $global ) {
+		$access_key = md5( "{$user_id}unsubscribe" . wp_salt() );
+
+	// Single group unsubscribe link.
+	} else {
+		$group_id = empty( $group_id ) ? bp_get_current_group_id() : (int) $group_id;
+		if ( empty( $group_id ) ) {
+			return false;
+		}
+
+		$access_key = md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
+
+		$args['group'] = $group_id;
+	}
+
+	$args['access_key'] = $access_key;
+
+	return esc_url( add_query_arg( $args, bp_core_get_user_domain( $user_id ) ) );
 }
 
 /**
