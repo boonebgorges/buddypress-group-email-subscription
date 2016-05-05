@@ -734,8 +734,9 @@ function ass_send_email( $email_type, $to, $args ) {
 		remove_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
 		add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 
-		// Remove BP's plain-text filter.
+		// Remove BP's plain-text filter and convert the HTML email content to Markdown.
 		remove_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+		add_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
 
 		/**
 		 * Hook to do something before GES sends a BP email.
@@ -753,6 +754,7 @@ function ass_send_email( $email_type, $to, $args ) {
 		add_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
 		remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		add_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+		remove_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
 
 		/**
 		 * Hook to do something after GES sends a BP email.
@@ -876,6 +878,43 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 	if ( true === $switched ) {
 		restore_current_blog();
 	}
+}
+
+/**
+ * Convert HTML over to a form of Markdown plaintext.
+ *
+ * Do not confuse with {@link ass_convert_html_to_text()}. That function
+ * strips tags.
+ *
+ * @since 3.7.0
+ *
+ * @uses html2text() by Jevon Wright. Licensed under the EPL v1.0 and LGPL v3.0.
+ *       We use a fork of 0.1.1 to maintain PHP 5.2 compatibility.
+ * @link https://github.com/r-a-y/html2text/tree/0.1.x
+ * @link https://github.com/soundasleep/html2text/
+ *
+ * @param string $content The HTML content to convert to plaintext.
+ * @param string $prop    Unused. This is only used by the 'bp_email_get_property' filter.
+ * @param string $prop    Unused. This is only used by the 'bp_email_get_property' filter.
+ * @return string
+ */
+function ass_email_convert_html_to_plaintext( $content = '', $prop = 'content_plaintext', $transform = 'replace-tokens' ) {
+	if ( empty( $content ) || 'content_plaintext' !== $prop || 'replace-tokens' !== $transform ) {
+		return $content;
+	}
+
+	if ( false === function_exists( 'convert_html_to_text' ) ) {
+		require dirname( __FILE__ ) . '/html2text.php';
+	}
+
+	// Suppress warnings when using DOMDocument.
+	// This addresses issues when failing to parse certain HTML.
+	if ( function_exists( 'libxml_use_internal_errors' ) ) {
+		libxml_use_internal_errors( true );
+	}
+
+	// Convert newlines to breaklines before using our HTML to text function.
+	return convert_html_to_text( nl2br( $content ) );
 }
 
 /**
