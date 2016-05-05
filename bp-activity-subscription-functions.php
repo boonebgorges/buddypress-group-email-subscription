@@ -644,22 +644,48 @@ To view or reply, log in and go to:
 
 		// if we're good to send, send the email!
 		if ( $send_it ) {
-			// One last chance to filter the message content
-			$user_message = apply_filters( 'bp_ass_activity_notification_message', $message . $notice, array(
+			$user_message_args = array(
 				'message'           => $message,
 				'notice'            => $notice,
 				'user_id'           => $user_id,
 				'subscription_type' => $group_status,
 				'content'           => $the_content,
 				'settings_link'     => ! empty( $settings_link ) ? $settings_link : '',
-			) );
+			);
+
+			// One last chance to filter the message content
+			$user_message = apply_filters( 'bp_ass_activity_notification_message', $message . $notice, $user_message_args );
 
 			// Get the details for the user
 			$user = bp_core_get_core_userdata( $user_id );
 
 			// Send the email
 			if ( $user->user_email ) {
-				wp_mail( $user->user_email, $subject, $user_message );
+				// Custom GES email tokens.
+				$user_message_args['ges.action']  = $activity_obj->action; // Unfiltered.
+				$user_message_args['ges.subject'] = $r['action'];          // Unfiltered.
+				$user_message_args['ges.email-setting-description'] = $email_setting_desc;
+				$user_message_args['ges.email-setting-links']       = $email_setting_links;
+				$user_message_args['ges.unsubscribe-global']        = ass_get_group_unsubscribe_link_for_user( $user->ID, $r['group_id'], true );
+				$user_message_args['ges.unsubscribe']   = ass_get_group_unsubscribe_link_for_user( $user->ID, $r['group_id'] );
+				$user_message_args['ges.settings-link'] = $user_message_args['settings_link'];
+				$user_message_args['poster.url']        = bp_core_get_user_domain( $r['sender_id'] );
+				$user_message_args['recipient.id']      = $user->ID;
+
+				// BP-specific tokens.
+				$user_message_args['usermessage'] = $the_content;
+				$user_message_args['poster.name'] = bp_core_get_user_displayname( $r['sender_id'] );
+				$user_message_args['thread.url']  = $r['link'];
+				$user_message_args['group.id']    = $r['group_id'];
+
+				// Remove tokens that we're not using.
+				unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
+
+				ass_send_email( 'bp-ges-single', $user->user_email, array(
+					'tokens'  => $user_message_args,
+					'subject' => $subject,
+					'content' => $user_message
+				) );
 			}
 
 		}
