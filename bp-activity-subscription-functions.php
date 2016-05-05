@@ -727,6 +727,9 @@ function ass_send_email( $email_type, $to, $args ) {
 		// Temporary save tokens.
 		buddypress()->ges_tokens = $args['tokens'];
 
+		// Add BP email post type if it doesn't exist.
+		ass_set_email_type( $email_type );
+
 		// Remove BP's restrictive HTML filtering and use KSES from BP activity.
 		remove_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
 		add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
@@ -765,6 +768,113 @@ function ass_send_email( $email_type, $to, $args ) {
 	// Older BP versions use wp_mail().
 	} else {
 		return wp_mail( $to, $args['subject'], $args['content'] );
+	}
+}
+
+/**
+ * Install GES emails during email installation routine for BuddyPress.
+ *
+ * @since 3.7.0
+ */
+function ass_install_emails() {
+	ass_set_email_type( 'bp-ges-single', false );
+}
+add_action( 'bp_core_install_emails', 'ass_install_emails' );
+
+/**
+ * Sets the email situation type for use in GES.
+ *
+ * Only applicable for BuddyPress 2.5+.
+ *
+ * @since 3.7.0
+ *
+ * @param string $email_type The email type to fetch.
+ * @param bool   $term_check Check if our GES email term exists before creating our specific email
+ *                           situation. Default: true.
+ */
+function ass_set_email_type( $email_type, $term_check = true ) {
+	$switched = false;
+
+	if ( false === bp_is_root_blog() ) {
+		$switched = true;
+		switch_to_blog( bp_get_root_blog_id() );
+	}
+
+	if ( true === $term_check ) {
+		$term = term_exists( $email_type, bp_get_email_tax_type() );
+	} else {
+		$term = 0;
+	}
+
+	// Term already exists so don't do anything.
+	if ( true === $term_check && $term !== 0 && $term !== null ) {
+		if ( true === $switched ) {
+			restore_current_blog();
+		}
+
+		return;
+
+	// Create our email situation.
+	} else {
+		// Set up default email content depending on the email type.
+		switch ( $email_type ) {
+			// Group activity single items.
+			case 'bp-ges-single' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$html_content = __( "{{{ges.action}}}:\n\n<blockquote>{{{usermessage}}}</blockquote>\n&ndash;\n<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up on the conversation.\n{{{ges.email-setting-description}}}", 'buddypress-group-email-subscription' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$plaintext_content = __( "{{{ges.action}}}:\n\n\"{{{usermessage}}}\"\n\nGo to the discussion to reply or catch up on the conversation:\n{{{thread.url}}}\n\n----\n\n{{{ges.email-setting-description}}}\n\n{{{ges.email-setting-links}}}", 'buddypress-group-email-subscription' );
+
+				$situation_desc = __( 'A member created a group activity entry. Used by the Group Email Subscription plugin during immediate sendouts.', 'buddypress-group-email-subscription' );
+
+				break;
+		}
+
+		// Sanity check!
+		if ( false === isset( $post_title ) ) {
+			if ( true === $switched ) {
+				restore_current_blog();
+			}
+
+			return;
+		}
+
+		$id = $email_type;
+
+		$defaults = array(
+			'post_status' => 'publish',
+			'post_type'   => bp_get_email_post_type(),
+		);
+
+		$email = array(
+			'post_title'   => $post_title,
+			'post_content' => $html_content,
+			'post_excerpt' => $plaintext_content,
+		);
+
+		// Email post content.
+		$post_id = wp_insert_post( bp_parse_args( $email, $defaults, 'install_email_' . $id ) );
+
+		// Save the situation.
+		if ( ! is_wp_error( $post_id ) ) {
+			$tt_ids = wp_set_object_terms( $post_id, $id, bp_get_email_tax_type() );
+
+			// Situation description.
+			if ( ! is_wp_error( $tt_ids ) ) {
+				$term = get_term_by( 'term_taxonomy_id', (int) $tt_ids[0], bp_get_email_tax_type() );
+				wp_update_term( (int) $term->term_id, bp_get_email_tax_type(), array(
+					'description' => $situation_desc,
+				) );
+			}
+		}
+	}
+
+	if ( true === $switched ) {
+		restore_current_blog();
 	}
 }
 
