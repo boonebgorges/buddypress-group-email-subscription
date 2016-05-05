@@ -738,6 +738,14 @@ function ass_send_email( $email_type, $to, $args ) {
 		remove_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
 		add_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
 
+		// Remove default BP email footer.
+		add_action( 'bp_before_email_footer', 'ob_start', 999, 0 );
+		add_action( 'bp_after_email_footer',  'ob_get_clean', -999, 0 );
+
+		// Add our custom BP email footer.
+		add_action( 'bp_after_email_footer', 'ass_bp_email_footer_text' );
+		add_action( 'bp_after_email_footer', 'ass_bp_email_footer_html_unsubscribe_links' );
+
 		/**
 		 * Hook to do something before GES sends a BP email.
 		 *
@@ -915,6 +923,88 @@ function ass_email_convert_html_to_plaintext( $content = '', $prop = 'content_pl
 
 	// Convert newlines to breaklines before using our HTML to text function.
 	return convert_html_to_text( nl2br( $content ) );
+}
+
+/**
+ * Output footer text from the BP Emails Customizer.
+ *
+ * For BuddyPress 2.5+.
+ *
+ * @since 3.7.0
+ */
+function ass_bp_email_footer_text() {
+	if ( false === function_exists( 'bp_email_get_appearance_settings' ) ) {
+		return;
+	}
+
+	$settings = bp_email_get_appearance_settings();
+
+	$footer_text = stripslashes( $settings['footer_text'] );
+	if ( $footer_text ) :
+?>
+
+	<span class="footer_text"><?php echo nl2br( $footer_text ); ?></span>
+	<br><br>
+
+<?php
+	endif;
+}
+
+/**
+ * Add custom BP email footer for HTML emails.
+ *
+ * We want to override the default {{unsubscribe}} token with something else.
+ *
+ * @since 3.7.0
+ */
+function ass_bp_email_footer_html_unsubscribe_links() {
+	$tokens = buddypress()->ges_tokens;
+
+	$link_format = '<a href="%1$s" title="%2$s" style="text-decoration: underline;">%3$s</a>';
+	$footer_links = array();
+
+	switch( $tokens['subscription_type'] ) {
+		// Self-notifications.
+		case 'self_notify' :
+			$footer_links[] = sprintf( $link_format,
+				$tokens['ges.settings-link'],
+				esc_attr__( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'buddypress-group-email-subscription' ),
+				esc_html__( 'Change email settings', 'buddypress-group-email-subscription' )
+			);
+
+			break;
+
+		// 'New Topics' or 'All Mail'.
+		case 'sub':
+		case 'supersub':
+			$footer_links[] = sprintf( $link_format,
+				$tokens['ges.settings-link'],
+				esc_attr__( 'To change your email settings for this group only, click on this link', 'buddypress-group-email-subscription' ),
+				esc_html__( 'Change group email Settings', 'buddypress-group-email-subscription' )
+			);
+
+			$footer_links[] = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+				$tokens['ges.unsubscribe'],
+				esc_attr__( 'To disable all notifications for this group, click on this link', 'buddypress-group-email-subscription' ),
+				esc_html__( 'Unsubscribe from this group', 'wpbe-bp' )
+			);
+
+			if ( 'yes' == get_option( 'ass-global-unsubscribe-link' ) ) {
+				$footer_links[] = sprintf( $link_format,
+					$tokens['ges.unsubscribe-global'],
+					esc_attr__( 'To disable notifications from all your groups, click on this link', 'buddypress-group-email-subscription' ),
+					esc_html__( 'Unsubscribe from all groups', 'buddypress-group-email-subscription' )
+				);
+			}
+
+			break;
+	}
+
+	if ( ! empty( $footer_links ) ) {
+		echo implode( ' &middot; ', $footer_links );
+	}
+
+	unset( buddypress()->ges_tokens );
 }
 
 /**
