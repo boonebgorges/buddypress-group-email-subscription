@@ -592,7 +592,7 @@ To view or reply, log in and go to:
 			$group_status = 'self_notify';
 
 			// notification settings link
-			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/#groups-subscription-notification-settings';
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
