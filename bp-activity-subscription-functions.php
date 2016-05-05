@@ -595,9 +595,12 @@ To view or reply, log in and go to:
 			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/#groups-subscription-notification-settings';
 
 			// set notice
-			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
-			$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-			$notice .= "\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+			$notice = $email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
+
+			$email_setting_links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$email_setting_links .= "\n\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+
+			$notice .= "\n\n" . $email_setting_links;
 
 		// User is subscribed to "All Mail"
 		// OR user is subscribed to "New Topics" (bbPress 2)
@@ -615,9 +618,16 @@ To view or reply, log in and go to:
 
 			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), $group_status );
 
-			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
-			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
-			$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+			$email_setting_string = __( 'Your email setting for this group is: %s', 'buddypress-group-email-subscription' );
+			$group_status_string  = ass_subscribe_translate( $group_status );
+
+			$notice             = sprintf( $email_setting_string, $group_status_string );
+			$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
+
+			$email_setting_links = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+
+			$notice .= "\n" . $email_setting_links;
 
 		}
 
