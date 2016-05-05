@@ -674,6 +674,75 @@ To view or reply, log in and go to:
 }
 
 /**
+ * Email wrapper function for BP-GES.
+ *
+ * Created to be backward compatible when used on < BP 2.5.
+ *
+ * @since 3.7.0
+ *
+ * @param string                   $email_type Type of email being sent.
+ * @param string|array|int|WP_User $to         Either a email address, user ID, WP_User object,
+ *                                             or an array containg the address and name.
+ * @param array                    $args {
+ *     Optional. Array of extra parameters.
+ *
+ *     @type array $tokens Optional. Assocative arrays of string replacements for the email.
+ * }
+ * @return bool|WP_Error True if the email was sent successfully. Otherwise, a WP_Error object
+ *                       describing why the email failed to send. The contents will vary based
+ *                       on the email delivery class you are using.
+ */
+function ass_send_email( $email_type, $to, $args ) {
+	// BP 2.5+
+	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
+		// Unset array keys used for older BP installs.
+		unset( $args['subject'], $args['content'] );
+
+		// Temporary save tokens.
+		buddypress()->ges_tokens = $args['tokens'];
+
+		// Remove BP's restrictive HTML filtering and use KSES from BP activity.
+		remove_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
+		add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+
+		// Remove BP's plain-text filter.
+		remove_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+
+		/**
+		 * Hook to do something before GES sends a BP email.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $email_type The GES email type.
+		 */
+		do_action( 'bp_ges_before_bp_send_email', $email_type );
+
+		// Email time!
+		$send = bp_send_email( $email_type, $args['tokens']['user_id'], $args );
+
+		// Clean up after ourselves!
+		add_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
+		remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+		add_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+
+		/**
+		 * Hook to do something after GES sends a BP email.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $email_type The GES email type.
+		 */
+		do_action( 'bp_ges_after_bp_send_email', $email_type );
+
+		return $send;
+
+	// Older BP versions use wp_mail().
+	} else {
+		return wp_mail( $to, $args['subject'], $args['content'] );
+	}
+}
+
+/**
  * Activity edit checker.
  *
  * Catch attempts to save activity entries to see if they already exist.
