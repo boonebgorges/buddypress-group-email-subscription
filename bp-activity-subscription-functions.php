@@ -590,7 +590,6 @@ To view or reply, log in and go to:
 
 		// Does the author want updates of their own forum posts?
 		if ( $activity_obj->type == 'bbp_topic_create' || $activity_obj->type == 'bbp_reply_create' ) {
-
 			if ( $user_id == $r['sender_id'] ) {
 				$self_notify = ass_self_post_notification( $user_id );
 
@@ -786,6 +785,7 @@ function ass_send_email( $email_type, $to, $args ) {
 
 		// Remove BP's plain-text filter and convert the HTML email content to Markdown.
 		remove_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+		add_filter( 'bp_email_get_property', 'ass_email_strip_trailing_breaklines', 1, 3 );
 		add_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
 
 		// Remove default BP email footer.
@@ -810,8 +810,8 @@ function ass_send_email( $email_type, $to, $args ) {
 
 		// Clean up after ourselves!
 		add_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
-		remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		add_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+		remove_filter( 'bp_email_get_property', 'ass_email_strip_trailing_breaklines', 1, 3 );
 		remove_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
 
 		/**
@@ -936,6 +936,42 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 	if ( true === $switched ) {
 		restore_current_blog();
 	}
+}
+
+/**
+ * Strip trailing breaklines created by BuddyPress during token additions.
+ *
+ * @since 3.7.0
+ *
+ * @see BP_Email::get() and the nl2br() call.
+ *
+ * @param string $content   Content to check.
+ * @param string $prop      Property to check.
+ * @param string $transform Transform type to check.
+ * @return string
+ */
+function ass_email_strip_trailing_breaklines( $content = '', $prop = '', $transform = '' ) {
+	if ( $transform !== 'add-content' ) {
+		return $content;
+	}
+
+	$find = array(
+		'ul><br />',
+		'ol><br />',
+		'li><br />',
+		'</p><br />',
+		'</blockquote><br />'
+	);
+
+	$replace = array(
+		'ul>',
+		'ol>',
+		'li>',
+		'</p>',
+		'</blockquote>'
+	);
+
+	return str_replace( $find, $replace, $content );
 }
 
 /**
