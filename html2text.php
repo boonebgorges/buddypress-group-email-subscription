@@ -164,6 +164,24 @@ function iterate_over_node($node) {
 			$output = "- ";
 			break;
 
+		case "b":
+		case "strong":
+			$output = "**";
+			break;
+
+		case "i":
+		case "em":
+			$output = "_";
+			break;
+
+		case "del":
+			$output = "~~";
+			break;
+
+		case "code":
+			$output = "`";
+			break;
+
 		default:
 			// print out contents of unknown tags
 			$output = "";
@@ -273,6 +291,24 @@ function iterate_over_node($node) {
 
 		case "li":
 			$output .= "\n";
+			break;
+
+		case "b":
+		case "strong":
+			$output .= "**";
+			break;
+
+		case "i":
+		case "em":
+			$output .= "_";
+			break;
+
+		case "del":
+			$output .= "~~";
+			break;
+
+		case "code":
+			$output .= "`";
 			break;
 
 		default:
