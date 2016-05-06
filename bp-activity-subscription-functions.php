@@ -402,6 +402,40 @@ function ass_group_forum_record_digest( $activity ) {
 add_action( 'bp_activity_after_save', 'ass_group_forum_record_digest' );
 
 /**
+ * Temporarily save the full activity content before activity KSES kicks in.
+ *
+ * At the moment, we only do this for bbPress content since bbPress supports a
+ * larger amount of elements than BuddyPress' activity KSES filter.
+ *
+ * @since 3.7.0
+ *
+ * @param string               $retval   Current activity content.
+ * @param BP_Activity_Activity $activity Activity object.
+ * @return string
+ */
+function ass_group_notification_activity_content_before_save( $retval = '', BP_Activity_Activity $activity ) {
+	// If not bbPress content, bail.
+	if ( 0 !== strpos( $activity->type, 'bbp_' ) ) {
+		return $retval;
+	}
+
+	// Temporarily remove BP activity KSES filter.
+	remove_filter( 'bp_get_activity_content', 'bp_activity_filter_kses', 1 );
+
+	// Apply bbPress KSES filter if it exists (sanity check!)
+	$content = ( true === function_exists( 'bbp_filter_kses' ) ) ? bbp_filter_kses( $retval ) : $retval;
+
+	// Temporarily save bbPress content and apply BP's activity content filter.
+	$GLOBALS['bp']->ges_content = apply_filters( 'bp_get_activity_content', $retval );
+
+	// Add back BP activity KSES filter.
+	add_filter( 'bp_get_activity_content', 'bp_activity_filter_kses', 1 );
+
+	return $retval;
+}
+add_filter( 'bp_activity_content_before_save', 'ass_group_notification_activity_content_before_save', -999, 2 );
+
+/**
  * Records group activity items in GES for all activity except:
  *  - group forum posts (handled in ass_group_notification_forum_posts())
  *  - created and joined group entries (irrelevant)
@@ -529,6 +563,12 @@ To view or reply, log in and go to:
 
 ---------------------
 ', 'bp-ass' ), $r['action'], $the_content, $r['link'] );
+	}
+
+	// Use bbPress filtered post content and reapply GES filter... sigh.
+	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) ) {
+		$the_content = apply_filters( 'bp_ass_activity_notification_content', $GLOBALS['bp']->ges_content, $activity_obj, $r['action'], $group );
+		unset( $GLOBALS['bp']->ges_content );
 	}
 
 	// get subscribed users for the group
@@ -681,11 +721,22 @@ To view or reply, log in and go to:
 				// Remove tokens that we're not using.
 				unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
 
+				// If activity type is not a bbPress item, add activity KSES filter.
+				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+					add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+				}
+
+				// Sending time!
 				ass_send_email( 'bp-ges-single', $user->user_email, array(
 					'tokens'  => $user_message_args,
 					'subject' => $subject,
 					'content' => $user_message
 				) );
+
+				// Revert!
+				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+					remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+				}
 			}
 
 		}
@@ -730,9 +781,8 @@ function ass_send_email( $email_type, $to, $args ) {
 		// Add BP email post type if it doesn't exist.
 		ass_set_email_type( $email_type );
 
-		// Remove BP's restrictive HTML filtering and use KSES from BP activity.
+		// Remove BP's restrictive HTML filtering.
 		remove_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
-		add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 
 		// Remove BP's plain-text filter and convert the HTML email content to Markdown.
 		remove_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
