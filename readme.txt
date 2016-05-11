@@ -48,7 +48,7 @@ TRANSLATORS
 - Japanese - http://buddypress.org/community/members/chestnut_jp/
 - Spanish - Williams Castillo, Gregor Gimmy
 - Italian - Stefano Russo
-- French - http://www.claudegagne-photo.com
+- French - http://www.claudegagne-photo.com, Sylvain Ghysens
 - Brazilian Portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
 - Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
 - Swedish - Thomas Schneider, Joakim Hising
