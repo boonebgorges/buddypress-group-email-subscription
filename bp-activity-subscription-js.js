@@ -41,7 +41,7 @@ jQuery(document).ready( function() {
 
 
 	// group subscription options
-	j( '#groups-dir-list,#item-header' ).on("click", '.group-sub', function() {
+	j( '.item-list,#item-header' ).on("click", '.group-sub', function() {
 		it = j(this);
 		var theid = j(this).attr('id');
 		var stheid = theid.split('-');
