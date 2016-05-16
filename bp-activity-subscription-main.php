@@ -42,35 +42,39 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	public function add_settings_stylesheet() {
-		$revision_date = '20130729';
+		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
+			$revision_date = '20130729';
 
-		wp_register_style(
-			'activity-subscription-style',
-			plugins_url( 'css/bp-activity-subscription-css.css', __FILE__ ),
-			array(),
-			$revision_date
-		);
+			wp_register_style(
+				'activity-subscription-style',
+				plugins_url( 'css/bp-activity-subscription-css.css', __FILE__ ),
+				array(),
+				$revision_date
+			);
 
-		wp_enqueue_style( 'activity-subscription-style' );
+			wp_enqueue_style( 'activity-subscription-style' );
+		}
 	}
 
 	public function ass_add_javascript() {
-		$revision_date = '20130729';
+		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
+			$revision_date = '20130729';
 
-		wp_register_script(
-			'bp-activity-subscription-js',
-			plugins_url( 'bp-activity-subscription-js.js', __FILE__ ),
-			array( 'jquery' ),
-			$revision_date
-		);
+			wp_register_script(
+				'bp-activity-subscription-js',
+				plugins_url( 'bp-activity-subscription-js.js', __FILE__ ),
+				array( 'jquery' ),
+				$revision_date
+			);
 
-		wp_enqueue_script( 'bp-activity-subscription-js' );
+			wp_enqueue_script( 'bp-activity-subscription-js' );
 
-		wp_localize_script( 'bp-activity-subscription-js', 'bp_ass', array(
-			'mute'   => __( 'Mute', 'bp-ass' ),
-			'follow' => __( 'Follow', 'bp-ass' ),
-			'error'  => __( 'Error', 'bp-ass' )
-		) );
+			wp_localize_script( 'bp-activity-subscription-js', 'bp_ass', array(
+				'mute'   => __( 'Mute', 'bp-ass' ),
+				'follow' => __( 'Follow', 'bp-ass' ),
+				'error'  => __( 'Error', 'bp-ass' )
+			) );
+		}
 	}
 
 	// Display the notification settings form
