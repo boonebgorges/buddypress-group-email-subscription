@@ -43,7 +43,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 	public function add_settings_stylesheet() {
 		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
-			$revision_date = '20130729';
+			$revision_date = '20160516';
 
 			wp_register_style(
 				'activity-subscription-style',
@@ -58,7 +58,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 	public function ass_add_javascript() {
 		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
-			$revision_date = '20130729';
+			$revision_date = '20160516';
 
 			wp_register_script(
 				'bp-activity-subscription-js',
