@@ -41,7 +41,7 @@ jQuery(document).ready( function() {
 
 
 	// group subscription options
-	j( '#groups-dir-list,#item-header' ).on("click", '.group-sub', function() {
+	j( '.item-list,#item-header' ).on("click", '.group-sub', function() {
 		it = j(this);
 		var theid = j(this).attr('id');
 		var stheid = theid.split('-');
@@ -70,13 +70,13 @@ jQuery(document).ready( function() {
 
 	});
 
-	j( '#groups-dir-list,#item-header' ).on("click", '.group-subscription-options-link', function() {
+	j( '.item-list,#item-header' ).on("click", '.group-subscription-options-link', function() {
 		stheid = j(this).attr('id').split('-');
 		group_id = stheid[1];
 		j( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 
-	j( '#groups-dir-list,#item-header' ).on("click", '.group-subscription-close', function() {
+	j( '.item-list,#item-header' ).on("click", '.group-subscription-close', function() {
 		stheid = j(this).attr('id').split('-');
 		group_id = stheid[1];
 		j( '#gsubopt-'+group_id ).slideToggle('fast');

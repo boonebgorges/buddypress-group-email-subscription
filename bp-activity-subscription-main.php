@@ -42,7 +42,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	public function add_settings_stylesheet() {
-		if ( bp_is_groups_component() ) {
+		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
 			$revision_date = '20130729';
 
 			wp_register_style(
@@ -57,7 +57,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 	}
 
 	public function ass_add_javascript() {
-		if ( bp_is_groups_component() ) {
+		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
 			$revision_date = '20130729';
 
 			wp_register_script(
