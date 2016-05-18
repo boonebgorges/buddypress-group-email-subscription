@@ -89,6 +89,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.6.2 =
+* Improve JavaScript event binding for better compatibility with AJAX page loading
+
 = 3.6.1 =
 * Fix bug that could cause fatal error when sending digests in some cases.
 * Improve appearance of "Get email updates" link in directories when using Twenty* themes.
