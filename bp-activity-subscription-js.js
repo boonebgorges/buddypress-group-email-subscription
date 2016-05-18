@@ -2,7 +2,7 @@ jQuery(document).ready( function() {
 	var j = jQuery;
 
 	// topic follow/mute
-	j(".ass-topic-subscribe > a").click( function() {
+	j( document ).on("click", '.ass-topic-subscribe > a', function() {
 		it = j(this);
 		var theid = j(this).attr('id');
 		var stheid = theid.split('-');
@@ -41,7 +41,7 @@ jQuery(document).ready( function() {
 
 
 	// group subscription options
-	j( '.item-list,#item-header' ).on("click", '.group-sub', function() {
+	j( document ).on("click", '.group-sub', function() {
 		it = j(this);
 		var theid = j(this).attr('id');
 		var stheid = theid.split('-');
@@ -70,26 +70,26 @@ jQuery(document).ready( function() {
 
 	});
 
-	j( '.item-list,#item-header' ).on("click", '.group-subscription-options-link', function() {
+	j( document ).on("click", '.group-subscription-options-link', function() {
 		stheid = j(this).attr('id').split('-');
 		group_id = stheid[1];
 		j( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 
-	j( '.item-list,#item-header' ).on("click", '.group-subscription-close', function() {
+	j( document ).on("click", '.group-subscription-close', function() {
 		stheid = j(this).attr('id').split('-');
 		group_id = stheid[1];
 		j( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 
-	//j('.ass-settings-advanced-link').click( function() {
+	//j( document ).on("click", '.ass-settings-advanced-link', function() {
 	//	j( '.ass-settings-advanced' ).slideToggle('fast');
 	//});
 
 	j('.group-subscription-options').hide();
 
 	// Toggle welcome email fields on group email options page
-	j('#ass-welcome-email-enabled').change(function() {
+	j( document ).on("change", '#ass-welcome-email-enabled', function() {
 		if ( j(this).prop('checked') ) {
 			j('.ass-welcome-email-field').show();
 		} else {
