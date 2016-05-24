@@ -702,7 +702,7 @@ To view or reply, log in and go to:
 			if ( $user->user_email ) {
 				// Custom GES email tokens.
 				$user_message_args['ges.action']  = stripslashes( $activity_obj->action ); // Unfiltered.
-				$user_message_args['ges.subject'] = stripslashes( $r['action'] );          // Unfiltered.
+				$user_message_args['ges.subject'] = strip_tags( stripslashes( $r['action'] ) ); // Unfiltered.
 				$user_message_args['ges.email-setting-description'] = $email_setting_desc;
 				$user_message_args['ges.email-setting-links']       = $email_setting_links;
 				$user_message_args['ges.unsubscribe-global']        = ass_get_group_unsubscribe_link_for_user( $user->ID, $r['group_id'], true );
