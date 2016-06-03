@@ -45,20 +45,20 @@ To protect against spam, you can set a minimum number of days users need to be r
 
 TRANSLATORS
 
-- Japanese - http://buddypress.org/community/members/chestnut_jp/
-- Spanish - Williams Castillo, Gregor Gimmy
-- Italian - Stefano Russo
-- French - http://www.claudegagne-photo.com, Sylvain Ghysens
 - Brazilian Portuguese - www.about.me/dennisaltermann (or www.congregacao.net)
-- Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
-- Swedish - Thomas Schneider, Joakim Hising
-- German - Peter Peterson, Thorsten Wollenhöfer, Jörg Lohrer
-- Russian - http://www.viaestvita.net/groups/
-- Farsi - Vahid Masoomi http://www.AzUni.ir
-- Lithuanian - Vincent G http://www.Host1Free.com
-- Danish - Morten Nalholm
-- Hebrew - Iggy Pritzker
 - Catalan - Sara Arjona Téllez
+- Danish - Morten Nalholm
+- Dutch - Anja werkgroepen.net/wordpress, Tim de Hoog
+- Farsi - Vahid Masoomi http://www.AzUni.ir
+- French - http://www.claudegagne-photo.com, Sylvain Ghysens
+- German - Peter Peterson, Thorsten Wollenhöfer, Jörg Lohrer
+- Hebrew - Iggy Pritzker
+- Italian - Stefano Russo
+- Japanese - http://buddypress.org/community/members/chestnut_jp/
+- Lithuanian - Vincent G http://www.Host1Free.com
+- Russian - http://www.viaestvita.net/groups/
+- Spanish - Williams Castillo, Gregor Gimmy
+- Swedish - Thomas Schneider, Joakim Hising
 
 NOTE TO PLUGIN AUTHORS
 If your plugin posts updates to the standard BuddyPress activity stream, then group members who are subscribed via 3. Daily Digest and 5. All Email will get your updates automatically. However people subscribed as 2. Weekly Summary and 4. New Topic will not. If you feel some of your plugin's updates are very important and want to make sure all subscribed members receive them, you can filter 'ass_this_activity_is_important' and return TRUE when $type matches your activity. See the ass_this_activity_is_important() function in bp-activity-subscription-functions.phpfor more info.
