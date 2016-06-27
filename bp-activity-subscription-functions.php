@@ -419,17 +419,8 @@ function ass_group_notification_activity_content_before_save( $retval = '', BP_A
 		return $retval;
 	}
 
-	// Temporarily remove BP activity KSES filter.
-	remove_filter( 'bp_get_activity_content', 'bp_activity_filter_kses', 1 );
-
-	// Apply bbPress KSES filter if it exists (sanity check!)
-	$content = ( true === function_exists( 'bbp_filter_kses' ) ) ? bbp_filter_kses( $retval ) : $retval;
-
-	// Temporarily save bbPress content and apply BP's activity content filter.
-	$GLOBALS['bp']->ges_content = apply_filters( 'bp_get_activity_content', $retval );
-
-	// Add back BP activity KSES filter.
-	add_filter( 'bp_get_activity_content', 'bp_activity_filter_kses', 1 );
+	// Temporarily save bbPress content.
+	$GLOBALS['bp']->ges_content = $retval;
 
 	return $retval;
 }
@@ -567,8 +558,18 @@ To view or reply, log in and go to:
 
 	// Use bbPress filtered post content and reapply GES filter... sigh.
 	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) ) {
-		$the_content = apply_filters( 'bp_ass_activity_notification_content', $GLOBALS['bp']->ges_content, $activity_obj, $r['action'], $group );
-		unset( $GLOBALS['bp']->ges_content );
+		// Not in global cache? Query for post content.
+		if ( empty( $GLOBALS['bp']->ges_content ) ) {
+			$the_content = get_post_field( 'post_content', $activity_obj->secondary_item_id, 'raw' );
+		} else {
+			$the_content = $GLOBALS['bp']->ges_content;
+			unset( $GLOBALS['bp']->ges_content );
+		}
+
+		// Apply bbPress KSES filter if it exists (sanity check!)
+		$the_content = ( true === function_exists( 'bbp_filter_kses' ) ) ? bbp_filter_kses( $the_content ) : $the_content;
+
+		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity_obj, $r['action'], $group );
 	}
 
 	// get subscribed users for the group
