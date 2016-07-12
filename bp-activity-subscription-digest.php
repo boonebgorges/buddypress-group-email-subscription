@@ -250,11 +250,12 @@ function ass_digest_fire( $type ) {
 				$user_message_args['poster.url']   = $userdomain;
 
 				// BP-specific tokens.
-				$user_message_args['usermessage'] = str_replace( "\n", '', $body );
+				$user_message_args['usermessage'] = $body;
 				$user_message_args['poster.name'] = $userdata['user_login']; // Unused
 
-				// Filter salutation title.
+				// Filters.
 				add_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
+				add_filter( 'bp_email_get_property', 'ass_digest_strip_plaintext_separators', 1, 3 );
 
 				// Send the email.
 				ass_send_email( 'bp-ges-digest', $to, array(
@@ -263,13 +264,14 @@ function ass_digest_fire( $type ) {
 
 				// Remove filter.
 				remove_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
+				remove_filter( 'bp_email_get_property', 'ass_digest_strip_plaintext_separators', 1, 3 );
 
 			// Old version.
 			} else {
 				$message_plaintext = ass_convert_html_to_plaintext( $message );
 
 				// Send out the email.
-				ass_send_multipart_email( $to, $subject, $message_plaintext, $message );
+				ass_send_multipart_email( $to, $subject, $message_plaintext, str_replace( '---', '', $message ) );
 			}
 
 			// update the subscriber's digest list
@@ -313,6 +315,38 @@ function ass_digest_filter_salutation( $retval = '' ) {
 	}
 
 	return ass_digest_get_title( buddypress()->ges_tokens['subscription_type'] );
+}
+
+/**
+ * Strip plain-text only content from BP 2.5 digest HTML emails.
+ *
+ * @since 3.7.0
+ *
+ * @see BP_Email::get() and the nl2br() call.
+ *
+ * @param string $content   Content to check.
+ * @param string $prop      Property to check.
+ * @param string $transform Transform type to check.
+ * @return string
+ */
+function ass_digest_strip_plaintext_separators( $content = '', $prop = '', $transform = '' ) {
+	if ( $transform !== 'add-content' ) {
+		return $content;
+	}
+
+	$find = array(
+		"---",
+		"<br />",
+		"\n&ndash;\n",
+	);
+
+	$replace = array(
+		'',
+		'',
+		'<br />&ndash;<br />',
+	);
+
+	return str_replace( $find, $replace, $content );
 }
 
 // these functions are hooked in via the cron
