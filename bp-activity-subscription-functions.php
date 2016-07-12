@@ -903,7 +903,7 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 				$html_content = __( "{{{ges.digest-summary}}}{{{usermessage}}}\n&ndash;\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{site.name}}.", 'buddypress-group-email-subscription' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'buddypress-group-email-subscription' );
+				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\n----\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'buddypress-group-email-subscription' );
 
 				$situation_desc = __( 'An email digest is sent to a member. Used by the Group Email Subscription plugin during daily or weekly digest sendouts.', 'buddypress-group-email-subscription' );
 
