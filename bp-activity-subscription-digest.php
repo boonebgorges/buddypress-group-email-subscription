@@ -61,7 +61,7 @@ function ass_digest_fire( $type ) {
 	// Allow plugins to filter the CSS
 	$ass_email_css = apply_filters( 'ass_email_css', $ass_email_css );
 
-	$title = ass_digest_get_title();
+	$title = ass_digest_get_title( $type );
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
 	$subject = apply_filters( 'ass_digest_subject', "$title [$blogname]", $blogname, $title, $type );
 
@@ -243,7 +243,7 @@ function ass_digest_fire( $type ) {
 
 				$user_message_args['ges.subject']       = $title;
 				$user_message_args['ges.settings-link'] = ass_get_login_redirect_url( "{$userdomain}{$bp->groups->slug}" );
-				$user_message_args['subscription_type'] = 'dig';
+				$user_message_args['subscription_type'] = $type;
 				$user_message_args['user_id']           = $user_id;
 
 				// Unused.

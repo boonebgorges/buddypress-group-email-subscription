@@ -1103,6 +1103,7 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 
 		// Digests.
 		case 'dig' :
+		case 'sum' :
 			$footer_links[] = sprintf( $link_format,
 				$tokens['ges.settings-link'],
 				esc_attr__( 'Once you are logged in, change your email settings for each group.', 'buddypress-group-email-subscription' ),
