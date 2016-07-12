@@ -253,9 +253,16 @@ function ass_digest_fire( $type ) {
 				$user_message_args['usermessage'] = str_replace( "\n", '', $body );
 				$user_message_args['poster.name'] = $userdata['user_login']; // Unused
 
+				// Filter salutation title.
+				add_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
+
+				// Send the email.
 				ass_send_email( 'bp-ges-digest', $to, array(
 					'tokens'  => $user_message_args
 				) );
+
+				// Remove filter.
+				remove_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
 
 			// Old version.
 			} else {
@@ -290,6 +297,22 @@ function ass_digest_get_title( $type = '' ) {
 	}
 
 	return apply_filters( 'ass_digest_title', $title, $type );
+}
+
+/**
+ * Filter the "Hi, X" salutation in BP 2.5 emails to use the digest title.
+ *
+ * @since 3.7.0
+ *
+ * @param  string $retval Current salutation.
+ * @return string
+ */
+function ass_digest_filter_salutation( $retval = '' ) {
+	if ( true === empty( buddypress()->ges_tokens ) ) {
+		return $retval;
+	}
+
+	return ass_digest_get_title( buddypress()->ges_tokens['subscription_type'] );
 }
 
 // these functions are hooked in via the cron
