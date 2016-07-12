@@ -61,13 +61,7 @@ function ass_digest_fire( $type ) {
 	// Allow plugins to filter the CSS
 	$ass_email_css = apply_filters( 'ass_email_css', $ass_email_css );
 
-	if ( $type == 'dig' )
-		$title = sprintf( __( 'Your daily digest of group activity', 'bp-ass' ) );
-	else
-		$title = sprintf( __( 'Your weekly summary of group topics', 'bp-ass' ) );
-
-	$title = apply_filters( 'ass_digest_title', $title, $type );
-
+	$title = ass_digest_get_title();
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
 	$subject = apply_filters( 'ass_digest_subject', "$title [$blogname]", $blogname, $title, $type );
 
@@ -278,6 +272,24 @@ function ass_digest_fire( $type ) {
 
 		unset( $message, $message_plaintext, $message, $to, $userdata, $userdomain, $activity_message, $summary, $group_activity_ids_array, $group_activity_ids );
 	}
+}
+
+/**
+ * Get the title for the digest email.
+ *
+ * @since 3.7.0
+ *
+ * @param  string $type Type of digest. Either 'dig' for daily digest or 'sum' for weekly summary.
+ * @return string
+ */
+function ass_digest_get_title( $type = '' ) {
+	if ( $type == 'dig' ) {
+		$title = sprintf( __( 'Your daily digest of group activity', 'bp-ass' ) );
+	} else {
+		$title = sprintf( __( 'Your weekly summary of group topics', 'bp-ass' ) );
+	}
+
+	return apply_filters( 'ass_digest_title', $title, $type );
 }
 
 // these functions are hooked in via the cron
