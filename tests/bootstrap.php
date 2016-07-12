@@ -22,6 +22,7 @@ if ( file_exists( BP_TESTS_DIR . '/bootstrap.php' ) ) {
 	function _bootstrap_plugins() {
 		require BP_TESTS_DIR . '/includes/loader.php';
 		require dirname( __FILE__ ) . '/../bp-activity-subscription.php';
+		require dirname( __FILE__ ) . '/includes/ges-mock-mailer.php';
 	}
 	tests_add_filter( 'muplugins_loaded', '_bootstrap_plugins' );
 
