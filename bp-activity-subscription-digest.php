@@ -56,6 +56,7 @@ function ass_digest_fire( $type ) {
 	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
 		$ass_email_css['summary_ul']  = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
 		$ass_email_css['item_action'] = $ass_email_css['item_content'] = '';
+		$ass_email_css['item_date']   = 'style="font-size:85%;"';
 	}
 
 	// Allow plugins to filter the CSS
