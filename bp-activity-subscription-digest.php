@@ -191,8 +191,9 @@ function ass_digest_fire( $type ) {
 		$group_activity_ids_array[$type] = $group_activity_ids;
 
 		// show group summary for digest, and follow help text for weekly summary
-		if ( 'dig' == $type )
-			$message .= apply_filters( 'ass_digest_summary_full', "\n<ul {$ass_email_css['summary_ul']}>" . __( 'Group Summary', 'bp-ass') . ":\n" . $summary . "</ul>\n", $ass_email_css['summary_ul'], $summary );
+		if ( 'dig' == $type ) {
+			$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass') . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+		}
 
 		// the meat of the message which we generated above goes here
 		$message .= $activity_message;
