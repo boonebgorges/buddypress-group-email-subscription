@@ -893,6 +893,21 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 				$situation_desc = __( 'A member created a group activity entry. Used by the Group Email Subscription plugin during immediate sendouts.', 'buddypress-group-email-subscription' );
 
 				break;
+
+			// Digests.
+			case 'bp-ges-digest' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$html_content = __( "{{{ges.digest-summary}}}{{{usermessage}}}\n&ndash;\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{site.name}}.", 'buddypress-group-email-subscription' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'buddypress-group-email-subscription' );
+
+				$situation_desc = __( 'An email digest is sent to a member. Used by the Group Email Subscription plugin during daily or weekly digest sendouts.', 'buddypress-group-email-subscription' );
+
+				break;
 		}
 
 		// Sanity check!
@@ -1083,6 +1098,16 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 					esc_html__( 'Unsubscribe from all groups', 'buddypress-group-email-subscription' )
 				);
 			}
+
+			break;
+
+		// Digests.
+		case 'dig' :
+			$footer_links[] = sprintf( $link_format,
+				$tokens['ges.settings-link'],
+				esc_attr__( 'Once you are logged in, change your email settings for each group.', 'buddypress-group-email-subscription' ),
+				esc_html__( 'Change email settings', 'buddypress-group-email-subscription' )
+			);
 
 			break;
 	}

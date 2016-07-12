@@ -37,20 +37,26 @@ function ass_digest_fire( $type ) {
 		$type = 'sum';
 
 	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
-	$ass_email_css['wrapper'] = 		'style="color:#333;clear:both;'; // use this to style the body
-	$ass_email_css['title'] = 			'style="font-size:130%;"';
-	$ass_email_css['summary']	      = '';
-	$ass_email_css['summary_ul'] = 		'style="padding:12px 0 5px; list-style-type:circle; list-style-position:inside;"';
-	//$ass_email_css['summary'] = 		'style="display:list-item;"';
-	$ass_email_css['follow_topic'] = 	'style="padding:15px 0 0; color: #888;clear:both;"';
-	$ass_email_css['group_title'] = 	'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
-	$ass_email_css['change_email'] = 	'style="font-size:12px; margin-left:10px; color:#888;"';
-	$ass_email_css['item_div'] = 		'style="padding: 10px; border-top: 1px #eee solid;"';
-	$ass_email_css['item_action'] = 	'style="color:#888;"';
-	$ass_email_css['item_date'] = 		'style="font-size:85%; color:#bbb; margin-left:8px;"';
-	$ass_email_css['item_content'] = 	'style="color:#333;"';
-	$ass_email_css['item_weekly'] = 	'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
-	$ass_email_css['footer'] = 			'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
+	$ass_email_css['wrapper']      = 'style="color:#333;clear:both;'; // use this to style the body
+	$ass_email_css['title']        = 'style="font-size:130%; margin:0 0 25px 0;"';
+	$ass_email_css['summary']      = '';
+	$ass_email_css['summary_ul']   = 'style="margin:0; padding:0 0 5px; list-style-type:circle; list-style-position:inside;"';
+	//$ass_email_css['summary']    = 'style="display:list-item;"';
+	$ass_email_css['follow_topic'] = 'style="padding:15px 0 0; color: #888;clear:both;"';
+	$ass_email_css['group_title']  = 'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
+	$ass_email_css['change_email'] = 'style="font-size:12px; margin-left:10px; color:#888;"';
+	$ass_email_css['item_div']     = 'style="padding: 10px; border-top: 1px #eee solid;"';
+	$ass_email_css['item_action']  = 'style="color:#888;"';
+	$ass_email_css['item_date']    = 'style="font-size:85%; color:#bbb; margin-left:8px;"';
+	$ass_email_css['item_content'] = 'style="color:#333;"';
+	$ass_email_css['item_weekly']  = 'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
+	$ass_email_css['footer']       = 'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
+
+	// BP 2.5+ overrides.
+	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
+		$ass_email_css['summary_ul']  = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
+		$ass_email_css['item_action'] = $ass_email_css['item_content'] = '';
+	}
 
 	// Allow plugins to filter the CSS
 	$ass_email_css = apply_filters( 'ass_email_css', $ass_email_css );
@@ -145,7 +151,7 @@ function ass_digest_fire( $type ) {
 		$group_activity_ids_array = unserialize( $user->meta_value );
 
 		// initialize some strings
-		$summary = $activity_message = '';
+		$summary = $activity_message = $body = '';
 
 		// We only want the weekly or daily ones
 		if ( empty( $group_activity_ids_array[$type] ) || !$group_activity_ids = (array)$group_activity_ids_array[$type] )
@@ -180,8 +186,11 @@ function ass_digest_fire( $type ) {
 			$group_name = $groups_info[ $group_id ][ 'name' ];
 			$group_slug = $groups_info[ $group_id ][ 'slug' ];
 			$group_permalink = apply_filters( 'bp_get_group_permalink', trailingslashit( bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/' . $group_slug . '/' ) );
-			if ( 'dig' == $type ) // might be nice here to link to anchor tags in the message
+
+			// Might be nice here to link to anchor tags in the message.
+			if ( 'dig' == $type ) {
 				$summary .= apply_filters( 'ass_digest_summary', "<li {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
+			}
 
 			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
 			unset( $group_activity_ids[ $group_id ] );
@@ -197,6 +206,7 @@ function ass_digest_fire( $type ) {
 
 		// the meat of the message which we generated above goes here
 		$message .= $activity_message;
+		$body .= $activity_message;
 
 		// user is subscribed to "New Topics"
 		// add follow help text only if bundled forums are enabled
@@ -206,7 +216,7 @@ function ass_digest_fire( $type ) {
 
 		$message .= $footer;
 
-		$unsubscribe_message = "\n\n<br><br>" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
+		$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
 
 		if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 			$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
@@ -217,8 +227,6 @@ function ass_digest_fire( $type ) {
 
 		$message .= "</div>";
 
-		$message_plaintext = ass_convert_html_to_plaintext( $message );
-
 		if ( isset( $_GET['sum'] ) ) {
 			// test mode run from the browser, dont send the emails, just show them on screen using domain.com?sum=1
 			echo '<div style="background-color:white; width:75%;padding:20px 10px;">';
@@ -227,8 +235,42 @@ function ass_digest_fire( $type ) {
 			//echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_plaintext ; echo '</pre>';
 			echo '</div>';
 		} else {
-			// send out the email
-			ass_send_multipart_email( $to, $subject, $message_plaintext, $message );
+
+			// Sending time!
+			if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
+				// Custom GES email tokens.
+				$user_message_args = array();
+
+				// Digest summary only available for daily digests.
+				$user_message_args['ges.digest-summary'] = '';
+				if ( 'dig' == $type ) {
+					$user_message_args['ges.digest-summary'] = apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'buddypress-group-email-subscription' ) . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+				}
+
+				$user_message_args['ges.subject']       = $title;
+				$user_message_args['ges.settings-link'] = ass_get_login_redirect_url( "{$userdomain}{$bp->groups->slug}" );
+				$user_message_args['subscription_type'] = 'dig';
+				$user_message_args['user_id']           = $user_id;
+
+				// Unused.
+				$user_message_args['poster.url']   = $userdomain;
+
+				// BP-specific tokens.
+				$user_message_args['usermessage'] = str_replace( "\n", '', $body );
+				$user_message_args['poster.name'] = $userdata['user_login']; // Unused
+
+				ass_send_email( 'bp-ges-digest', $to, array(
+					'tokens'  => $user_message_args
+				) );
+
+			// Old version.
+			} else {
+				$message_plaintext = ass_convert_html_to_plaintext( $message );
+
+				// Send out the email.
+				ass_send_multipart_email( $to, $subject, $message_plaintext, $message );
+			}
+
 			// update the subscriber's digest list
 			bp_update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
 
@@ -237,7 +279,6 @@ function ass_digest_fire( $type ) {
 		unset( $message, $message_plaintext, $message, $to, $userdata, $userdomain, $activity_message, $summary, $group_activity_ids_array, $group_activity_ids );
 	}
 }
-
 
 // these functions are hooked in via the cron
 function ass_daily_digest_fire() {
