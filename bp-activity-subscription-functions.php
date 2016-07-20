@@ -589,6 +589,11 @@ To view or reply, log in and go to:
 	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
 		$self_notify = false;
 
+		// If user is banned from group, do not send mail.
+		if ( groups_is_user_banned( $user_id, $group->id ) ) {
+			continue;
+		}
+
 		// Does the author want updates of their own forum posts?
 		if ( $activity_obj->type == 'bbp_topic_create' || $activity_obj->type == 'bbp_reply_create' ) {
 			if ( $user_id == $r['sender_id'] ) {
