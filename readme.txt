@@ -91,6 +91,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 == Changelog ==
 
 = 3.6.2 =
+* Do not send email to a banned group member.
 * Improve JavaScript event binding for better compatibility with AJAX page loading
 * Add Catalan translation
 
