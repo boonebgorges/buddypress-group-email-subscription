@@ -972,6 +972,8 @@ function ass_update_group_subscribe_settings() {
 			$group_id = $_POST[ 'ass_group_id' ];
 			$action = $_POST[ 'ass_group_subscribe' ];
 
+			//print_r( 'here' ); die();
+			
 			if ( !groups_is_user_member( $user_id, $group_id ) )
 				return;
 
