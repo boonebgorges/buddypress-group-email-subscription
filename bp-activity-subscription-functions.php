@@ -2162,7 +2162,22 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 	$user = bp_core_get_core_userdata( $user_id );
 
 	$welcome_email = groups_get_groupmeta( $group_id, 'ass_welcome_email' );
-	$welcome_email = apply_filters( 'ass_welcome_email', $welcome_email, $group_id ); // for multilingual filtering
+
+	/**
+	 * Filters the parameters of the welcome email.
+	 *
+	 * @since 3.1.1
+	 * @since 3.7.0 Added $user parameter.
+	 *
+	 * @param array $welcome_email Message details {
+	 *              $enabled Whether the group has a welcome email enabled or not.
+	 *              $subject The saved subject of the welcome email.
+	 *              $content The saved content of the welcome email.
+	 * }
+ 	 * @param int   $group_id ID of the group the email is sent by.
+	 * @param array $user     Details of the user who just joined the group.
+	 */
+	$welcome_email = apply_filters( 'ass_welcome_email', $welcome_email, $group_id, $user ); // for multilingual filtering
 	$welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : 'no';
 
 	if ( 'no' == $welcome_email_enabled ) {
