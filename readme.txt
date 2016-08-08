@@ -93,6 +93,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 = 3.6.2 =
 * Do not send email to a banned group member.
 * Improve JavaScript event binding for better compatibility with AJAX page loading
+* Pass user information to 'ass_welcome_email' filter.
 * Add Catalan translation
 
 = 3.6.1 =
