@@ -844,6 +844,7 @@ function ass_send_email( $email_type, $to, $args ) {
  */
 function ass_install_emails() {
 	ass_set_email_type( 'bp-ges-single', false );
+	ass_set_email_type( 'bp-ges-digest', false );
 }
 add_action( 'bp_core_install_emails', 'ass_install_emails' );
 
