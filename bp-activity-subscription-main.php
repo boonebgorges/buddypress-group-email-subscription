@@ -13,6 +13,16 @@ if ( defined( 'BP_VERSION' ) ) {
 	}
 }
 
+// old bbPress.
+if ( function_exists( 'bp_setup_forums' ) ) {
+	require_once( dirname( __FILE__ ) . '/legacy-forums.php' );
+}
+
+// Admin-related code.
+if ( defined( 'WP_NETWORK_ADMIN' ) ) {
+	require_once( dirname( __FILE__ ) . '/admin.php' );
+}
+
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
@@ -124,3 +134,23 @@ if ( $bpges_bp_version < 1.5 ) {
 	// Load the group extension in the proper fashion
 	bp_register_group_extension( 'Group_Activity_Subscription' );
 }
+
+/**
+ * Include files only if we're on a specific group page.
+ *
+ * @since 3.7.0
+ */
+function ges_late_includes() {
+	// This could be more fine-grained, but we have to be nice for BP 1.2 installs.
+	if ( bp_is_groups_component() ) {
+		require_once( dirname( __FILE__ ) . '/screen.php' );
+	}
+}
+if ( function_exists( 'bp_setup_canonical_stack' ) ) {
+	$load_hook = 'bp_setup_canonical_stack';
+	$priority  = 20;
+} else {
+	$load_hook = 'bp_init';
+	$priority  = 5;
+}
+add_action( $load_hook, 'ges_late_includes', $priority );
