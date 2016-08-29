@@ -245,7 +245,7 @@ function ass_digest_fire( $type ) {
 				$user_message_args['ges.subject']       = $title;
 				$user_message_args['ges.settings-link'] = ass_get_login_redirect_url( "{$userdomain}{$bp->groups->slug}" );
 				$user_message_args['subscription_type'] = $type;
-				$user_message_args['user_id']           = $user_id;
+				$user_message_args['recipient.id']      = $user_id;
 
 				// Unused.
 				$user_message_args['poster.url']   = $userdomain;
