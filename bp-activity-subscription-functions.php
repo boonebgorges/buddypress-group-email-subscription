@@ -802,6 +802,11 @@ function ass_send_email( $email_type, $to, $args ) {
 		add_action( 'bp_after_email_footer', 'ass_bp_email_footer_text' );
 		add_action( 'bp_after_email_footer', 'ass_bp_email_footer_html_unsubscribe_links' );
 
+		if ( isset( $args['from'] ) ) {
+			buddypress()->ges_from = $args['from'];
+			add_action( 'bp_email_set_tokens', 'ass_email_set_from_during_token_addition', 10, 3 );
+		}
+
 		/**
 		 * Hook to do something before GES sends a BP email.
 		 *
@@ -833,7 +838,12 @@ function ass_send_email( $email_type, $to, $args ) {
 
 	// Older BP versions use wp_mail().
 	} else {
-		return wp_mail( $to, $args['subject'], $args['content'] );
+		$headers = array();
+
+		if ( isset( $args['from'] ) ) {
+			$headers[] = "From: \"{$from['name']}\" <{$from['email']}>";
+		}
+		return wp_mail( $to, $args['subject'], $args['content'], $headers );
 	}
 }
 
@@ -958,6 +968,26 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 	if ( true === $switched ) {
 		restore_current_blog();
 	}
+}
+
+/**
+ * Sets 'From' email header for BuddyPress 2.5 emails during token addition.
+ *
+ * @since  3.7.0
+ * @access private
+ *
+ * @param  array    $retval Formatted tokens.
+ * @param  array    $tokens Unformatted tokens.
+ * @param  BP_Email $email  BP Email object.
+ * @return array    Token array.
+ */
+function ass_email_set_from_during_token_addition( $retval, $tokens, BP_Email $email ) {
+	if ( isset( buddypress()->ges_from ) ) {
+		$email->set_from( buddypress()->ges_from['email'], buddypress()->ges_from['name'] );
+		unset( buddypress()->ges_from );
+	}
+
+	return $retval;
 }
 
 /**
