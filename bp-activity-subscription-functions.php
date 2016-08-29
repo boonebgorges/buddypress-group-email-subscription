@@ -841,7 +841,7 @@ function ass_send_email( $email_type, $to, $args ) {
 		$headers = array();
 
 		if ( isset( $args['from'] ) ) {
-			$headers[] = "From: \"{$from['name']}\" <{$from['email']}>";
+			$headers[] = "From: \"{$args['from']['name']}\" <{$args['from']['email']}>";
 		}
 		return wp_mail( $to, $args['subject'], $args['content'], $headers );
 	}
