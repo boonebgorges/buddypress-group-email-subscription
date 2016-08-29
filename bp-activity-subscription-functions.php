@@ -1126,6 +1126,10 @@ function ass_bp_email_footer_text() {
 function ass_bp_email_footer_html_unsubscribe_links() {
 	$tokens = buddypress()->ges_tokens;
 
+	if ( ! isset( $tokens['subscription_type'] ) ) {
+		return;
+	}
+
 	$link_format = '<a href="%1$s" title="%2$s" style="text-decoration: underline;">%3$s</a>';
 	$footer_links = array();
 
@@ -1152,7 +1156,7 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 			$footer_links[] = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
 				$tokens['ges.unsubscribe'],
 				esc_attr__( 'To disable all notifications for this group, click on this link', 'buddypress-group-email-subscription' ),
-				esc_html__( 'Unsubscribe from this group', 'wpbe-bp' )
+				esc_html__( 'Unsubscribe from this group', 'buddypress-group-email-subscription' )
 			);
 
 			if ( 'yes' == get_option( 'ass-global-unsubscribe-link' ) ) {
