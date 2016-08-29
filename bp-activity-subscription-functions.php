@@ -855,6 +855,8 @@ function ass_send_email( $email_type, $to, $args ) {
 function ass_install_emails() {
 	ass_set_email_type( 'bp-ges-single', false );
 	ass_set_email_type( 'bp-ges-digest', false );
+	ass_set_email_type( 'bp-ges-notice', false );
+	ass_set_email_type( 'bp-ges-welcome', false );
 }
 add_action( 'bp_core_install_emails', 'ass_install_emails' );
 
@@ -922,6 +924,32 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\n----\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'buddypress-group-email-subscription' );
 
 				$situation_desc = __( 'An email digest is sent to a member. Used by the Group Email Subscription plugin during daily or weekly digest sendouts.', 'buddypress-group-email-subscription' );
+
+				break;
+
+			// Admin notice.
+			case 'bp-ges-notice' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}} - from the group "{{{group.name}}}"', 'buddypress-group-email-subscription' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$html_content = __( "This is a notice from the group {{{group.link}}}:\n\n{{{usermessage}}}\n\n&ndash;\n<strong>Please note:</strong> admin notices are sent to everyone in the group and cannot be disabled.\nIf you feel this service is being misused please speak to the website administrator.", 'buddypress-group-email-subscription' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$plaintext_content = __( "This is a notice from the group \"{{{group.name}}}\":\n\n\"{{{usermessage}}}\"\n\n----\n\nPlease note: admin notices are sent to everyone in the group and cannot be disabled.\n\nIf you feel this service is being misused please speak to the website administrator.\n\nTo visit the group homepage, click on the link below:\n{{{group.url}}}", 'buddypress-group-email-subscription' );
+
+				$situation_desc = __( 'An email notice is sent by a group administrator to all members of the group. Used by the Group Email Subscription plugin.', 'buddypress-group-email-subscription' );
+
+				break;
+
+			// Welcome email.
+			case 'bp-ges-welcome' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
+
+				$html_content = $plaintext_content = "{{{usermessage}}}";
+
+				$situation_desc = __( 'A welcome email is sent to new members of a group. Used by the Group Email Subscription plugin.', 'buddypress-group-email-subscription' );
 
 				break;
 		}
@@ -2601,7 +2629,7 @@ function ass_admin_notice() {
 		} else {
 			$group      = groups_get_current_group();
 			$group_id   = $group->id;
-			$group_name = bp_get_current_group_name();
+			$group_name = bp_get_group_name( $group );
 			$group_link = bp_get_group_permalink( $group );
 
 			if ( $group->status != 'public' ) {
@@ -2636,12 +2664,30 @@ If you feel this service is being misused please speak to the website administra
 			// allow others to perform an action when this type of email is sent, like adding to the activity feed
 			do_action( 'ass_admin_notice', $group_id, $subject, $notice );
 
+			// Custom GES email tokens.
+			$tokens['ges.subject'] = stripslashes( strip_tags( $_POST[ 'ass_admin_notice_subject' ] ) ); // Unfiltered.
+			$tokens['group.link']  = sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name );
+
+			// BP-specific tokens.
+			$tokens['usermessage'] = apply_filters( 'ass_admin_notice_message', $_POST['ass_admin_notice'] );
+			$tokens['group.id']    = $group->id;
+			$tokens['group.name']  = $group_name;
+			$tokens['group.url']   = esc_url( $group_link );
+
 			// cycle through all group members
-			foreach ( (array)$user_ids as $user_id ) {
+			foreach ( (array) $user_ids as $user_id ) {
 				$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 
-				if ( $user->user_email )
-					wp_mail( $user->user_email, $subject, $message );  // Send the email
+				if ( $user->user_email ) {
+					$tokens['recipient.id'] = $user_id;
+
+					// Sending time!
+					ass_send_email( 'bp-ges-notice', $user->user_email, array(
+						'tokens'  => $tokens,
+						'subject' => $subject,
+						'content' => $message
+					) );
+				}
 
 				//echo '<br>Email: ' . $user->user_email;
 			}
@@ -2711,7 +2757,32 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 		"From: \"{$group_admin->display_name}\" <{$group_admin->user_email}>"
 	);
 
-	wp_mail( $user->user_email, $subject, $message, $headers );
+	$group      = groups_get_group( array( 'group_id' => $group_id ) );
+	$group_name = bp_get_group_name( $group );
+	$group_link = bp_get_group_permalink( $group );
+
+	// Sending time!
+	ass_send_email( 'bp-ges-welcome', $user->user_email, array(
+		'tokens'  => array(
+			'ges.subject'  => stripslashes( strip_tags( $welcome_email['subject'] ) ),
+			'usermessage'  => stripslashes( $welcome_email['content'] ),
+			'group.link'   => sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name ),
+			'group.name'   => $group_name,
+			'group.url'    => esc_url( $group_link ),
+			'group.id'     => $group_id,
+			'recipient.id' => $user->ID,
+			'subscription_type' => 'sub',
+			'ges.settings-link' => ass_get_login_redirect_url( trailingslashit( $group_link . 'notifications' ), 'welcome' ),
+			'ges.unsubscribe'   => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id ),
+			'ges.unsubscribe-global' => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true ),
+		),
+		'subject' => $subject,
+		'content' => $message,
+		'from' => array(
+			'name'   => $group_name,
+			'email'  => $group_admin->user_email
+		)
+	) );
 }
 add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
