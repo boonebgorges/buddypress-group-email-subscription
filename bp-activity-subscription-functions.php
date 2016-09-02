@@ -817,7 +817,7 @@ function ass_send_email( $email_type, $to, $args ) {
 		do_action( 'bp_ges_before_bp_send_email', $email_type );
 
 		// Email time!
-		$send = bp_send_email( $email_type, $args['tokens']['recipient.id'], $args );
+		$send = bp_send_email( $email_type, (int) $args['tokens']['recipient.id'], $args );
 
 		// Clean up after ourselves!
 		add_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
