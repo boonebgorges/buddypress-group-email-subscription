@@ -1268,6 +1268,8 @@ add_filter( 'bbp_is_subscriptions_active', 'ass_bbp_subscriptions' );
  * Stuff to do when the bbPress plugin is ready.
  *
  * @since 3.4.1
+ * @since 3.7.0 Adds support to remove user from bbP's forum subscriber list if user is
+ *              already subscribed to the group's "All Mail" option.
  */
 function ass_bbp_ready() {
 	/**
@@ -1279,6 +1281,9 @@ function ass_bbp_ready() {
 	if ( version_compare( bbp_get_version(), '2.5.4' ) >= 0 ) {
 		add_filter( 'bbp_subscription_mail_title', 'ass_bbp_add_topic_subscribers_filter',    99 );
 		add_action( 'bbp_pre_notify_subscribers',  'ass_bbp_remove_topic_subscribers_filter', 0 );
+
+		add_filter( 'bbp_forum_subscription_mail_title', 'ass_bbp_add_topic_subscribers_filter',    99 );
+		add_action( 'bbp_pre_notify_forum_subscribers',  'ass_bbp_remove_topic_subscribers_filter', 0 );
 
 	// bbPress <= v2.5.3
 	} else {
@@ -1339,8 +1344,14 @@ function ass_bbp_remove_topic_subscribers( $retval = array() ) {
  * @return string
  */
 function ass_bbp_add_topic_subscribers_filter( $retval ) {
-	// add our filter to check topic subscribers
-	add_filter( 'bbp_get_topic_subscribers', 'ass_bbp_remove_topic_subscribers' );
+	// Add our filter to check topic subscribers.
+	if ( 'bbp_subscription_mail_title' === current_filter() ) {
+		add_filter( 'bbp_get_topic_subscribers', 'ass_bbp_remove_topic_subscribers' );
+
+	// For forum subscribers.
+	} else {
+		add_filter( 'bbp_get_forum_subscribers', 'ass_bbp_remove_topic_subscribers' );
+	}
 
 	return $retval;
 }
@@ -1354,7 +1365,14 @@ function ass_bbp_add_topic_subscribers_filter( $retval ) {
  * @since 3.4.1
  */
 function ass_bbp_remove_topic_subscribers_filter() {
-	remove_filter( 'bbp_get_topic_subscribers', 'ass_bbp_remove_topic_subscribers' );
+	// Remove our filter to check topic subscribers.
+	if ( 'bbp_pre_notify_subscribers' === current_action() ) {
+		remove_filter( 'bbp_get_topic_subscribers', 'ass_bbp_remove_topic_subscribers' );
+
+	// For forum subscribers.
+	} else {
+		remove_filter( 'bbp_get_forum_subscribers', 'ass_bbp_remove_topic_subscribers' );
+	}
 }
 
 /**
