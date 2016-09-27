@@ -13,6 +13,11 @@ if ( defined( 'BP_VERSION' ) ) {
 	}
 }
 
+// Admin-related code.
+if ( defined( 'WP_NETWORK_ADMIN' ) ) {
+	require_once( dirname( __FILE__ ) . '/admin.php' );
+}
+
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
