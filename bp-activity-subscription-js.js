@@ -86,8 +86,6 @@ jQuery(document).ready( function() {
 	//	j( '.ass-settings-advanced' ).slideToggle('fast');
 	//});
 
-	j('.group-subscription-options').hide();
-
 	// Toggle welcome email fields on group email options page
 	j( document ).on("change", '#ass-welcome-email-enabled', function() {
 		if ( j(this).prop('checked') ) {
