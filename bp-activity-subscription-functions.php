@@ -2373,9 +2373,3 @@ function ass_weekly_digest_week() {
 	elseif ( $ass_weekly_digest == 0 )
 		return __('Sunday' );
 }
-
-function ass_testing_func() {
-	//echo '<pre>'; print_r( wp_get_schedules() ); echo '</pre>';
-}
-//add_action('bp_before_container','ass_testing_func');
-add_action('bp_after_container','ass_testing_func');
