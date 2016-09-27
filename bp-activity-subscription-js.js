@@ -97,4 +97,9 @@ jQuery(document).ready( function() {
 		}
 	});
 
+	// hide popover when tabs are selected and AJAX returns are inserted into the DOM
+	j('#groups-dir-list').on('DOMNodeInserted', function() {
+		j('.group-subscription-options').hide();
+	});
+
 });
