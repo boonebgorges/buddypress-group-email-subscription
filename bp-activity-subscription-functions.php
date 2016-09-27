@@ -2627,7 +2627,7 @@ function ass_admin_notice_form() {
 			<?php $welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : ''; ?>
 
 			<h3><?php _e( 'Welcome Email', 'bp-ass' ); ?></h3>
-			<p><?php _e( 'Send an email when a new member join the group.', 'bp-ass' ); ?></p>
+			<p><?php _e( 'Send an email when a new member joins the group.', 'bp-ass' ); ?></p>
 
 			<p>
 				<label>
