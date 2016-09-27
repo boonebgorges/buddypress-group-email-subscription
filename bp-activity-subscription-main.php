@@ -57,7 +57,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 			wp_register_style(
 				'activity-subscription-style',
-				plugins_url( 'css/bp-activity-subscription-css.css', __FILE__ ),
+				plugins_url( basename( dirname( __FILE__ ) ) ) . '/css/bp-activity-subscription-css.css',
 				array(),
 				$revision_date
 			);
@@ -72,7 +72,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 			wp_register_script(
 				'bp-activity-subscription-js',
-				plugins_url( 'bp-activity-subscription-js.js', __FILE__ ),
+				plugins_url( basename( dirname( __FILE__ ) ) ) . '/bp-activity-subscription-js.js',
 				array( 'jquery' ),
 				$revision_date
 			);
