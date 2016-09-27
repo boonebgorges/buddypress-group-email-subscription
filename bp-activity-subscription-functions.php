@@ -663,7 +663,7 @@ To view or reply, log in and go to:
 
 			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), $group_status );
 
-			$email_setting_string = __( 'Your email setting for this group is: %s', 'buddypress-group-email-subscription' );
+			$email_setting_string = __( 'Your email setting for this group is: %s', 'bp-ass' );
 			$group_status_string  = ass_subscribe_translate( $group_status );
 
 			$notice             = sprintf( $email_setting_string, $group_status_string );
@@ -943,56 +943,56 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 			// Group activity single items.
 			case 'bp-ges-single' :
 				/* translators: do not remove {} brackets or translate its contents. */
-				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'bp-ass' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$html_content = __( "{{{ges.action}}}:\n\n<blockquote>{{{usermessage}}}</blockquote>\n&ndash;\n<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up on the conversation.\n{{{ges.email-setting-description}}}", 'buddypress-group-email-subscription' );
+				$html_content = __( "{{{ges.action}}}:\n\n<blockquote>{{{usermessage}}}</blockquote>\n&ndash;\n<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up on the conversation.\n{{{ges.email-setting-description}}}", 'bp-ass' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$plaintext_content = __( "{{{ges.action}}}:\n\n\"{{{usermessage}}}\"\n\nGo to the discussion to reply or catch up on the conversation:\n{{{thread.url}}}\n\n----\n\n{{{ges.email-setting-description}}}\n\n{{{ges.email-setting-links}}}", 'buddypress-group-email-subscription' );
+				$plaintext_content = __( "{{{ges.action}}}:\n\n\"{{{usermessage}}}\"\n\nGo to the discussion to reply or catch up on the conversation:\n{{{thread.url}}}\n\n----\n\n{{{ges.email-setting-description}}}\n\n{{{ges.email-setting-links}}}", 'bp-ass' );
 
-				$situation_desc = __( 'A member created a group activity entry. Used by the Group Email Subscription plugin during immediate sendouts.', 'buddypress-group-email-subscription' );
+				$situation_desc = __( 'A member created a group activity entry. Used by the Group Email Subscription plugin during immediate sendouts.', 'bp-ass' );
 
 				break;
 
 			// Digests.
 			case 'bp-ges-digest' :
 				/* translators: do not remove {} brackets or translate its contents. */
-				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'bp-ass' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$html_content = __( "{{{ges.digest-summary}}}{{{usermessage}}}\n&ndash;\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{site.name}}.", 'buddypress-group-email-subscription' );
+				$html_content = __( "{{{ges.digest-summary}}}{{{usermessage}}}\n&ndash;\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{site.name}}.", 'bp-ass' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\n----\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'buddypress-group-email-subscription' );
+				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\n----\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'bp-ass' );
 
-				$situation_desc = __( 'An email digest is sent to a member. Used by the Group Email Subscription plugin during daily or weekly digest sendouts.', 'buddypress-group-email-subscription' );
+				$situation_desc = __( 'An email digest is sent to a member. Used by the Group Email Subscription plugin during daily or weekly digest sendouts.', 'bp-ass' );
 
 				break;
 
 			// Admin notice.
 			case 'bp-ges-notice' :
 				/* translators: do not remove {} brackets or translate its contents. */
-				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}} - from the group "{{{group.name}}}"', 'buddypress-group-email-subscription' );
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}} - from the group "{{{group.name}}}"', 'bp-ass' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$html_content = __( "This is a notice from the group {{{group.link}}}:\n\n{{{usermessage}}}\n\n&ndash;\n<strong>Please note:</strong> admin notices are sent to everyone in the group and cannot be disabled.\nIf you feel this service is being misused please speak to the website administrator.", 'buddypress-group-email-subscription' );
+				$html_content = __( "This is a notice from the group {{{group.link}}}:\n\n{{{usermessage}}}\n\n&ndash;\n<strong>Please note:</strong> admin notices are sent to everyone in the group and cannot be disabled.\nIf you feel this service is being misused please speak to the website administrator.", 'bp-ass' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$plaintext_content = __( "This is a notice from the group \"{{{group.name}}}\":\n\n\"{{{usermessage}}}\"\n\n----\n\nPlease note: admin notices are sent to everyone in the group and cannot be disabled.\n\nIf you feel this service is being misused please speak to the website administrator.\n\nTo visit the group homepage, click on the link below:\n{{{group.url}}}", 'buddypress-group-email-subscription' );
+				$plaintext_content = __( "This is a notice from the group \"{{{group.name}}}\":\n\n\"{{{usermessage}}}\"\n\n----\n\nPlease note: admin notices are sent to everyone in the group and cannot be disabled.\n\nIf you feel this service is being misused please speak to the website administrator.\n\nTo visit the group homepage, click on the link below:\n{{{group.url}}}", 'bp-ass' );
 
-				$situation_desc = __( 'An email notice is sent by a group administrator to all members of the group. Used by the Group Email Subscription plugin.', 'buddypress-group-email-subscription' );
+				$situation_desc = __( 'An email notice is sent by a group administrator to all members of the group. Used by the Group Email Subscription plugin.', 'bp-ass' );
 
 				break;
 
 			// Welcome email.
 			case 'bp-ges-welcome' :
 				/* translators: do not remove {} brackets or translate its contents. */
-				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'bp-ass' );
 
 				$html_content = $plaintext_content = "{{{usermessage}}}";
 
-				$situation_desc = __( 'A welcome email is sent to new members of a group. Used by the Group Email Subscription plugin.', 'buddypress-group-email-subscription' );
+				$situation_desc = __( 'A welcome email is sent to new members of a group. Used by the Group Email Subscription plugin.', 'bp-ass' );
 
 				break;
 		}
@@ -1181,8 +1181,8 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 		case 'self_notify' :
 			$footer_links[] = sprintf( $link_format,
 				$tokens['ges.settings-link'],
-				esc_attr__( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'buddypress-group-email-subscription' ),
-				esc_html__( 'Change email settings', 'buddypress-group-email-subscription' )
+				esc_attr__( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' ),
+				esc_html__( 'Change email settings', 'bp-ass' )
 			);
 
 			break;
@@ -1192,21 +1192,21 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 		case 'supersub':
 			$footer_links[] = sprintf( $link_format,
 				$tokens['ges.settings-link'],
-				esc_attr__( 'To change your email settings for this group only, click on this link', 'buddypress-group-email-subscription' ),
-				esc_html__( 'Change group email Settings', 'buddypress-group-email-subscription' )
+				esc_attr__( 'To change your email settings for this group only, click on this link', 'bp-ass' ),
+				esc_html__( 'Change group email Settings', 'bp-ass' )
 			);
 
 			$footer_links[] = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
 				$tokens['ges.unsubscribe'],
-				esc_attr__( 'To disable all notifications for this group, click on this link', 'buddypress-group-email-subscription' ),
-				esc_html__( 'Unsubscribe from this group', 'buddypress-group-email-subscription' )
+				esc_attr__( 'To disable all notifications for this group, click on this link', 'bp-ass' ),
+				esc_html__( 'Unsubscribe from this group', 'bp-ass' )
 			);
 
 			if ( 'yes' == get_option( 'ass-global-unsubscribe-link' ) ) {
 				$footer_links[] = sprintf( $link_format,
 					$tokens['ges.unsubscribe-global'],
-					esc_attr__( 'To disable notifications from all your groups, click on this link', 'buddypress-group-email-subscription' ),
-					esc_html__( 'Unsubscribe from all groups', 'buddypress-group-email-subscription' )
+					esc_attr__( 'To disable notifications from all your groups, click on this link', 'bp-ass' ),
+					esc_html__( 'Unsubscribe from all groups', 'bp-ass' )
 				);
 			}
 
@@ -1217,8 +1217,8 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 		case 'sum' :
 			$footer_links[] = sprintf( $link_format,
 				$tokens['ges.settings-link'],
-				esc_attr__( 'Once you are logged in, change your email settings for each group.', 'buddypress-group-email-subscription' ),
-				esc_html__( 'Change email settings', 'buddypress-group-email-subscription' )
+				esc_attr__( 'Once you are logged in, change your email settings for each group.', 'bp-ass' ),
+				esc_html__( 'Change email settings', 'bp-ass' )
 			);
 
 			break;

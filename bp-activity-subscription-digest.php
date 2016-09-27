@@ -239,7 +239,7 @@ function ass_digest_fire( $type ) {
 				// Digest summary only available for daily digests.
 				$user_message_args['ges.digest-summary'] = '';
 				if ( 'dig' == $type ) {
-					$user_message_args['ges.digest-summary'] = apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'buddypress-group-email-subscription' ) . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+					$user_message_args['ges.digest-summary'] = apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass' ) . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
 				}
 
 				$user_message_args['ges.subject']       = $title;
