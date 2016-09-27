@@ -875,11 +875,11 @@ function ass_bp_email_admin_notice() {
 	}
 
 	// Output notice; hidden by default.
-	echo '<div id="bp-ges-notice" class="error" style="display:none;">';
+	echo '<div id="bp-ges-notice" class="updated" style="display:none;">';
 	printf( '<p>%s</p>',
 		sprintf(
 			__( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'bp-ass' ),
-			esc_url( 'https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens' )
+			esc_url( 'https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens#tokens' )
 		)
 	);
 	echo '</div>';
