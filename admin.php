@@ -186,3 +186,59 @@ function ass_groups_admin_manage_member_row( $user_id, $group ) {
 	ass_manage_members_email_status( $user_id, $group );
 }
 add_action( 'bp_groups_admin_manage_member_row', 'ass_groups_admin_manage_member_row', 10, 2 );
+
+/**
+ * Install GES emails during email installation routine for BuddyPress.
+ *
+ * @since 3.7.0
+ */
+function ass_install_emails() {
+	ass_set_email_type( 'bp-ges-single', false );
+	ass_set_email_type( 'bp-ges-digest', false );
+	ass_set_email_type( 'bp-ges-notice', false );
+	ass_set_email_type( 'bp-ges-welcome', false );
+}
+add_action( 'bp_core_install_emails', 'ass_install_emails' );
+
+/**
+ * Show admin notice when editing a BP email in the admin dashboard.
+ *
+ * @since 3.7.0
+ */
+function ass_bp_email_admin_notice() {
+	// Bail if not using BP 2.5 or if not editing a BP email.
+	if ( ! function_exists( 'bp_get_email_post_type' ) ) {
+		return;
+	}
+	if ( get_current_screen()->post_type !== bp_get_email_post_type() ) {
+		return;
+	}
+
+	// Output notice; hidden by default.
+	echo '<div id="bp-ges-notice" class="updated" style="display:none;">';
+	printf( '<p>%s</p>',
+		sprintf(
+			__( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'bp-ass' ),
+			esc_url( 'https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens#tokens' )
+		)
+	);
+	echo '</div>';
+
+	// Inline JS.
+	$inline_js = <<<EOD
+
+jQuery( function( $ ) {
+	$( '#bp-email-typechecklist input:checked' ).each( function() {
+		// If current email is used by GES, show our notice.
+		if ( $(this).val().lastIndexOf( 'bp-ges-', 0 ) === 0 ) {
+			$( '#bp-ges-notice' ).show();
+			return false;
+		}
+	} );
+} );
+
+EOD;
+
+	echo "<script type=\"text/javascript\">{$inline_js}</script>";
+}
+add_action( 'admin_head-post.php', 'ass_bp_email_admin_notice' );
