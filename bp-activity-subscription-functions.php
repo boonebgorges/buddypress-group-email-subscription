@@ -18,21 +18,82 @@ function ass_group_unsubscribe_links( $user_id ) {
 	//$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
 	//$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
 
-	$userdomain = bp_core_get_user_domain( $user_id );
-
-	$group_id = bp_get_current_group_id();
-	$group_link = "$userdomain?bpass-action=unsubscribe&group={$group_id}&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
-	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp-ass' ), $group_link );
+	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'bp-ass' ), ass_get_group_unsubscribe_link_for_user( $user_id ) );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
-		$global_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( "{$user_id}unsubscribe" . wp_salt() );
-		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp-ass' ), $global_link );
+		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'bp-ass' ), ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) );
 	}
 
 	$links .= "\n";
 
 	return $links;
 }
+
+/**
+ * Get the group unsubscribe link for a user.
+ *
+ * @since 3.7.0
+ *
+ * @param  int  $user_id  WP user ID.
+ * @param  int  $group_id BuddyPress group ID.
+ * @param  bool $global   Should we use the global unsubscribe link? If 'false', we will use the
+  *                       single group's unsubscribe link. Default: false.
+ * @return string|bool URL for unsubscribe link on success; boolean false on failure.
+ */
+function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $global = false ) {
+	if ( empty( $user_id ) ) {
+		return false;
+	}
+
+	$args = array(
+		'bpass-action' => 'unsubscribe',
+	);
+
+	// Use global unsubscribe link.
+	if ( true === $global ) {
+		$access_key = md5( "{$user_id}unsubscribe" . wp_salt() );
+
+	// Single group unsubscribe link.
+	} else {
+		$group_id = empty( $group_id ) ? bp_get_current_group_id() : (int) $group_id;
+		if ( empty( $group_id ) ) {
+			return false;
+		}
+
+		$access_key = md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
+
+		$args['group'] = $group_id;
+	}
+
+	$args['access_key'] = $access_key;
+
+	return esc_url( add_query_arg( $args, bp_core_get_user_domain( $user_id ) ) );
+}
+
+/**
+ * Temporarily save the full activity content before activity KSES kicks in.
+ *
+ * At the moment, we only do this for bbPress content since bbPress supports a
+ * larger amount of elements than BuddyPress' activity KSES filter.
+ *
+ * @since 3.7.0
+ *
+ * @param string               $retval   Current activity content.
+ * @param BP_Activity_Activity $activity Activity object.
+ * @return string
+ */
+function ass_group_notification_activity_content_before_save( $retval = '', BP_Activity_Activity $activity ) {
+	// If not bbPress content, bail.
+	if ( 0 !== strpos( $activity->type, 'bbp_' ) ) {
+		return $retval;
+	}
+
+	// Temporarily save bbPress content.
+	$GLOBALS['bp']->ges_content = $retval;
+
+	return $retval;
+}
+add_filter( 'bp_activity_content_before_save', 'ass_group_notification_activity_content_before_save', -999, 2 );
 
 /**
  * Records group activity items in GES for all activity except:
@@ -164,6 +225,22 @@ To view or reply, log in and go to:
 ', 'bp-ass' ), $r['action'], $the_content, $r['link'] );
 	}
 
+	// Use bbPress filtered post content and reapply GES filter... sigh.
+	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) ) {
+		// Not in global cache? Query for post content.
+		if ( empty( $GLOBALS['bp']->ges_content ) ) {
+			$the_content = get_post_field( 'post_content', $activity_obj->secondary_item_id, 'raw' );
+		} else {
+			$the_content = $GLOBALS['bp']->ges_content;
+			unset( $GLOBALS['bp']->ges_content );
+		}
+
+		// Apply bbPress KSES filter if it exists (sanity check!)
+		$the_content = ( true === function_exists( 'bbp_filter_kses' ) ) ? bbp_filter_kses( $the_content ) : $the_content;
+
+		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity_obj, $r['action'], $group );
+	}
+
 	// get subscribed users for the group
 	$subscribed_users = groups_get_groupmeta( $r['group_id'], 'ass_subscribed_users' );
 
@@ -188,7 +265,6 @@ To view or reply, log in and go to:
 
 		// Does the author want updates of their own forum posts?
 		if ( $activity_obj->type == 'bbp_topic_create' || $activity_obj->type == 'bbp_reply_create' ) {
-
 			if ( $user_id == $r['sender_id'] ) {
 				$self_notify = ass_self_post_notification( $user_id );
 
@@ -230,12 +306,15 @@ To view or reply, log in and go to:
 			$group_status = 'self_notify';
 
 			// notification settings link
-			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/#groups-subscription-notification-settings';
 
 			// set notice
-			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
-			$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-			$notice .= "\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+			$notice = $email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
+
+			$email_setting_links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$email_setting_links .= "\n\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+
+			$notice .= "\n\n" . $email_setting_links;
 
 		// User is subscribed to "All Mail"
 		// OR user is subscribed to "New Topics" (bbPress 2)
@@ -253,9 +332,16 @@ To view or reply, log in and go to:
 
 			$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), $group_status );
 
-			$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
-			$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
-			$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+			$email_setting_string = __( 'Your email setting for this group is: %s', 'bp-ass' );
+			$group_status_string  = ass_subscribe_translate( $group_status );
+
+			$notice             = sprintf( $email_setting_string, $group_status_string );
+			$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
+
+			$email_setting_links = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+			$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+
+			$notice .= "\n" . $email_setting_links;
 
 		}
 
@@ -272,22 +358,59 @@ To view or reply, log in and go to:
 
 		// if we're good to send, send the email!
 		if ( $send_it ) {
-			// One last chance to filter the message content
-			$user_message = apply_filters( 'bp_ass_activity_notification_message', $message . $notice, array(
+			$user_message_args = array(
 				'message'           => $message,
 				'notice'            => $notice,
 				'user_id'           => $user_id,
 				'subscription_type' => $group_status,
 				'content'           => $the_content,
 				'settings_link'     => ! empty( $settings_link ) ? $settings_link : '',
-			) );
+			);
+
+			// One last chance to filter the message content
+			$user_message = apply_filters( 'bp_ass_activity_notification_message', $message . $notice, $user_message_args );
 
 			// Get the details for the user
 			$user = bp_core_get_core_userdata( $user_id );
 
 			// Send the email
 			if ( $user->user_email ) {
-				wp_mail( $user->user_email, $subject, $user_message );
+				// Custom GES email tokens.
+				$user_message_args['ges.action']  = stripslashes( $activity_obj->action ); // Unfiltered.
+				$user_message_args['ges.subject'] = strip_tags( stripslashes( $r['action'] ) ); // Unfiltered.
+				$user_message_args['ges.email-setting-description'] = $email_setting_desc;
+				$user_message_args['ges.email-setting-links']       = $email_setting_links;
+				$user_message_args['ges.unsubscribe-global']        = ass_get_group_unsubscribe_link_for_user( $user->ID, $r['group_id'], true );
+				$user_message_args['ges.unsubscribe']   = ass_get_group_unsubscribe_link_for_user( $user->ID, $r['group_id'] );
+				$user_message_args['ges.settings-link'] = $user_message_args['settings_link'];
+				$user_message_args['poster.url']        = bp_core_get_user_domain( $r['sender_id'] );
+				$user_message_args['recipient.id']      = $user->ID;
+
+				// BP-specific tokens.
+				$user_message_args['usermessage'] = $the_content;
+				$user_message_args['poster.name'] = bp_core_get_user_displayname( $r['sender_id'] );
+				$user_message_args['thread.url']  = $r['link'];
+				$user_message_args['group.id']    = $r['group_id'];
+
+				// Remove tokens that we're not using.
+				unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
+
+				// If activity type is not a bbPress item, add activity KSES filter.
+				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+					add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+				}
+
+				// Sending time!
+				ass_send_email( 'bp-ges-single', $user->user_email, array(
+					'tokens'  => $user_message_args,
+					'subject' => $subject,
+					'content' => $user_message
+				) );
+
+				// Revert!
+				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+					remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+				}
 			}
 
 		}
@@ -299,6 +422,482 @@ To view or reply, log in and go to:
 			ass_digest_record_activity( $r['activity_id'], $user_id, $r['group_id'], $group_status );
 		}
 	}
+}
+
+/**
+ * Email wrapper function for BP-GES.
+ *
+ * Created to be backward compatible when used on < BP 2.5.
+ *
+ * @since 3.7.0
+ *
+ * @param string                   $email_type Type of email being sent.
+ * @param string|array|int|WP_User $to         Either a email address, user ID, WP_User object,
+ *                                             or an array containg the address and name.
+ * @param array                    $args {
+ *     Optional. Array of extra parameters.
+ *
+ *     @type array $tokens Optional. Assocative arrays of string replacements for the email.
+ * }
+ * @return bool|WP_Error True if the email was sent successfully. Otherwise, a WP_Error object
+ *                       describing why the email failed to send. The contents will vary based
+ *                       on the email delivery class you are using.
+ */
+function ass_send_email( $email_type, $to, $args ) {
+	// BP 2.5+
+	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
+		// Unset array keys used for older BP installs.
+		unset( $args['subject'], $args['content'] );
+
+		// Temporary save tokens.
+		buddypress()->ges_tokens = $args['tokens'];
+
+		// Add BP email post type if it doesn't exist.
+		ass_set_email_type( $email_type );
+
+		// Remove BP's restrictive HTML filtering.
+		remove_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
+
+		// Remove BP's plain-text filter and convert the HTML email content to Markdown.
+		remove_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+		add_filter( 'bp_email_get_property', 'ass_email_strip_trailing_breaklines', 1, 3 );
+		add_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
+
+		// Remove default BP email footer.
+		add_action( 'bp_before_email_footer', 'ob_start', 999, 0 );
+		add_action( 'bp_after_email_footer',  'ob_get_clean', -999, 0 );
+
+		// Add our custom BP email footer.
+		add_action( 'bp_after_email_footer', 'ass_bp_email_footer_text' );
+		add_action( 'bp_after_email_footer', 'ass_bp_email_footer_html_unsubscribe_links' );
+
+		if ( isset( $args['from'] ) ) {
+			buddypress()->ges_from = $args['from'];
+			add_action( 'bp_email_set_tokens', 'ass_email_set_from_during_token_addition', 10, 3 );
+		}
+
+		/**
+		 * Hook to do something before GES sends a BP email.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $email_type The GES email type.
+		 */
+		do_action( 'bp_ges_before_bp_send_email', $email_type );
+
+		// Email time!
+		$send = bp_send_email( $email_type, (int) $args['tokens']['recipient.id'], $args );
+
+		// Clean up after ourselves!
+		add_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
+		add_filter( 'bp_email_set_content_plaintext', 'wp_strip_all_tags', 6 );
+		remove_filter( 'bp_email_get_property', 'ass_email_strip_trailing_breaklines', 1, 3 );
+		remove_filter( 'bp_email_get_property', 'ass_email_convert_html_to_plaintext', 20, 3 );
+
+		/**
+		 * Hook to do something after GES sends a BP email.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param string $email_type The GES email type.
+		 */
+		do_action( 'bp_ges_after_bp_send_email', $email_type );
+
+		return $send;
+
+	// Older BP versions use wp_mail().
+	} else {
+		$headers = array();
+
+		if ( isset( $args['from'] ) ) {
+			$headers[] = "From: \"{$args['from']['name']}\" <{$args['from']['email']}>";
+		}
+		return wp_mail( $to, $args['subject'], $args['content'], $headers );
+	}
+}
+
+/**
+ * Install GES emails during email installation routine for BuddyPress.
+ *
+ * @since 3.7.0
+ */
+function ass_install_emails() {
+	ass_set_email_type( 'bp-ges-single', false );
+	ass_set_email_type( 'bp-ges-digest', false );
+	ass_set_email_type( 'bp-ges-notice', false );
+	ass_set_email_type( 'bp-ges-welcome', false );
+}
+add_action( 'bp_core_install_emails', 'ass_install_emails' );
+
+/**
+ * Show admin notice when editing a BP email in the admin dashboard.
+ *
+ * @since 3.7.0
+ */
+function ass_bp_email_admin_notice() {
+	// Bail if not using BP 2.5 or if not editing a BP email.
+	if ( ! function_exists( 'bp_get_email_post_type' ) ) {
+		return;
+	}
+	if ( get_current_screen()->post_type !== bp_get_email_post_type() ) {
+		return;
+	}
+
+	// Output notice; hidden by default.
+	echo '<div id="bp-ges-notice" class="updated" style="display:none;">';
+	printf( '<p>%s</p>',
+		sprintf(
+			__( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'bp-ass' ),
+			esc_url( 'https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens#tokens' )
+		)
+	);
+	echo '</div>';
+
+	// Inline JS.
+	$inline_js = <<<EOD
+
+jQuery( function( $ ) {
+	$( '#bp-email-typechecklist input:checked' ).each( function() {
+		// If current email is used by GES, show our notice.
+		if ( $(this).val().lastIndexOf( 'bp-ges-', 0 ) === 0 ) {
+			$( '#bp-ges-notice' ).show();
+			return false;
+		}
+	} );
+} );
+
+EOD;
+
+	echo "<script type=\"text/javascript\">{$inline_js}</script>";
+}
+add_action( 'admin_head-post.php', 'ass_bp_email_admin_notice' );
+
+/**
+ * Sets the email situation type for use in GES.
+ *
+ * Only applicable for BuddyPress 2.5+.
+ *
+ * @since 3.7.0
+ *
+ * @param string $email_type The email type to fetch.
+ * @param bool   $term_check Check if our GES email term exists before creating our specific email
+ *                           situation. Default: true.
+ */
+function ass_set_email_type( $email_type, $term_check = true ) {
+	$switched = false;
+
+	if ( false === bp_is_root_blog() ) {
+		$switched = true;
+		switch_to_blog( bp_get_root_blog_id() );
+	}
+
+	if ( true === $term_check ) {
+		$term = term_exists( $email_type, bp_get_email_tax_type() );
+	} else {
+		$term = 0;
+	}
+
+	// Term already exists so don't do anything.
+	if ( true === $term_check && $term !== 0 && $term !== null ) {
+		if ( true === $switched ) {
+			restore_current_blog();
+		}
+
+		return;
+
+	// Create our email situation.
+	} else {
+		// Set up default email content depending on the email type.
+		switch ( $email_type ) {
+			// Group activity single items.
+			case 'bp-ges-single' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'bp-ass' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$html_content = __( "{{{ges.action}}}:\n\n<blockquote>{{{usermessage}}}</blockquote>\n&ndash;\n<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up on the conversation.\n{{{ges.email-setting-description}}}", 'bp-ass' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$plaintext_content = __( "{{{ges.action}}}:\n\n\"{{{usermessage}}}\"\n\nGo to the discussion to reply or catch up on the conversation:\n{{{thread.url}}}\n\n----\n\n{{{ges.email-setting-description}}}\n\n{{{ges.email-setting-links}}}", 'bp-ass' );
+
+				$situation_desc = __( 'A member created a group activity entry. Used by the Group Email Subscription plugin during immediate sendouts.', 'bp-ass' );
+
+				break;
+
+			// Digests.
+			case 'bp-ges-digest' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'bp-ass' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$html_content = __( "{{{ges.digest-summary}}}{{{usermessage}}}\n&ndash;\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{site.name}}.", 'bp-ass' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$plaintext_content = __( "{{{ges.digest-summary}}}\n\n{{{usermessage}}}\n\n----\n\nYou have received this message because you are subscribed to receive a digest of activity in some of your groups on {{{site.name}}}.\n\nTo disable these notifications per group, please login and [visit your groups page]({{{ges.settings-link}}}) where you can manage your email settings for each group.", 'bp-ass' );
+
+				$situation_desc = __( 'An email digest is sent to a member. Used by the Group Email Subscription plugin during daily or weekly digest sendouts.', 'bp-ass' );
+
+				break;
+
+			// Admin notice.
+			case 'bp-ges-notice' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}} - from the group "{{{group.name}}}"', 'bp-ass' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$html_content = __( "This is a notice from the group {{{group.link}}}:\n\n{{{usermessage}}}\n\n&ndash;\n<strong>Please note:</strong> admin notices are sent to everyone in the group and cannot be disabled.\nIf you feel this service is being misused please speak to the website administrator.", 'bp-ass' );
+
+				/* translators: do not remove {} brackets or translate its contents. */
+				$plaintext_content = __( "This is a notice from the group \"{{{group.name}}}\":\n\n\"{{{usermessage}}}\"\n\n----\n\nPlease note: admin notices are sent to everyone in the group and cannot be disabled.\n\nIf you feel this service is being misused please speak to the website administrator.\n\nTo visit the group homepage, click on the link below:\n{{{group.url}}}", 'bp-ass' );
+
+				$situation_desc = __( 'An email notice is sent by a group administrator to all members of the group. Used by the Group Email Subscription plugin.', 'bp-ass' );
+
+				break;
+
+			// Welcome email.
+			case 'bp-ges-welcome' :
+				/* translators: do not remove {} brackets or translate its contents. */
+				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'bp-ass' );
+
+				$html_content = $plaintext_content = "{{{usermessage}}}";
+
+				$situation_desc = __( 'A welcome email is sent to new members of a group. Used by the Group Email Subscription plugin.', 'bp-ass' );
+
+				break;
+		}
+
+		// Sanity check!
+		if ( false === isset( $post_title ) ) {
+			if ( true === $switched ) {
+				restore_current_blog();
+			}
+
+			return;
+		}
+
+		$id = $email_type;
+
+		$defaults = array(
+			'post_status' => 'publish',
+			'post_type'   => bp_get_email_post_type(),
+		);
+
+		$email = array(
+			'post_title'   => $post_title,
+			'post_content' => $html_content,
+			'post_excerpt' => $plaintext_content,
+		);
+
+		// Email post content.
+		$post_id = wp_insert_post( bp_parse_args( $email, $defaults, 'install_email_' . $id ) );
+
+		// Save the situation.
+		if ( ! is_wp_error( $post_id ) ) {
+			$tt_ids = wp_set_object_terms( $post_id, $id, bp_get_email_tax_type() );
+
+			// Situation description.
+			if ( ! is_wp_error( $tt_ids ) ) {
+				$term = get_term_by( 'term_taxonomy_id', (int) $tt_ids[0], bp_get_email_tax_type() );
+				wp_update_term( (int) $term->term_id, bp_get_email_tax_type(), array(
+					'description' => $situation_desc,
+				) );
+			}
+		}
+	}
+
+	if ( true === $switched ) {
+		restore_current_blog();
+	}
+}
+
+/**
+ * Sets 'From' email header for BuddyPress 2.5 emails during token addition.
+ *
+ * @since  3.7.0
+ * @access private
+ *
+ * @param  array    $retval Formatted tokens.
+ * @param  array    $tokens Unformatted tokens.
+ * @param  BP_Email $email  BP Email object.
+ * @return array    Token array.
+ */
+function ass_email_set_from_during_token_addition( $retval, $tokens, BP_Email $email ) {
+	if ( isset( buddypress()->ges_from ) ) {
+		$email->set_from( buddypress()->ges_from['email'], buddypress()->ges_from['name'] );
+		unset( buddypress()->ges_from );
+	}
+
+	return $retval;
+}
+
+/**
+ * Strip trailing breaklines created by BuddyPress during token additions.
+ *
+ * @since 3.7.0
+ *
+ * @see BP_Email::get() and the nl2br() call.
+ *
+ * @param string $content   Content to check.
+ * @param string $prop      Property to check.
+ * @param string $transform Transform type to check.
+ * @return string
+ */
+function ass_email_strip_trailing_breaklines( $content = '', $prop = '', $transform = '' ) {
+	if ( $transform !== 'add-content' ) {
+		return $content;
+	}
+
+	$find = array(
+		'ul><br />',
+		'ol><br />',
+		'li><br />',
+		'</p><br />',
+		'</blockquote><br />'
+	);
+
+	$replace = array(
+		'ul>',
+		'ol>',
+		'li>',
+		'</p>',
+		'</blockquote>'
+	);
+
+	return str_replace( $find, $replace, $content );
+}
+
+/**
+ * Convert HTML over to a form of Markdown plaintext.
+ *
+ * Do not confuse with {@link ass_convert_html_to_text()}. That function
+ * strips tags.
+ *
+ * @since 3.7.0
+ *
+ * @uses html2text() by Jevon Wright. Licensed under the EPL v1.0 and LGPL v3.0.
+ *       We use a fork of 0.1.1 to maintain PHP 5.2 compatibility.
+ * @link https://github.com/r-a-y/html2text/tree/0.1.x
+ * @link https://github.com/soundasleep/html2text/
+ *
+ * @param string $content The HTML content to convert to plaintext.
+ * @param string $prop    Unused. This is only used by the 'bp_email_get_property' filter.
+ * @param string $prop    Unused. This is only used by the 'bp_email_get_property' filter.
+ * @return string
+ */
+function ass_email_convert_html_to_plaintext( $content = '', $prop = 'content_plaintext', $transform = 'replace-tokens' ) {
+	if ( empty( $content ) || 'content_plaintext' !== $prop || 'replace-tokens' !== $transform ) {
+		return $content;
+	}
+
+	if ( false === function_exists( 'convert_html_to_text' ) ) {
+		require dirname( __FILE__ ) . '/html2text.php';
+	}
+
+	// Suppress warnings when using DOMDocument.
+	// This addresses issues when failing to parse certain HTML.
+	if ( function_exists( 'libxml_use_internal_errors' ) ) {
+		libxml_use_internal_errors( true );
+	}
+
+	// Convert newlines to breaklines before using our HTML to text function.
+	return convert_html_to_text( nl2br( $content ) );
+}
+
+/**
+ * Output footer text from the BP Emails Customizer.
+ *
+ * For BuddyPress 2.5+.
+ *
+ * @since 3.7.0
+ */
+function ass_bp_email_footer_text() {
+	if ( false === function_exists( 'bp_email_get_appearance_settings' ) ) {
+		return;
+	}
+
+	$settings = bp_email_get_appearance_settings();
+
+	$footer_text = stripslashes( $settings['footer_text'] );
+	if ( $footer_text ) :
+?>
+
+	<span class="footer_text"><?php echo nl2br( $footer_text ); ?></span>
+	<br><br>
+
+<?php
+	endif;
+}
+
+/**
+ * Add custom BP email footer for HTML emails.
+ *
+ * We want to override the default {{unsubscribe}} token with something else.
+ *
+ * @since 3.7.0
+ */
+function ass_bp_email_footer_html_unsubscribe_links() {
+	$tokens = buddypress()->ges_tokens;
+
+	if ( ! isset( $tokens['subscription_type'] ) ) {
+		return;
+	}
+
+	$link_format = '<a href="%1$s" title="%2$s" style="text-decoration: underline;">%3$s</a>';
+	$footer_links = array();
+
+	switch( $tokens['subscription_type'] ) {
+		// Self-notifications.
+		case 'self_notify' :
+			$footer_links[] = sprintf( $link_format,
+				$tokens['ges.settings-link'],
+				esc_attr__( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' ),
+				esc_html__( 'Change email settings', 'bp-ass' )
+			);
+
+			break;
+
+		// 'New Topics' or 'All Mail'.
+		case 'sub':
+		case 'supersub':
+			$footer_links[] = sprintf( $link_format,
+				$tokens['ges.settings-link'],
+				esc_attr__( 'To change your email settings for this group only, click on this link', 'bp-ass' ),
+				esc_html__( 'Change group email Settings', 'bp-ass' )
+			);
+
+			$footer_links[] = sprintf( '<a href="%1$s" title="%2$s">%3$s</a>',
+				$tokens['ges.unsubscribe'],
+				esc_attr__( 'To disable all notifications for this group, click on this link', 'bp-ass' ),
+				esc_html__( 'Unsubscribe from this group', 'bp-ass' )
+			);
+
+			if ( 'yes' == get_option( 'ass-global-unsubscribe-link' ) ) {
+				$footer_links[] = sprintf( $link_format,
+					$tokens['ges.unsubscribe-global'],
+					esc_attr__( 'To disable notifications from all your groups, click on this link', 'bp-ass' ),
+					esc_html__( 'Unsubscribe from all groups', 'bp-ass' )
+				);
+			}
+
+			break;
+
+		// Digests.
+		case 'dig' :
+		case 'sum' :
+			$footer_links[] = sprintf( $link_format,
+				$tokens['ges.settings-link'],
+				esc_attr__( 'Once you are logged in, change your email settings for each group.', 'bp-ass' ),
+				esc_html__( 'Change email settings', 'bp-ass' )
+			);
+
+			break;
+	}
+
+	if ( ! empty( $footer_links ) ) {
+		echo implode( ' &middot; ', $footer_links );
+	}
+
+	unset( buddypress()->ges_tokens );
 }
 
 /**
@@ -1054,7 +1653,32 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 		"From: \"{$group_admin->display_name}\" <{$group_admin->user_email}>"
 	);
 
-	wp_mail( $user->user_email, $subject, $message, $headers );
+	$group      = groups_get_group( array( 'group_id' => $group_id ) );
+	$group_name = bp_get_group_name( $group );
+	$group_link = bp_get_group_permalink( $group );
+
+	// Sending time!
+	ass_send_email( 'bp-ges-welcome', $user->user_email, array(
+		'tokens'  => array(
+			'ges.subject'  => stripslashes( strip_tags( $welcome_email['subject'] ) ),
+			'usermessage'  => stripslashes( $welcome_email['content'] ),
+			'group.link'   => sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name ),
+			'group.name'   => $group_name,
+			'group.url'    => esc_url( $group_link ),
+			'group.id'     => $group_id,
+			'recipient.id' => $user->ID,
+			'subscription_type' => 'sub',
+			'ges.settings-link' => ass_get_login_redirect_url( trailingslashit( $group_link . 'notifications' ), 'welcome' ),
+			'ges.unsubscribe'   => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id ),
+			'ges.unsubscribe-global' => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true ),
+		),
+		'subject' => $subject,
+		'content' => $message,
+		'from' => array(
+			'name'   => $group_name,
+			'email'  => $group_admin->user_email
+		)
+	) );
 }
 add_action( 'groups_join_group', 'ass_send_welcome_email', 10, 2 );
 
