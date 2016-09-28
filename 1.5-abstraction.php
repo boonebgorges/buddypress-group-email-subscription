@@ -195,3 +195,10 @@ if ( ! function_exists( 'bp_update_user_meta' ) ) :
 		return update_user_meta( $user_id, bp_get_user_meta_key( $key ), $value, $prev_value );
 	}
 endif;
+
+if ( ! function_exists( 'bp_get_option' ) ) :
+	function bp_get_option( $option_name, $default = '' ) {
+		$value = get_blog_option( constant( 'BP_ROOT_BLOG' ), $option_name, $default );
+		return apply_filters( 'bp_get_option', $value );
+	}
+endif;
