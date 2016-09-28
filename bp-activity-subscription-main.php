@@ -134,3 +134,43 @@ if ( $bpges_bp_version < 1.5 ) {
 	// Load the group extension in the proper fashion
 	bp_register_group_extension( 'Group_Activity_Subscription' );
 }
+
+/**
+ * Include files only if we're on a specific page.
+ *
+ * @since 3.7.0
+ */
+function ges_late_includes() {
+	// Any group page.
+	if ( bp_is_groups_component() ) {
+		require_once( dirname( __FILE__ ) . '/screen.php' );
+
+		// Group's "Email Options" page.
+		if ( bp_is_current_action( 'notifications' ) ) {
+			require_once( dirname( __FILE__ ) . '/screen-notifications.php' );
+		}
+
+		// Group creation page or any group's admin page.
+		if ( bp_is_group_create() || bp_is_group_admin_page() ) {
+			require_once( dirname( __FILE__ ) . '/screen-admin.php' );
+		}
+
+		// bbPress.
+		if ( bp_is_group() && function_exists( 'bbpress' ) ) {
+			require_once( dirname( __FILE__ ) . '/screen-bbpress.php' );
+		}
+	}
+
+	// User's "Settings > Email" page.
+	if ( bp_is_settings_component() && bp_is_current_action( 'notifications' ) ) {
+		require_once( dirname( __FILE__ ) . '/screen-user-settings.php' );
+	}
+}
+if ( function_exists( 'bp_setup_canonical_stack' ) ) {
+	$load_hook = 'bp_setup_canonical_stack';
+	$priority  = 20;
+} else {
+	$load_hook = 'bp_init';
+	$priority  = 5;
+}
+add_action( $load_hook, 'ges_late_includes', $priority );
