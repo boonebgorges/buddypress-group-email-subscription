@@ -78,7 +78,7 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 	public function ass_add_javascript() {
 		if ( apply_filters( 'ass_load_assets', bp_is_groups_component() ) ) {
-			$revision_date = '20160516';
+			$revision_date = '20160928';
 
 			wp_register_script(
 				'bp-activity-subscription-js',
