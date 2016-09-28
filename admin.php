@@ -6,19 +6,26 @@
  */
 
 /**
- * Adds "Group Email Options" panel under "Settings" in the admin/network admin
+ * Adds "Group Email Options" panel under "Settings" in the admin/network admin.
  *
- * The add_action() hook is conditional to account for variations between WP 3.0.x/3.1.x and
- * BP < 1.2.7/>1.2.8.
- *
- * @package BuddyPress Group Email Subscription
+ * @since 2.1b
  */
 function ass_admin_menu() {
-	$settings_page = bp_core_do_network_admin() ? 'settings.php' : 'options-general.php';
+	// BP 1.6+ deprecated the "BuddyPress" top-level menu item.
+	if ( function_exists( 'bp_version' ) ) {
+		$settings_page = bp_core_do_network_admin() ? 'settings.php' : 'options-general.php';
+		$title = __( 'BP Group Email Options', 'bp-ass' );
+
+	// BP 1.5 - Keep using the top-level "BuddyPress" menu item.
+	} else {
+		$settings_page = 'bp-general-settings';
+		$title = __( 'Group Email Options', 'bp-ass' );
+	}
+
 	add_submenu_page(
 		$settings_page,
-		__( 'Group Email Options', 'bp-ass' ),
-		__( 'Group Email Options', 'bp-ass' ),
+		$title,
+		$title,
 		'manage_options',
 		'ass_admin_options',
 		'ass_admin_options'
