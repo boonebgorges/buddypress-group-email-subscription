@@ -16,6 +16,10 @@ if ( defined( 'BP_VERSION' ) ) {
 // Admin-related code.
 if ( defined( 'WP_NETWORK_ADMIN' ) ) {
 	require_once( dirname( __FILE__ ) . '/admin.php' );
+
+	// Updater.
+	require_once( dirname( __FILE__ ) . '/updater.php' );
+	new GES_Updater;
 }
 
 // Legacy forums.
