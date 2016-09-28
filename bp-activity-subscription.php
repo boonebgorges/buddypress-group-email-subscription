@@ -20,62 +20,43 @@ define( 'GES_REVISION_DATE', '2016-09-28 00:00 UTC' );
 /**
  * Main loader for the plugin.
  *
- * This function is hooked to bp_include, which is the recommended method for loading BP plugins
- * since BP 1.2.5 or so. When this function is loaded properly, it will unhook
- * activitysub_load_buddypress(). If bp_include is not fired (because you are running a legacy
- * version of BP), the legacy function will load the plugin normally.
+ * @since 2.9.0
  */
 function ass_loader() {
-	if ( bp_is_active( 'groups' ) && bp_is_active( 'activity' ) ) {
-		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
-	}
+	// Only supported in BP 1.5+.
+	if ( version_compare( BP_VERSION, '1.3', '>' ) ) {
+		// Make sure the group and activity components are active.
+		if ( bp_is_active( 'groups' ) && bp_is_active( 'activity' ) ) {
+			require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
+		}
 
-	remove_action( 'plugins_loaded', 'activitysub_load_buddypress', 11 );
+	// Show admin notice for those on BP 1.2.x.
+	} else {
+		$older_version_notice = sprintf( __( "Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  If you are still using BuddyPress 1.2 and you don't plan on upgrading, use <a href='%s'>BP Group Email Subscription v3.6.2 instead</a>.", 'bp-ass' ), 'https://downloads.wordpress.org/plugin/buddypress-group-email-subscription.3.6.1.zip' );
+
+		add_action( 'admin_notices', create_function( '', "
+			echo '<div class=\"error\"><p>" . $older_version_notice . "</p></div>';
+		" ) );
+	}
 }
 add_action( 'bp_include', 'ass_loader' );
 
 /**
- * Legacy loader for BP < 1.2
+ * Textdomain loader.
  *
- * This function will be unhooked by ass_loader() when possible
+ * @since 2.5.3
  */
-function activitysub_load_buddypress() {
-	global $ass_activities;
-	if ( function_exists( 'bp_core_setup_globals' ) ) {
-		// Don't load the plugin if activity and groups are not both active
-		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
-			return false;
-
-		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
-		return true;
-	}
-	/* Get the list of active sitewide plugins */
-	$active_sitewide_plugins = maybe_unserialize( get_site_option( 'active_sitewide_plugins' ) );
-
-	if ( !isset( $active_sidewide_plugins['buddypress/bp-loader.php'] ) )
-		return false;
-
-	if ( isset( $active_sidewide_plugins['buddypress/bp-loader.php'] ) && !function_exists( 'bp_core_setup_globals' ) ) {
-		require_once( WP_PLUGIN_DIR . '/buddypress/bp-loader.php' );
-		// Don't load the plugin if activity and groups are not both active
-		if ( function_exists( 'bp_is_active' ) && ( !bp_is_active( 'groups' ) || !bp_is_active( 'activity' ) ) )
-			return false;
-
-		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
-		return true;
-	}
-
-	return false;
-}
-add_action( 'plugins_loaded', 'activitysub_load_buddypress', 11 );
-
-
 function activitysub_textdomain() {
 	load_plugin_textdomain( 'bp-ass', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 add_action( 'init', 'activitysub_textdomain' );
 
-
+/**
+ * Activation hook.
+ *
+ * @since 2.5.3
+ * @since 3.7.0 Renamed function to handle things other than digests.
+ */
 function activitysub_setup_defaults() {
 	// Digests.
 	require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
@@ -90,11 +71,13 @@ function activitysub_setup_defaults() {
 }
 register_activation_hook( __FILE__, 'activitysub_setup_defaults' );
 
+/**
+ * Digest deactivation hook.
+ *
+ * @since 2.5.3
+ */
 function activitysub_unset_digests() {
 	wp_clear_scheduled_hook( 'ass_digest_event' );
 	wp_clear_scheduled_hook( 'ass_digest_event_weekly' );
 }
 register_deactivation_hook( __FILE__, 'activitysub_unset_digests' );
-
-
-?>
