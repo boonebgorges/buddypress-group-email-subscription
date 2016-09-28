@@ -155,7 +155,7 @@ function ges_late_includes() {
 	}
 
 	// User's "Settings > Email" page.
-	if ( bp_is_settings_component() && bp_is_current_action( 'notifications' ) ) {
+	if ( bp_is_user_settings_notifications() ) {
 		require_once( dirname( __FILE__ ) . '/screen-user-settings.php' );
 	}
 }
