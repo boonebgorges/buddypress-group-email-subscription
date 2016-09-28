@@ -2,8 +2,8 @@
 Contributors: dwenaus, boonebgorges, r-a-y
 Description: Allow users to receive email notifications of group activity. Weekly or daily digests are available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
-Requires at least: 2.9.1 (BP 1.2)
-Tested up to: 4.4.2 (BP 2.5)
+Requires at least: 3.2 (BP 1.5)
+Tested up to: 4.6.1 (BP 2.7)
 Stable tag: 3.6.1
 
 == Description ==
@@ -90,11 +90,16 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
-= 3.6.2 =
+= 3.7.0 =
+* Add support for BuddyPress HTML emails, available since BuddyPress 2.5. (View the accompanying wiki article for more info - https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens)
+* Reduce the amount of code loaded by GES on any given page.
+* Fix issue with the email options popup being displayed automatically when changing the group filter or when clicking on a paginated link.
 * Do not send email to a banned group member.
 * Improve JavaScript event binding for better compatibility with AJAX page loading
 * Pass user information to 'ass_welcome_email' filter.
 * Add Catalan translation
+* Admin menu moved to "Settings > BP Group Email Options" for those using BP 1.6+.
+* Drop support for BuddyPress 1.2.
 
 = 3.6.1 =
 * Fix bug that could cause fatal error when sending digests in some cases.
