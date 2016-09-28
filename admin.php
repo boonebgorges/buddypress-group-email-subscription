@@ -191,12 +191,64 @@ add_action( 'bp_groups_admin_manage_member_row', 'ass_groups_admin_manage_member
  * Install GES emails during email installation routine for BuddyPress.
  *
  * @since 3.7.0
+ *
+ * @param bool $post_exists_check Should we check to see if our email post types exist before installing?
+ *                                Default: false.
  */
-function ass_install_emails() {
-	ass_set_email_type( 'bp-ges-single', false );
-	ass_set_email_type( 'bp-ges-digest', false );
-	ass_set_email_type( 'bp-ges-notice', false );
-	ass_set_email_type( 'bp-ges-welcome', false );
+function ass_install_emails( $post_exists_check = false ) {
+	// No need to check if our post types exist.
+	if ( ! $post_exists_check ) {
+		ass_set_email_type( 'bp-ges-single', false );
+		ass_set_email_type( 'bp-ges-digest', false );
+		ass_set_email_type( 'bp-ges-notice', false );
+		ass_set_email_type( 'bp-ges-welcome', false );
+
+	// Only create email post types if they do not exist.
+	} else {
+		switch_to_blog( bp_get_root_blog_id() );
+
+		$ges_types = array( 'bp-ges-single', 'bp-ges-digest', 'bp-ges-notice', 'bp-ges-welcome' );
+
+		// Try to fetch email posts with our taxonomy.
+		$emails = get_posts( array(
+			'fields'           => 'ids',
+			'post_status'      => 'publish',
+			'post_type'        => bp_get_email_post_type(),
+			'posts_per_page'   => 4,
+			'suppress_filters' => false,
+			'tax_query' => array(
+				'relation' => 'OR',
+				array(
+					'taxonomy' => bp_get_email_tax_type(),
+					'field'    => 'slug',
+					'terms'    => $ges_types,
+				),
+			),
+		) );
+
+		// See if our taxonomies are attached to our email posts.
+		$found = array();
+		foreach ( $emails as $post_id ) {
+			$tax   = wp_get_object_terms( $post_id, bp_get_email_tax_type(), array( 'fields' => 'slugs' ) );
+			$found = array_merge( $found, (array) $tax );
+		}
+
+		restore_current_blog();
+
+		// Find out if we need to create any posts.
+		$to_create = array_diff( $ges_types, $found );
+		if ( empty( $to_create ) ) {
+			return;
+		}
+
+		// Create posts with our email types.
+		if ( ! function_exists( 'ass_set_email_type' ) ) {
+			require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
+		}
+		foreach ( $to_create as $email_type ) {
+			ass_set_email_type( $email_type, false );
+		}
+	}
 }
 add_action( 'bp_core_install_emails', 'ass_install_emails' );
 

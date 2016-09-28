@@ -74,48 +74,9 @@ function activitysub_setup_defaults() {
 	ass_set_weekly_digest_time( '4' );
 
 	// BP 2.5 - Add email types to DB if they do not exist.
+	require_once( dirname( __FILE__ ) . '/admin.php' );
 	if ( function_exists( 'bp_send_email' ) ) {
-		switch_to_blog( bp_get_root_blog_id() );
-
-		$ges_types = array( 'bp-ges-single', 'bp-ges-digest', 'bp-ges-notice', 'bp-ges-welcome' );
-
-		// Try to fetch email posts with our taxonomy.
-		$emails = get_posts( array(
-			'fields'           => 'ids',
-			'post_status'      => 'publish',
-			'post_type'        => bp_get_email_post_type(),
-			'posts_per_page'   => 4,
-			'suppress_filters' => false,
-			'tax_query' => array(
-				'relation' => 'OR',
-				array(
-					'taxonomy' => bp_get_email_tax_type(),
-					'field'    => 'slug',
-					'terms'    => $ges_types,
-				),
-			),
-		) );
-
-		// See if our taxonomies are attached to our email posts.
-		$found = array();
-		foreach ( $emails as $post_id ) {
-			$tax   = wp_get_object_terms( $post_id, bp_get_email_tax_type(), array( 'fields' => 'slugs' ) );
-			$found = array_merge( $found, (array) $tax );
-		}
-
-		restore_current_blog();
-
-		// Find out if we need to create any posts.
-		$to_create = array_diff( $ges_types, $found );
-		if ( empty( $to_create ) ) {
-			return;
-		}
-
-		// Create posts with our email types.
-		require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
-		foreach ( $to_create as $email_type ) {
-			ass_set_email_type( $email_type, false );
-		}
+		ass_install_emails( true );
 	}
 }
 register_activation_hook( __FILE__, 'activitysub_setup_defaults' );
