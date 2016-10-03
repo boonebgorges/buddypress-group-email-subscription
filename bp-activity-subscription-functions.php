@@ -446,6 +446,7 @@ To view or reply, log in and go to:
 				'message'           => $message,
 				'notice'            => $notice,
 				'user_id'           => $user_id,
+				'group_id'          => $group->id,
 				'subscription_type' => $group_status,
 				'content'           => $the_content,
 				'settings_link'     => ! empty( $settings_link ) ? $settings_link : '',
