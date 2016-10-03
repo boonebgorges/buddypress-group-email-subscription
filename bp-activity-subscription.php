@@ -63,11 +63,10 @@ function activitysub_setup_defaults() {
 	ass_set_daily_digest_time( '05', '00' );
 	ass_set_weekly_digest_time( '4' );
 
-	// BP 2.5 - Add email types to DB if they do not exist.
+	// Run updater on activation.
 	require_once( dirname( __FILE__ ) . '/admin.php' );
-	if ( function_exists( 'bp_send_email' ) ) {
-		ass_install_emails( true );
-	}
+	require_once( dirname( __FILE__ ) . '/updater.php' );
+	new GES_Updater( true );
 }
 register_activation_hook( __FILE__, 'activitysub_setup_defaults' );
 

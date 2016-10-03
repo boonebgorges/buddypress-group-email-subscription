@@ -9,13 +9,23 @@ class GES_Updater {
 	/**
 	 * Constructor.
 	 *
-	 * Only load our updater on certain admin pages only.  This currently includes
-	 * the "Dashboard", "Dashboard > Updates" and "Plugins" pages.
+	 * @param bool $skip_admin_check Run updater code without admin check. Default: false.
+	 *                               When false, our updater only runs on certain admin pages only. This
+	 *                               currently includes the "Dashboard", "Dashboard > Updates" and
+	 *                               "Plugins" pages. You should only set to true if you need to run the
+	 *                               updater manually.
 	 */
-	public function __construct() {
-		add_action( 'load-index.php',       array( $this, '_init' ) );
-		add_action( 'load-update-core.php', array( $this, '_init' ) );
-		add_action( 'load-plugins.php',     array( $this, '_init' ) );
+	public function __construct( $skip_admin_check = false ) {
+		// Skip admin check and run updater code.
+		if ( true === $skip_admin_check ) {
+			$this->init();
+
+		// Use admin check.
+		} else {
+			add_action( 'load-index.php',       array( $this, '_init' ) );
+			add_action( 'load-update-core.php', array( $this, '_init' ) );
+			add_action( 'load-plugins.php',     array( $this, '_init' ) );
+		}
 	}
 
 	/**
