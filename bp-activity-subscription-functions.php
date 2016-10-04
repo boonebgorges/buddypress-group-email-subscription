@@ -56,7 +56,8 @@ class BP_GES_Async_Task extends WP_Async_Task {
 		$activity = $data[0];
 
 		$component = $activity->component;
-		$group_id  = 0;
+		// The item_id is the group id unless the type is 'activity_comment'.
+		$group_id  = $activity->item_id;
 
 		// special case for activity comments
 		if ( 'activity_comment' === $activity->type && bp_is_groups_component() && 'activity' === $component ) {
@@ -272,12 +273,6 @@ function ass_generate_notification( $args = array() ) {
 	}
 
 	$activity_obj = new BP_Activity_Activity( $r['activity_id'] );
-
-	if ( 'activity_comment' === $type ) {
-		$action = ass_clean_subject( $content->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $group->name;
-	}
-
-	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $content );
 
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
