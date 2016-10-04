@@ -47,6 +47,44 @@ class BP_GES_Async_Task extends WP_Async_Task {
 	}
 
 	/**
+	 * Launch the request on the WordPress shutdown hook
+	 *
+	 * On VIP we got into data races due to the postback sometimes completing
+	 * faster than the data could propogate to the database server cluster.
+	 * This made WordPress get empty data sets from the database without
+	 * failing. On their advice, we're moving the actual firing of the async
+	 * postback to the shutdown hook. Supposedly that will ensure that the
+	 * data at least has time to get into the object cache.
+	 *
+	 * @uses $_COOKIE        To send a cookie header for async postback
+	 * @uses apply_filters()
+	 * @uses admin_url()
+	 * @uses wp_remote_post()
+	 */
+	public function launch_on_shutdown() {
+		if ( ! empty( $this->_body_data ) ) {
+			$cookies = array();
+			foreach ( $_COOKIE as $name => $value ) {
+				$cookies[] = "$name=" . urlencode( is_array( $value ) ? serialize( $value ) : $value );
+			}
+
+			$request_args = array(
+				'timeout'   => apply_filters( 'bpges_async_task_timeout', 0.01 ),
+				'blocking'  => false,
+				'sslverify' => apply_filters( 'https_local_ssl_verify', true ),
+				'body'      => $this->_body_data,
+				'headers'   => array(
+					'cookie' => implode( '; ', $cookies ),
+				),
+			);
+
+			$url = admin_url( 'admin-post.php' );
+
+			wp_remote_post( $url, $request_args );
+		}
+	}
+
+	/**
 	 * Prepare data for the asynchronous request
 	 *
 	 * @param  array $data Function arguments from our hook as an array.
