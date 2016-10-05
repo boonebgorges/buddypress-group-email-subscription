@@ -40,6 +40,27 @@ class BP_GES_Async_Task extends WP_Async_Task {
 	protected $argument_count = 1;
 
 	/**
+	 * Total number of users to process.
+	 *
+	 * @var int
+	 */
+	protected static $total_users = 0;
+
+	/**
+	 * Total number of users to process each iteration.
+	 *
+	 * @var int
+	 */
+	protected static $users_per_iteration = 100;
+
+	/**
+	 * Which iteration we're on.
+	 *
+	 * @var int
+	 */
+	protected static $increment = 0;
+
+	/**
 	 * Static initializer.
 	 */
 	public static function init() {
@@ -69,7 +90,7 @@ class BP_GES_Async_Task extends WP_Async_Task {
 			}
 
 			$request_args = array(
-				'timeout'   => apply_filters( 'bpges_async_task_timeout', 0.01 ),
+				'timeout'   => apply_filters( 'ass_async_task_timeout', 0.01 ),
 				'blocking'  => false,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', true ),
 				'body'      => $this->_body_data,
@@ -91,7 +112,23 @@ class BP_GES_Async_Task extends WP_Async_Task {
 	 * @return array Data to pass to the next pageload.
 	 */
 	protected function prepare_data( $data ) {
-		$activity = $data[0];
+		/*
+		 * On the first iteration, $data should be the complete activity object
+		 * passed to the hook.
+		 * On subsequent runs, we'll need to create the activity item from POST.
+		 */
+		$activity = false;
+		if ( isset( $data[0] ) ) {
+			$activity = $data[0];
+		}
+		if ( ! ( $activity instanceof BP_Activity_Activity ) && isset( $_POST['activity_id'] ) ) {
+			$activity = new BP_Activity_Activity( $_POST['activity_id'] );
+		}
+
+		// Bail if we haven't got a valid activity object.
+		if ( ! ( $activity instanceof BP_Activity_Activity ) ) {
+			throw new Exception( 'BP GES Async Task: This activity object could not be created.' );
+		}
 
 		$component = $activity->component;
 		// The item_id is the group id unless the type is 'activity_comment'.
@@ -121,8 +158,34 @@ class BP_GES_Async_Task extends WP_Async_Task {
 		// prepare data for offloading
 		return array(
 			'activity_id' => $activity->id,
-			'group_id'    => $group_id
+			'group_id'    => $group_id,
+			'increment'   => ++static::$increment
 		);
+	}
+
+	/**
+	 * Get the subscription info for this iteration.
+	 *
+	 * @return array Subscription information of the form: user_id => subscription_type.
+	 */
+	public static function get_subscribed_users() {
+		$group_id = ! empty( $_POST['group_id'] ) ? (int) $_POST['group_id'] : bp_get_current_group_id();
+
+		$subscribed_users = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
+
+		if ( is_array( $subscribed_users ) ) {
+			static::$total_users         = count( $subscribed_users );
+			static::$users_per_iteration = apply_filters( 'ass_set_users_per_iteration', static::$users_per_iteration );
+
+			// Prepare a subset of the results if necessary.
+			if ( static::$increment && static::$users_per_iteration ) {
+				$start            = ( static::$increment - 1 ) * ( static::$users_per_iteration );
+				$subscribed_users = array_slice( $subscribed_users, $start, static::$users_per_iteration, true );
+			}
+		} else {
+			$subscribed_users = array();
+		}
+		return $subscribed_users;
 	}
 
 	/**
@@ -131,9 +194,18 @@ class BP_GES_Async_Task extends WP_Async_Task {
 	 * Uses the data passed from prepare_data().
 	 */
 	protected function run_action() {
-		$activity = new BP_Activity_Activity( $_POST['activity_id'] );
+		$activity          = new BP_Activity_Activity( $_POST['activity_id'] );
+		static::$increment = isset( $_POST['increment'] ) ? $_POST['increment'] : 1;
 
 		do_action( "wp_async_{$this->action}", $activity );
+
+		/*
+		 * Run launch() again if there are members left to process,
+		 * preparing a new post request to be fired on shutdown.
+		 */
+		if ( static::$total_users > ( static::$increment * static::$users_per_iteration ) ) {
+			$this->launch();
+		}
 	}
 
 }
@@ -359,7 +431,7 @@ To view or reply, log in and go to:
 	}
 
 	// get subscribed users for the group
-	$subscribed_users = groups_get_groupmeta( $r['group_id'], 'ass_subscribed_users' );
+	$subscribed_users = BP_GES_Async_Task::get_subscribed_users();
 
 	// this is used if a user is subscribed to the "Weekly Summary" option.
 	// the weekly summary shouldn't record everything, so we have a filter:
