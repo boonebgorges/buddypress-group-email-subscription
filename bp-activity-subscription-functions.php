@@ -204,6 +204,15 @@ class BP_GES_Async_Task extends WP_Async_Task {
 		 * preparing a new post request to be fired on shutdown.
 		 */
 		if ( static::$total_users > ( static::$increment * static::$users_per_iteration ) ) {
+			/*
+			 * We need to remove the nopriv_ from the action that may have been
+			 * added in WP_Async_Task::handle_postback(), else launch() will
+			 * post with the action `wp_async_nopriv_bp_activity_after_save`,
+			 * causing the handle_postback hook name to be malformed.
+			 */
+			if ( substr( $this->action, 0, 7 ) === 'nopriv_' ) {
+				$this->action = substr( $this->action, 7 );
+			}
 			$this->launch();
 		}
 	}
@@ -351,7 +360,9 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 
 	ass_generate_notification( $send_args );
 }
-add_action( 'wp_async_bp_activity_after_save' , 'ass_group_notification_activity', 50 );
+add_action( 'wp_async_bp_activity_after_save' ,        'ass_group_notification_activity', 50 );
+// Add the 'nopriv' version in case the user logs out before the notifications are all sent.
+add_action( 'wp_async_nopriv_bp_activity_after_save' , 'ass_group_notification_activity', 50 );
 
 /**
  * Generate and send a group notification.
