@@ -5,6 +5,169 @@
 //date_default_timezone_set('Asia/Tokyo');
 //date_default_timezone_set('America/New_York');
 
+/**
+ * Offload GES digest sending to another page process.
+ *
+ * Uses the awesome TechCrunch WP Async Task library.  Licensed under the MIT.
+ *
+ * @since 3.7.0
+ */
+class BP_GES_Async_Task_Send_Digests extends WP_Async_Task {
+
+	/**
+	 * Hook that WP Async Task should attach itself to.
+	 *
+	 * @var string
+	 */
+	protected $action = 'ass_digest_event';
+
+	/**
+	 * Which digest are we sending?
+	 *
+	 * @var string
+	 */
+	protected $style = 'dig';
+
+	/**
+	 * Priority to run the hook.
+	 *
+	 * @var int
+	 */
+	protected $priority = 10;
+
+	/**
+	 * How many arguments are we passing to the hook?
+	 *
+	 * @var int
+	 */
+	protected $argument_count = 1;
+
+	/**
+	 * Constructor to wire up the necessary actions
+	 *
+	 * Which hooks the asynchronous postback happens on can be set by the
+	 * $auth_level parameter. There are essentially three options: logged in users
+	 * only, logged out users only, or both. Set this when you instantiate an
+	 * object by using one of the three class constants to do so:
+	 *  - LOGGED_IN
+	 *  - LOGGED_OUT
+	 *  - BOTH
+	 * $auth_level defaults to BOTH
+	 *
+	 * @throws Exception If the class' $action value hasn't been set
+	 *
+	 * @param int $auth_level The authentication level to use (see above)
+	 * @param string $style   Which digest are we sending?
+	 *                        Specify 'dig' for daily, 'sum' for weekly.
+	 */
+	public function __construct( $auth_level = WP_Async_Task::BOTH, $style = 'dig' ) {
+		if ( $style == 'sum' ) {
+			$this->action = $this->action . '_weekly';
+			$this->style  = 'sum';
+		}
+
+		if ( empty( $this->action ) ) {
+			throw new Exception( 'Action not defined for class ' . __CLASS__ );
+		}
+		add_action( $this->action, array( $this, 'launch' ), (int) $this->priority, (int) $this->argument_count );
+		if ( $auth_level & self::LOGGED_IN ) {
+			add_action( "admin_post_wp_async_$this->action", array( $this, 'handle_postback' ) );
+		}
+		if ( $auth_level & self::LOGGED_OUT ) {
+			add_action( "admin_post_nopriv_wp_async_$this->action", array( $this, 'handle_postback' ) );
+		}
+	}
+
+	/**
+	 * Launch the request on the WordPress shutdown hook
+	 *
+	 * On VIP we got into data races due to the postback sometimes completing
+	 * faster than the data could propogate to the database server cluster.
+	 * This made WordPress get empty data sets from the database without
+	 * failing. On their advice, we're moving the actual firing of the async
+	 * postback to the shutdown hook. Supposedly that will ensure that the
+	 * data at least has time to get into the object cache.
+	 *
+	 * @uses $_COOKIE        To send a cookie header for async postback
+	 * @uses apply_filters()
+	 * @uses admin_url()
+	 * @uses wp_remote_post()
+	 */
+	public function launch_on_shutdown() {
+		if ( ! empty( $this->_body_data ) ) {
+			$cookies = array();
+			foreach ( $_COOKIE as $name => $value ) {
+				$cookies[] = "$name=" . urlencode( is_array( $value ) ? serialize( $value ) : $value );
+			}
+
+			$request_args = array(
+				'timeout'   => apply_filters( 'ass_async_task_timeout', 0.01 ),
+				'blocking'  => false,
+				'sslverify' => apply_filters( 'https_local_ssl_verify', true ),
+				'body'      => $this->_body_data,
+				'headers'   => array(
+					'cookie' => implode( '; ', $cookies ),
+				),
+			);
+
+			$url = admin_url( 'admin-post.php' );
+
+			wp_remote_post( $url, $request_args );
+		}
+	}
+
+	/**
+	 * Prepare data for the asynchronous request
+	 *
+	 * @param  array $data Function arguments from our hook as an array.
+	 * @return array Data to pass to the next pageload.
+	 */
+	protected function prepare_data( $data ) {
+
+		// prepare data for offloading
+		return array(
+			'increment' => isset( $_POST['increment'] ) ? ++$_POST['increment'] : 1,
+		);
+	}
+
+	/**
+	 * Run the async task action.
+	 *
+	 * Uses the data passed from prepare_data().
+	 */
+	protected function run_action() {
+
+		do_action( "wp_async_{$this->action}" );
+
+		/*
+		 * Run launch() again if there are members left to process,
+		 * preparing a new post request to be fired on shutdown.
+		 */
+		global $wpdb;
+		// Find users with usermeta values containing `dig";a:1(or greater)`, but not `dig";a:0`.
+		$type_regex = $this->style . '";a:[1-9][0-9]*';
+		$unsent_users = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value RLIKE %s LIMIT 1", $type_regex ) );
+		if ( ! empty( $unsent_users ) ) {
+			/*
+			 * We need to remove the nopriv_ from the action that may have been
+			 * added in WP_Async_Task::handle_postback(), else launch() will
+			 * post with the action `wp_async_nopriv_ass_digest_event_weekly`,
+			 * causing the handle_postback hook name to be malformed.
+			 */
+			if ( substr( $this->action, 0, 7 ) === 'nopriv_' ) {
+				$this->action = substr( $this->action, 7 );
+			}
+			$this->launch();
+		}
+	}
+
+}
+
+function ass_initialize_async_send_digests_classes(){
+	$digest_class  = new BP_GES_Async_Task_Send_Digests( 3, 'dig' );
+	$summary_class = new BP_GES_Async_Task_Send_Digests( 3, 'sum' );
+}
+add_action( 'bp_init', 'ass_initialize_async_send_digests_classes' );
 
 /* This function was used for debugging the digest scheduling features */
 function ass_digest_schedule_print() {
@@ -33,8 +196,9 @@ function ass_digest_fire( $type ) {
 		set_time_limit(0);
 	}
 
-	if ( !is_string($type) )
+	if ( 'dig' != $type ) {
 		$type = 'sum';
+	}
 
 	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
 	$ass_email_css['wrapper']      = 'style="color:#333;clear:both;'; // use this to style the body
@@ -70,8 +234,23 @@ function ass_digest_fire( $type ) {
 	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
-	// get all user subscription data
-	$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
+	// get user subscription data for this type
+	// If we're incrementing, fetch a subset, otherwise we fetch everything.
+	if ( isset( $_POST['increment'] ) ) {
+		/**
+		 * Filters the number of users to send digests to in one iteration.
+		 *
+		 * @since 3.7.0
+		 *
+		 * @param int $number  How many users to send digests to.
+		 * @param string $type Which type of digest we're currently sending.
+		 */
+		$user_limit = apply_filters( 'ass_set_users_per_iteration_digest_send', 50, $type );
+		$type_regex = $type . '";a:[1-9][0-9]*';
+		$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value RLIKE %s LIMIT %d", $type_regex, $user_limit ) );
+	} else {
+		$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
+	}
 
 	// no subscription data? stop now!
 	if ( empty( $user_subscriptions ) ) {
@@ -382,12 +561,14 @@ function ass_digest_strip_plaintext_separators( $content = '', $prop = '', $tran
 function ass_daily_digest_fire() {
 	ass_digest_fire( 'dig' );
 }
-add_action( 'ass_digest_event', 'ass_daily_digest_fire' );
+add_action( 'wp_async_nopriv_ass_digest_event', 'ass_daily_digest_fire' );
+add_action( 'wp_async_ass_digest_event',        'ass_daily_digest_fire' );
 
 function ass_weekly_digest_fire() {
 	ass_digest_fire( 'sum' );
 }
-add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
+add_action( 'wp_async_nopriv_ass_digest_event_weekly', 'ass_weekly_digest_fire' );
+add_action( 'wp_async_ass_digest_event_weekly',        'ass_weekly_digest_fire' );
 
 // Use these two lines for testing the digest firing in real-time
 //add_action( 'bp_actions', 'ass_daily_digest_fire' ); // for testing only
