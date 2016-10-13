@@ -1368,7 +1368,7 @@ function ass_manage_members_email_status(  $user_id = '', $group = '' ) {
 	}
 
 	// no user ID? fallback on members loop user ID if it exists
-	if ( ! $user_id ) {
+	if ( ! $user_id || ! is_numeric( $user_id ) ) {
 		$user_id = ! empty( $members_template->member->user_id ) ? $members_template->member->user_id : false;
 	}
 
