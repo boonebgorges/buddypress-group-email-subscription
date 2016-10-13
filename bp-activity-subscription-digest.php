@@ -331,13 +331,19 @@ function ass_digest_fire( $type ) {
 		if ( empty( $group_activity_ids_array[$type] ) || !$group_activity_ids = (array)$group_activity_ids_array[$type] )
 			continue;
 
-		// get userdata
-		// @see ass_get_mass_userdata()
-		$userdata = $bp->ass->massdata[$user_id];
-
 		// sanity check!
-		if ( empty( $userdata ) )
+		if ( ! isset( $bp->ass->massdata[$user_id] ) ) {
+			/*
+			 * If this index isn't set, then the user couldn't be found in
+			 * `ass_get_mass_userdata()`. Clean up the stray meta.
+			 */
+			bp_delete_user_meta( $user_id, 'ass_digest_items' );
 			continue;
+		} else {
+			// get userdata
+			// @see ass_get_mass_userdata()
+			$userdata = $bp->ass->massdata[$user_id];
+		}
 
 		// email address of user
 		$to = $userdata['email'];
