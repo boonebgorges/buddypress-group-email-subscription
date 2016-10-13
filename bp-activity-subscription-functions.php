@@ -236,7 +236,7 @@ To view or reply, log in and go to:
 		}
 
 		// Apply bbPress KSES filter if it exists (sanity check!)
-		$the_content = ( true === function_exists( 'bbp_filter_kses' ) ) ? bbp_filter_kses( $the_content ) : $the_content;
+		$the_content = ( true === function_exists( 'bbp_filter_kses' ) ) ? wp_unslash( bbp_filter_kses( $the_content ) ) : $the_content;
 
 		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity_obj, $r['action'], $group );
 	}
