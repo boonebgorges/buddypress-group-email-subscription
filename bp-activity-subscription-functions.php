@@ -452,9 +452,6 @@ function ass_send_email( $email_type, $to, $args ) {
 		// Temporary save tokens.
 		buddypress()->ges_tokens = $args['tokens'];
 
-		// Add BP email post type if it doesn't exist.
-		ass_set_email_type( $email_type );
-
 		// Remove BP's restrictive HTML filtering.
 		remove_filter( 'bp_email_set_content_html', 'wp_filter_post_kses', 6 );
 
