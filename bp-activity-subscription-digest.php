@@ -110,7 +110,7 @@ function ass_digest_fire( $type ) {
 	//
 	// @todo MySQL IN query doesn't scale well when querying a ton of IDs
 	$items = $wpdb->get_results( "
-		SELECT id, type, action, content, primary_link, secondary_item_id, date_recorded
+		SELECT id, type, action, content, primary_link, item_id, secondary_item_id, date_recorded
 			FROM {$bp->activity->table_name}
 			WHERE id IN ({$in})
 	" );
