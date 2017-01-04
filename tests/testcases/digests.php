@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * @group digests
@@ -8,6 +8,12 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		parent::setUp();
 
 		$this->reset_phpmailer_instance();
+
+		// Install our email post types.
+		require_once( dirname( __FILE__ ) . '/../../admin.php' );
+		require_once( dirname( __FILE__ ) . '/../../updater.php' );
+		new GES_Updater( true );
+
 		add_filter( 'bp_send_email_delivery_class', array( $this, 'use_mockmailer' ) );
 	}
 
@@ -98,16 +104,13 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		) );
 
 		add_filter( 'bp_email_use_wp_mail', '__return_true' );
-		reset_phpmailer_instance();
 
 		// Send digests.
 		ass_daily_digest_fire();
 
-		$mailer = tests_retrieve_phpmailer_instance();
-		//print_r($mailer);
+		//print_r($GLOBALS['phpmailer']);
 
 		remove_filter( 'bp_email_use_wp_mail', '__return_true' );
-		reset_phpmailer_instance();
 	}
 
 	public function test_performance() {
@@ -162,5 +165,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		if ( isset( $GLOBALS['ges_mockmailer'] ) && isset( $GLOBALS['ges_mockmailer']->mock_sent ) ) {
 			unset( $GLOBALS['ges_mockmailer']->mock_sent );
 		}
+
+		unset( $GLOBALS['phpmailer']->mock_sent );
 	}
 }
