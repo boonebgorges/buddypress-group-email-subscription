@@ -583,12 +583,28 @@ function ass_convert_html_to_plaintext( $message ) {
 }
 
 /**
+ * Properly encode HTML characters in old digest items.
+ *
+ * This is a regex callback function used in ass_send_multipart_email().
+ *
+ * @since 3.7.1
+ *
+ * @param  array $matches Regex matches.
+ * @return string
+ */
+function ass_old_digest_item_html_entities( $matches ) {
+	global $ass_email_css;
+	return '<span ' . $ass_email_css['item_content'] . '>' . htmlentities( strip_tags( $matches[1] ), ENT_COMPAT, 'utf-8' ) . '</span>';
+}
+
+/**
  * Formats and sends a MIME multipart email with both HTML and plaintext
  *
  * We have to use some fancy filters from the wp_mail function to configure the $phpmailer object
  * properly
  */
 function ass_send_multipart_email( $to, $subject, $message_plaintext, $message ) {
+	global $ass_email_css;
 
      // setup HTML body. plugins that wrap emails with HTML templates can filter this
 	$message = apply_filters( 'ass_digest_message_html', "<html><body>{$message}</body></html>", $message );
@@ -641,6 +657,13 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 
 	// set content type as HTML
 	$headers = array( 'Content-type: text/html' );
+
+	/*
+	 * Eek. Stupid HTML encoding.
+	 *
+	 * Wish we could do this higher up the chain...
+	 */
+	$message = preg_replace_callback( '/<span ' . $ass_email_css['item_content'] . '>(.+?)<\/span>/', 'ass_old_digest_item_html_entities', $message );
 
 	// send the email!
 	$result = wp_mail( $to, $subject, $message, $headers );
