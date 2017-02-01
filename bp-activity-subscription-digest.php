@@ -180,7 +180,7 @@ function ass_digest_fire( $type ) {
 
 			$group_name = $groups_info[ $group_id ][ 'name' ];
 			$group_slug = $groups_info[ $group_id ][ 'slug' ];
-			$group_permlink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
+			$group_permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
 
 			// Might be nice here to link to anchor tags in the message.
 			if ( 'dig' == $type ) {
@@ -399,7 +399,7 @@ add_action( 'bp_actions', 'ass_digest_fire_test' );
 function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id ) {
 	global $bp, $ass_email_css;
 
-	$group_permlink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
+	$group_permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
 	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
 
 	$userdomain = ass_digest_get_user_domain( $user_id );
