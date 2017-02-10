@@ -1091,6 +1091,9 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 		return false;
 
 	$group_user_subscriptions = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
+	if ( ! is_array( $group_user_subscriptions ) ) {
+		$group_user_subscriptions = array();
+	}
 
 	// we're being overly careful here
 	if ( $action == 'no' ) {
