@@ -52,10 +52,10 @@ function ass_admin_options() {
 	}
 
 	//set the first time defaults
-	if ( !$ass_digest_time = get_option( 'ass_digest_time' ) )
+	if ( !$ass_digest_time = bp_get_option( 'ass_digest_time' ) )
 		$ass_digest_time = array( 'hours' => '05', 'minutes' => '00' );
 
-	if ( !$ass_weekly_digest = get_option( 'ass_weekly_digest' ) )
+	if ( !$ass_weekly_digest = bp_get_option( 'ass_weekly_digest' ) )
 //		$ass_weekly_digest = 5; // friday
 		$ass_weekly_digest = 0; // sunday
 
@@ -111,7 +111,7 @@ function ass_admin_options() {
 
 		<h3><?php _e( 'Global Unsubscribe Link', 'bp-ass' ); ?></h3>
 		<p><?php _e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'bp-ass' ); ?>
-		<?php $global_unsubscribe_link = get_option( 'ass-global-unsubscribe-link' ); ?>
+		<?php $global_unsubscribe_link = bp_get_option( 'ass-global-unsubscribe-link' ); ?>
 		<input<?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php _e( 'yes', 'bp-ass' ); ?> &nbsp;
 		<input<?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php _e( 'no', 'bp-ass' ); ?>
 		<br />
@@ -120,12 +120,12 @@ function ass_admin_options() {
 
 		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
 		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'bp-ass'); ?>
-		<?php $admins_can_edit_status = get_option('ass-admin-can-edit-email'); ?>
+		<?php $admins_can_edit_status = bp_get_option('ass-admin-can-edit-email'); ?>
 		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> <?php _e('yes', 'bp-ass') ?> &nbsp;
 		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'bp-ass') ?>
 
 		<p><?php _e('Allow group admins to override subscription settings and send an email to everyone in their group: ', 'bp-ass'); ?>
-		<?php $admins_can_send_email = get_option('ass-admin-can-send-email'); ?>
+		<?php $admins_can_send_email = bp_get_option('ass-admin-can-send-email'); ?>
 		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> <?php _e('yes', 'bp-ass') ?> &nbsp;
 		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'bp-ass') ?>
 
@@ -133,7 +133,7 @@ function ass_admin_options() {
 		<br>
 		<h3><?php _e('Spam Prevention', 'bp-ass'); ?></h3>
 			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'bp-ass'); ?> </p>
-			<?php _e('Member must be registered for', 'bp-ass'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'bp-ass'); ?></p>
+			<?php _e('Member must be registered for', 'bp-ass'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo bp_get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'bp-ass'); ?></p>
 
 
 			<p class="submit">
@@ -166,24 +166,24 @@ function ass_update_dashboard_settings() {
 		return;
 
 	/* The daily digest time has been changed */
-	if ( $_POST['ass_digest_time'] != get_option( 'ass_digest_time' ) )
+	if ( $_POST['ass_digest_time'] != bp_get_option( 'ass_digest_time' ) )
 		ass_set_daily_digest_time( $_POST['ass_digest_time']['hours'], $_POST['ass_digest_time']['minutes'] );
 
 	/* The weekly digest day has been changed */
-	if ( $_POST['ass_weekly_digest'] != get_option( 'ass_weekly_digest' ) )
+	if ( $_POST['ass_weekly_digest'] != bp_get_option( 'ass_weekly_digest' ) )
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
 
-	if ( $_POST['ass-global-unsubscribe-link'] != get_option( 'ass-global-unsubscribe-link' ) )
-		update_option( 'ass-global-unsubscribe-link', $_POST['ass-global-unsubscribe-link'] );
+	if ( $_POST['ass-global-unsubscribe-link'] != bp_get_option( 'ass-global-unsubscribe-link' ) )
+		bp_update_option( 'ass-global-unsubscribe-link', $_POST['ass-global-unsubscribe-link'] );
 
-	if ( $_POST['ass-admin-can-edit-email'] != get_option( 'ass-admin-can-edit-email' ) )
-		update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );
+	if ( $_POST['ass-admin-can-edit-email'] != bp_get_option( 'ass-admin-can-edit-email' ) )
+		bp_update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );
 
-	if ( $_POST['ass-admin-can-send-email'] != get_option( 'ass-admin-can-send-email' ) )
-		update_option( 'ass-admin-can-send-email', $_POST['ass-admin-can-send-email'] );
+	if ( $_POST['ass-admin-can-send-email'] != bp_get_option( 'ass-admin-can-send-email' ) )
+		bp_update_option( 'ass-admin-can-send-email', $_POST['ass-admin-can-send-email'] );
 
-	if ( $_POST['ass_registered_req'] != get_option( 'ass_registered_req' ) )
-		update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
+	if ( $_POST['ass_registered_req'] != bp_get_option( 'ass_registered_req' ) )
+		bp_update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 
 	return true;
 	//echo '<pre>'; print_r( $_POST ); echo '</pre>';

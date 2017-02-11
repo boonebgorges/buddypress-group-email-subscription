@@ -213,7 +213,7 @@ function ass_digest_fire( $type ) {
 
 		$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
 
-		if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+		if ( bp_get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 			$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
 			$unsubscribe_message .= "\n\n<br><br><a href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp-ass' ) . '</a>';
 		}
@@ -737,7 +737,7 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 	wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
 
 	/* Finally, save the option */
-	update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
+	bp_update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
 }
 
 // Takes the numeral equivalent of a $day: 0 for Sunday, 1 for Monday, etc
@@ -754,7 +754,7 @@ function ass_set_weekly_digest_time( $day ) {
 	wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
 
 	/* Finally, save the option */
-	update_option( 'ass_weekly_digest', $day );
+	bp_update_option( 'ass_weekly_digest', $day );
 }
 
 /*
