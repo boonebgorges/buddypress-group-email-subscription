@@ -13,7 +13,15 @@
 function ass_admin_menu() {
 	// BP 1.6+ deprecated the "BuddyPress" top-level menu item.
 	if ( function_exists( 'bp_version' ) ) {
-		$settings_page = bp_core_do_network_admin() ? 'settings.php' : 'options-general.php';
+		// GES is network-activated, so show under Network Settings.
+		if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
+			$settings_page = 'settings.php';
+
+		// Everything else.
+		} else {
+			$settings_page = 'options-general.php';
+		}
+
 		$title = __( 'BP Group Email Options', 'bp-ass' );
 
 	// BP 1.5 - Keep using the top-level "BuddyPress" menu item.
@@ -31,7 +39,8 @@ function ass_admin_menu() {
 		'ass_admin_options'
 	);
 }
-add_action( bp_core_admin_hook(), 'ass_admin_menu' );
+add_action( 'admin_menu', 'ass_admin_menu' );
+add_action( 'network_admin_menu', 'ass_admin_menu' );
 
 /**
  * Function to create the back end admin form.
