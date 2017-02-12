@@ -734,7 +734,17 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 
 	/* Clear the old recurring event and set up a new one */
 	wp_clear_scheduled_hook( 'ass_digest_event' );
+
+	// Custom BP root blog, so set up cron on BP sub-site.
+	if ( ! bp_is_root_blog() ) {
+		switch_to_blog( bp_get_root_blog_id() );
+		wp_clear_scheduled_hook( 'ass_digest_event' );
+	}
+
 	wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
+
+	// Restore current blog.
+	restore_current_blog();
 
 	/* Finally, save the option */
 	bp_update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
@@ -751,7 +761,17 @@ function ass_set_weekly_digest_time( $day ) {
 
 	/* Clear the old recurring event and set up a new one */
 	wp_clear_scheduled_hook( 'ass_digest_event_weekly' );
+
+	// Custom BP root blog, so set up cron on BP sub-site.
+	if ( ! bp_is_root_blog() ) {
+		switch_to_blog( bp_get_root_blog_id() );
+		wp_clear_scheduled_hook( 'ass_digest_event_weekly' );
+	}
+
 	wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
+
+	// Restore current blog.
+	restore_current_blog();
 
 	/* Finally, save the option */
 	bp_update_option( 'ass_weekly_digest', $day );
