@@ -175,11 +175,11 @@ function ass_update_dashboard_settings() {
 		return;
 
 	/* The daily digest time has been changed */
-	if ( $_POST['ass_digest_time'] != bp_get_option( 'ass_digest_time' ) )
+	if ( $_POST['ass_digest_time'] )
 		ass_set_daily_digest_time( $_POST['ass_digest_time']['hours'], $_POST['ass_digest_time']['minutes'] );
 
 	/* The weekly digest day has been changed */
-	if ( $_POST['ass_weekly_digest'] != bp_get_option( 'ass_weekly_digest' ) )
+	if ( $_POST['ass_weekly_digest'] )
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
 
 	if ( $_POST['ass-global-unsubscribe-link'] != bp_get_option( 'ass-global-unsubscribe-link' ) )
