@@ -492,10 +492,12 @@ function ass_digest_format_item( $item, $type ) {
 
 	// view link
 	if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
-		$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
+		$view_link = bp_activity_get_permalink( $item->id, $item );
 	} else {
-		$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
+		$view_link = $item->primary_link;
 	}
+
+	$item_message .= ' - <a href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'bp-ass' ) . '</a>';
 
 	$item_message .= "</div>\n\n";
 
