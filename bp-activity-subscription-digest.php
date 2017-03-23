@@ -480,68 +480,24 @@ function ass_digest_format_item( $item, $type ) {
 	$time_posted = date( get_option( 'time_format' ), $timestamp );
 	$date_posted = date( get_option( 'date_format' ), $timestamp );
 
-	// Daily Digest
-	if ( $type == 'dig' ) {
+	//$item_message = strip_tags( $action ) . ": \n";
+	$item_message =  "<div {$ass_email_css['item_div']}>";
+	$item_message .=  "<span {$ass_email_css['item_action']}>" . $action . ": ";
+	$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
+	$item_message .=  "</span>\n";
 
-		//$item_message = strip_tags( $action ) . ": \n";
-		$item_message =  "<div {$ass_email_css['item_div']}>";
-		$item_message .=  "<span {$ass_email_css['item_action']}>" . $action . ": ";
-		$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
-		$item_message .=  "</span>\n";
+	// activity content
+	if ( ! empty( $item->content ) )
+		$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
 
-		// activity content
-		if ( ! empty( $item->content ) )
-			$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
-
-		// view link
-		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
-			$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
-		} else {
-			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
-		}
-
-		$item_message .= "</div>\n\n";
-
-
-	// Weekly summary
-	} elseif ( $type == 'sum' ) {
-
-		// count the number of replies
-		//
-		// commented out for now
-		// if we want to bring this back we should use a direct DB query to the
-		// wp_bb_topics table and locally cache the value
-		/*
-		if ( $item->type == 'new_forum_topic' ) {
-			if ( $posts = bp_forums_get_topic_posts( 'per_page=10000&topic_id='. $item->secondary_item_id ) ) {
-				foreach ( $posts as $post ) {
-					$since = time() - strtotime( $post->post_time );
-					if ( $since < 604800 ) //number of seconds in a week
-						$counter++;
-				}
-			}
-			$replies = ' ' . sprintf( __( '(%s replies)', 'bp-ass' ), $counter );
-		}
-		*/
-
-		$item_message =  "<div {$ass_email_css['item_div']}>";
-		$item_message .=  "<span {$ass_email_css['item_action']}>" . $action . ": ";
-		$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
-		$item_message .=  "</span>\n";
-
-		// activity content
-		if ( ! empty( $item->content ) )
-			$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
-
-		// view link
-		if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
-			$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
-		} else {
-			$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
-		}
-
-		$item_message .= "</div>\n\n";
+	// view link
+	if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
+		$item_message .= ' - <a href="' . bp_activity_get_permalink( $item->id, $item ).'">'.__('View', 'bp-ass').'</a>';
+	} else {
+		$item_message .= ' - <a href="' . $item->primary_link .'">'.__('View', 'bp-ass').'</a>';
 	}
+
+	$item_message .= "</div>\n\n";
 
 	$item_message = apply_filters( 'ass_digest_format_item', $item_message, $item, $action, $timestamp, $type, $replies );
 	$item_message = ass_digest_filter( $item_message );
