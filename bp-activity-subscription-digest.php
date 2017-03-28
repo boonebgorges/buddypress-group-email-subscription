@@ -664,6 +664,9 @@ function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 
 
 	// get the digest/summary items for all groups for this user
 	$group_activity_ids = bp_get_user_meta( $user_id, 'ass_digest_items', true );
+	if ( ! is_array( $group_activity_ids ) ) {
+		$group_activity_ids = array();
+	}
 
 	// update multi-dimensional array with the current activity_id
 	$group_activity_ids[$type][$group_id][] = $activity_id;
