@@ -90,6 +90,14 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.7.1 =
+* Fix incorrect activity comment permalinks in digest emails.
+* Use login redirect links in digest emails, for improved navigation when not logged in.
+* Improve compatibility with non-standard Multisite configurations.
+* Improve compatibility with PHP 7.1+.
+* Improve compatibility with BP 2.5+ function signatures.
+* Improve HTML character encoding in digests.
+
 = 3.7.0 =
 * Add support for BuddyPress HTML emails, available since BuddyPress 2.5. (View the accompanying wiki article for more info - https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens)
 * Reduce the amount of code loaded by GES on any given page.
