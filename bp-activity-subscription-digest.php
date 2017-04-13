@@ -696,9 +696,20 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 	/* Clear the old recurring event and set up a new one */
 	wp_clear_scheduled_hook( 'ass_digest_event' );
 
+	/*
+	 * Not using bp_get_root_blog_id() since it might not be available during
+	 * activation time.
+	 */
+	if ( defined( 'BP_ROOT_BLOG' ) ) {
+		/** This filter is documented in /wp-content/plugins/buddypress/bp-core/bp-core-functions.php */
+		$blog_id = (int) apply_filters( 'bp_get_root_blog_id', constant( 'BP_ROOT_BLOG' ) );
+	} else {
+		$blog_id = 1;
+	}
+
 	// Custom BP root blog, so set up cron on BP sub-site.
-	if ( ! bp_is_root_blog() ) {
-		switch_to_blog( bp_get_root_blog_id() );
+	if ( 1 !== $blog_id ) {
+		switch_to_blog( $blog_id );
 		wp_clear_scheduled_hook( 'ass_digest_event' );
 	}
 
