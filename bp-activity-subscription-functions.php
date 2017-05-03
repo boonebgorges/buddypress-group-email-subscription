@@ -402,9 +402,10 @@ To view or reply, log in and go to:
 
 				// Sending time!
 				ass_send_email( 'bp-ges-single', $user->user_email, array(
-					'tokens'  => $user_message_args,
-					'subject' => $subject,
-					'content' => $user_message
+					'tokens'   => $user_message_args,
+					'subject'  => $subject,
+					'content'  => $user_message,
+					'activity' => $activity_obj
 				) );
 
 				// Revert!
