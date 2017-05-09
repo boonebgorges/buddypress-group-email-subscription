@@ -114,8 +114,6 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
  * @since 2.1b2
  */
 function ass_admin_notice_form() {
-	global $bp;
-
 	if ( groups_is_user_admin( bp_loggedin_user_id() , bp_get_current_group_id() ) || is_super_admin() ) {
 		/**
 		 * Filter to display the email notice form on the "Manage > Email Options page".
