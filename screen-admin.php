@@ -109,9 +109,8 @@ function ass_admin_notice_form() {
 	global $bp;
 
 	if ( groups_is_user_admin( bp_loggedin_user_id() , bp_get_current_group_id() ) || is_super_admin() ) {
-		$submit_link = bp_get_groups_action_link( 'notifications' );
 		?>
-		<form action="<?php echo $submit_link ?>" method="post">
+
 			<?php wp_nonce_field( 'ass_email_options' ); ?>
 
 			<h3><?php _e('Send an email notice to everyone in the group', 'bp-ass'); ?></h3>
@@ -160,7 +159,7 @@ function ass_admin_notice_form() {
 			<p>
 				<input type="submit" name="ass_welcome_email_submit" value="<?php _e( 'Save', 'bp-ass' ); ?>" />
 			</p>
-		</form>
+
 		<?php
 	}
 }
