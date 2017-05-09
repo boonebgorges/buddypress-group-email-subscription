@@ -104,12 +104,30 @@ function ass_manage_all_members_email_update() {
 }
 add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
 
-// create a form that allows admins to email everyone in the group
+/**
+ * Options displayed on a group's "Manage > Email Options" page.
+ *
+ * This page is only visible to group admins and when the "Allow group admins
+ * to override subscription settings and send an email to everyone in their
+ * group" is enabled in the GES admin settings page.
+ *
+ * @since 2.1b2
+ */
 function ass_admin_notice_form() {
 	global $bp;
 
 	if ( groups_is_user_admin( bp_loggedin_user_id() , bp_get_current_group_id() ) || is_super_admin() ) {
-		?>
+		/**
+		 * Filter to display the email notice form on the "Manage > Email Options page".
+		 *
+		 * @since 3.7.2
+		 *
+		 * @param  bool $retval Defaults to true.
+		 * @return bool
+		 */
+		$enable_email_notice = apply_filters( 'bp_group_email_subscription_enable_email_notice', true );
+		if ( true === $enable_email_notice ) {
+	?>
 
 			<?php wp_nonce_field( 'ass_email_options' ); ?>
 
@@ -130,6 +148,21 @@ function ass_admin_notice_form() {
 			<p>
 				<input type="submit" name="ass_admin_notice_send" value="<?php _e('Email this notice to everyone in the group', 'bp-ass') ?>" />
 			</p>
+
+	<?php
+		}
+
+		/**
+		 * Filter to display the welcome email form on the "Manage > Email Options page".
+		 *
+		 * @since 3.7.2
+		 *
+		 * @param  bool $retval Defaults to true.
+		 * @return bool
+		 */
+		$enable_welcome = apply_filters( 'bp_group_email_subscription_enable_welcome_email', true );
+		if ( true === $enable_welcome ) {
+	?>
 
 			<br />
 
@@ -161,6 +194,20 @@ function ass_admin_notice_form() {
 			</p>
 
 		<?php
+		}
+
+		/**
+		 * If plugins are adding custom content to this page and we have hidden both
+		 * the Email Notice and Welcome Email options, make sure BP's Group Extension
+		 * API doesn't inject another submit button.
+		 *
+		 * To fool BP, we add a hidden submit button.
+		 *
+		 * @see BP_Group_Extension::maybe_add_submit_button()
+		 */
+		if ( ! $enable_email_notice && ! $enable_welcome ) {
+			echo '<input type="submit" style="display:none" />';
+		}
 	}
 }
 
