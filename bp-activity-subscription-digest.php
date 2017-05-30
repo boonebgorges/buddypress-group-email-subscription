@@ -66,7 +66,7 @@ function ass_digest_fire( $type ) {
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
 	$subject = apply_filters( 'ass_digest_subject', "$title [$blogname]", $blogname, $title, $type );
 
-	$footer = "\n\n<div {$ass_email_css['footer']}>";
+	$footer = "\n\n<div class=\"digest-footer\" {$ass_email_css['footer']}>";
 	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
@@ -168,7 +168,7 @@ function ass_digest_fire( $type ) {
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
 
-		$header = "<div {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
+		$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
 		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
 		// loop through each group for this user
@@ -184,7 +184,7 @@ function ass_digest_fire( $type ) {
 
 			// Might be nice here to link to anchor tags in the message.
 			if ( 'dig' == $type ) {
-				$summary .= apply_filters( 'ass_digest_summary', "<li {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
+				$summary .= apply_filters( 'ass_digest_summary', "<li class=\"digest-group-summary\" {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 			}
 
 			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
@@ -196,7 +196,7 @@ function ass_digest_fire( $type ) {
 
 		// show group summary for digest, and follow help text for weekly summary
 		if ( 'dig' == $type ) {
-			$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass') . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+			$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass') . ":\n<ul class=\"digest-group-summaries\" {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
 		}
 
 		// the meat of the message which we generated above goes here
@@ -215,7 +215,7 @@ function ass_digest_fire( $type ) {
 
 		if ( bp_get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 			$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
-			$unsubscribe_message .= "\n\n<br><br><a href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp-ass' ) . '</a>';
+			$unsubscribe_message .= "\n\n<br><br><a class=\"digest-unsubscribe-link\" href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp-ass' ) . '</a>';
 		}
 
 		$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
@@ -400,7 +400,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 	global $bp, $ass_email_css;
 
 	$group_permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
-	$group_name_link = '<a href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
+	$group_name_link = '<a class="item-group-group-link" href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
 
 	$userdomain = ass_digest_get_user_domain( $user_id );
 	$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&group=$group_id&access_key=" . md5( "{$group_id}{$user_id}unsubscribe" . wp_salt() );
@@ -408,13 +408,13 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 	// add the group title bar
 	if ( $type == 'dig' ) {
-		$group_message = "\n---\n\n<div {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s', 'bp-ass' ), $group_name_link ) . "</div>\n\n";
+		$group_message = "\n---\n\n<div class=\"item-group-title\" {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s', 'bp-ass' ), $group_name_link ) . "</div>\n\n";
 	} elseif ( $type == 'sum' ) {
-		$group_message = "\n---\n\n<div {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s weekly summary', 'bp-ass' ), $group_name_link ) . "</div>\n";
+		$group_message = "\n---\n\n<div class=\"item-group-title\" {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s weekly summary', 'bp-ass' ), $group_name_link ) . "</div>\n";
 	}
 
 	// add change email settings link
-	$group_message .= "\n<div {$ass_email_css['change_email']}>";
+	$group_message .= "\n<div class=\"item-group-settings-link\" {$ass_email_css['change_email']}>";
 	$group_message .= __('To disable these notifications for this group click ', 'bp-ass'). " <a href=\"$unsubscribe_link\">" . __( 'unsubscribe', 'bp-ass' ) . '</a> - ';
 	$group_message .=  __('change ', 'bp-ass') . '<a href="' . $gnotifications_link . '">' . __( 'email options', 'bp-ass' ) . '</a>';
 	$group_message .= "</div>\n\n";
@@ -481,14 +481,14 @@ function ass_digest_format_item( $item, $type ) {
 	$date_posted = date( get_option( 'date_format' ), $timestamp );
 
 	//$item_message = strip_tags( $action ) . ": \n";
-	$item_message =  "<div {$ass_email_css['item_div']}>";
-	$item_message .=  "<span {$ass_email_css['item_action']}>" . $action . ": ";
-	$item_message .= "<span {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
+	$item_message =  "<div class=\"digest-item\" {$ass_email_css['item_div']}>";
+	$item_message .=  "<span class=\"digest-item-action\" {$ass_email_css['item_action']}>" . $action . ": ";
+	$item_message .= "<span class=\"digest-item-timestamp\" {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
 	$item_message .=  "</span>\n";
 
 	// activity content
 	if ( ! empty( $item->content ) )
-		$item_message .= "<br><span {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
+		$item_message .= "<br><span class=\"digest-item-content\" {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
 
 	// view link
 	if ( $item->type == 'activity_update' || $item->type == 'activity_comment' ) {
@@ -497,7 +497,7 @@ function ass_digest_format_item( $item, $type ) {
 		$view_link = $item->primary_link;
 	}
 
-	$item_message .= ' - <a href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'bp-ass' ) . '</a>';
+	$item_message .= ' - <a class="digest-item-view-link" href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'bp-ass' ) . '</a>';
 
 	$item_message .= "</div>\n\n";
 
