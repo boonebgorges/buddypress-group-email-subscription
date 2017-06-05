@@ -172,11 +172,19 @@ function ass_digest_fire( $type ) {
 		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
 		// loop through each group for this user
+		$has_group_activity = false;
 		foreach ( $group_activity_ids as $group_id => $activity_ids ) {
 			// check to see if our activity IDs exist
 			// intersect against our master activity IDs array
 			$activity_ids = array_intersect_key( array_flip( $activity_ids ), $bp->ass->activity_ids );
 			$activity_ids = array_keys( $activity_ids );
+
+			// Activities could have been deleted since being recorded for digest emails.
+			if ( empty( $activity_ids ) ) {
+				continue;
+			}
+
+			$has_group_activity = true;
 
 			$group_name = $groups_info[ $group_id ][ 'name' ];
 			$group_slug = $groups_info[ $group_id ][ 'slug' ];
@@ -190,6 +198,12 @@ function ass_digest_fire( $type ) {
 			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
 			unset( $group_activity_ids[ $group_id ] );
 		}
+
+		// If there's nothing to send, skip this use.
+		if ( ! $has_group_activity ) {
+			continue;
+		}
+
 
 		// reset the user's sub array removing those sent
 		$group_activity_ids_array[$type] = $group_activity_ids;
