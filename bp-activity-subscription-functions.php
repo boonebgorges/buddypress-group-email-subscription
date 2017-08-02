@@ -1176,7 +1176,7 @@ function ass_set_default_subscription( $groups_member ){
 	if ( !$groups_member->is_confirmed )
 		return;
 
-	$default_gsub = ass_get_default_subscription( $groups_member->user_id );
+	$default_gsub = ass_get_default_subscription( $groups_member->group_id );
 
 	if ( $default_gsub ) {
 		ass_group_subscription( $default_gsub, $groups_member->user_id, $groups_member->group_id );
