@@ -1176,7 +1176,7 @@ function ass_set_default_subscription( $groups_member ){
 	if ( !$groups_member->is_confirmed )
 		return;
 
-	$default_gsub = apply_filters( 'ass_default_subscription_level', groups_get_groupmeta( $groups_member->group_id, 'ass_default_subscription' ), $groups_member->group_id );
+	$default_gsub = ass_get_default_subscription( $groups_member->user_id );
 
 	if ( $default_gsub ) {
 		ass_group_subscription( $default_gsub, $groups_member->user_id, $groups_member->group_id );
@@ -1211,18 +1211,38 @@ function ass_save_default_subscription( $group ) {
 add_action( 'groups_group_after_save', 'ass_save_default_subscription' );
 
 
-// Get the default subscription settings for the group
+/**
+ * Gets the default subscription settings for the group.
+ *
+ * @param BP_Groups_Group|int $group Group object or group ID. Defaults to the current group.
+ * @return string
+ */
 function ass_get_default_subscription( $group = false ) {
 	global $bp, $groups_template;
-	if ( !$group )
+	if ( ! $group && isset( $groups_template->group ) ) {
 		$group =& $groups_template->group;
+	}
 
-	if ( isset( $group->id ) )
+	if ( is_int( $group ) ) {
+		$group_id = $group;
+	} elseif ( isset( $group->id ) ) {
 		$group_id = $group->id;
-	else if ( isset( $bp->groups->new_group_id ) )
-		$group_id = $bp->groups->new_group_id;
+	} elseif ( bp_is_group_create() ) {
+		$group_id = bp_get_new_group_id();
+	}
 
-	$default_subscription =  groups_get_groupmeta( $group_id, 'ass_default_subscription' );
+	$default_subscription = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
+
+	if ( empty( $default_subscription ) ) {
+		/**
+		 * Filters the fallback value for a group's default subscription level.
+		 *
+		 * @param string $status   'supersub' by default.
+		 * @param int    $group_id ID of the group.
+		 */
+		$default_subscription = apply_filters( 'ass_default_subscription_level', 'supersub', $group_id );
+	}
+
 	return apply_filters( 'ass_get_default_subscription', $default_subscription );
 }
 
