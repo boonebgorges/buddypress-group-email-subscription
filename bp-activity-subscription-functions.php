@@ -244,6 +244,9 @@ To view or reply, log in and go to:
 	// get subscribed users for the group
 	$subscribed_users = groups_get_groupmeta( $r['group_id'], 'ass_subscribed_users' );
 
+	global $wpdb, $bp;
+	$group_member_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$bp->groups->table_name_members} WHERE group_id = %d AND is_banned = 0", $r['group_id'] ) );
+
 	// this is used if a user is subscribed to the "Weekly Summary" option.
 	// the weekly summary shouldn't record everything, so we have a filter:
 	//
@@ -255,7 +258,13 @@ To view or reply, log in and go to:
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $activity_obj->type );
 
 	// cycle through subscribed users
-	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
+//	foreach ( (array) $subscribed_users as $user_id => $group_status ) {
+	foreach ( $group_member_ids as $user_id ) {
+		$group_status = 'dig';
+		if ( isset( $subscribed_users[ $user_id ] ) ) {
+			$group_status = $subscribed_users[ $user_id ];
+		}
+
 		$self_notify = false;
 
 		// If user is banned from group, do not send mail.
@@ -1080,7 +1089,8 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 
 	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
 
-	$user_subscription = isset( $group_user_subscriptions[$user_id] ) ? $group_user_subscriptions[$user_id] : false;
+//	$user_subscription = isset( $group_user_subscriptions[$user_id] ) ? $group_user_subscriptions[$user_id] : false;
+	$user_subscription = isset( $group_user_subscriptions[$user_id] ) ? $group_user_subscriptions[$user_id] : 'dig';
 
 	return $user_subscription;
 }
@@ -1102,7 +1112,8 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	} elseif ( $action == 'sum' ) {
 		$group_user_subscriptions[ $user_id ] = 'sum';
 	} elseif ( $action == 'dig' ) {
-		$group_user_subscriptions[ $user_id ] = 'dig';
+		unset( $group_user_subscriptions[ $user_id ] );
+//		$group_user_subscriptions[ $user_id ] = 'dig';
 	} elseif ( $action == 'sub' ) {
 		$group_user_subscriptions[ $user_id ] = 'sub';
 	} elseif ( $action == 'supersub' ) {

@@ -71,7 +71,11 @@ function ass_digest_fire( $type ) {
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
 	// get all user subscription data
-	$user_subscriptions = $wpdb->get_results( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value != ''" );
+	$like1 = '%' . $wpdb->esc_like( '"' . $type . '"' ) . '%';
+
+	// Ignore empty items. Oy vey.
+	$like2 = '%' . $wpdb->esc_like( '"' . $type . '";a:0' ) . '%';
+	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value LIKE %s AND meta_value NOT LIKE %s LIMIT 50", $like1, $like2 ) );
 
 	// no subscription data? stop now!
 	if ( empty( $user_subscriptions ) ) {
@@ -199,14 +203,17 @@ function ass_digest_fire( $type ) {
 			unset( $group_activity_ids[ $group_id ] );
 		}
 
+		// update the subscriber's digest list
+
+		// reset the user's sub array removing those sent
+		unset( $group_activity_ids_array[ $type ] );
+		//$group_activity_ids_array[$type] = $group_activity_ids;
+		bp_update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
+
 		// If there's nothing to send, skip this use.
 		if ( ! $has_group_activity ) {
 			continue;
 		}
-
-
-		// reset the user's sub array removing those sent
-		$group_activity_ids_array[$type] = $group_activity_ids;
 
 		// show group summary for digest, and follow help text for weekly summary
 		if ( 'dig' == $type ) {
@@ -288,13 +295,18 @@ function ass_digest_fire( $type ) {
 				// Send out the email.
 				ass_send_multipart_email( $to, $subject, $message_plaintext, str_replace( '---', '', $message ) );
 			}
-
-			// update the subscriber's digest list
-			bp_update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
-
 		}
 
 		unset( $message, $message_plaintext, $message, $to, $userdata, $userdomain, $activity_message, $summary, $group_activity_ids_array, $group_activity_ids );
+	}
+
+	if ( ! isset( $_GET['sum'] ) ) {
+		$nonce = wp_rand();
+		update_option( 'bpges_nonce', $nonce );
+		wp_remote_get( add_query_arg( array(
+			'ass_digest_fire' => $type,
+			'nonce' => $nonce,
+		), home_url() ) );
 	}
 }
 
@@ -363,6 +375,29 @@ function ass_digest_strip_plaintext_separators( $content = '', $prop = '', $tran
 
 	return str_replace( $find, $replace, $content );
 }
+
+function ass_digest_detect_self_request() {
+	if ( empty( $_GET['ass_digest_fire'] ) || empty( $_GET['nonce'] ) ) {
+		return;
+	}
+
+	$type = wp_unslash( $_GET['ass_digest_fire'] );
+	if ( 'dig' !== $type && 'sum' !== $type ) {
+		return;
+	}
+
+	$nonce = wp_unslash( $_GET['nonce'] );
+
+	$stored = get_option( 'bpges_nonce' );
+	if ( ! $stored || $stored != $nonce ) {
+		return;
+	}
+
+	delete_option( 'bpges_nonce' );
+
+	ass_digest_fire( $type );
+}
+register_shutdown_function( 'ass_digest_detect_self_request' );
 
 // these functions are hooked in via the cron
 function ass_daily_digest_fire() {
