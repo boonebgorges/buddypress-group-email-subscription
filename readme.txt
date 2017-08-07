@@ -90,6 +90,16 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.7.2 =
+* Fix bug that could cause fatal errors when activating without BuddyPress.
+* Improve data passed to filters.
+* Fix invalid form markup.
+* Introduce new filters for disabling "Email Notice" and "Welcome Email" sections
+* Add CSS clases to HTML elements in digests.
+* Improve handling of deleted activity items when generating digests.
+* Fix some spelling errors.
+* Improve handling of default subscription level filters.
+
 = 3.7.1 =
 * Fix incorrect activity comment permalinks in digest emails.
 * Use login redirect links in digest emails, for improved navigation when not logged in.
