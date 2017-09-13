@@ -172,6 +172,9 @@ function ass_digest_fire( $type ) {
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
 
+		// Keep an unmodified copy of the activity IDs to be passed to filters.
+		$group_activity_ids_pristine = $group_activity_ids;
+
 		$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
 		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
@@ -274,6 +277,17 @@ function ass_digest_fire( $type ) {
 				// BP-specific tokens.
 				$user_message_args['usermessage'] = $body;
 				$user_message_args['poster.name'] = $userdata['user_login']; // Unused
+
+				/**
+				 * Filters the arguments passed to `ass_send_email()` when a digest is sent.
+				 *
+				 * @since 3.7.3
+				 *
+				 * @param array $user_message_args           Arguments passed to ass_send_email 'tokens' param.
+				 * @param int   $user_id                     ID of the user whose digest is currently being processed.
+				 * @param array $group_activity_ids_pristine Array of activity items in the digest.
+				 */
+				$user_message_args = apply_filters( 'bp_ges_user_digest_message_args', $user_message_args, $user_id, $group_activity_ids_pristine );
 
 				// Filters.
 				add_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
