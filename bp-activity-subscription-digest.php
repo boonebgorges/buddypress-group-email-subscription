@@ -28,6 +28,8 @@ function ass_digest_schedule_print() {
 function ass_digest_fire( $type ) {
 	global $bp, $wpdb, $groups_template, $ass_email_css;
 
+	$is_preview = isset( $_GET['sum'] );
+
 	// If safe mode isn't on, then let's set the execution time to unlimited
 	if ( ! ini_get( 'safe_mode' ) ) {
 		set_time_limit(0);
@@ -209,9 +211,11 @@ function ass_digest_fire( $type ) {
 		// update the subscriber's digest list
 
 		// reset the user's sub array removing those sent
-		unset( $group_activity_ids_array[ $type ] );
-		//$group_activity_ids_array[$type] = $group_activity_ids;
-		bp_update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
+		if ( ! $is_preview ) {
+			unset( $group_activity_ids_array[ $type ] );
+			//$group_activity_ids_array[$type] = $group_activity_ids;
+			bp_update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
+		}
 
 		// If there's nothing to send, skip this use.
 		if ( ! $has_group_activity ) {
@@ -246,7 +250,7 @@ function ass_digest_fire( $type ) {
 
 		$message .= "</div>";
 
-		if ( isset( $_GET['sum'] ) ) {
+		if ( $is_preview ) {
 			// test mode run from the browser, dont send the emails, just show them on screen using domain.com?sum=1
 			echo '<div style="background-color:white; width:75%;padding:20px 10px;">';
 			echo '<p>======================== to: <b>'.$to.'</b> ========================</p>';
