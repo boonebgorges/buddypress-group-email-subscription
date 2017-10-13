@@ -1711,6 +1711,38 @@ function ass_get_forum_type() {
 }
 
 /**
+ * Add attachment links by the GD bbPress Attachments plugin to group emails.
+ *
+ * @since 3.7.3
+ *
+ * @param  string               $content  Current email content.
+ * @param  BP_Activity_Activity $activity Current activity item.
+ * @return string
+ */
+function ass_add_gd_bbpress_attachments_to_email_content( $content, $activity ) {
+	// No GD bbPress Attachments or not a bbPress item? Stop now!
+	if ( ! function_exists( 'd4p_get_post_attachments' ) || ! in_array( $activity->type, array( 'bbp_reply_create', 'bbp_topic_create' ) ) ) {
+		return $content;
+	}
+
+	$atts = d4p_get_post_attachments( $activity->secondary_item_id );
+	if ( empty( $atts ) ) {
+		return $content;
+	}
+
+	$attachment_message = "\n\n" . __( 'This post has attachments:', 'bp-ass' );
+
+	foreach ( $atts as $attachment ) {
+		$file_url = wp_get_attachment_url( $attachment->ID );
+		$file_name = basename( get_attached_file( $attachment->ID ) );
+		$attachment_message .= sprintf( "\n<a href='%s'>%s</a>", $file_url, $file_name );
+	}
+
+	return $content . $attachment_message;
+}
+add_filter( 'bp_ass_activity_notification_content', 'ass_add_gd_bbpress_attachments_to_email_content', 100, 2 );
+
+/**
  * Determine whether user should receive a notification of their own posts
  *
  * The main purpose of the filter is so that admins can override the setting, especially
