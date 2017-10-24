@@ -114,6 +114,10 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
  * @since 2.1b2
  */
 function ass_admin_notice_form() {
+	if ( ! groups_is_user_admin( bp_loggedin_user_id(), bp_get_current_group_id() ) && ! bp_current_user_can( 'bp_moderate' ) ) {
+		return;
+	}
+
 	bp_get_template_part( 'groups/single/admin/ges-email-options' );
 }
 
