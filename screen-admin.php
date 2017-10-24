@@ -226,7 +226,7 @@ function ass_admin_notice() {
 			return;
 
 		if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
-			bp_core_add_message( __( 'The email notice was sent not sent. Please enter email content.', 'bp-ass' ), 'error' );
+			bp_core_add_message( __( 'The email notice was not sent. Please enter email content.', 'bp-ass' ), 'error' );
 		} else {
 			$group      = groups_get_current_group();
 			$group_id   = $group->id;
