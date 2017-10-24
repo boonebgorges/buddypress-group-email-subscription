@@ -114,7 +114,7 @@ add_action( 'bp_actions', 'ass_manage_all_members_email_update' );
  * @since 2.1b2
  */
 function ass_admin_notice_form() {
-	bp_get_template_part( 'groups/single/admin/email-options' );
+	bp_get_template_part( 'groups/single/admin/ges-email-options' );
 }
 
 // This function sends an email out to all group members regardless of subscription status.
