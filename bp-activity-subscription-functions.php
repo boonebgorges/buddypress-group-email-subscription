@@ -1793,3 +1793,20 @@ function ass_weekly_digest_week() {
 	elseif ( $ass_weekly_digest == 0 )
 		return __('Sunday' );
 }
+
+/**
+ * Logs BPGES actions to a debug log.
+ *
+ * @since 1.0-beta
+ */
+function bpges_log( $message ) {
+	if ( ! defined( 'BPGES_DEBUG' ) || ! BPGES_DEBUG ) {
+		return;
+	}
+
+	if ( empty( $message ) ) {
+		return;
+	}
+
+	error_log( '[' . gmdate( 'd-M-Y H:i:s' ) . '] ' . $message . "\n", 3, BPGES_DEBUG_LOG_PATH );
+}
