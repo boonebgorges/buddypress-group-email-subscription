@@ -77,7 +77,13 @@ function ass_digest_fire( $type ) {
 
 	// Ignore empty items. Oy vey.
 	$like2 = '%' . $wpdb->esc_like( '"' . $type . '";a:0' ) . '%';
-	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value LIKE %s AND meta_value NOT LIKE %s LIMIT 50", $like1, $like2 ) );
+
+	// Ignore users who have no email address.
+	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value LIKE %s AND meta_value NOT LIKE %s AND user_id NOT IN ( SELECT ID FROM {$wpdb->users} WHERE user_email = '' ) ORDER BY umeta_id DESC LIMIT 25", $like1, $like2 ) );
+
+	if ( ! $is_preview ) {
+		bpges_log( 'About to send message for the following users: ' . print_r( $user_subscriptions, true ) );
+	}
 
 	// no subscription data? stop now!
 	if ( empty( $user_subscriptions ) ) {
@@ -168,6 +174,10 @@ function ass_digest_fire( $type ) {
 
 		// email address of user
 		$to = $userdata['email'];
+		if ( empty( $to ) ) {
+			// Nothing to do.
+			continue;
+		}
 
 		$userdomain = ass_digest_get_user_domain( $user_id );
 
