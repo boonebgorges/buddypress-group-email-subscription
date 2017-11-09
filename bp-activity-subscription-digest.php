@@ -79,7 +79,7 @@ function ass_digest_fire( $type ) {
 	$like2 = '%' . $wpdb->esc_like( '"' . $type . '";a:0' ) . '%';
 
 	// Ignore users who have no email address.
-	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value LIKE %s AND meta_value NOT LIKE %s AND user_id NOT IN ( SELECT ID FROM {$wpdb->users} WHERE user_email = '' ) ORDER BY umeta_id DESC LIMIT 25", $like1, $like2 ) );
+	$user_subscriptions = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' AND meta_value LIKE %s AND meta_value NOT LIKE %s AND user_id NOT IN ( SELECT ID FROM {$wpdb->users} WHERE user_email = '' ) ORDER BY umeta_id DESC LIMIT 1", $like1, $like2 ) );
 
 	if ( ! $is_preview ) {
 		bpges_log( 'About to send message for the following users: ' . print_r( $user_subscriptions, true ) );
@@ -331,15 +331,24 @@ function ass_digest_fire( $type ) {
 	}
 
 	if ( ! $is_preview ) {
-		$nonce = wp_rand();
-		$updated = update_site_option( 'bpges_nonce', $nonce );
-		bpges_log( 'Sending async request with nonce ' . $nonce );
+		$token = wp_rand();
+		$timestamp = time();
+		$nonce = bpges_generate_nonce( $token, $timestamp );
+
+		bpges_log( 'Sending async request with nonce ' . $nonce . ' and token ' . $token );
+
 		sleep( 2 );
-		$found = wp_remote_get( add_query_arg( array(
-			'ass_digest_fire' => $type,
-			'nonce' => $nonce,
-			'action' => 'ass_digest_fire',
-		), home_url() . '/wp-admin/admin-ajax.php' ) );
+
+		$found = wp_remote_post( home_url() . '/wp-admin/admin-ajax.php', array(
+			'body' => array(
+				'ass_digest_fire' => $type,
+				'token' => $token,
+				'timestamp' => $timestamp,
+				'nonce' => $nonce,
+				'action' => 'ass_digest_fire',
+			),
+			'blocking' => false,
+		) );
 	}
 }
 
@@ -410,26 +419,34 @@ function ass_digest_strip_plaintext_separators( $content = '', $prop = '', $tran
 }
 
 function ass_digest_detect_self_request() {
-	if ( empty( $_GET['ass_digest_fire'] ) || empty( $_GET['nonce'] ) ) {
+	if ( empty( $_POST['ass_digest_fire'] ) || empty( $_POST['nonce'] ) || empty( $_POST['token'] ) || empty( $_POST['timestamp'] ) ) {
 		return;
 	}
+
 	bpges_log( 'GES: Detected self request' );
 
-	$type = wp_unslash( $_GET['ass_digest_fire'] );
+	// Don't allow timestamps older than 30 seconsd, to avoid replays.
+	$timestamp = wp_unslash( $_POST['timestamp'] );
+	$now = time();
+	if ( ( $now - $timestamp ) > 30 ) {
+		return;
+	}
+
+	$type = wp_unslash( $_POST['ass_digest_fire'] );
 	if ( 'dig' !== $type && 'sum' !== $type ) {
 		return;
 	}
 
-	$nonce = wp_unslash( $_GET['nonce'] );
+	$nonce = wp_unslash( $_POST['nonce'] );
+	$token = wp_unslash( $_POST['token'] );
 
-	$stored = get_site_option( 'bpges_nonce' );
-	bpges_log( 'GES: Detected nonce ' . $nonce );
-	if ( ! $stored || $stored != $nonce ) {
-		bpges_log( 'GES: Nonce mismatch. Expected ' . $stored );
+	bpges_log( 'GES: Detected nonce ' . $nonce . ' and token ' . $token );
+
+	$expected = bpges_generate_nonce( $token, $timestamp );
+	if ( $expected !== $nonce ) {
+		bpges_log( 'GES: Nonce mismatch. Expected ' . $expected );
 		return;
 	}
-
-	delete_site_option( 'bpges_nonce' );
 
 	bpges_log( 'GES: Firing async batch' );
 	ass_digest_fire( $type );

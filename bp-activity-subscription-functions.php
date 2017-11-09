@@ -1795,6 +1795,16 @@ function ass_weekly_digest_week() {
 }
 
 /**
+ * Generate a nonce for based on a token, for use in verifying self-requests.
+ *
+ * @param string $token
+ * @return string
+ */
+function bpges_generate_nonce( $token ) {
+	return wp_hash( $token . '-bpges', 'nonce' );
+}
+
+/**
  * Logs BPGES actions to a debug log.
  *
  * @since 1.0-beta
