@@ -55,13 +55,13 @@ h4.activity-subscription-settings-title {
 	position: absolute;
 	margin-left: 30px;
 	font-size: 11px;
-	z-index: 1;
+	z-index: 9999;
 }
 
 #groups-dir-list .group-subscription-options,
 #groups-list .group-subscription-options {
 	position: relative;
-	z-index: 1;
+	z-index: 9999;
 	right: 0;
 	text-align: left;
 }
