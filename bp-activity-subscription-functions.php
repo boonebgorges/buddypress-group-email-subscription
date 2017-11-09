@@ -1894,3 +1894,20 @@ function bpges_register_template_stack() {
 	}, 20 );
 }
 add_action( 'bp_actions', 'bpges_register_template_stack' );
+
+/*
+ * Logs BPGES actions to a debug log.
+ *
+ * @since 3.9.0
+ */
+function bpges_log( $message ) {
+	if ( ! defined( 'BPGES_DEBUG' ) || ! BPGES_DEBUG ) {
+		return;
+	}
+
+	if ( empty( $message ) ) {
+		return;
+	}
+
+	error_log( '[' . gmdate( 'd-M-Y H:i:s' ) . '] ' . $message . "\n", 3, BPGES_DEBUG_LOG_PATH );
+}
