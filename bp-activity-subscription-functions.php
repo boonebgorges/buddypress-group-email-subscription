@@ -1800,8 +1800,8 @@ function ass_weekly_digest_week() {
  * @param string $token
  * @return string
  */
-function bpges_generate_nonce( $token ) {
-	return wp_hash( $token . '-bpges', 'nonce' );
+function bpges_generate_nonce( $token, $timestamp ) {
+	return wp_hash( $token . '|' . $timestamp, 'nonce' );
 }
 
 /**
