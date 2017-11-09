@@ -312,6 +312,8 @@ function ass_digest_fire( $type ) {
 					'tokens'  => $user_message_args
 				) );
 
+				bpges_log( 'Sent GES digest for user ' . $user_id );
+
 				// Remove filter.
 				remove_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
 				remove_filter( 'bp_email_get_property', 'ass_digest_strip_plaintext_separators', 1, 3 );
@@ -411,6 +413,7 @@ function ass_digest_detect_self_request() {
 	if ( empty( $_GET['ass_digest_fire'] ) || empty( $_GET['nonce'] ) ) {
 		return;
 	}
+	bpges_log( 'GES: Detected self request' );
 
 	$type = wp_unslash( $_GET['ass_digest_fire'] );
 	if ( 'dig' !== $type && 'sum' !== $type ) {
