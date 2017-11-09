@@ -318,13 +318,16 @@ function ass_digest_fire( $type ) {
 		unset( $message, $message_plaintext, $message, $to, $userdata, $userdomain, $activity_message, $summary, $group_activity_ids_array, $group_activity_ids );
 	}
 
-	if ( ! isset( $_GET['sum'] ) ) {
+	if ( ! $is_preview ) {
 		$nonce = wp_rand();
-		update_option( 'bpges_nonce', $nonce );
-		wp_remote_get( add_query_arg( array(
+		$updated = update_site_option( 'bpges_nonce', $nonce );
+		bpges_log( 'Sending async request with nonce ' . $nonce );
+		sleep( 2 );
+		$found = wp_remote_get( add_query_arg( array(
 			'ass_digest_fire' => $type,
 			'nonce' => $nonce,
-		), home_url() ) );
+			'action' => 'ass_digest_fire',
+		), home_url() . '/wp-admin/admin-ajax.php' ) );
 	}
 }
 
@@ -406,16 +409,20 @@ function ass_digest_detect_self_request() {
 
 	$nonce = wp_unslash( $_GET['nonce'] );
 
-	$stored = get_option( 'bpges_nonce' );
+	$stored = get_site_option( 'bpges_nonce' );
+	bpges_log( 'GES: Detected nonce ' . $nonce );
 	if ( ! $stored || $stored != $nonce ) {
+		bpges_log( 'GES: Nonce mismatch. Expected ' . $stored );
 		return;
 	}
 
-	delete_option( 'bpges_nonce' );
+	delete_site_option( 'bpges_nonce' );
 
+	bpges_log( 'GES: Firing async batch' );
 	ass_digest_fire( $type );
+	die();
 }
-register_shutdown_function( 'ass_digest_detect_self_request' );
+add_action( 'wp_ajax_nopriv_ass_digest_fire', 'ass_digest_detect_self_request' );
 
 // these functions are hooked in via the cron
 function ass_daily_digest_fire() {
