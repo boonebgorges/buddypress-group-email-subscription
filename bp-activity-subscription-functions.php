@@ -242,7 +242,7 @@ To view or reply, log in and go to:
 	}
 
 	// get subscribed users for the group
-	$subscribed_users = groups_get_groupmeta( $r['group_id'], 'ass_subscribed_users' );
+	$subscribed_users = ass_get_subscriptions_for_group( $r['group_id'] );
 
 	// this is used if a user is subscribed to the "Weekly Summary" option.
 	// the weekly summary shouldn't record everything, so we have a filter:
@@ -1067,6 +1067,28 @@ function ass_get_login_redirect_url( $url = '', $context = '' ) {
 //	!GROUP SUBSCRIPTION
 //
 
+/**
+ * Get a list of user subscriptions for a group.
+ *
+ * @since 3.8.0
+ *
+ * @param int $group_id
+ * @return array
+ */
+function ass_get_subscriptions_for_group( $group_id ) {
+	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
+
+	/**
+	 * Filter's the group's user subscriptions.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param array $group_user_subscriptions Keys are user IDs, values are subscription levels.
+	 * @param int   $group_id                 ID of the group.
+	 */
+	return apply_filters( 'bp_ges_group_user_subscriptions', $group_user_subscriptions, $group_id );
+}
+
 
 // returns the subscription status of a user in a group
 function ass_get_group_subscription_status( $user_id, $group_id ) {
@@ -1078,7 +1100,7 @@ function ass_get_group_subscription_status( $user_id, $group_id ) {
 	if ( !$group_id )
 		$group_id = bp_get_current_group_id();
 
-	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
+	$group_user_subscriptions = ass_get_subscriptions_for_group( $group_id );
 
 	$user_subscription = isset( $group_user_subscriptions[$user_id] ) ? $group_user_subscriptions[$user_id] : false;
 
