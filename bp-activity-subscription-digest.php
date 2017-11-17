@@ -460,7 +460,17 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 		//$group_message .= '<pre>'. $item->id .'</pre>';
 	}
 
-	return apply_filters( 'ass_digest_format_item_group', $group_message, $group_id, $type );
+	/**
+	 * Filters the markup for a group's digest section.
+	 *
+	 * @since 3.8.0 Introduced $activity_ids parameter.
+	 *
+	 * @param string $group_message Markup.
+	 * @param int    $group_id      ID of the group.
+	 * @param string $type          Digest type. 'dig' or 'sum'.
+	 * @param array  $activity_ids  Array of IDs included in this group's digest.
+	 */
+	return apply_filters( 'ass_digest_format_item_group', $group_message, $group_id, $type, $activity_ids );
 }
 
 
