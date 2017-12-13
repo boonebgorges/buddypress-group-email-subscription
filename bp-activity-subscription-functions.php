@@ -1056,11 +1056,24 @@ function ass_get_login_redirect_url( $url = '', $context = '' ) {
 		'redirect_to' => apply_filters( 'ass_login_redirect_to', urlencode( $url ), $context )
 	);
 
-	$login_redirect_url = add_query_arg(
-		$query_args,
-		apply_filters( 'ass_login_url', wp_login_url() )
-	);
+	/**
+	 * Filters the login redirect URL, before the BPGES query args are added.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param string $login_url
+	 */
+	$login_redirect_url = apply_filters( 'ass_login_url', wp_login_url() );
 
+	$login_redirect_url = add_query_arg( $query_args, $login_redirect_url );
+
+	/**
+	 * Filters the login redirect URL.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param string $login_redirect_url
+	 */
 	return apply_filters( 'bp_ges_login_redirect_url', $login_redirect_url );
 }
 
