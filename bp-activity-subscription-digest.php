@@ -174,6 +174,8 @@ function ass_digest_fire( $type ) {
 		$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
 		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
+		$default_stale_activity_period = 'dig' === $type ? ( 3 * DAY_IN_SECONDS ) : ( 3 * WEEK_IN_SECONDS );
+
 		// loop through each group for this user
 		$has_group_activity = false;
 		foreach ( $group_activity_ids as $group_id => $activity_ids ) {
@@ -181,6 +183,31 @@ function ass_digest_fire( $type ) {
 			// intersect against our master activity IDs array
 			$activity_ids = array_intersect_key( array_flip( $activity_ids ), $bp->ass->activity_ids );
 			$activity_ids = array_keys( $activity_ids );
+
+			// Discard activity items that are too old.
+			$activity_ids_raw = $activity_ids;
+			$activity_ids = array();
+
+			foreach ( $activity_ids_raw as $activity_id_raw ) {
+				/**
+				 * Filters the "staleness" period for an activity item, after which it is discarded and not included in digests.
+				 *
+				 * @since 3.8.0
+				 *
+				 * @param int    $stale_activity_period Time period, in seconds.
+				 * @param object $user                  User object.
+				 * @param int    $activity_id           Activity ID.
+				 */
+				$stale_activity_period = apply_filters( 'bp_ges_stale_activity_period', $default_stale_activity_period, $user, $activity_id );
+
+				$activity_item = $bp->ass->items[ $activity_id_raw ];
+				if ( ( strtotime( $activity_item->date_recorded ) - time() ) > $stale_activity_period ) {
+					continue;
+				}
+
+				$activity_ids[] = $activity_id_raw;
+			}
+
 
 			// Activities could have been deleted since being recorded for digest emails.
 			if ( empty( $activity_ids ) ) {
