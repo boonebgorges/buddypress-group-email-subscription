@@ -1784,3 +1784,19 @@ function ass_weekly_digest_week() {
 	elseif ( $ass_weekly_digest == 0 )
 		return __('Sunday' );
 }
+
+/**
+ * Register our theme template directory with BuddyPress.
+ *
+ * @since 3.8.0
+ */
+function bpges_register_template_stack() {
+	if ( ! bp_is_group_admin_page() ) {
+		return;
+	}
+
+	bp_register_template_stack( function() {
+		return plugin_dir_path( __FILE__ ) . '/templates/';
+	}, 20 );
+}
+add_action( 'bp_actions', 'bpges_register_template_stack' );
