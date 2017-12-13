@@ -1056,10 +1056,12 @@ function ass_get_login_redirect_url( $url = '', $context = '' ) {
 		'redirect_to' => apply_filters( 'ass_login_redirect_to', urlencode( $url ), $context )
 	);
 
-	return add_query_arg(
+	$login_redirect_url = add_query_arg(
 		$query_args,
 		apply_filters( 'ass_login_url', wp_login_url() )
 	);
+
+	return apply_filters( 'bp_ges_login_redirect_url', $login_redirect_url );
 }
 
 
