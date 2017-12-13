@@ -1056,24 +1056,11 @@ function ass_get_login_redirect_url( $url = '', $context = '' ) {
 		'redirect_to' => apply_filters( 'ass_login_redirect_to', urlencode( $url ), $context )
 	);
 
-	/**
-	 * Filters the login redirect URL, before the BPGES query args are added.
-	 *
-	 * @since 3.4.0
-	 *
-	 * @param string $login_url
-	 */
-	$login_redirect_url = apply_filters( 'ass_login_url', wp_login_url() );
+	$login_redirect_url = add_query_arg(
+		$query_args,
+		apply_filters( 'ass_login_url', wp_login_url() )
+	);
 
-	$login_redirect_url = add_query_arg( $query_args, $login_redirect_url );
-
-	/**
-	 * Filters the login redirect URL.
-	 *
-	 * @since 3.8.0
-	 *
-	 * @param string $login_redirect_url
-	 */
 	return apply_filters( 'bp_ges_login_redirect_url', $login_redirect_url );
 }
 
@@ -1819,3 +1806,19 @@ function ass_weekly_digest_week() {
 	elseif ( $ass_weekly_digest == 0 )
 		return __('Sunday' );
 }
+
+/**
+ * Register our theme template directory with BuddyPress.
+ *
+ * @since 3.8.0
+ */
+function bpges_register_template_stack() {
+	if ( ! bp_is_group_admin_page() ) {
+		return;
+	}
+
+	bp_register_template_stack( function() {
+		return plugin_dir_path( __FILE__ ) . '/templates/';
+	}, 20 );
+}
+add_action( 'bp_actions', 'bpges_register_template_stack' );
