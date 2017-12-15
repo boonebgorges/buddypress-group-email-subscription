@@ -282,6 +282,18 @@ function ass_digest_fire( $type ) {
 				 */
 				$user_message_args = apply_filters( 'bp_ges_user_digest_message_args', $user_message_args, $user_id, $group_activity_ids_pristine );
 
+				/**
+				 * Filter to allow plugins to stop the email from being sent.
+				 *
+				 * @since 3.8.0
+				 *
+				 * @param bool  true               Whether or not to send the email.
+				 * @param array $user_message_args Arguments passed to ass_send_email 'tokens' param.
+				 */
+				if ( ! apply_filters( 'bp_ges_send_digest_to_user', true, $user_message_args ) ) {
+					continue;
+				}
+
 				// Filters.
 				add_filter( 'bp_email_get_salutation', 'ass_digest_filter_salutation' );
 				add_filter( 'bp_email_get_property', 'ass_digest_strip_plaintext_separators', 1, 3 );
