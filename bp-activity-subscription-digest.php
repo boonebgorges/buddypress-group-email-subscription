@@ -165,6 +165,10 @@ function ass_digest_fire( $type ) {
 
 		$userdomain = ass_digest_get_user_domain( $user_id );
 
+		// if $group_activity_ids changes due to filtering, use this to compare in order
+		// only to remove the activity records that are being sent (and leave the rest)
+		$group_activity_ids_original = $group_activity_ids;
+
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
 
@@ -200,6 +204,7 @@ function ass_digest_fire( $type ) {
 
 			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
 			unset( $group_activity_ids[ $group_id ] );
+			unset( $group_activity_ids_original[ $group_id ] );
 		}
 
 		// If there's nothing to send, skip this use.
@@ -207,9 +212,9 @@ function ass_digest_fire( $type ) {
 			continue;
 		}
 
-
 		// reset the user's sub array removing those sent
-		$group_activity_ids_array[$type] = $group_activity_ids;
+
+		$group_activity_ids_array[$type] = array_diff( $group_activity_ids_original, $group_activity_ids );
 
 		// show group summary for digest, and follow help text for weekly summary
 		if ( 'dig' == $type ) {
