@@ -174,6 +174,8 @@ function ass_digest_fire( $type ) {
 		$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
 		$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
+		$sent_activity_ids = array();
+
 		// loop through each group for this user
 		$has_group_activity = false;
 		foreach ( $group_activity_ids as $group_id => $activity_ids ) {
@@ -199,7 +201,8 @@ function ass_digest_fire( $type ) {
 			}
 
 			$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
-			unset( $group_activity_ids[ $group_id ] );
+
+			$sent_activity_ids[ $group_id ] = $activity_ids;
 		}
 
 		// If there's nothing to send, skip this use.
@@ -207,9 +210,17 @@ function ass_digest_fire( $type ) {
 			continue;
 		}
 
-
 		// reset the user's sub array removing those sent
-		$group_activity_ids_array[$type] = $group_activity_ids;
+		$unsent_groups = array();
+		foreach ( $group_activity_ids as $queued_group_id => $queued_activity_ids ) {
+			if ( isset( $sent_activity_ids[ $queued_group_id ] ) ) {
+				$unsent_ids = array_diff( $queued_activity_ids, $sent_activity_ids[ $queued_group_id ] );
+				if ( $unsent_ids ) {
+					$unsent_groups[ $queued_group_id ] = $unsent_ids;
+				}
+			}
+		}
+		$group_activity_ids_array[$type] = $unsent_groups;
 
 		// show group summary for digest, and follow help text for weekly summary
 		if ( 'dig' == $type ) {
