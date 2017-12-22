@@ -177,7 +177,7 @@ If you feel this service is being misused please speak to the website administra
 
 			$email_tokens = array(
 				'ges.subject'  => stripslashes( strip_tags( $subject ) ),
-				'usermessage'  => $message,
+				'usermessage'  => $notice,
 				'group.link'   => sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name ),
 				'group.name'   => $group_name,
 				'group.url'    => esc_url( $group_link ),
