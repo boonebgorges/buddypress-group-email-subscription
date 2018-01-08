@@ -165,6 +165,9 @@ function ass_digest_fire( $type ) {
 
 		$userdomain = ass_digest_get_user_domain( $user_id );
 
+		// Keep an unfiltered copy of the activity IDs to be compared with sent items.
+		$group_activity_ids_unfiltered = $group_activity_ids;
+
 		// filter the list - can be used to sort the groups
 		$group_activity_ids = apply_filters( 'ass_digest_group_activity_ids', @$group_activity_ids );
 
@@ -212,7 +215,7 @@ function ass_digest_fire( $type ) {
 
 		// reset the user's sub array removing those sent
 		$unsent_groups = array();
-		foreach ( $group_activity_ids as $queued_group_id => $queued_activity_ids ) {
+		foreach ( $group_activity_ids_unfiltered as $queued_group_id => $queued_activity_ids ) {
 			if ( isset( $sent_activity_ids[ $queued_group_id ] ) ) {
 				$unsent_ids = array_diff( $queued_activity_ids, $sent_activity_ids[ $queued_group_id ] );
 				if ( $unsent_ids ) {

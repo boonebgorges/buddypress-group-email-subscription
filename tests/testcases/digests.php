@@ -154,6 +154,77 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		//$mailer = $GLOBALS['ges_mockmailer'];
 	}
 
+	/**
+	 * @group issue-129
+	 */
+	public function test_only_sent_items_should_be_removed_from_digest_queue() {
+		$u1 = $this->factory->user->create();
+		$u2 = $this->factory->user->create();
+
+		$g1 = $this->factory->group->create( array( 'creator_id' => $u1 ) );
+		$g2 = $this->factory->group->create( array( 'creator_id' => $u1 ) );
+
+		$a1 = $this->factory->activity->create( array(
+			'type'      => 'activity_update',
+			'item_id'   => $g1,
+			'user_id'   => $u1,
+			'component' => 'groups',
+			'action'    => 'Foo posted an activity update in the group Bar',
+		) );
+
+		$a2 = $this->factory->activity->create( array(
+			'type'      => 'activity_update',
+			'item_id'   => $g1,
+			'user_id'   => $u1,
+			'component' => 'groups',
+			'action'    => 'Foo posted an activity update in the group Bar',
+		) );
+
+		$a3 = $this->factory->activity->create( array(
+			'type'      => 'activity_update',
+			'item_id'   => $g2,
+			'user_id'   => $u1,
+			'component' => 'groups',
+			'action'    => 'Foo posted an activity update in the group Bar',
+		) );
+
+		$a4 = $this->factory->activity->create( array(
+			'type'      => 'activity_update',
+			'item_id'   => $g2,
+			'user_id'   => $u1,
+			'component' => 'groups',
+			'action'    => 'Foo posted an activity update in the group Bar',
+		) );
+
+		ass_digest_record_activity( $a1, $u2, $g1, 'dig' );
+		ass_digest_record_activity( $a2, $u2, $g1, 'dig' );
+		ass_digest_record_activity( $a3, $u2, $g2, 'dig' );
+		ass_digest_record_activity( $a4, $u2, $g2, 'dig' );
+
+		$callback = function( $activity_ids ) use ( $a1, $a3, $g1, $g2 ) {
+			return array(
+				$g1 => array(
+					$a1,
+				),
+				$g2 => array(
+					$a3,
+				),
+			);
+		};
+
+		add_filter( 'ass_digest_group_activity_ids', $callback );
+		ass_digest_fire( 'dig' );
+		remove_filter( 'ass_digest_group_activity_ids', $callback );
+
+		$saved = bp_get_user_meta( $u2, 'ass_digest_items', true );
+
+		$expected_g1 = array( $a2 );
+		$expected_g2 = array( $a4 );
+
+		$this->assertEqualSets( $expected_g1, $saved['dig'][ $g1 ] );
+		$this->assertEqualSets( $expected_g2, $saved['dig'][ $g2 ] );
+	}
+
 	public function use_mockmailer() {
 		return 'GES_Mock_Mailer';
 	}
