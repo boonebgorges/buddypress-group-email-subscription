@@ -34,9 +34,9 @@ function ass_loader() {
 	} else {
 		$older_version_notice = sprintf( __( "Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  If you are still using BuddyPress 1.2 and you don't plan on upgrading, use <a href='%s'>BP Group Email Subscription v3.6.2 instead</a>.", 'bp-ass' ), 'https://downloads.wordpress.org/plugin/buddypress-group-email-subscription.3.6.1.zip' );
 
-		add_action( 'admin_notices', create_function( '', "
-			echo '<div class=\"error\"><p>" . $older_version_notice . "</p></div>';
-		" ) );
+		add_action( 'admin_notices', function() use ( $older_version_notice ) {
+			echo '<div class="error"><p>' . $older_version_notice . '</p></div>';
+		} );
 	}
 }
 add_action( 'bp_include', 'ass_loader' );
