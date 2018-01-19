@@ -650,7 +650,7 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 
 	// setup plain-text body
 	$message_plaintext = addslashes( $message_plaintext );
-	add_action( 'phpmailer_init', function( $phpmailer ) {
+	add_action( 'phpmailer_init', function( $phpmailer ) use ( $message_plaintext ) {
 		$phpmailer->AltBody = "'" . $message_plaintext . "'";
 	} );
 
