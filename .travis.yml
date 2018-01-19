@@ -10,8 +10,8 @@ matrix:
     - php: 7.2
 
 env:
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=1
+    - WP_VERSION=latest WP_MULTISITE=0 BP_VERSION=master
+    - WP_VERSION=latest WP_MULTISITE=1 BP_VERSION=master
 #    - WP_VERSION=3.8 WP_MULTISITE=0
 #    - WP_VERSION=3.8 WP_MULTISITE=1
 
