@@ -343,12 +343,14 @@ To view or reply, log in and go to:
 		 * @param int    $user_id             ID of the user.
 		 * @param string $group_status        Group subscription status for the current user.
 		 */
-		$add_to_digest_queue = apply_filters( 'bpges_add_to_digest_queue_for_user', $add_to_digest_queue, $activity_obj, $user_id, $group_status );
+		$add_to_digest_queue = apply_filters( 'bp_ges_add_to_digest_queue_for_user', $add_to_digest_queue, $activity_obj, $user_id, $group_status );
+
+		$raw_group_status = $group_status;
 
 		// Assemble variables for use in building immediate notification, if necessary.
 		if ( $send_immediately ) {
 			// Self-notification email for bbPress posts
-			if ( $self_notify === true ) {
+			if ( true === $self_notify ) {
 				$group_status = 'self_notify';
 
 				// notification settings link
@@ -441,7 +443,7 @@ To view or reply, log in and go to:
 
 		// Record in digest queue, if necessary.
 		if ( $add_to_digest_queue ) {
-			ass_digest_record_activity( $r['activity_id'], $user_id, $r['group_id'], $group_status );
+			ass_digest_record_activity( $r['activity_id'], $user_id, $r['group_id'], $raw_group_status );
 		}
 	}
 }
