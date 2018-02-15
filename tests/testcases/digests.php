@@ -24,6 +24,20 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		parent::tearDown();
 	}
 
+	public function test_stale_item_daily_digest() {
+		$time = time();
+
+		$a1 = $this->factory->activity->create( array(
+			'recorded_time' => date( 'Y-m-d H:i:s', $time - ( 2 * DAY_IN_SECONDS ) ),
+		) );
+		$a2 = $this->factory->activity->create( array(
+			'recorded_time' => date( 'Y-m-d H:i:s', $time - ( 4 * DAY_IN_SECONDS ) ),
+		) );
+
+		$this->assertTrue( bp_ges_activity_is_valid_for_digest( $a1, 'dig', null ) );
+		$this->assertFalse( bp_ges_activity_is_valid_for_digest( $a2, 'dig', null ) );
+	}
+
 	/**
 	 * @group new-digests
 	 */
