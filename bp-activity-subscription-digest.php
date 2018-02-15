@@ -182,6 +182,15 @@ function ass_digest_fire( $type ) {
 			$activity_ids = array_intersect_key( array_flip( $activity_ids ), $bp->ass->activity_ids );
 			$activity_ids = array_keys( $activity_ids );
 
+			// Discard activity items that are invalid.
+			$activity_ids_raw = $activity_ids;
+			$activity_ids = array();
+			foreach ( $activity_ids_raw as $activity_id_raw ) {
+				if ( bp_ges_activity_is_valid_for_digest( $activity_id_raw, $type, $user->user_id ) ) {
+					$activity_ids[] = $activity_id_raw;
+				}
+			}
+
 			// Activities could have been deleted since being recorded for digest emails.
 			if ( empty( $activity_ids ) ) {
 				continue;
@@ -882,3 +891,55 @@ function ass_digest_support_wp_better_emails( $message, $message_pre_html_wrap )
     return $message;
 }
 add_filter( 'ass_digest_message_html', 'ass_digest_support_wp_better_emails', 10, 2 );
+
+/**
+ * Checks whether an item is valid to send in a digest for a user.
+ *
+ * @since 3.8.0
+ *
+ * @param
+ */
+function bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_id = null ) {
+	/*
+	 * By default, an activity item is "stale" if it should have sent more than
+	 * three digest-periods ago.
+	 */
+	$is_stale = false;
+	$default_stale_activity_period = 'dig' === $digest_type ? ( 3 * DAY_IN_SECONDS ) : ( 3 * WEEK_IN_SECONDS );
+
+	/**
+	 * Filters the "staleness" period for an activity item, after which it is discarded and not included in digests.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param int    $stale_activity_period Time period, in seconds.
+	 * @param int    $activity_id           Activity ID.
+	 * @param string $digest_type           Digest type. 'dig' or 'sum'.
+	 * @param int    $user_id               User ID.
+	 */
+	$stale_activity_period = apply_filters( 'bp_ges_stale_activity_period', $default_stale_activity_period, $activity_id, $digest_type, $user_id );
+
+	if ( isset( buddypress()->ass->items[ $activity_id ] ) ) {
+		$activity_item = buddypress()->ass->items[ $activity_id ];
+	} else {
+		$activity_item = new BP_Activity_Activity( $activity_id );
+	}
+
+	if ( ( time() - strtotime( $activity_item->date_recorded ) ) > $stale_activity_period ) {
+		$is_stale = true;
+	}
+
+	$is_valid = ! $is_stale;
+
+	/**
+	 * Filters whether an activity item should be considered valid for a digest.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param bool   $is_valid    Whether the activity item is valid.
+	 * @param int    $activity_id Activity ID.
+	 * @param string $digest_type Digest type. 'dig' or 'sum'.
+	 * @param int    $user_id     User ID.
+	 */
+	return apply_filters( 'bp_ges_activity_is_valid_for_digest', $is_valid, $activity_id, $digest_type, $user_id );
+}
