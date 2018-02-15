@@ -915,7 +915,7 @@ function bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_
 	 * @param string $digest_type           Digest type. 'dig' or 'sum'.
 	 * @param int    $user_id               User ID.
 	 */
-	$stale_activity_period = apply_filters( 'bp_ges_stale_activity_period', $default_stale_activity_period, $activity_id, $user_id );
+	$stale_activity_period = apply_filters( 'bp_ges_stale_activity_period', $default_stale_activity_period, $activity_id, $digest_type, $user_id );
 
 	if ( isset( buddypress()->ass->items[ $activity_id ] ) ) {
 		$activity_item = buddypress()->ass->items[ $activity_id ];
