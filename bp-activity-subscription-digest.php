@@ -230,6 +230,9 @@ function ass_digest_fire( $type ) {
 				if ( $unsent_ids ) {
 					$unsent_groups[ $queued_group_id ] = $unsent_ids;
 				}
+			} else {
+				// No items from this group were sent, so all get requeued.
+				$unsent_groups[ $queued_group_id ] = $queued_activity_ids;
 			}
 		}
 		$group_activity_ids_array[$type] = $unsent_groups;
