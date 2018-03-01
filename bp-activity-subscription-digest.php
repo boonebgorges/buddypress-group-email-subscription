@@ -274,8 +274,9 @@ function ass_digest_fire( $type ) {
 		 * @param int    $user_id            ID of the user whose digest is currently being processed.
 		 * @param array  $group_activity_ids Array of activity items in the digest.
 		 * @param string $message            Message body.
+		 * @param string $type               Digest type. 'dig' or 'sum'.
 		 */
-		$send = apply_filters( 'bp_ges_send_digest_to_user', true, $user_id, $group_activity_ids, $message );
+		$send = apply_filters( 'bp_ges_send_digest_to_user', true, $user_id, $group_activity_ids, $message, $type );
 		if ( ! $send ) {
 			continue;
 		}
