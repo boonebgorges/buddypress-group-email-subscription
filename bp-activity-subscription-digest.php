@@ -239,6 +239,21 @@ function ass_digest_fire( $type ) {
 
 		$message .= "</div>";
 
+		/**
+		 * Filter to allow plugins to stop the email from being sent.
+		 *
+		 * @since 3.8.0
+		 *
+		 * @param bool   true                Whether or not to send the email.
+		 * @param int    $user_id            ID of the user whose digest is currently being processed.
+		 * @param array  $group_activity_ids Array of activity items in the digest.
+		 * @param string $message            Message body.
+		 */
+		$send = apply_filters( 'bp_ges_send_digest_to_user', true, $user_id, $group_activity_ids, $message );
+		if ( ! $send ) {
+			continue;
+		}
+
 		if ( isset( $_GET['sum'] ) ) {
 			// test mode run from the browser, dont send the emails, just show them on screen using domain.com?sum=1
 			echo '<div style="background-color:white; width:75%;padding:20px 10px;">';
