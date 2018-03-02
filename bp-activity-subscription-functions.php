@@ -1197,14 +1197,58 @@ function ass_group_ajax_callback() {
 }
 add_action( 'wp_ajax_ass_group_ajax', 'ass_group_ajax_callback' );
 
+/** GROUP LEAVE/REMOVAL EVENTS ***********************************************/
 
-// if the user leaves the group or if they are removed by an admin, delete their subscription status
+/**
+ * No longer used.
+ *
+ * @param int $group_id ID of the group.
+ * @param int $user_id  ID of the user.
+ */
 function ass_unsubscribe_on_leave( $group_id, $user_id ){
 	ass_group_subscription( 'delete', $user_id, $group_id );
 }
-add_action( 'groups_leave_group', 'ass_unsubscribe_on_leave', 100, 2 );
-add_action( 'groups_remove_member', 'ass_unsubscribe_on_leave', 100, 2 );
 
+/**
+ * Remove a user's subscription level after a 'remove' action.
+ *
+ * @since 3.8.0
+ *
+ * @param BP_Groups_Member $membership
+ */
+function bpges_unsubscribe_on_membership_remove( BP_Groups_Member $membership ) {
+	ass_group_subscription( 'delete', $membership->user_id, $membership->group_id );
+}
+add_action( 'groups_member_before_remove', 'bpges_unsubscribe_on_membership_remove' );
+
+/**
+ * Remove a user's subscription level after a 'delete' action.
+ *
+ * @since 3.8.0
+ *
+ * @param int $user_id  ID of the user.
+ * @param int $group_id ID of the group.
+ */
+function bpges_unsubscribe_on_membership_delete( $user_id, $group_id ) {
+	ass_group_subscription( 'delete', $user_id, $group_id );
+}
+add_action( 'bp_groups_member_before_delete', 'bpges_unsubscribe_on_membership_delete', 10, 2 );
+
+/**
+ * Remove a user's subscription level after a 'ban' action.
+ *
+ * @since 3.8.0
+ *
+ * @param BP_Groups_Member $membership
+ */
+function bpges_unsubscribe_on_membership_ban( BP_Groups_Member $membership ) {
+	if ( ! $membership->is_banned ) {
+		return;
+	}
+
+	ass_group_subscription( 'delete', $membership->user_id, $membership->group_id );
+}
+add_action( 'groups_member_before_save', 'bpges_unsubscribe_on_membership_ban' );
 
 
 //
