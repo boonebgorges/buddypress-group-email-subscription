@@ -1223,6 +1223,11 @@ function ass_set_default_subscription( $groups_member ){
 	if ( !$groups_member->is_confirmed )
 		return;
 
+	// If the member is banned, don't add.
+	if ( $groups_member->is_banned ) {
+		return;
+	}
+
 	$default_gsub = ass_get_default_subscription( $groups_member->group_id );
 
 	if ( $default_gsub ) {
