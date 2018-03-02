@@ -1,152 +1,152 @@
-# Copyright (C) 2016 BuddyPress Group Email Subscription
+# Copyright (C) 2018 BuddyPress Group Email Subscription
 # This file is distributed under the same license as the BuddyPress Group Email Subscription package.
 msgid ""
 msgstr ""
-"Project-Id-Version: BuddyPress Group Email Subscription 3.7.0\n"
+"Project-Id-Version: BuddyPress Group Email Subscription 3.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-"
 "email-subscription\n"
-"POT-Creation-Date: 2016-12-14 18:06:58+00:00\n"
+"POT-Creation-Date: 2018-03-02 18:56:09+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2018-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: admin.php:17
+#: admin.php:25
 msgid "BP Group Email Options"
 msgstr ""
 
-#: admin.php:22
+#: admin.php:30
 msgid "Group Email Options"
 msgstr ""
 
-#: admin.php:47
+#: admin.php:56
 msgid "Settings saved."
 msgstr ""
 
-#: admin.php:65
+#: admin.php:74
 msgid "Group Email Subscription Settings"
 msgstr ""
 
-#: admin.php:70
+#: admin.php:79
 msgid "Digests & Summaries"
 msgstr ""
 
-#: admin.php:72
+#: admin.php:81
 msgid ""
 "View queued digest items</a></b> (in new window)<br>As admin, you can see "
 "what is currently in the email queue by adding ?sum=1 to your url. This will "
 "not fire the digest, it will just show you what is waiting to be sent."
 msgstr ""
 
-#: admin.php:76
+#: admin.php:85
 msgid "<strong>Daily Digests</strong> should be sent at this time:"
 msgstr ""
 
-#: admin.php:93
+#: admin.php:102
 msgid "<strong>Weekly Summaries</strong> should be sent on:"
 msgstr ""
 
-#: admin.php:97 admin.php:108 bp-activity-subscription-functions.php:1715
+#: admin.php:106 admin.php:117 bp-activity-subscription-functions.php:1867
 msgid "Monday"
 msgstr ""
 
-#: admin.php:98 admin.php:108 bp-activity-subscription-functions.php:1717
+#: admin.php:107 admin.php:117 bp-activity-subscription-functions.php:1869
 msgid "Tuesday"
 msgstr ""
 
-#: admin.php:99 admin.php:108 bp-activity-subscription-functions.php:1719
+#: admin.php:108 admin.php:117 bp-activity-subscription-functions.php:1871
 msgid "Wednesday"
 msgstr ""
 
-#: admin.php:100 admin.php:108 bp-activity-subscription-functions.php:1721
+#: admin.php:109 admin.php:117 bp-activity-subscription-functions.php:1873
 msgid "Thursday"
 msgstr ""
 
-#: admin.php:101 admin.php:108 bp-activity-subscription-functions.php:1723
+#: admin.php:110 admin.php:117 bp-activity-subscription-functions.php:1875
 msgid "Friday"
 msgstr ""
 
-#: admin.php:102 admin.php:108 bp-activity-subscription-functions.php:1725
+#: admin.php:111 admin.php:117 bp-activity-subscription-functions.php:1877
 msgid "Saturday"
 msgstr ""
 
-#: admin.php:103 admin.php:108 bp-activity-subscription-functions.php:1727
+#: admin.php:112 admin.php:117 bp-activity-subscription-functions.php:1879
 msgid "Sunday"
 msgstr ""
 
-#: admin.php:108
+#: admin.php:117
 msgid ""
 "The server timezone is %s (%s); the current server time is %s (%s); and the "
 "day is %s."
 msgstr ""
 
-#: admin.php:112
+#: admin.php:121
 msgid "Global Unsubscribe Link"
 msgstr ""
 
-#: admin.php:113
+#: admin.php:122
 msgid ""
 "Add a link in the emails and on the notifications settings page allowing "
 "users to unsubscribe from all their groups at once:"
 msgstr ""
 
-#: admin.php:115 admin.php:124 admin.php:129
+#: admin.php:124 admin.php:133 admin.php:138
 msgid "yes"
 msgstr ""
 
-#: admin.php:116 admin.php:125 admin.php:130
+#: admin.php:125 admin.php:134 admin.php:139
 msgid "no"
 msgstr ""
 
-#: admin.php:121
+#: admin.php:130
 msgid "Group Admin Abilities"
 msgstr ""
 
-#: admin.php:122
+#: admin.php:131
 msgid ""
 "Allow group admins and mods to change members' email subscription settings: "
 msgstr ""
 
-#: admin.php:127
+#: admin.php:136
 msgid ""
 "Allow group admins to override subscription settings and send an email to "
 "everyone in their group: "
 msgstr ""
 
-#: admin.php:134
+#: admin.php:143
 msgid "Spam Prevention"
 msgstr ""
 
-#: admin.php:135
+#: admin.php:144
 msgid ""
 "To help protect against spam, you may wish to require a user to have been a "
 "member of the site for a certain amount of days before any group updates are "
 "emailed to the other group members. This is disabled by default."
 msgstr ""
 
-#: admin.php:136
+#: admin.php:145
 msgid "Member must be registered for"
 msgstr ""
 
-#: admin.php:136
+#: admin.php:145
 msgid "days"
 msgstr ""
 
-#: admin.php:140 screen-notifications.php:57
+#: admin.php:149 screen-notifications.php:57
 msgid "Save Settings"
 msgstr ""
 
-#: admin.php:147
+#: admin.php:156
 msgid "If you enjoy using this plugin %s please rate it %s."
 msgstr ""
 
-#: admin.php:148
+#: admin.php:157
 msgid "Please make a donation to the team to support ongoing development."
 msgstr ""
 
-#: admin.php:288
+#: admin.php:297
 msgid ""
 "This email is handled by the Group Email Subscription plugin and uses "
 "customized tokens.  <a target=\"_blank\" href=\"%s\">Learn more about GES "
@@ -159,93 +159,89 @@ msgid ""
 "digest of activity in some of your groups on %s."
 msgstr ""
 
-#: bp-activity-subscription-digest.php:171
+#: bp-activity-subscription-digest.php:177
 msgid "at"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:187
+#: bp-activity-subscription-digest.php:212
 msgid "(%s items)"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:199
 #: bp-activity-subscription-digest.php:242
+#: bp-activity-subscription-digest.php:301
 msgid "Group Summary"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:209
+#: bp-activity-subscription-digest.php:252
 msgid ""
 "How to follow a topic: to get email updates for a specific topic, click the "
 "topic title - then on the webpage click the <i>Follow this topic</i> button. "
 "(If you don't see the button you need to login first.)"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:214
+#: bp-activity-subscription-digest.php:257
 msgid ""
 "To disable these notifications per group please login and go to: %s where "
 "you can change your email settings for each group."
 msgstr ""
 
-#: bp-activity-subscription-digest.php:214 screen-user-settings.php:93
+#: bp-activity-subscription-digest.php:257 screen-user-settings.php:93
 msgid "My Groups"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:218
+#: bp-activity-subscription-digest.php:261
 msgid "Disable these notifications for all my groups at once."
 msgstr ""
 
-#: bp-activity-subscription-digest.php:297
+#: bp-activity-subscription-digest.php:367
 msgid "Your daily digest of group activity"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:299
+#: bp-activity-subscription-digest.php:369
 msgid "Your weekly summary of group topics"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:373
+#: bp-activity-subscription-digest.php:443
 msgid "DAILY DIGEST:"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:375
+#: bp-activity-subscription-digest.php:445
 msgid "WEEKLY DIGEST:"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:411
+#: bp-activity-subscription-digest.php:481
 msgid "Group: %s"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:413
+#: bp-activity-subscription-digest.php:483
 msgid "Group: %s weekly summary"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:418
+#: bp-activity-subscription-digest.php:488
 msgid "To disable these notifications for this group click "
 msgstr ""
 
-#: bp-activity-subscription-digest.php:418
+#: bp-activity-subscription-digest.php:488
 msgid "unsubscribe"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:419
+#: bp-activity-subscription-digest.php:489
 msgid "change "
 msgstr ""
 
-#: bp-activity-subscription-digest.php:419
+#: bp-activity-subscription-digest.php:489
 msgid "email options"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:489
-#: bp-activity-subscription-digest.php:529
+#: bp-activity-subscription-digest.php:567
 msgid "at %s, %s"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:498
-#: bp-activity-subscription-digest.php:500
-#: bp-activity-subscription-digest.php:538
-#: bp-activity-subscription-digest.php:540
+#: bp-activity-subscription-digest.php:581
 msgid "View"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:697
+#: bp-activity-subscription-digest.php:764
 msgid "Once Weekly"
 msgstr ""
 
@@ -283,40 +279,40 @@ msgid ""
 "---------------------\n"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:312 legacy-forums.php:192
+#: bp-activity-subscription-functions.php:360 legacy-forums.php:192
 msgid "You are currently receiving notifications for your own posts."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:314 legacy-forums.php:193
+#: bp-activity-subscription-functions.php:362 legacy-forums.php:193
 #: legacy-forums.php:247 legacy-forums.php:261 legacy-forums.php:275
 msgid "To disable these notifications please log in and go to: %s"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:315
-#: bp-activity-subscription-functions.php:804 legacy-forums.php:194
+#: bp-activity-subscription-functions.php:363
+#: bp-activity-subscription-functions.php:828 legacy-forums.php:194
 msgid ""
 "Once you are logged in, uncheck \"Receive notifications of your own posts?\"."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:335
+#: bp-activity-subscription-functions.php:371
 msgid "Your email setting for this group is: %s"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:341 legacy-forums.php:209
+#: bp-activity-subscription-functions.php:377 legacy-forums.php:209
 #: legacy-forums.php:233
 msgid ""
 "To change your email setting for this group, please log in and go to: %s"
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:566
-#: bp-activity-subscription-functions.php:581
-#: bp-activity-subscription-functions.php:611
+#: bp-activity-subscription-functions.php:590
+#: bp-activity-subscription-functions.php:605
+#: bp-activity-subscription-functions.php:635
 msgid "[{{{site.name}}}] {{{ges.subject}}}"
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:569
+#: bp-activity-subscription-functions.php:593
 msgid ""
 "{{{ges.action}}}:\n"
 "\n"
@@ -328,7 +324,7 @@ msgid ""
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:572
+#: bp-activity-subscription-functions.php:596
 msgid ""
 "{{{ges.action}}}:\n"
 "\n"
@@ -344,14 +340,14 @@ msgid ""
 "{{{ges.email-setting-links}}}"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:574
+#: bp-activity-subscription-functions.php:598
 msgid ""
 "A member created a group activity entry. Used by the Group Email "
 "Subscription plugin during immediate sendouts."
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:584
+#: bp-activity-subscription-functions.php:608
 msgid ""
 "{{{ges.digest-summary}}}{{{usermessage}}}\n"
 "&ndash;\n"
@@ -360,7 +356,7 @@ msgid ""
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:587
+#: bp-activity-subscription-functions.php:611
 msgid ""
 "{{{ges.digest-summary}}}\n"
 "\n"
@@ -376,20 +372,20 @@ msgid ""
 "settings for each group."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:589
+#: bp-activity-subscription-functions.php:613
 msgid ""
 "An email digest is sent to a member. Used by the Group Email Subscription "
 "plugin during daily or weekly digest sendouts."
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:596
+#: bp-activity-subscription-functions.php:620
 msgid ""
 "[{{{site.name}}}] {{{ges.subject}}} - from the group \"{{{group.name}}}\""
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:599
+#: bp-activity-subscription-functions.php:623
 msgid ""
 "This is a notice from the group {{{group.link}}}:\n"
 "\n"
@@ -403,7 +399,7 @@ msgid ""
 msgstr ""
 
 #. translators: do not remove {} brackets or translate its contents.
-#: bp-activity-subscription-functions.php:602
+#: bp-activity-subscription-functions.php:626
 msgid ""
 "This is a notice from the group \"{{{group.name}}}\":\n"
 "\n"
@@ -421,139 +417,143 @@ msgid ""
 "{{{group.url}}}"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:604
+#: bp-activity-subscription-functions.php:628
 msgid ""
 "An email notice is sent by a group administrator to all members of the "
 "group. Used by the Group Email Subscription plugin."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:615
+#: bp-activity-subscription-functions.php:639
 msgid ""
 "A welcome email is sent to new members of a group. Used by the Group Email "
 "Subscription plugin."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:805
-#: bp-activity-subscription-functions.php:841
+#: bp-activity-subscription-functions.php:829
+#: bp-activity-subscription-functions.php:865
 msgid "Change email settings"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:815
+#: bp-activity-subscription-functions.php:839
 msgid "To change your email settings for this group only, click on this link"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:816
+#: bp-activity-subscription-functions.php:840
 msgid "Change group email Settings"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:821
+#: bp-activity-subscription-functions.php:845
 msgid "To disable all notifications for this group, click on this link"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:822
+#: bp-activity-subscription-functions.php:846
 msgid "Unsubscribe from this group"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:828
+#: bp-activity-subscription-functions.php:852
 msgid "To disable notifications from all your groups, click on this link"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:829
+#: bp-activity-subscription-functions.php:853
 msgid "Unsubscribe from all groups"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:840
+#: bp-activity-subscription-functions.php:864
 msgid "Once you are logged in, change your email settings for each group."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1120
-#: bp-activity-subscription-functions.php:1398 screen-notifications.php:31
+#: bp-activity-subscription-functions.php:1171
+#: bp-activity-subscription-functions.php:1518 screen-notifications.php:31
 #: screen.php:53
 msgid "No Email"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1122 screen.php:54
+#: bp-activity-subscription-functions.php:1173 screen.php:54
 msgid "Weekly Summary"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1124 screen.php:55
+#: bp-activity-subscription-functions.php:1175 screen.php:55
 msgid "Daily Digest"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1126
-#: bp-activity-subscription-functions.php:1403 screen.php:58
+#: bp-activity-subscription-functions.php:1177
+#: bp-activity-subscription-functions.php:1523 screen.php:58
 msgid "New Topics"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1128
-#: bp-activity-subscription-functions.php:1406 screen-notifications.php:53
+#: bp-activity-subscription-functions.php:1179
+#: bp-activity-subscription-functions.php:1526 screen-notifications.php:53
 #: screen.php:61
 msgid "All Email"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1396 screen.php:98
+#: bp-activity-subscription-functions.php:1516 screen.php:98
 msgid "Email status:"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1397
+#: bp-activity-subscription-functions.php:1517
 msgid "Change to:"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1399
+#: bp-activity-subscription-functions.php:1519
 msgid "Weekly"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1400
+#: bp-activity-subscription-functions.php:1520
 msgid "Daily"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1463
+#: bp-activity-subscription-functions.php:1583
 msgid "You have been unsubscribed from all groups notifications."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1465
+#: bp-activity-subscription-functions.php:1585
 msgid "This user's has been unsubscribed from all groups notifications."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1493
+#: bp-activity-subscription-functions.php:1613
 msgid ""
 "Your unsubscription was successful. You will no longer receive email "
 "notifications from the group %s."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1495
-#: bp-activity-subscription-functions.php:1508
+#: bp-activity-subscription-functions.php:1615
+#: bp-activity-subscription-functions.php:1628
 msgid "<a href=\"%1$s\">Continue to %2$s</a>"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1506
+#: bp-activity-subscription-functions.php:1626
 msgid ""
 "Your unsubscription was successful. You will no longer receive email "
 "notifications from any of your groups."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1518
+#: bp-activity-subscription-functions.php:1638
 msgid "Unsubscribe from all groups notifications"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1532
+#: bp-activity-subscription-functions.php:1652
 msgid "Unsubscribe"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1537
+#: bp-activity-subscription-functions.php:1657
 msgid "Do you really want to unsubscribe from all groups notifications?"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1542
+#: bp-activity-subscription-functions.php:1662
 msgid "Yes, unsubscribe from all my groups"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1543
+#: bp-activity-subscription-functions.php:1663
 msgid "No, close"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1598
+#: bp-activity-subscription-functions.php:1718
 msgid "To disable emails from all your groups at once click: %s"
+msgstr ""
+
+#: bp-activity-subscription-functions.php:1829
+msgid "This post has attachments:"
 msgstr ""
 
 #: bp-activity-subscription-main.php:42
@@ -725,58 +725,15 @@ msgstr ""
 msgid "All user email status's changed successfully"
 msgstr ""
 
-#: screen-admin.php:117
-msgid "Send an email notice to everyone in the group"
-msgstr ""
-
-#: screen-admin.php:118
-msgid ""
-"You can use the form below to send an email notice to all group members."
-msgstr ""
-
-#: screen-admin.php:119
-msgid ""
-"Everyone in the group will receive the email -- regardless of their email "
-"settings -- so use with caution"
-msgstr ""
-
-#: screen-admin.php:122 screen-admin.php:151
-msgid "Email Subject:"
-msgstr ""
-
-#: screen-admin.php:127 screen-admin.php:156
-msgid "Email Content:"
-msgstr ""
-
-#: screen-admin.php:132
-msgid "Email this notice to everyone in the group"
-msgstr ""
-
-#: screen-admin.php:140
-msgid "Welcome Email"
-msgstr ""
-
 #: screen-admin.php:141
-msgid "Send an email when a new member join the group."
+msgid "The email notice was not sent. Please enter email content."
 msgstr ""
 
-#: screen-admin.php:146
-msgid "Enable welcome email"
-msgstr ""
-
-#: screen-admin.php:161
-msgid "Save"
-msgstr ""
-
-#: screen-admin.php:185
-msgid "The email notice was sent not sent. Please enter email content."
-msgstr ""
-
-#: screen-admin.php:198
+#: screen-admin.php:154
 msgid " - sent from the group "
 msgstr ""
 
-#: screen-admin.php:204
+#: screen-admin.php:160
 msgid ""
 "This is a notice from the group '%s':\n"
 "\n"
@@ -789,7 +746,7 @@ msgid ""
 "---------------------\n"
 msgstr ""
 
-#: screen-admin.php:216
+#: screen-admin.php:172
 msgid ""
 "Please note: admin notices are sent to everyone in the group and cannot be "
 "disabled.\n"
@@ -797,11 +754,11 @@ msgid ""
 "administrator."
 msgstr ""
 
-#: screen-admin.php:234
+#: screen-admin.php:215
 msgid "The email notice was sent successfully."
 msgstr ""
 
-#: screen-admin.php:259
+#: screen-admin.php:240
 msgid "The welcome email option has been saved."
 msgstr ""
 
@@ -931,6 +888,51 @@ msgstr ""
 
 #: screen.php:83
 msgid "You successfully joined the group. Your group email status is: "
+msgstr ""
+
+#: templates/groups/single/admin/ges-email-notice.php:1
+msgid "Send an email notice to everyone in the group"
+msgstr ""
+
+#: templates/groups/single/admin/ges-email-notice.php:2
+msgid ""
+"You can use the form below to send an email notice to all group members."
+msgstr ""
+
+#: templates/groups/single/admin/ges-email-notice.php:3
+msgid ""
+"Everyone in the group will receive the email -- regardless of their email "
+"settings -- so use with caution"
+msgstr ""
+
+#: templates/groups/single/admin/ges-email-notice.php:6
+#: templates/groups/single/admin/ges-welcome-email.php:15
+msgid "Email Subject:"
+msgstr ""
+
+#: templates/groups/single/admin/ges-email-notice.php:11
+#: templates/groups/single/admin/ges-welcome-email.php:20
+msgid "Email Content:"
+msgstr ""
+
+#: templates/groups/single/admin/ges-email-notice.php:16
+msgid "Email this notice to everyone in the group"
+msgstr ""
+
+#: templates/groups/single/admin/ges-welcome-email.php:4
+msgid "Welcome Email"
+msgstr ""
+
+#: templates/groups/single/admin/ges-welcome-email.php:5
+msgid "Send an email when a new member join the group."
+msgstr ""
+
+#: templates/groups/single/admin/ges-welcome-email.php:10
+msgid "Enable welcome email"
+msgstr ""
+
+#: templates/groups/single/admin/ges-welcome-email.php:25
+msgid "Save"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
