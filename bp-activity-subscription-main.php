@@ -28,6 +28,7 @@ if ( function_exists( 'bp_setup_forums' ) ) {
 }
 
 // Core.
+require_once( dirname( __FILE__ ) . '/lib/wp-async-task.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
