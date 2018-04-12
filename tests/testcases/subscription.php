@@ -42,4 +42,19 @@ class BPGES_Tests_Subscription extends BP_UnitTestCase {
 		$this->assertSame( 'sum', ass_get_group_subscription_status( self::$user_ids[0], self::$group_ids[0] ) );
 		$this->assertSame( 'dig', ass_get_group_subscription_status( self::$user_ids[1], self::$group_ids[0] ) );
 	}
+
+	public function test_digest_record_activity() {
+		$activity_id = 123;
+
+		ass_digest_record_activity( $activity_id, self::$user_ids[0], self::$group_ids[0], 'dig' );
+
+		$queue = bpges_get_digest_queue_for_user( self::$user_ids[0], 'dig' );
+		$expected = array(
+			self::$group_ids[0] => array(
+				$activity_id,
+			)
+		);
+
+		$this->assertSame( $expected, $queue );
+	}
 }
