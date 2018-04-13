@@ -1101,7 +1101,15 @@ function ass_get_login_redirect_url( $url = '', $context = '' ) {
  * @return array
  */
 function ass_get_subscriptions_for_group( $group_id ) {
-	$group_user_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users' );
+	$query = new BPGES_Subscription_Query( array(
+		'group_id' => $group_id,
+	) );
+	$subs = $query->get_results();
+
+	$group_user_subscriptions = array();
+	foreach ( $subs as $sub ) {
+		$group_user_subscriptions[ $sub->user_id ] = $sub->type;
+	}
 
 	/**
 	 * Filter's the group's user subscriptions.
@@ -1138,28 +1146,26 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	if ( !$action || !$user_id || !$group_id )
 		return false;
 
-	$group_user_subscriptions = groups_get_groupmeta( $group_id , 'ass_subscribed_users' );
-	if ( ! is_array( $group_user_subscriptions ) ) {
-		$group_user_subscriptions = array();
+	$query = new BPGES_Subscription_Query( array(
+		'user_id'  => $user_id,
+		'group_id' => $group_id,
+	) );
+
+	$existing = $query->get_results();
+	if ( $existing ) {
+		$subscription = reset( $existing );
+	} else {
+		$subscription = new BPGES_Subscription();
+		$subscription->user_id = $user_id;
+		$subscription->group_id = $group_id;
 	}
 
-	// we're being overly careful here
-	if ( $action == 'no' ) {
-		$group_user_subscriptions[ $user_id ] = 'no';
-	} elseif ( $action == 'sum' ) {
-		$group_user_subscriptions[ $user_id ] = 'sum';
-	} elseif ( $action == 'dig' ) {
-		$group_user_subscriptions[ $user_id ] = 'dig';
-	} elseif ( $action == 'sub' ) {
-		$group_user_subscriptions[ $user_id ] = 'sub';
-	} elseif ( $action == 'supersub' ) {
-		$group_user_subscriptions[ $user_id ] = 'supersub';
-	} elseif ( $action == 'delete' ) {
-		if ( isset( $group_user_subscriptions[ $user_id ] ) )
-			unset( $group_user_subscriptions[ $user_id ] );
+	if ( 'delete' === $action ) {
+		$subscription->delete();
+	} else {
+		$subscription->type = $action;
+		$subscription->save();
 	}
-
-	groups_update_groupmeta( $group_id , 'ass_subscribed_users', $group_user_subscriptions );
 
 	// add a hook for 3rd-party plugin devs
 	do_action( 'ass_group_subscription', $user_id, $group_id, $action );

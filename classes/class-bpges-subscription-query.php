@@ -73,7 +73,7 @@ class BPGES_Subscription_Query {
 		foreach ( $results as $found ) {
 			$sub = new BPGES_Subscription();
 			$sub->fill( $found );
-			$retval[ $found->id ] = $found;
+			$retval[ $found->id ] = $sub;
 		}
 
 		return $retval;

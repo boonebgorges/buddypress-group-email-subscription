@@ -65,7 +65,16 @@ class BPGES_Subscription {
 
 	public function fill( $vars ) {
 		foreach ( $vars as $key => $value ) {
-			$this->{$key} = $value;
+			switch ( $key ) {
+				case 'items_dig' :
+				case 'items_sum' :
+					$this->{$key} = wp_parse_id_list( $value );
+				break;
+
+				default :
+					$this->{$key} = $value;
+				break;
+			}
 		}
 	}
 
@@ -114,7 +123,15 @@ class BPGES_Subscription {
 		);
 
 		if ( $this->id ) {
+			$updated = $wpdb->update(
+				$this->table_name,
+				$data,
+				array( 'id' => $this->id ),
+				$formats,
+				array( '%d' )
+			);
 
+			$retval = (bool) $updated;
 		} else {
 			$inserted = $wpdb->insert(
 				$this->table_name,
@@ -124,11 +141,24 @@ class BPGES_Subscription {
 
 			if ( $inserted ) {
 				$retval = (int) $wpdb->insert_id;
+				$this->id = $retval;
 			} else {
 				$retval = false;
 			}
 		}
 
 		return $retval;
+	}
+
+	public function delete() {
+		global $wpdb;
+
+		$deleted = $wpdb->delete(
+			$this->table_name,
+			array( 'id' => $this->id ),
+			array( '%d' )
+		);
+
+		return (bool) $deleted;
 	}
 }
