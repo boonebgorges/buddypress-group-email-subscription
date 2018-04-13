@@ -30,6 +30,8 @@ if ( function_exists( 'bp_setup_forums' ) ) {
 // Core.
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription-query.php' );
 
 // CLI.
 if ( defined( 'WP_CLI' ) ) {
