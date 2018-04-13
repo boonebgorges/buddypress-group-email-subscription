@@ -31,6 +31,12 @@ if ( function_exists( 'bp_setup_forums' ) ) {
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 
+// CLI.
+if ( defined( 'WP_CLI' ) ) {
+	require_once( dirname( __FILE__ ) . '/classes/class-bpges-command.php' );
+	WP_CLI::add_command( 'bpges', 'BPGES_Command' );
+}
+
 /**
  * Group extension for GES.
  *
