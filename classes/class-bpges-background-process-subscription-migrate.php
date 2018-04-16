@@ -3,7 +3,7 @@
 /**
  * Background process for migrating subscription data in 3.9.0 upgrade.
  */
-class BPGES_Subscription_Migrate_Background_Process extends WP_Background_Process {
+class BPGES_Background_Process_Subscription_Migrate extends WP_Background_Process {
 	/**
 	 * @var   string
 	 * @since 3.9.0

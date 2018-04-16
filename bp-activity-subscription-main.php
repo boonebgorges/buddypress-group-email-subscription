@@ -38,8 +38,8 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 }
 
 if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
-	require( dirname( __FILE__ ) . '/classes/class-bpges-subscription-migrate-background-process.php' );
-	$b = new BPGES_Subscription_Migrate_Background_Process();
+	require( dirname( __FILE__ ) . '/classes/class-bpges-background-process-subscription-migrate.php' );
+	$b = new BPGES_Background_Process_Subscription_Migrate();
 }
 
 // CLI.
