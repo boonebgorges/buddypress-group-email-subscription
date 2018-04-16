@@ -348,3 +348,32 @@ function bpges_install_subscription_table() {
 
 	dbDelta( $sql );
 }
+
+/**
+ * Launch the migration of legacy subscriptions.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_launch_legacy_subscription_migration() {
+	global $wpdb;
+
+	if ( ! class_exists( 'BPGES_Subscription_Migrate_Background_Process' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-subscription-migrate-background-process.php' );
+	}
+
+	$bp = buddypress();
+
+	$group_ids = $wpdb->get_col( "SELECT group_id FROM {$bp->groups->table_name_groupmeta} WHERE meta_key = 'ass_subscribed_users'" );
+	_b( $group_ids );
+
+	$process = new BPGES_Subscription_Migrate_Background_Process();
+	foreach ( $group_ids as $group_id ) {
+		$process->push_to_queue( $group_id );
+	}
+
+	$dispatched = $process->save()->dispatch();
+}
+
+add_action( 'admin_init', function() {
+	$b = new BPGES_Subscription_Migrate_Background_Process();
+} );

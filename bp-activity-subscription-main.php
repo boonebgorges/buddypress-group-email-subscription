@@ -33,6 +33,15 @@ require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription.php' );
 require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription-query.php' );
 
+if ( ! class_exists( 'WP_Background_Process' ) ) {
+	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+}
+
+if ( ! bp_get_option( 'bpges_39_subscriptions_migrated' ) ) {
+	require( dirname( __FILE__ ) . '/classes/class-bpges-subscription-migrate-background-process.php' );
+	$b = new BPGES_Subscription_Migrate_Background_Process();
+}
+
 // CLI.
 if ( defined( 'WP_CLI' ) ) {
 	require_once( dirname( __FILE__ ) . '/classes/class-bpges-command.php' );
