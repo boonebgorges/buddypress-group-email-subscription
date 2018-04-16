@@ -55,5 +55,8 @@ class BPGES_Background_Process_Subscription_Migrate extends WP_Background_Proces
 	 */
 	protected function complete() {
 		bp_update_option( '_ges_39_subscriptions_migrated', 1 );
+
+		// The digest queue migration depends on this one, so we launch it from here.
+		bpges_39_launch_legacy_digest_queue_migration();
 	}
 }
