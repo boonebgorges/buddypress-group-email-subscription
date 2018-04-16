@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Background process for migrating subscription data in 3.9.0 upgrade.
+ */
 class BPGES_Subscription_Migrate_Background_Process extends WP_Background_Process {
 	/**
 	 * @var   string
@@ -43,6 +46,13 @@ class BPGES_Subscription_Migrate_Background_Process extends WP_Background_Proces
 		return false;
 	}
 
+	/**
+	 * When 3.9.0 subscription migration task is complete, set a database flag.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param int $group_id ID of the group whose subscriptions are being migrated.
+	 */
 	protected function complete() {
 		bp_update_option( '_ges_39_subscriptions_migrated', 1 );
 	}
