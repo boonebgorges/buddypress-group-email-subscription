@@ -372,3 +372,19 @@ function bpges_39_launch_legacy_subscription_migration() {
 
 	$dispatched = $process->save()->dispatch();
 }
+
+/**
+ * Launch the migration of legacy digest queues.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_launch_legacy_digest_queue_migration() {
+	global $wpdb;
+
+	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+	}
+
+	$process = new BPGES_Async_Request_Digest_Queue_Migrate();
+	$process->dispatch();
+}

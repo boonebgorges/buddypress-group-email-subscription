@@ -42,6 +42,11 @@ if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
 	$b = new BPGES_Background_Process_Subscription_Migrate();
 }
 
+if ( ! bp_get_option( '_ges_39_digest_queue_migrated' ) ) {
+	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+	$b = new BPGES_Async_Request_Digest_Queue_Migrate();
+}
+
 // CLI.
 if ( defined( 'WP_CLI' ) ) {
 	require_once( dirname( __FILE__ ) . '/classes/class-bpges-command.php' );
