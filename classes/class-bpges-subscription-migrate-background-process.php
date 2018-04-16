@@ -44,6 +44,6 @@ class BPGES_Subscription_Migrate_Background_Process extends WP_Background_Proces
 	}
 
 	protected function complete() {
-		bp_update_option( 'bpges_39_subscriptions_migrated', 1 );
+		bp_update_option( '_ges_39_subscriptions_migrated', 1 );
 	}
 }

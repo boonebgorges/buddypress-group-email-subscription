@@ -373,7 +373,3 @@ function bpges_39_launch_legacy_subscription_migration() {
 
 	$dispatched = $process->save()->dispatch();
 }
-
-add_action( 'admin_init', function() {
-	$b = new BPGES_Subscription_Migrate_Background_Process();
-} );
