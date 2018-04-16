@@ -20,7 +20,7 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends WP_Async_Request {
 	protected function handle() {
 		global $wpdb;
 
-		$batch_size = 2;
+		$batch_size = 50;
 
 		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' LIMIT %d", $batch_size ) );
 
