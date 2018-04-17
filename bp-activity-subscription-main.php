@@ -38,8 +38,8 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 }
 
 if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
-	require( dirname( __FILE__ ) . '/classes/class-bpges-background-process-subscription-migrate.php' );
-	$b = new BPGES_Background_Process_Subscription_Migrate();
+	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
+	$b = new BPGES_Async_Request_Subscription_Migrate();
 }
 
 if ( ! bp_get_option( '_ges_39_digest_queue_migrated' ) ) {
