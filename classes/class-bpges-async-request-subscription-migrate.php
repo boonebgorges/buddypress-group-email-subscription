@@ -20,7 +20,7 @@ class BPGES_Async_Request_Subscription_Migrate extends WP_Async_Request {
 
 		$bp = buddypress();
 
-		$batch_count = 2;
+		$batch_count = 10;
 
 		$group_ids = $wpdb->get_col( "SELECT g.id FROM {$bp->groups->table_name} g LEFT JOIN {$bp->groups->table_name_groupmeta} gm ON ( g.id = gm.group_id AND gm.meta_key = '_ges_subscriptions_migrated' ) INNER JOIN {$bp->groups->table_name_groupmeta} gm2 ON ( g.id = gm2.group_id ) WHERE gm.meta_value IS NULL AND gm2.meta_key = 'ass_subscribed_users' AND gm2.meta_value IS NOT NULL LIMIT $batch_count" );
 
