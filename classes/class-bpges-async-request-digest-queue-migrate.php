@@ -22,10 +22,13 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends WP_Async_Request {
 
 		$batch_size = 50;
 
-		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = 'ass_digest_items' LIMIT %d", $batch_size ) );
+		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT um.user_id FROM {$wpdb->usermeta} um LEFT JOIN {$wpdb->usermeta} um1 ON ( um.user_id = um1.user_id AND um1.meta_key = '_ges_digest_queue_migrated' ) WHERE um.meta_key = 'ass_digest_items' AND um.meta_value IS NOT NULL AND um1.meta_value IS NULL LIMIT %d", $batch_size ) );
 
 		if ( ! $user_ids ) {
 			bp_update_option( '_ges_39_digest_queue_migrated', 1 );
+
+			delete_metadata( 'user', 1, '_ges_digest_queue_migrated', false, true );
+
 			return;
 		}
 
@@ -41,6 +44,7 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends WP_Async_Request {
 					$existing = $query->get_results();
 					if ( ! $existing ) {
 						// Nothing to migrate.
+						bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
 						continue;
 					}
 
@@ -57,22 +61,11 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends WP_Async_Request {
 			}
 
 			// Delete the legacy queue, to avoid double-processing.
-			bp_delete_user_meta( $user_id, 'ass_digest_items' );
+			bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
 		}
 
 		// Launch another item in the queue.
 		$process = new self();
 		$process->dispatch();
-	}
-
-	/**
-	 * When 3.9.0 subscription migration task is complete, set a database flag.
-	 *
-	 * @since 3.9.0
-	 *
-	 * @param int $group_id ID of the group whose subscriptions are being migrated.
-	 */
-	protected function complete() {
-		bp_update_option( '_ges_39_subscriptions_migrated', 1 );
 	}
 }
