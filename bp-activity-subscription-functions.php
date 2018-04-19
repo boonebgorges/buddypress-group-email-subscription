@@ -645,19 +645,6 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 
 		// Save the situation.
 		if ( ! is_wp_error( $post_id ) ) {
-			/*
-			 * If BP's email taxonomy doesn't exist, it's due to a load order issue during
-			 * bulk-plugin activation (what's up CBOX!), so register the taxonomy here.
-			 */
-			if ( function_exists( 'bp_get_email_tax_type' ) && ! taxonomy_exists( bp_get_email_tax_type() ) ) {
-				register_taxonomy(
-					/** This filter is documented in /plugins/buddypress/class-buddypress.php */
-					apply_filters( 'bp_email_tax_type', 'bp-email-type' ),
-					/** This filter is documented in /plugins/buddypress/class-buddypress.php */
-					apply_filters( 'bp_email_post_type', 'bp-email' )
-				);
-			}
-
 			$tt_ids = wp_set_object_terms( $post_id, $id, bp_get_email_tax_type() );
 
 			// Situation description.
