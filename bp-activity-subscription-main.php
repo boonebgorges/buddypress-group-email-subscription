@@ -39,12 +39,12 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 
 if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
 	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
-	$b = new BPGES_Async_Request_Subscription_Migrate();
+	$bpges_subscription_migration = new BPGES_Async_Request_Subscription_Migrate();
 }
 
 if ( ! bp_get_option( '_ges_39_digest_queue_migrated' ) ) {
 	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
-	$b = new BPGES_Async_Request_Digest_Queue_Migrate();
+	$bpges_digest_queue_migration = new BPGES_Async_Request_Digest_Queue_Migrate();
 }
 
 // CLI.
