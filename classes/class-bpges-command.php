@@ -12,6 +12,7 @@ class BPGES_Command extends WP_CLI_Command {
 		}
 
 		bpges_install_subscription_table();
+		bpges_install_queued_items_table();
 	}
 
 	/**

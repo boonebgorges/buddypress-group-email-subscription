@@ -338,12 +338,37 @@ function bpges_install_subscription_table() {
 				user_id bigint(20) NOT NULL,
 				group_id bigint(20) NOT NULL,
 				type varchar(75) NOT NULL,
-				last_sent datetime NOT NULL,
-				items_dig longtext NOT NULL,
-				items_sum longtext NOT NULL,
 				KEY user_id (user_id),
 				KEY group_id (group_id),
 				KEY user_type (user_id,type)
+			) {$charset_collate};";
+
+	dbDelta( $sql );
+}
+
+/**
+ * Install/update queued items database table.
+ *
+ * @since 3.9.0
+ */
+function bpges_install_queued_items_table() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	$sql             = array();
+	$charset_collate = $wpdb->get_charset_collate();
+	$bp_prefix       = bp_core_get_table_prefix();
+
+	$sql[] = "CREATE TABLE {$bp_prefix}bpges_queued_items (
+				id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				user_id bigint(20) NOT NULL,
+				activity_id bigint(20) NOT NULL,
+				type varchar(75) NOT NULL,
+				date_recorded datetime NOT NULL default '0000-00-00 00:00:00',
+				KEY user_id (user_id),
+				KEY activity_id (activity_id),
+				KEY user_type_date (user_id,type,date_recorded)
 			) {$charset_collate};";
 
 	dbDelta( $sql );
