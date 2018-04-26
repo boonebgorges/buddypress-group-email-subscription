@@ -12,6 +12,7 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 		return array(
 			'id'            => '%d',
 			'user_id'       => '%d',
+			'group_id'      => '%d',
 			'activity_id'   => '%d',
 			'type'          => '%s',
 			'date_recorded' => '%s',

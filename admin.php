@@ -363,12 +363,14 @@ function bpges_install_queued_items_table() {
 	$sql[] = "CREATE TABLE {$bp_prefix}bpges_queued_items (
 				id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				user_id bigint(20) NOT NULL,
+				group_id bigint(20) NOT NULL,
 				activity_id bigint(20) NOT NULL,
 				type varchar(75) NOT NULL,
 				date_recorded datetime NOT NULL default '0000-00-00 00:00:00',
 				KEY user_id (user_id),
+				KEY group_id (user_id),
 				KEY activity_id (activity_id),
-				KEY user_type_date (user_id,type,date_recorded)
+				KEY user_group_type_date (user_id,type,date_recorded)
 			) {$charset_collate};";
 
 	dbDelta( $sql );

@@ -162,7 +162,158 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 
 	ass_generate_notification( $send_args );
 }
-add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
+
+/**
+ * Add item to send queue at the time of activity creation.
+ */
+function ass_record_group_activity_item( BP_Activity_Activity $activity ) {
+	if ( 'groups' !== $activity->component ) {
+		return;
+	}
+
+	/**
+	 * Allows activity item queuing to be prevented.
+	 *
+	 * @param bool                 $send     Defaults to true. Return false to stop this item from being queued.
+	 * @param string               $type     Activity type.
+	 * @param BP_Activity_Activity $activity Activity item.
+	 */
+	if ( false === apply_filters( 'ass_block_group_activity_types', true, $activity->type, $activity ) )
+		return;
+
+	if ( ! ass_registered_long_enough( $activity->user_id  ) ) {
+		return;
+	}
+
+	// activity_comment must have its group ID inferred.
+	// @todo This can be made less terrible.
+	$group_id = $activity->item_id;
+	if ( 'activity_comment' === $activity->type ) {
+		$group_id = bp_get_current_group_id();
+	}
+
+	// No group, nothing to do.
+	$group = groups_get_group( array( 'group_id' => $group_id ) );
+	if ( ! $group->id ) {
+		return;
+	}
+
+	/**
+	 * Forces an item to be "important", ie not excluded from weekly summaries.
+	 *
+	 * @param bool   $is_important Defaults to false.
+	 * @param string $type         Activity type.
+	 */
+	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $activity->type );
+
+	// If we've gotten this far, record the activity item for each subscribed group member.
+	$subscribed_users = ass_get_subscriptions_for_group( $group_id );
+	foreach ( $subscribed_users as $user_id => $subscription_type ) {
+		$self_notify = false;
+
+		// If user is banned from group, do not send mail.
+		if ( groups_is_user_banned( $user_id, $group->id ) ) {
+			continue;
+		}
+
+		// Does the author want updates of their own forum posts?
+		if ( $activity->type == 'bbp_topic_create' || $activity->type == 'bbp_reply_create' ) {
+			if ( $user_id === $activity->user_id ) {
+				$self_notify = ass_self_post_notification( $user_id );
+
+				// Author does not want notifications of their own posts
+				if ( ! $self_notify ) {
+					continue;
+				}
+			}
+
+		/*
+		 * If this is an activity comment, and the $user_id is the user who is being replied
+		 * to, check to make sure that the user is not subscribed to BP's native activity reply notifications.
+		 */
+		} elseif ( 'activity_comment' == $activity->type ) {
+			// First, look at the immediate parent
+			$immediate_parent = new BP_Activity_Activity( $activity->secondary_item_id );
+
+			// Don't send the bp-ass notification if the user is subscribed through BP
+			if ( $user_id == $immediate_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+				continue;
+			}
+
+			// We only need to check the root parent if it's different from the immediate parent.
+			if ( $activity->secondary_item_id !== $activity->item_id ) {
+				$root_parent = new BP_Activity_Activity( $activity->item_id );
+
+				// Don't send the bp-ass notification if the user is subscribed through BP
+				if ( $user_id == $root_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+					continue;
+				}
+			}
+		}
+
+		$send_immediately = $add_to_digest_queue = false;
+
+		if (
+			( true === $self_notify ) ||
+			( 'supersub' === $subscription_type ) ||
+			( 'sub' === $subscription_type && 'bbp_topic_create' === $activity->type )
+		) {
+			$send_immediately = true;
+		}
+
+		// Special case: users should not get immediate notifications of their own group activity updates.
+		if ( 'activity_update' === $activity->type && $activity->user_id === $user_id ) {
+			$send_immediately = false;
+		}
+
+		if (
+			( 'dig' === $subscription_type ) ||
+			( 'sum' === $subscription_type && $this_activity_is_important )
+		) {
+			$add_to_digest_queue = true;
+		}
+
+		/**
+		 * Filters whether a given user should receive immediate notification of the current activity.
+		 *
+		 * @since 3.6.0
+		 * @since 3.8.0 Added `$subscription_type` parameter.
+		 *
+		 * @param bool   $send_immediately True to send an immediate email notification, false otherwise.
+		 * @param object $activity          Activity object.
+		 * @param int    $user_id           ID of the user.
+		 * @param string $subscription_type Group subscription status for the current user.
+		 */
+		$send_immediately = apply_filters( 'bp_ass_send_activity_notification_for_user', $send_immediately, $activity, $user_id, $subscription_type );
+
+		/**
+		 * Filters whether to add the current activity item to the digest queue for the current user.
+		 *
+		 * @since 3.8.0
+		 *
+		 * @param bool   $add_to_digest_queue True to send an immediate email notification, false otherwise.
+		 * @param object $activity_obj        Activity object.
+		 * @param int    $user_id             ID of the user.
+		 * @param string $subscription_type   Group subscription status for the current user.
+		 */
+		$add_to_digest_queue = apply_filters( 'bp_ges_add_to_digest_queue_for_user', $add_to_digest_queue, $activity, $user_id, $subscription_type );
+
+		if ( $send_immediately ) {
+			ass_queue_activity_item( $activity->id, $user_id, $group_id, 'immediate' );
+		}
+
+		if ( $add_to_digest_queue ) {
+			ass_queue_activity_item( $activity->id, $user_id, $group_id, $subscription_type );
+		}
+	}
+
+	// Trigger the batch process.
+	bpges_send_queue()->data( array(
+		'type'        => 'immediate',
+		'activity_id' => $activity->id,
+	) )->dispatch();
+}
+add_action( 'bp_activity_after_save' , 'ass_record_group_activity_item' , 50 );
 
 /**
  * Generate and send a group notification.
@@ -444,6 +595,180 @@ To view or reply, log in and go to:
 		// Record in digest queue, if necessary.
 		if ( $add_to_digest_queue ) {
 			ass_digest_record_activity( $r['activity_id'], $user_id, $r['group_id'], $raw_group_status );
+		}
+	}
+}
+
+/**
+ * Generate an immediate email notification for an activity + user combo.
+ *
+ * @since 3.9.0
+ *
+ * @param BPGES_Queued_Item $queued_item Queued item.
+ */
+function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
+	$activity_id = $queued_item->activity_id;
+	$user_id     = $queued_item->user_id;
+	$group_id    = $queued_item->group_id;
+
+	$activity = new BP_Activity_Activity( $activity_id );
+	$group    = groups_get_group(
+		array(
+			'group_id' => $group_id,
+		)
+	);
+
+	// @todo We can add nonpersistent caching for static content.
+
+	if ( 'activity_comment' === $activity->type ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
+		// this will need to be filtered for plugins manually adding group activity comments
+
+		$action   = ass_clean_subject( $activity->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . $group->name;
+	} else {
+		$action = ass_clean_subject( $activity->action );
+	}
+
+	/* Subject & Content */
+	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', $activity->content, $activity, $action, $group );
+	$the_content = ass_clean_content( $the_content );
+
+	/*
+	 * If it's an activity item, switch the activity permalink to the group homepage
+	 * rather than the user's homepage.
+	 */
+	$link = bp_get_group_permalink( $group );
+	if ( $activity->primary_link && $activity->primary_link !== bp_core_get_user_domain( $activity->user_id ) ) {
+		$link = $activity->primary_link;
+	}
+
+	// If message has no content (as in the case of group joins, etc), we'll use a different
+	// $message template
+	if ( empty( $the_content ) ) {
+		$message = sprintf( __(
+'%1$s
+
+To view or reply, log in and go to:
+%2$s
+
+---------------------
+', 'bp-ass' ), $r['action'], $r['link'] );
+	} else {
+		$message = sprintf( __(
+'%1$s
+
+"%2$s"
+
+To view or reply, log in and go to:
+%3$s
+
+---------------------
+', 'bp-ass' ), $action, $the_content, $link );
+	}
+
+	// Use bbPress filtered post content and reapply GES filter... sigh.
+	$self_notify = false;
+	if ( 0 === strpos( $activity->type, 'bbp_' ) ) {
+		// Not in global cache? Query for post content.
+		if ( empty( $GLOBALS['bp']->ges_content ) ) {
+			$the_content = get_post_field( 'post_content', $activity->secondary_item_id, 'raw' );
+		} else {
+			$the_content = $GLOBALS['bp']->ges_content;
+			unset( $GLOBALS['bp']->ges_content );
+		}
+
+		// Apply bbPress KSES filter if it exists (sanity check!)
+		$the_content = ( true === function_exists( 'bbp_filter_kses' ) ) ? wp_unslash( bbp_filter_kses( $the_content ) ) : $the_content;
+
+		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity, $action, $group );
+
+		// Check for $self_notify status.
+		$self_notify = ass_self_post_notification( $user_id );
+	}
+
+	// @todo
+	$group_status = 'sum';
+
+	if ( $self_notify ) {
+		// notification settings link
+		$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/#groups-subscription-notification-settings';
+
+		// set notice
+		$notice = $email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
+
+		$email_setting_links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
+		$email_setting_links .= "\n\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+
+		$notice .= "\n\n" . $email_setting_links;
+	} else {
+		$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), $group_status );
+
+		$email_setting_string = __( 'Your email setting for this group is: %s', 'bp-ass' );
+		$group_status_string  = ass_subscribe_translate( $group_status );
+
+		$notice             = sprintf( $email_setting_string, $group_status_string );
+		$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
+
+		$email_setting_links = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+		$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+
+		$notice .= "\n" . $email_setting_links;
+	}
+
+	$user_message_args = array(
+		'message'           => $message,
+		'notice'            => $notice,
+		'user_id'           => $user_id,
+		'subscription_type' => $queued_item->type,
+		'content'           => $the_content,
+		'settings_link'     => ! empty( $settings_link ) ? $settings_link : '',
+	);
+
+	// One last chance to filter the message content
+	$user_message = apply_filters( 'bp_ass_activity_notification_message', $message . $notice, $user_message_args );
+
+	// Get the details for the user
+	$user = bp_core_get_core_userdata( $user_id );
+
+	// Send the email
+	if ( $user->user_email ) {
+		// Custom GES email tokens.
+		$user_message_args['ges.action']  = stripslashes( $activity->action ); // Unfiltered.
+		$user_message_args['ges.subject'] = strip_tags( stripslashes( $activity->action ) ); // Unfiltered.
+		$user_message_args['ges.email-setting-description'] = $email_setting_desc;
+		$user_message_args['ges.email-setting-links']       = $email_setting_links;
+		$user_message_args['ges.unsubscribe-global']        = ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true );
+		$user_message_args['ges.unsubscribe']   = ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id );
+		$user_message_args['ges.settings-link'] = $user_message_args['settings_link'];
+		$user_message_args['poster.url']        = bp_core_get_user_domain( $activity->user_id );
+		$user_message_args['recipient.id']      = $user->ID;
+
+		// BP-specific tokens.
+		$user_message_args['usermessage'] = $the_content;
+		$user_message_args['poster.name'] = bp_core_get_user_displayname( $activity->user_id );
+		$user_message_args['thread.url']  = $link;
+		$user_message_args['group.id']    = $group_id;
+
+		// Remove tokens that we're not using.
+		unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
+
+		// If activity type is not a bbPress item, add activity KSES filter.
+		if ( false === strpos( $activity->type, 'bbp_' ) ) {
+			add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
+		}
+
+		// Sending time!
+		ass_send_email( 'bp-ges-single', $user->user_email, array(
+			'tokens'   => $user_message_args,
+			'subject'  => $subject,
+			'content'  => $user_message,
+			'activity' => $activity,
+		) );
+
+		// Revert!
+		if ( false === strpos( $activity->type, 'bbp_' ) ) {
+			remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		}
 	}
 }
@@ -905,6 +1230,28 @@ function ass_group_activity_edits( $activity ) {
 	$run_once = true;
 }
 add_action( 'bp_activity_before_save', 'ass_group_activity_edits' );
+
+/**
+ * Queue an activity item for sending.
+ *
+ * @since 3.9.0
+ *
+ * @param int    $activity_id ID of the activity item.
+ * @param int    $user_id     ID of the user.
+ * @param int    $group_id    ID of the group.
+ * @param string $type        Notification type. Accepts 'immediate', 'dig', 'sum'.
+ */
+function ass_queue_activity_item( $activity_id, $user_id, $group_id, $type ) {
+	$queued_item = new BPGES_Queued_Item();
+
+	$queued_item->activity_id   = $activity_id;
+	$queued_item->user_id       = $user_id;
+	$queued_item->group_id      = $group_id;
+	$queued_item->type          = $type;
+	$queued_item->date_recorded = date( 'Y-m-d H:i:s' );
+
+	return $queued_item->save();
+}
 
 /**
  * Block some activity types from being sent / recorded in groups.
@@ -1916,4 +2263,14 @@ function bpges_log( $message ) {
 	}
 
 	error_log( '[' . gmdate( 'd-M-Y H:i:s' ) . '] ' . $message . "\n", 3, BPGES_DEBUG_LOG_PATH );
+}
+
+function bpges_send_queue() {
+	static $queue;
+
+	if ( null === $queue ) {
+		$queue = new BPGES_Async_Request_Send_Queue();
+	}
+
+	return $queue;
 }
