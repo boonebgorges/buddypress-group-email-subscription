@@ -251,7 +251,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 				'user_id'       => $user_id,
 				'group_id'      => $group_id,
 				'activity_id'   => $activity->id,
-				'type'          => 'immediate',
+				'type'          => $subscription_type,
 				'date_recorded' => date( 'Y-m-d H:i:s' ),
 			);
 		}
