@@ -104,69 +104,6 @@ add_filter( 'bp_activity_content_before_save', 'ass_group_notification_activity_
  * 'ass_block_group_activity_types' filter.
  */
 function ass_group_notification_activity( BP_Activity_Activity $activity ) {
-	global $bp;
-
-	$component = $activity->component;
-	$sender_id = $activity->user_id;
-
-	// get group activity update replies to work (there is no group id passed in $content, but we can get it from $bp)
-	if ( $activity->type == 'activity_comment' && bp_is_groups_component() && $component == 'activity' ) {
-		$component = 'groups';
-	}
-
-	// at this point we only want group activity, perhaps later we can make a function and interface for personal activity...
-	if ( $component != 'groups' ) {
-		return;
-	}
-
-	// if you want to conditionally block certain activity types from appearing,
-	// use the filter below
-	if ( false === apply_filters( 'ass_block_group_activity_types', true, $activity->type, $activity ) )
-		return;
-
-	if ( !ass_registered_long_enough( $sender_id ) )
-		return;
-
-
-	if ( 'activity_comment' === $activity->type ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
-		// this will need to be filtered for plugins manually adding group activity comments
-		$group_id = bp_get_current_group_id();
-
-		$action   = ass_clean_subject( $activity->action ) . ' ' . __( 'in the group', 'bp-ass' ) . ' ' . bp_get_current_group_name();
-	} else {
-		$group_id = $activity->item_id;
-		$action = ass_clean_subject( $activity->action );
-	}
-
-	$action = apply_filters( 'bp_ass_activity_notification_action', $action, $activity );
-
-	$group = groups_get_group( array( 'group_id' => $group_id ) );
-
-	/*
-	 * If it's an activity item, switch the activity permalink to the group homepage
-	 * rather than the user's homepage.
-	 */
-	$link = bp_get_group_permalink( $group );
-	if ( $activity->primary_link && $activity->primary_link !== bp_core_get_user_domain( $sender_id ) ) {
-		$link = $activity->primary_link;
-	}
-
-	$send_args = array(
-		'group_id'    => $group_id,
-		'sender_id'   => $sender_id,
-		'activity_id' => $activity->id,
-		'action'      => $action,
-		'content'     => $activity->content,
-		'link'        => $link,
-	);
-
-	ass_generate_notification( $send_args );
-}
-
-/**
- * Add item to send queue at the time of activity creation.
- */
-function ass_record_group_activity_item( BP_Activity_Activity $activity ) {
 	if ( 'groups' !== $activity->component ) {
 		return;
 	}
@@ -329,7 +266,7 @@ function ass_record_group_activity_item( BP_Activity_Activity $activity ) {
 		'activity_id' => $activity->id,
 	) )->dispatch();
 }
-add_action( 'bp_activity_after_save' , 'ass_record_group_activity_item' , 50 );
+add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
 /**
  * Generate and send a group notification.
