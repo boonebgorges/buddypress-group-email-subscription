@@ -47,21 +47,26 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	}
 
 	protected function handle_immediate_queue( $activity_id ) {
+		bpges_log( "Beginning batch of immediate notifications for $activity_id." );
+
+		$total_for_activity = (int) bp_activity_get_meta( $activity_id, 'bpges_immediate_notification_count' );
 
 		$run = true;
-		$i = 1;
+		$total_for_batch = 0;
 		do {
-			$num_queries = $GLOBALS['wpdb']->num_queries;
-			$i++;
 			$query = new BPGES_Queued_Item_Query( array(
 				'activity_id' => $activity_id,
 				'per_page'    => 1,
+				'type'        => 'immediate',
 			) );
 
 			$items = $query->get_results();
 
 			// Queue is finished.
 			if ( ! $items ) {
+				bpges_log( "Finished sending immediate notifications for $activity_id. A total of $total_for_activity notifications were sent over all batches." );
+				bp_activity_delete_meta( $activity_id, 'bpges_immediate_notification_count' );
+
 				// @todo Should we take this opportunity to run a cleanup of other failed 'immediate' items? or maybe on a cron job
 				return;
 			}
@@ -69,12 +74,18 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 			foreach ( $items as $item ) {
 				bpges_generate_notification( $item );
 				$item->delete();
+				$total_for_batch++;
+				$total_for_activity++;
 			}
 
 			if ( $this->time_exceeded() || $this->memory_exceeded() ) {
 				$run = false;
 			}
 		} while ( $run );
+
+		bpges_log( "Sent $total_for_batch immediate notifications for $activity_id this batch. Launching another batch...." );
+
+		bp_activity_update_meta( $activity_id, 'bpges_immediate_notification_count', $total_for_activity );
 
 		bpges_send_queue()->data( array(
 			'type'        => 'immediate',
