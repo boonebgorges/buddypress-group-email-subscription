@@ -2218,6 +2218,13 @@ function bpges_log( $message ) {
 	error_log( '[' . gmdate( 'd-M-Y H:i:s' ) . '] ' . $message . "\n", 3, BPGES_DEBUG_LOG_PATH );
 }
 
+/**
+ * Gets the send queue process.
+ *
+ * @since 3.9.0
+ *
+ * @return BPGES_Async_Request_Send_Queue
+ */
 function bpges_send_queue() {
 	static $queue;
 
