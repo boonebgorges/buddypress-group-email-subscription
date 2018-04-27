@@ -4,7 +4,7 @@
  * Subscription database methods.
  */
 class BPGES_Subscription extends BPGES_Database_Object {
-	protected function get_table_name() {
+	protected static function get_table_name() {
 		return bp_core_get_table_prefix() . 'bpges_subscriptions';
 	}
 

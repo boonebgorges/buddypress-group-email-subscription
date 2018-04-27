@@ -5,13 +5,13 @@
  */
 abstract class BPGES_Database_Object {
 	protected $data = array();
-	protected $table_name;
+	protected static $table_name;
 
-	abstract protected function get_table_name();
+	abstract protected static function get_table_name();
 	abstract protected function get_columns();
 
 	public function __construct( $id = null ) {
-		$this->table_name = $this->get_table_name();
+		$this->table_name = static::get_table_name();
 
 		$cols = $this->get_columns();
 		foreach ( $cols as $col => $col_type ) {
@@ -27,7 +27,11 @@ abstract class BPGES_Database_Object {
 
 	public function __get( $key ) {
 		$cols = $this->get_columns();
-		$col_type = $cols[ $key ];
+		$col_type = isset( $cols[ $key ] ) ? $cols[ $key ] : '%s';
+
+		if ( 'table_name' === $key ) {
+			return static::get_table_name();
+		}
 
 		switch ( $col_type ) {
 			case '%d' :
@@ -40,7 +44,11 @@ abstract class BPGES_Database_Object {
 
 	public function __set( $key, $value ) {
 		$cols = $this->get_columns();
-		$col_type = $cols[ $key ];
+		$col_type = isset( $cols[ $key ] ) ? $cols[ $key ] : '%s';
+
+		if ( 'table_name' === $key ) {
+			static::$table_name = $value;
+		}
 
 		switch ( $key ) {
 			case '%d' :

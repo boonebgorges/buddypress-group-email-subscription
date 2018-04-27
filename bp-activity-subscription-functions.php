@@ -207,6 +207,7 @@ function ass_record_group_activity_item( BP_Activity_Activity $activity ) {
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $activity->type );
 
 	// If we've gotten this far, record the activity item for each subscribed group member.
+	$to_queue = array();
 	$subscribed_users = ass_get_subscriptions_for_group( $group_id );
 	foreach ( $subscribed_users as $user_id => $subscription_type ) {
 		$self_notify = false;
@@ -299,13 +300,28 @@ function ass_record_group_activity_item( BP_Activity_Activity $activity ) {
 		$add_to_digest_queue = apply_filters( 'bp_ges_add_to_digest_queue_for_user', $add_to_digest_queue, $activity, $user_id, $subscription_type );
 
 		if ( $send_immediately ) {
-			ass_queue_activity_item( $activity->id, $user_id, $group_id, 'immediate' );
+			$to_queue[] = array(
+				'user_id'       => $user_id,
+				'group_id'      => $group_id,
+				'activity_id'   => $activity->id,
+				'type'          => 'immediate',
+				'date_recorded' => date( 'Y-m-d H:i:s' ),
+			);
 		}
 
 		if ( $add_to_digest_queue ) {
-			ass_queue_activity_item( $activity->id, $user_id, $group_id, $subscription_type );
+			$to_queue[] = array(
+				'user_id'       => $user_id,
+				'group_id'      => $group_id,
+				'activity_id'   => $activity->id,
+				'type'          => 'immediate',
+				'date_recorded' => date( 'Y-m-d H:i:s' ),
+			);
 		}
 	}
+
+	// Bulk insert.
+	BPGES_Queued_Item::bulk_insert( $to_queue );
 
 	// Trigger the batch process.
 	bpges_send_queue()->data( array(

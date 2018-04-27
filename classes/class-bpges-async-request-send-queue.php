@@ -59,6 +59,7 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 
 		// Queue is finished.
 		if ( ! $items ) {
+			// @todo Should we take this opportunity to run a cleanup of other failed 'immediate' items? or maybe on a cron job
 			return;
 		}
 
