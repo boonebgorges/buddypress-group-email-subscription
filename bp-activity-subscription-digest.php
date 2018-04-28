@@ -606,12 +606,12 @@ function ass_digest_strip_plaintext_separators( $content = '', $prop = '', $tran
 
 // these functions are hooked in via the cron
 function ass_daily_digest_fire() {
-	ass_digest_fire( 'dig' );
+	bpges_trigger_digest( 'dig' );
 }
 add_action( 'ass_digest_event', 'ass_daily_digest_fire' );
 
 function ass_weekly_digest_fire() {
-	ass_digest_fire( 'sum' );
+	bpges_trigger_digest( 'sum' );
 }
 add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 
