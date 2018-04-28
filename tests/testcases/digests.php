@@ -174,6 +174,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 	public function test_only_sent_items_should_be_removed_from_digest_queue() {
 		$u1 = $this->factory->user->create();
 		$u2 = $this->factory->user->create();
+		$u3 = $this->factory->user->create();
 
 		$g1 = $this->factory->group->create( array( 'creator_id' => $u1 ) );
 		$g2 = $this->factory->group->create( array( 'creator_id' => $u1 ) );
@@ -182,7 +183,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a1 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g1,
-			'user_id'   => $u1,
+			'user_id'   => $u3,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -190,7 +191,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a2 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g1,
-			'user_id'   => $u1,
+			'user_id'   => $u3,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -198,7 +199,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a3 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g2,
-			'user_id'   => $u1,
+			'user_id'   => $u3,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -206,7 +207,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a4 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g2,
-			'user_id'   => $u1,
+			'user_id'   => $u3,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -214,7 +215,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a5 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g3,
-			'user_id'   => $u1,
+			'user_id'   => $u3,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -222,7 +223,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a6 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g3,
-			'user_id'   => $u1,
+			'user_id'   => $u3,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
