@@ -12,7 +12,7 @@ class BPGES_Queued_Item_Query {
 			'group_id'    => null,
 			'activity_id' => null,
 			'type'        => null,
-			'date_query'  => null,
+			'before'      => null,
 			'per_page'    => null,
 			'paged'       => 1,
 		);
@@ -56,6 +56,11 @@ class BPGES_Queued_Item_Query {
 			$sql['where']['type'] = $wpdb->prepare( 'type = %s', $type );
 		}
 
+		$before = $this->get( 'before' );
+		if ( ! is_null( $before ) ) {
+			$sql['where']['before'] = $wpdb->prepare( 'date_recorded < %s', $before );
+		}
+
 		$where = '';
 		if ( $sql['where'] ) {
 			$where = ' WHERE ' . implode( ' AND ', $sql['where'] );
@@ -83,5 +88,24 @@ class BPGES_Queued_Item_Query {
 		}
 
 		return $retval;
+	}
+
+	/**
+	 * Get the ID of a user who has pending digest items of a given type.
+	 *
+	 * We look only at those items added to the queue before the $timestamp, in case
+	 * items are queued while a digest is being processed.
+	 *
+	 * @param string $type      Digest type.
+	 * @param string $timestamp Digest run timestamp, in Y-m-d H:i:s format.
+	 * @return int
+	 */
+	public static function get_user_with_pending_digest( $type, $timestamp ) {
+		global $wpdb;
+
+		$table_name = bp_core_get_table_prefix() . 'bpges_queued_items';
+		$user_id = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$table_name} WHERE type = %s AND date_recorded < %s", $type, $timestamp ) );
+
+		return (int) $user_id;
 	}
 }

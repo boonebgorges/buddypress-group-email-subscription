@@ -43,6 +43,19 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 				$this->handle_immediate_queue( $activity_id );
 			break;
 
+			default :
+				if ( ! isset( $_POST['type'] ) || ! isset( $_POST['timestamp'] ) ) {
+					return;
+				}
+
+				$timestamp = wp_unslash( $_POST['timestamp'] );
+				$type = wp_unslash( $_POST['type'] );
+				if ( 'dig' !== $type && 'sum' !== $type ) {
+					return;
+				}
+
+				$this->handle_digest_queue( $type, $timestamp );
+			break;
 		}
 	}
 
@@ -90,6 +103,73 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		bpges_send_queue()->data( array(
 			'type'        => 'immediate',
 			'activity_id' => $activity_id,
+		) )->dispatch();
+	}
+
+	protected function handle_digest_queue( $type, $timestamp ) {
+		bpges_log( "Beginning digest batch of type $type for timestamp $timestamp." );
+
+		$option_name = 'bpges_digest_count_' . $type . '_' . $timestamp;
+		$total_for_run = (int) bp_get_option( $option_name, 0 );
+
+		$run = true;
+		$total_for_batch = 0;
+		do {
+			$user_id = BPGES_Queued_Item_Query::get_user_with_pending_digest( $type, $timestamp );
+
+			// Queue is finished.
+			if ( ! $user_id ) {
+				bpges_log( "Finished digest run of type $type for timestamp $timestamp. Digests were sent to a total of $total_for_run users." );
+				bp_delete_option( $option_name );
+
+				// @todo Should we take this opportunity to run a cleanup of other failed 'immediate' items? or maybe on a cron job
+				return;
+			}
+			die;
+
+			$query = new BPGES_Queued_Item_Query( array(
+				'user_id'  => $user_id,
+				'type'     => $type,
+				'before'   => $timestamp,
+			) );
+
+			$items = $query->get_results();
+
+			// Sort by group.
+			$sorted_by_group = array();
+			foreach ( $items as $item ) {
+				if ( ! isset( $sorted_by_group[ $item->group_id ] ) ) {
+					$sorted_by_group[ $item->group_id ] = array();
+				}
+
+				$sorted_by_group[ $item->group_id ][] = $item->activity_id;
+			}
+
+			// Ensure numerical sort.
+			foreach ( $sorted_by_group as $group_id => &$group_activity_ids ) {
+				sort( $group_activity_ids );
+			}
+
+			bpges_generate_digest( $user_id, $type, $sorted_by_group );
+
+			//  bulk_delete
+			//$item->delete();
+
+			$total_for_batch++;
+			$total_for_run++;
+
+			if ( $this->time_exceeded() || $this->memory_exceeded() ) {
+				$run = false;
+			}
+		} while ( $run );
+
+		bpges_log( "Sent $type digests to $total_for_batch users as part of this batch. Launching another batch...." );
+
+		bp_update_option( $option_name, $total_for_run );
+
+		bpges_send_queue()->data( array(
+			'type'      => $type,
+			'timestamp' => $timestamp,
 		) )->dispatch();
 	}
 
@@ -160,6 +240,8 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		$return = false;
 
 		$time = time();
+
+		$finish = $this->start_time + 14;
 
 		// Don't get within 10 seconds of max time.
 		if ( $time >= ( $finish - 10 ) ) {
