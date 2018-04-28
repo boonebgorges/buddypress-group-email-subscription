@@ -43,6 +43,19 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 		$table_name = self::get_table_name();
 		$values_sql = implode( ', ', $values );
 		$sql = "INSERT INTO {$table_name} (user_id, group_id, activity_id, type, date_recorded) VALUES {$values_sql}";
-		$wpdb->query( $sql );
+		return $wpdb->query( $sql );
+	}
+
+	/**
+	 * Bulk deletion.
+	 *
+	 * @param array $ids Array of queued-item IDs.
+	 */
+	public static function bulk_delete( $ids ) {
+		global $wpdb;
+
+		$parsed_ids = implode( ',', wp_parse_id_list( $ids ) );
+		$table_name = self::get_table_name();
+		return $wpdb->query( "DELETE FROM {$table_name} WHERE id IN ({$parsed_ids})" );
 	}
 }

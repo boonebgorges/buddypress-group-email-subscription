@@ -125,7 +125,6 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 				// @todo Should we take this opportunity to run a cleanup of other failed 'immediate' items? or maybe on a cron job
 				return;
 			}
-			die;
 
 			$query = new BPGES_Queued_Item_Query( array(
 				'user_id'  => $user_id,
@@ -150,10 +149,28 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 				sort( $group_activity_ids );
 			}
 
-			bpges_generate_digest( $user_id, $type, $sorted_by_group );
+			$sent_activity_ids = bpges_generate_digest( $user_id, $type, $sorted_by_group );
 
-			//  bulk_delete
-			//$item->delete();
+			// Collate queued-item IDs for bulk deletion.
+			$to_delete_ids = array();
+			foreach ( $items as $item ) {
+				$group_id    = $item->group_id;
+				$activity_id = $item->activity_id;
+
+				if ( ! isset( $sent_activity_ids[ $group_id ] ) ) {
+					continue;
+				}
+
+				if ( ! in_array( $activity_id, $sent_activity_ids[ $group_id ], true ) ) {
+					continue;
+				}
+
+				$to_delete_ids[] = $item->id;
+			}
+
+			if ( $to_delete_ids ) {
+				BPGES_Queued_Item::bulk_delete( $to_delete_ids );
+			}
 
 			$total_for_batch++;
 			$total_for_run++;
@@ -240,8 +257,6 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		$return = false;
 
 		$time = time();
-
-		$finish = $this->start_time + 14;
 
 		// Don't get within 10 seconds of max time.
 		if ( $time >= ( $finish - 10 ) ) {

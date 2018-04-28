@@ -48,6 +48,8 @@ function bpges_trigger_digest( $type ) {
  * @param array  $group_activity_ids Associative array, where keys are group IDs and subarrays
  *                                   are arrays of activity IDs to be included in that group's
  *                                   section of the digest.
+ * @return array $sent_activity_ids Associative array of activity items that were included in
+ *                                  the digest, formatted as `$group_activity_ids` above.
  */
 function bpges_generate_digest( $user_id, $type, $group_activity_ids ) {
 	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
@@ -154,25 +156,6 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids ) {
 		return;
 	}
 
-	// @todo - This all needs to be rethought.
-	// reset the user's sub array removing those sent
-	/*
-	$unsent_groups = array();
-	foreach ( $group_activity_ids_unfiltered as $queued_group_id => $queued_activity_ids ) {
-		if ( isset( $sent_activity_ids[ $queued_group_id ] ) ) {
-			$unsent_ids = array_diff( $queued_activity_ids, $sent_activity_ids[ $queued_group_id ] );
-			if ( $unsent_ids ) {
-				$unsent_groups[ $queued_group_id ] = $unsent_ids;
-			}
-		} else {
-			// No items from this group were sent, so all get requeued.
-			$unsent_groups[ $queued_group_id ] = $queued_activity_ids;
-		}
-	}
-	*/
-
-//	$group_activity_ids_array[$type] = $unsent_groups;
-
 	// show group summary for digest, and follow help text for weekly summary
 	if ( 'dig' == $type ) {
 		$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass') . ":\n<ul class=\"digest-group-summaries\" {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
@@ -271,10 +254,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids ) {
 		ass_send_multipart_email( $to, $subject, $message_plaintext, str_replace( '---', '', $message ) );
 	}
 
-	// update the subscriber's digest list
-//	bp_update_user_meta( $user_id, 'ass_digest_items', $group_activity_ids_array );
-
-	unset( $message, $message_plaintext, $message, $to, $userdata, $userdomain, $activity_message, $summary, $group_activity_ids_array, $group_activity_ids );
+	return $sent_activity_ids;
 }
 
 function ass_digest_fire( $type ) {
