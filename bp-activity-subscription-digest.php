@@ -943,20 +943,16 @@ function bpges_get_digest_queue_for_user( $user_id, $type ) {
 		return array();
 	}
 
-	$user_id  = (int) $user_id;
+	$user_id = (int) $user_id;
 
-	$all_groups_queue = bp_get_user_meta( $user_id, 'ass_digest_items', true );
+	$query = new BPGES_Queued_Item_Query( array(
+		'user_id' => $user_id,
+		'type'    => $type,
+	) );
 
-	if ( isset( $all_groups_queue[ $type ] ) ) {
-		$raw_group_items = $all_groups_queue[ $type ];
-
-		$queue = array();
-		foreach ( $raw_group_items as $group_id => $items ) {
-			$group_id = (int) $group_id;
-			$queue[ $group_id ] = array_map( 'intval', $items );
-		}
-	} else {
-		$queue = array();
+	$queue = array();
+	foreach ( $query->get_results() as $item ) {
+		$queue[ $item->group_id ][] = $item->activity_id;
 	}
 
 	return $queue;
