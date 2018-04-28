@@ -52,31 +52,7 @@ function bpges_trigger_digest( $type ) {
  *                                  the digest, formatted as `$group_activity_ids` above.
  */
 function bpges_generate_digest( $user_id, $type, $group_activity_ids ) {
-	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
-	$ass_email_css['wrapper']      = 'style="color:#333;clear:both;'; // use this to style the body
-	$ass_email_css['title']        = 'style="font-size:130%; margin:0 0 25px 0;"';
-	$ass_email_css['summary']      = '';
-	$ass_email_css['summary_ul']   = 'style="margin:0; padding:0 0 5px; list-style-type:circle; list-style-position:inside;"';
-	//$ass_email_css['summary']    = 'style="display:list-item;"';
-	$ass_email_css['follow_topic'] = 'style="padding:15px 0 0; color: #888;clear:both;"';
-	$ass_email_css['group_title']  = 'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
-	$ass_email_css['change_email'] = 'style="font-size:12px; margin-left:10px; color:#888;"';
-	$ass_email_css['item_div']     = 'style="padding: 10px; border-top: 1px #eee solid;"';
-	$ass_email_css['item_action']  = 'style="color:#888;"';
-	$ass_email_css['item_date']    = 'style="font-size:85%; color:#bbb; margin-left:8px;"';
-	$ass_email_css['item_content'] = 'style="color:#333;"';
-	$ass_email_css['item_weekly']  = 'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
-	$ass_email_css['footer']       = 'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
-
-	// BP 2.5+ overrides.
-	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
-		$ass_email_css['summary_ul']  = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
-		$ass_email_css['item_action'] = $ass_email_css['item_content'] = '';
-		$ass_email_css['item_date']   = 'style="font-size:85%;"';
-	}
-
-	// Allow plugins to filter the CSS
-	$ass_email_css = apply_filters( 'ass_email_css', $ass_email_css );
+	$ass_email_css = bpges_digest_css();
 
 	$title = ass_digest_get_title( $type );
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
@@ -269,30 +245,7 @@ function ass_digest_fire( $type ) {
 		$type = 'sum';
 
 	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
-	$ass_email_css['wrapper']      = 'style="color:#333;clear:both;'; // use this to style the body
-	$ass_email_css['title']        = 'style="font-size:130%; margin:0 0 25px 0;"';
-	$ass_email_css['summary']      = '';
-	$ass_email_css['summary_ul']   = 'style="margin:0; padding:0 0 5px; list-style-type:circle; list-style-position:inside;"';
-	//$ass_email_css['summary']    = 'style="display:list-item;"';
-	$ass_email_css['follow_topic'] = 'style="padding:15px 0 0; color: #888;clear:both;"';
-	$ass_email_css['group_title']  = 'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
-	$ass_email_css['change_email'] = 'style="font-size:12px; margin-left:10px; color:#888;"';
-	$ass_email_css['item_div']     = 'style="padding: 10px; border-top: 1px #eee solid;"';
-	$ass_email_css['item_action']  = 'style="color:#888;"';
-	$ass_email_css['item_date']    = 'style="font-size:85%; color:#bbb; margin-left:8px;"';
-	$ass_email_css['item_content'] = 'style="color:#333;"';
-	$ass_email_css['item_weekly']  = 'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
-	$ass_email_css['footer']       = 'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
-
-	// BP 2.5+ overrides.
-	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
-		$ass_email_css['summary_ul']  = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
-		$ass_email_css['item_action'] = $ass_email_css['item_content'] = '';
-		$ass_email_css['item_date']   = 'style="font-size:85%;"';
-	}
-
-	// Allow plugins to filter the CSS
-	$ass_email_css = apply_filters( 'ass_email_css', $ass_email_css );
+	$ass_email_css = bpges_digest_css();
 
 	$title = ass_digest_get_title( $type );
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
@@ -1183,6 +1136,49 @@ function ass_digest_support_wp_better_emails( $message, $message_pre_html_wrap )
     return $message;
 }
 add_filter( 'ass_digest_message_html', 'ass_digest_support_wp_better_emails', 10, 2 );
+
+/**
+ * Get the CSS for digest emails.
+ *
+ * @since 3.9.0
+ *
+ * @return array
+ */
+function bpges_digest_css() {
+	$ass_email_css = array();
+
+	// HTML emails only work with inline CSS styles. Here we setup the styles to be used in various functions below.
+	$ass_email_css['wrapper']      = 'style="color:#333;clear:both;'; // use this to style the body
+	$ass_email_css['title']        = 'style="font-size:130%; margin:0 0 25px 0;"';
+	$ass_email_css['summary']      = '';
+	$ass_email_css['summary_ul']   = 'style="margin:0; padding:0 0 5px; list-style-type:circle; list-style-position:inside;"';
+	//$ass_email_css['summary']    = 'style="display:list-item;"';
+	$ass_email_css['follow_topic'] = 'style="padding:15px 0 0; color: #888;clear:both;"';
+	$ass_email_css['group_title']  = 'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
+	$ass_email_css['change_email'] = 'style="font-size:12px; margin-left:10px; color:#888;"';
+	$ass_email_css['item_div']     = 'style="padding: 10px; border-top: 1px #eee solid;"';
+	$ass_email_css['item_action']  = 'style="color:#888;"';
+	$ass_email_css['item_date']    = 'style="font-size:85%; color:#bbb; margin-left:8px;"';
+	$ass_email_css['item_content'] = 'style="color:#333;"';
+	$ass_email_css['item_weekly']  = 'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
+	$ass_email_css['footer']       = 'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
+
+	// BP 2.5+ overrides.
+	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
+		$ass_email_css['summary_ul']  = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
+		$ass_email_css['item_action'] = $ass_email_css['item_content'] = '';
+		$ass_email_css['item_date']   = 'style="font-size:85%;"';
+	}
+
+	/**
+	 * Filters the CSS used when generating digests.
+	 *
+	 * @since 2.1
+	 *
+	 * @return array
+	 */
+	return apply_filters( 'ass_email_css', $ass_email_css );
+}
 
 /**
  * Checks whether an item is valid to send in a digest for a user.
