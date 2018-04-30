@@ -134,7 +134,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 	$userdata = new WP_User( $user_id );
 	$to = $userdata->user_email;
-	$userdomain = ass_digest_get_user_domain( $user_id );
+	$userdomain = bp_core_get_user_domain( $user_id );
 
 	// Keep an unfiltered copy of the activity IDs to be compared with sent items.
 	$group_activity_ids_unfiltered = $group_activity_ids;
