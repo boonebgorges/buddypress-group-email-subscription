@@ -252,8 +252,13 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			);
 		};
 
+		$query = new BPGES_Queued_Item_Query( array(
+			'user_id' => $u2,
+		) );
+		$found = $query->get_results();
+
 		add_filter( 'ass_digest_group_activity_ids', $callback );
-		ass_digest_fire( 'dig' );
+		bpges_process_digest_for_user( $u2, 'dig', date( 'Y-m-d H:i:s', time() + 10 ) );
 		remove_filter( 'ass_digest_group_activity_ids', $callback );
 
 		$query = new BPGES_Queued_Item_Query( array(
