@@ -101,11 +101,24 @@ class BPGES_Queued_Item_Query {
 	 * @return int
 	 */
 	public static function get_user_with_pending_digest( $type, $timestamp ) {
+		$user_ids = self::get_users_with_pending_digests( $type, 1, $timestamp );
+		return reset( $user_ids );
+	}
+
+	/**
+	 * Get the IDs of users with pending digest items of a given type.
+	 *
+	 * @param string $type      Digest type.
+	 * @param int    $count     Max number of users to return.
+	 * @param string $timestamp Digest run timestamp, in Y-m-d H:i:s format.
+	 * @return array
+	 */
+	public static function get_users_with_pending_digest( $type, $count, $timestamp ) {
 		global $wpdb;
 
 		$table_name = bp_core_get_table_prefix() . 'bpges_queued_items';
-		$user_id = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM {$table_name} WHERE type = %s AND date_recorded < %s", $type, $timestamp ) );
+		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT user_id FROM {$table_name} WHERE type = %s AND date_recorded < %s LIMIT %d", $type, $timestamp, $count ) );
 
-		return (int) $user_id;
+		return array_map( 'intval', $user_ids );
 	}
 }

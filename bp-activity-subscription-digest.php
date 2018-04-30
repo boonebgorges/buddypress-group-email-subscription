@@ -49,12 +49,14 @@ function bpges_trigger_digest( $type ) {
  *
  * @since 3.9.0
  *
- * @param int    $user_id   ID of the user.
- * @param string $type      Digest type. 'sum' or 'dig'.
- * @param string $timestamp Timestamp for the current digest run. Used to determine the queued
- *                          items that should be included in the digest.
+ * @param int    $user_id    ID of the user.
+ * @param string $type       Digest type. 'sum' or 'dig'.
+ * @param string $timestamp  Timestamp for the current digest run. Used to determine the queued
+ *                           items that should be included in the digest.
+ * @param bool   $is_preview Whether this is a preview. When preview, email content will be
+ *                           echoed and not sent or deleted from the queue.
  */
-function bpges_process_digest_for_user( $user_id, $type, $timestamp ) {
+function bpges_process_digest_for_user( $user_id, $type, $timestamp, $is_preview = false ) {
 	$query = new BPGES_Queued_Item_Query( array(
 		'user_id'  => $user_id,
 		'type'     => $type,
@@ -78,27 +80,29 @@ function bpges_process_digest_for_user( $user_id, $type, $timestamp ) {
 		sort( $group_activity_ids );
 	}
 
-	$sent_activity_ids = bpges_generate_digest( $user_id, $type, $sorted_by_group );
+	$sent_activity_ids = bpges_generate_digest( $user_id, $type, $sorted_by_group, $is_preview );
 
-	// Collate queued-item IDs for bulk deletion.
-	$to_delete_ids = array();
-	foreach ( $items as $item ) {
-		$group_id    = $item->group_id;
-		$activity_id = $item->activity_id;
+	if ( ! $is_preview ) {
+		// Collate queued-item IDs for bulk deletion.
+		$to_delete_ids = array();
+		foreach ( $items as $item ) {
+			$group_id    = $item->group_id;
+			$activity_id = $item->activity_id;
 
-		if ( ! isset( $sent_activity_ids[ $group_id ] ) ) {
-			continue;
+			if ( ! isset( $sent_activity_ids[ $group_id ] ) ) {
+				continue;
+			}
+
+			if ( ! in_array( $activity_id, $sent_activity_ids[ $group_id ], true ) ) {
+				continue;
+			}
+
+			$to_delete_ids[] = $item->id;
 		}
 
-		if ( ! in_array( $activity_id, $sent_activity_ids[ $group_id ], true ) ) {
-			continue;
+		if ( $to_delete_ids ) {
+			BPGES_Queued_Item::bulk_delete( $to_delete_ids );
 		}
-
-		$to_delete_ids[] = $item->id;
-	}
-
-	if ( $to_delete_ids ) {
-		BPGES_Queued_Item::bulk_delete( $to_delete_ids );
 	}
 }
 
@@ -110,10 +114,11 @@ function bpges_process_digest_for_user( $user_id, $type, $timestamp ) {
  * @param array  $group_activity_ids Associative array, where keys are group IDs and subarrays
  *                                   are arrays of activity IDs to be included in that group's
  *                                   section of the digest.
+ * @param bool   $is_preview         Whether this is a preview.
  * @return array $sent_activity_ids Associative array of activity items that were included in
  *                                  the digest, formatted as `$group_activity_ids` above.
  */
-function bpges_generate_digest( $user_id, $type, $group_activity_ids ) {
+function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_preview = false ) {
 	$ass_email_css = bpges_digest_css();
 
 	$title = ass_digest_get_title( $type );
@@ -221,6 +226,11 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids ) {
 	$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
 
 	$message .= "</div>";
+
+	if ( $is_preview ) {
+		echo $message;
+		return;
+	}
 
 	/**
 	 * Filter to allow plugins to stop the email from being sent.
@@ -686,18 +696,42 @@ add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 // for testing the digest firing in real-time, add /?sum=1 to the url
 function ass_digest_fire_test() {
 	if ( isset( $_GET['sum'] ) && is_super_admin() ){
-		echo "<h2>".__('DAILY DIGEST:','bp-ass')."</h2>";
-		ass_digest_fire( 'dig' );
-		echo "<h2 style='margin-top:150px'>".__('WEEKLY DIGEST:','bp-ass')."</h2>";
-		ass_digest_fire( 'sum' );
-
-		//global $wpdb;
-		//echo '<pre>';print_r( $wpdb->queries );
+		echo '<h2>' . __( 'DAILY DIGEST:','bp-ass' ) . '</h2>';
+		bpges_generate_digest_preview_for_type( 'dig' );
+		echo '<h2 style="margin-top:150px">' . __( 'WEEKLY DIGEST:','bp-ass' ) . '</h2>';
+		bpges_generate_digest_preview_for_type( 'sum' );
 		die();
 	}
-
 }
 add_action( 'bp_actions', 'ass_digest_fire_test' );
+
+/**
+ * Generate preview for digest type.
+ *
+ * @since 3.9.0
+ *
+ * @param string $type Digest type. 'sum' or 'dig'.
+ */
+function bpges_generate_digest_preview_for_type( $type ) {
+	$timestamp = date( 'Y-m-d H:i:s' );
+
+	if ( isset( $_GET['user_ids'] ) ) {
+		$user_ids = wp_parse_id_list( wp_unslash( $_GET['user_ids'] ) );
+	} else {
+		$count = isset( $_GET['user_count'] ) ? intval( wp_unslash( $_GET['user_count'] ) ) : 25;
+
+		$user_ids = BPGES_Queued_Item_Query::get_users_with_pending_digest( $type, $count, $timestamp );
+	}
+
+	foreach ( $user_ids as $user_id ) {
+		$user = new WP_User( $user_id );
+		echo '<div style="background-color:white; width:75%;padding:20px 10px;">';
+		echo '<p>=================== to: <b>' . esc_html( $user->user_email ) . '</b> ===================</p>';
+		bpges_process_digest_for_user( $user_id, $type, $timestamp, true );
+		//echo '<br>PLAIN TEXT PART:<br><pre>'; echo $message_plaintext ; echo '</pre>';
+		echo '</div>';
+	}
+}
 
 
 
@@ -713,7 +747,9 @@ add_action( 'bp_actions', 'ass_digest_fire_test' );
  * the possibility that users within a single group would want more highly-filtered digests.
  */
 function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id ) {
-	global $bp, $ass_email_css;
+	global $bp;
+
+	$ass_email_css = bpges_digest_css();
 
 	$group_permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
 	$group_name_link = '<a class="item-group-group-link" href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
@@ -765,7 +801,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 // displays each item in a group
 function ass_digest_format_item( $item, $type ) {
-	global $ass_email_css;
+	$ass_email_css = bpges_digest_css();
 
 	$replies = '';
 
@@ -877,7 +913,7 @@ function ass_convert_html_to_plaintext( $message ) {
  * @return string
  */
 function ass_old_digest_item_html_entities( $matches ) {
-	global $ass_email_css;
+	$ass_email_css = bpges_digest_css();
 	return '<span ' . $ass_email_css['item_content'] . '>' . htmlentities( strip_tags( $matches[1] ), ENT_COMPAT, 'utf-8' ) . '</span>';
 }
 
@@ -888,7 +924,7 @@ function ass_old_digest_item_html_entities( $matches ) {
  * properly
  */
 function ass_send_multipart_email( $to, $subject, $message_plaintext, $message ) {
-	global $ass_email_css;
+	$ass_email_css = bpges_digest_css();
 
      // setup HTML body. plugins that wrap emails with HTML templates can filter this
 	$message = apply_filters( 'ass_digest_message_html', "<html><body>{$message}</body></html>", $message );
