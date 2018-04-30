@@ -388,12 +388,6 @@ function ass_weekly_digest_fire() {
 }
 add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 
-// Use these two lines for testing the digest firing in real-time
-//add_action( 'bp_actions', 'ass_daily_digest_fire' ); // for testing only
-//add_action( 'bp_actions', 'ass_weekly_digest_fire' ); // for testing only
-
-
-
 // for testing the digest firing in real-time, add /?sum=1 to the url
 function ass_digest_fire_test() {
 	if ( isset( $_GET['sum'] ) && is_super_admin() ){
