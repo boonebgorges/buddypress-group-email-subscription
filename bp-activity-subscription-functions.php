@@ -564,6 +564,18 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	$user_id     = $queued_item->user_id;
 	$group_id    = $queued_item->group_id;
 
+	// Fetch group subscription.
+	$sub = new BPGES_Subscription_Query( array(
+		'user_id'  => $user_id,
+		'group_id' => $group_id,
+		'per_page' => 1
+	) );
+	$sub = $sub->get_results();
+	$sub = end( $sub );
+
+	// Set group status to subscription type.
+	$group_status = $sub->type;
+
 	$activity = new BP_Activity_Activity( $activity_id );
 	$group    = groups_get_group(
 		array(
@@ -638,10 +650,10 @@ To view or reply, log in and go to:
 
 		// Check for $self_notify status.
 		$self_notify = ass_self_post_notification( $user_id );
+		if ( ! empty( $self_notify ) ) {
+			$group_status = 'self_notify';
+		}
 	}
-
-	// @todo
-	$group_status = 'sum';
 
 	if ( $self_notify ) {
 		// notification settings link
@@ -673,7 +685,7 @@ To view or reply, log in and go to:
 		'message'           => $message,
 		'notice'            => $notice,
 		'user_id'           => $user_id,
-		'subscription_type' => $queued_item->type,
+		'subscription_type' => $group_status,
 		'content'           => $the_content,
 		'settings_link'     => ! empty( $settings_link ) ? $settings_link : '',
 	);
