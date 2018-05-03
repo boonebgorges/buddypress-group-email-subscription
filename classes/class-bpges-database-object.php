@@ -7,7 +7,7 @@ abstract class BPGES_Database_Object {
 	protected $data = array();
 	protected static $table_name;
 
-	abstract protected static function get_table_name();
+	protected static function get_table_name() {}
 	abstract protected function get_columns();
 
 	public function __construct( $id = null ) {
