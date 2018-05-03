@@ -101,7 +101,7 @@ class BPGES_Queued_Item_Query {
 	 * @return int
 	 */
 	public static function get_user_with_pending_digest( $type, $timestamp ) {
-		$user_ids = self::get_users_with_pending_digests( $type, 1, $timestamp );
+		$user_ids = self::get_users_with_pending_digest( $type, 1, $timestamp );
 		return reset( $user_ids );
 	}
 
