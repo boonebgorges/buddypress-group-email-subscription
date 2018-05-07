@@ -23,11 +23,6 @@ define( 'GES_REVISION_DATE', '2018-04-25 14:00 UTC' );
  * @since 2.9.0
  */
 function ass_loader() {
-	if ( ! defined( 'BPGES_DEBUG_LOG_PATH' ) ) {
-		$dir = wp_upload_dir();
-		define( 'BPGES_DEBUG_LOG_PATH', trailingslashit( $dir['basedir'] ) . 'bpges-debug.log' );
-	}
-
 	// Only supported in BP 1.5+.
 	if ( version_compare( BP_VERSION, '1.3', '>' ) ) {
 		// Make sure the group and activity components are active.
