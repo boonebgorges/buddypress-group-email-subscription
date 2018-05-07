@@ -174,7 +174,6 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 	public function test_only_sent_items_should_be_removed_from_digest_queue() {
 		$u1 = $this->factory->user->create();
 		$u2 = $this->factory->user->create();
-		$u3 = $this->factory->user->create();
 
 		$g1 = $this->factory->group->create( array( 'creator_id' => $u1 ) );
 		$g2 = $this->factory->group->create( array( 'creator_id' => $u1 ) );
@@ -183,7 +182,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a1 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g1,
-			'user_id'   => $u3,
+			'user_id'   => $u1,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -191,7 +190,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a2 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g1,
-			'user_id'   => $u3,
+			'user_id'   => $u1,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -199,7 +198,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a3 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g2,
-			'user_id'   => $u3,
+			'user_id'   => $u1,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -207,7 +206,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a4 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g2,
-			'user_id'   => $u3,
+			'user_id'   => $u1,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -215,7 +214,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a5 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g3,
-			'user_id'   => $u3,
+			'user_id'   => $u1,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -223,7 +222,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$a6 = $this->factory->activity->create( array(
 			'type'      => 'activity_update',
 			'item_id'   => $g3,
-			'user_id'   => $u3,
+			'user_id'   => $u1,
 			'component' => 'groups',
 			'action'    => 'Foo posted an activity update in the group Bar',
 		) );
@@ -252,42 +251,19 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			);
 		};
 
-		$query = new BPGES_Queued_Item_Query( array(
-			'user_id' => $u2,
-		) );
-		$found = $query->get_results();
-
 		add_filter( 'ass_digest_group_activity_ids', $callback );
-		bpges_process_digest_for_user( $u2, 'dig', date( 'Y-m-d H:i:s', time() + 10 ) );
+		ass_digest_fire( 'dig' );
 		remove_filter( 'ass_digest_group_activity_ids', $callback );
 
-		$query = new BPGES_Queued_Item_Query( array(
-			'user_id' => $u2,
-		) );
-		$found = $query->get_results();
-
-		$found_g1 = $found_g2 = $found_g3 = array();
-		foreach ( $found as $item ) {
-			if ( $g1 === $item->group_id ) {
-				$found_g1[] = $item->activity_id;
-			}
-
-			if ( $g2 === $item->group_id ) {
-				$found_g2[] = $item->activity_id;
-			}
-
-			if ( $g3 === $item->group_id ) {
-				$found_g3[] = $item->activity_id;
-			}
-		}
+		$saved = bp_get_user_meta( $u2, 'ass_digest_items', true );
 
 		$expected_g1 = array( $a2 );
 		$expected_g3 = array( $a5, $a6 );
 
-		$this->assertEqualSets( $expected_g1, $found_g1 );
-		$this->assertEqualSets( $expected_g3, $found_g3 );
+		$this->assertEqualSets( $expected_g1, $saved['dig'][ $g1 ] );
+		$this->assertEqualSets( $expected_g3, $saved['dig'][ $g3 ] );
 
-		$this->assertEmpty( $found_g2 );
+		$this->assertFalse( isset( $saved['dig'][ $g2 ] ) );
 	}
 
 	public function use_mockmailer() {
