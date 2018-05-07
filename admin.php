@@ -318,3 +318,92 @@ EOD;
 	echo "<script type=\"text/javascript\">{$inline_js}</script>";
 }
 add_action( 'admin_head-post.php', 'ass_bp_email_admin_notice' );
+
+/**
+ * Install/update subscription database table.
+ *
+ * @since 3.9.0
+ */
+function bpges_install_subscription_table() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	$sql             = array();
+	$charset_collate = $wpdb->get_charset_collate();
+	$bp_prefix       = bp_core_get_table_prefix();
+
+	$sql[] = "CREATE TABLE {$bp_prefix}bpges_subscriptions (
+				id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				user_id bigint(20) NOT NULL,
+				group_id bigint(20) NOT NULL,
+				type varchar(75) NOT NULL,
+				KEY user_id (user_id),
+				KEY group_id (group_id),
+				KEY user_type (user_id,type)
+			) {$charset_collate};";
+
+	dbDelta( $sql );
+}
+
+/**
+ * Install/update queued items database table.
+ *
+ * @since 3.9.0
+ */
+function bpges_install_queued_items_table() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	$sql             = array();
+	$charset_collate = $wpdb->get_charset_collate();
+	$bp_prefix       = bp_core_get_table_prefix();
+
+	$sql[] = "CREATE TABLE {$bp_prefix}bpges_queued_items (
+				id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				user_id bigint(20) NOT NULL,
+				group_id bigint(20) NOT NULL,
+				activity_id bigint(20) NOT NULL,
+				type varchar(75) NOT NULL,
+				date_recorded datetime NOT NULL default '0000-00-00 00:00:00',
+				KEY user_id (user_id),
+				KEY group_id (user_id),
+				KEY activity_id (activity_id),
+				KEY user_group_type_date (user_id,type,date_recorded)
+			) {$charset_collate};";
+
+	dbDelta( $sql );
+}
+
+/**
+ * Launch the migration of legacy subscriptions.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_launch_legacy_subscription_migration() {
+	global $wpdb;
+
+	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
+	}
+
+	$process = new BPGES_Async_Request_Subscription_Migrate();
+	$process->dispatch();
+}
+
+/**
+ * Launch the migration of legacy digest queues.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_launch_legacy_digest_queue_migration() {
+	global $wpdb;
+
+	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+	}
+
+	$process = new BPGES_Async_Request_Digest_Queue_Migrate();
+	$process->dispatch();
+}

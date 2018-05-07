@@ -52,6 +52,13 @@ class GES_Updater {
 			ass_install_emails( true );
 		}
 
+		// 3.9.0 - Install subscription table and migrate data.
+		if ( $installed_date < 1523891599 ) {
+			bpges_install_subscription_table();
+			bpges_install_queued_items_table();
+			bpges_39_launch_legacy_subscription_migration();
+		}
+
 		// Bump revision date in DB.
 		self::bump_revision_date();
 	}

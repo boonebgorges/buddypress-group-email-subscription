@@ -30,6 +30,34 @@ if ( function_exists( 'bp_setup_forums' ) ) {
 // Core.
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-database-object.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription-query.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-queued-item.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-queued-item-query.php' );
+
+if ( ! class_exists( 'WP_Background_Process' ) ) {
+	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+}
+
+if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
+	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
+	$bpges_subscription_migration = new BPGES_Async_Request_Subscription_Migrate();
+}
+
+if ( ! bp_get_option( '_ges_39_digest_queue_migrated' ) ) {
+	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+	$bpges_digest_queue_migration = new BPGES_Async_Request_Digest_Queue_Migrate();
+}
+
+require dirname( __FILE__ ) . '/classes/class-bpges-async-request-send-queue.php';
+bpges_send_queue();
+
+// CLI.
+if ( defined( 'WP_CLI' ) ) {
+	require_once( dirname( __FILE__ ) . '/classes/class-bpges-command.php' );
+	WP_CLI::add_command( 'bpges', 'BPGES_Command' );
+}
 
 /**
  * Group extension for GES.
