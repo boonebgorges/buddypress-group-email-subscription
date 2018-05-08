@@ -618,7 +618,7 @@ To view or reply, log in and go to:
 %2$s
 
 ---------------------
-', 'bp-ass' ), $r['action'], $r['link'] );
+', 'bp-ass' ), $action, $link );
 	} else {
 		$message = sprintf( __(
 '%1$s
