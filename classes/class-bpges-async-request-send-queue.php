@@ -114,6 +114,9 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 
 		$run = true;
 		$total_for_batch = 0;
+
+		$processed_usermeta_key = "bpges_processed_digest_{$type}_{$timestamp}";
+
 		do {
 			$user_id = BPGES_Queued_Item_Query::get_user_with_pending_digest( $type, $timestamp );
 
@@ -122,10 +125,14 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 				bpges_log( "Finished digest run of type $type for timestamp $timestamp. Digests were sent to a total of $total_for_run users." );
 				bp_delete_option( $option_name );
 
+				// Clean up "processed" flags.
+				delete_metadata( 'user', 1, $processed_usermeta_key, '', true );
+
 				// @todo Should we take this opportunity to run a cleanup of other failed 'immediate' items? or maybe on a cron job
 				return;
 			}
 
+			update_user_meta( $user_id, $processed_usermeta_key, true );
 			bpges_process_digest_for_user( $user_id, $type, $timestamp );
 
 			$total_for_batch++;

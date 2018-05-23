@@ -116,8 +116,17 @@ class BPGES_Queued_Item_Query {
 	public static function get_users_with_pending_digest( $type, $count, $timestamp ) {
 		global $wpdb;
 
+		$processed_usermeta_key = "bpges_processed_digest_{$type}_{$timestamp}";
+		$processed_user_ids_raw = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s", $processed_usermeta_key ) );
+
+		if ( $processed_user_ids_raw ) {
+			$processed_user_ids = implode( ',', array_map( 'intval', $processed_user_ids_raw ) );
+		} else {
+			$processed_user_ids = '0';
+		}
+
 		$table_name = bp_core_get_table_prefix() . 'bpges_queued_items';
-		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT user_id FROM {$table_name} WHERE type = %s AND date_recorded < %s LIMIT %d", $type, $timestamp, $count ) );
+		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT user_id FROM {$table_name} WHERE type = %s AND date_recorded < %s AND user_id NOT IN ({$processed_user_ids}) LIMIT %d", $type, $timestamp, $count ) );
 
 		return array_map( 'intval', $user_ids );
 	}
