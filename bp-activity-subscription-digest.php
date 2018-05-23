@@ -155,7 +155,8 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	foreach ( $group_activity_ids as $group_id => $activity_ids ) {
 		// Prime cache and filter out invalid items.
 		$activity_get = bp_activity_get( array(
-			'in' => $activity_ids,
+			'in'          => $activity_ids,
+			'show_hidden' => true,
 		) );
 
 		$activity_ids = wp_list_pluck( $activity_get['activities'], 'id' );
