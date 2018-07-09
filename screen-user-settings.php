@@ -19,7 +19,7 @@ function ass_group_subscription_notification_settings() {
 	<table class="notification-settings zebra" id="groups-subscription-notification-settings">
 	<thead>
 		<tr>
-			<th class="icon"></th>
+			<th class="icon"><span class="bp-screen-reader-text"><?php esc_html_e( 'Item icon', 'bp-ass' ); ?></span></th>
 			<th class="title"><?php _e( 'Group Forum', 'bp-ass' ) ?></th>
 			<th class="yes"><?php _e( 'Yes', 'bp-ass' ) ?></th>
 			<th class="no"><?php _e( 'No', 'bp-ass' )?></th>
@@ -45,15 +45,31 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php checked( $replies_to_topic, 'yes', true ); ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php checked( $replies_to_topic, 'no', true ); ?>/></td>
+
+			<td class="yes">
+				<input type="radio" name="notifications[ass_replies_to_my_topic]" id="notification-ass-replies-to-my-topic-yes" value="yes" <?php checked( $replies_to_topic, 'yes', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-to-my-topic-yes"><?php esc_html_e( 'Yes, send email', 'bp-ass' ); ?></label>
+			</td>
+
+			<td class="no">
+				<input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" id="notification-ass-replies-to-my-topic-no" <?php checked( $replies_to_topic, 'no', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-to-my-topic-no"><?php esc_html_e( 'Yes, send email', 'bp-ass' ); ?></label>
+			</td>
 		</tr>
 
 		<tr>
 			<td></td>
 			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php checked( $replies_after_me, 'yes', true ); ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php checked( $replies_after_me, 'no', true ); ?>/></td>
+
+			<td class="yes">
+				<input type="radio" name="notifications[ass_replies_after_me_topic]" id="notification-ass-replies-after-me-yes" value="yes" <?php checked( $replies_after_me, 'yes', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-after-me-no"><?php esc_html_e( 'Yes, send email', 'bp-ass' ); ?></label>
+			</td>
+
+			<td class="no">
+				<input type="radio" name="notifications[ass_replies_after_me_topic]" id="notification-ass-replies-after-me-no" value="no" <?php checked( $replies_after_me, 'no', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-after-me-yes"><?php esc_html_e( 'No, do not send email', 'bp-ass' ); ?></label>
+			</td>
 		</tr>
 
 	<?php endif; ?>
@@ -61,8 +77,16 @@ function ass_group_subscription_notification_settings() {
 		<tr>
 			<td></td>
 			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/></td>
+
+			<td class="yes">
+				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-yes" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-self-post-yes"><?php esc_html_e( 'No, do not send email', 'bp-ass' ); ?></label>
+			</td>
+
+			<td class="no">
+				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-no" value="no" <?php if ( !ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-self-post-no"><?php esc_html_e( 'No, do not send email', 'bp-ass' ); ?></label>
+			</td>
 		</tr>
 
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
