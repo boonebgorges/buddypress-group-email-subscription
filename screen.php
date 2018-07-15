@@ -50,15 +50,26 @@ function ass_group_subscribe_button() {
 		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
 	</div>
 	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>" style="display:none;">
-		<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'bp-ass') ?></a> <?php _e('I will read this group on the web', 'bp-ass') ?><br>
-		<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'bp-ass') ?></a> <?php _e('Get a summary of topics each', 'bp-ass') ?> <?php echo ass_weekly_digest_week(); ?><br>
-		<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'bp-ass') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'bp-ass') ?><br>
+		<?php if ( display_subscription_option('no') ) : ?>
+			<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'bp-ass') ?></a> <?php _e('I will read this group on the web', 'bp-ass') ?><br>
+		<?php endif; ?>
 
-		<?php if ( ass_get_forum_type() ) : ?>
+		<?php if ( display_subscription_option('sum') ) : ?>
+			<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'bp-ass') ?></a> <?php _e('Get a summary of topics each', 'bp-ass') ?> <?php echo ass_weekly_digest_week(); ?><br>
+		<?php endif; ?>
+
+		<?php if ( display_subscription_option('dig') ) : ?>
+			<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'bp-ass') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'bp-ass') ?><br>
+		<?php endif; ?>
+
+		<?php if ( ass_get_forum_type() && display_subscription_option('sub') ) : ?>
 			<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'bp-ass') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'bp-ass') ?><br>
 		<?php endif; ?>
 
-		<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'bp-ass') ?></a> <?php _e('Send all group activity as it arrives', 'bp-ass') ?><br>
+		<?php if ( display_subscription_option('supersub') ) : ?>
+			<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'bp-ass') ?></a> <?php _e('Send all group activity as it arrives', 'bp-ass') ?><br>
+		<?php endif; ?>
+
 		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php _e('close', 'bp-ass') ?></a>
 	</div>
 

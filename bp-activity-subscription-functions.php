@@ -1515,15 +1515,23 @@ function ass_manage_members_email_status(  $user_id = '', $group = '' ) {
 	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
 	echo '<span class="ass_manage_members_links"> '.__('Email status:','bp-ass').' ' . ass_subscribe_translate( $sub_type ) . '.';
 	echo ' &nbsp; '.__('Change to:','bp-ass').' ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
 
-	if ( ass_get_forum_type() ) {
+	if ( display_subscription_option('no') ) {
+		echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','bp-ass').'</a> | ';
+	}
+	if ( display_subscription_option('sum') ) {
+		echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','bp-ass').'</a> | ';
+	}
+	if ( display_subscription_option('dig') ) {
+		echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','bp-ass').'</a> | ';
+	}
+	if ( ass_get_forum_type() && display_subscription_option('sub') ) {
 		echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','bp-ass').'</a> | ';
 	}
-
-	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
+	if ( display_subscription_option('supersub') ) {
+		echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','bp-ass').'</a>';
+	}
+	
 	echo '</span>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
@@ -1894,3 +1902,14 @@ function bpges_register_template_stack() {
 	}, 20 );
 }
 add_action( 'bp_actions', 'bpges_register_template_stack' );
+
+/**
+ * Check that the given subscription option should be displayed
+ * Possible values for $option: no, sum, dig, sub, supersub
+ *
+ */
+function display_subscription_option($option) {
+	$subscriptionOptions = array('no', 'sum', 'dig', 'sub', 'supersub');
+	$subscriptionOptions = apply_filters('bp_group_email_subscription_subscription_options', $subscriptionOptions);
+	return in_array($option, $subscriptionOptions);
+}

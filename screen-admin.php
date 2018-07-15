@@ -11,20 +11,30 @@ function ass_default_subscription_settings_form() {
 	<h4><?php _e('Email Subscription Defaults', 'bp-ass'); ?></h4>
 	<p><?php _e('When new users join this group, their default email notification settings will be:', 'bp-ass'); ?></p>
 	<div class="radio">
-		<label><input type="radio" name="ass-default-subscription" value="no" <?php ass_default_subscription_settings( 'no' ) ?> />
-			<?php _e( 'No Email (users will read this group on the web - good for any group)', 'bp-ass' ) ?></label>
-		<label><input type="radio" name="ass-default-subscription" value="sum" <?php ass_default_subscription_settings( 'sum' ) ?> />
-			<?php _e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'bp-ass' ) ?></label>
-		<label><input type="radio" name="ass-default-subscription" value="dig" <?php ass_default_subscription_settings( 'dig' ) ?> />
-			<?php _e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'bp-ass' ) ?></label>
-
-		<?php if ( ass_get_forum_type() ) : ?>
-			<label><input type="radio" name="ass-default-subscription" value="sub" <?php ass_default_subscription_settings( 'sub' ) ?> />
-			<?php _e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'bp-ass' ) ?></label>
+		<?php if ( display_subscription_option('no') ) : ?>
+			<label><input type="radio" name="ass-default-subscription" value="no" <?php ass_default_subscription_settings( 'no' ) ?> />
+				<?php _e( 'No Email (users will read this group on the web - good for any group)', 'bp-ass' ) ?></label>
 		<?php endif; ?>
 
-		<label><input type="radio" name="ass-default-subscription" value="supersub" <?php ass_default_subscription_settings( 'supersub' ) ?> />
-			<?php _e( 'All Email (send emails about everything - recommended only for working groups)', 'bp-ass' ) ?></label>
+		<?php if ( display_subscription_option('sum') ) : ?>
+			<label><input type="radio" name="ass-default-subscription" value="sum" <?php ass_default_subscription_settings( 'sum' ) ?> />
+				<?php _e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'bp-ass' ) ?></label>
+		<?php endif; ?>
+
+		<?php if ( display_subscription_option('dig') ) : ?>
+			<label><input type="radio" name="ass-default-subscription" value="dig" <?php ass_default_subscription_settings( 'dig' ) ?> />
+				<?php _e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'bp-ass' ) ?></label>
+		<?php endif; ?>
+
+		<?php if ( ass_get_forum_type() && display_subscription_option('sub') ) : ?>
+			<label><input type="radio" name="ass-default-subscription" value="sub" <?php ass_default_subscription_settings( 'sub' ) ?> />
+				<?php _e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'bp-ass' ) ?></label>
+		<?php endif; ?>
+
+		<?php if ( display_subscription_option('supersub') ) : ?>
+			<label><input type="radio" name="ass-default-subscription" value="supersub" <?php ass_default_subscription_settings( 'supersub' ) ?> />
+				<?php _e( 'All Email (send emails about everything - recommended only for working groups)', 'bp-ass' ) ?></label>
+		<?php endif; ?>
 	</div>
 	<hr />
 	<?php
