@@ -2,6 +2,12 @@
 
 class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	/**
+	 * @var   string
+	 * @since 3.9.0
+	 */
+	protected $query_url;
+
+	/**
 	 * @var   array
 	 * @since 3.9.0
 	 */
@@ -30,6 +36,15 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	 * @since 3.9.0
 	 */
 	public function __construct() {
+		/**
+		 * Filters the query URL for BPGES async requests.
+		 *
+		 * @since 3.9.0
+		 *
+		 * @param string $url
+		 */
+		$this->query_url = apply_filters( 'bpges_async_request_query_url', admin_url( 'admin-ajax.php' ) );
+
 		/**
 		 * Filters the timeout for BPGES async requests.
 		 *
