@@ -4,12 +4,43 @@
  * Abstract class for BPGES database objects.
  */
 abstract class BPGES_Database_Object {
+	/**
+	 * @var   array
+	 * @since 3.9.0
+	 */
 	protected $data = array();
+
+	/**
+	 * @var   array
+	 * @since 3.9.0
+	 */
 	protected static $table_name;
 
+	/**
+	 * Returns the table name.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return string
+	 */
 	protected static function get_table_name() {}
+
+	/**
+	 * Returns the database table columns.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return array
+	 */
 	abstract protected function get_columns();
 
+	/**
+	 * Constructor.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param int $id Optional. Primary ID of the item.
+	 */
 	public function __construct( $id = null ) {
 		$this->table_name = static::get_table_name();
 
@@ -25,6 +56,14 @@ abstract class BPGES_Database_Object {
 		$this->populate( $id );
 	}
 
+	/**
+	 * Gets an object property.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param string $key Property name.
+	 * @return mixed
+	 */
 	public function __get( $key ) {
 		$cols = $this->get_columns();
 		$col_type = isset( $cols[ $key ] ) ? $cols[ $key ] : '%s';
@@ -42,6 +81,14 @@ abstract class BPGES_Database_Object {
 		}
 	}
 
+	/**
+	 * Sets an object property.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param string $key   Property key.
+	 * @param mixed  $value Value.
+	 */
 	public function __set( $key, $value ) {
 		$cols = $this->get_columns();
 		$col_type = isset( $cols[ $key ] ) ? $cols[ $key ] : '%s';
@@ -61,12 +108,26 @@ abstract class BPGES_Database_Object {
 		}
 	}
 
+	/**
+	 * Fills the object based on vars pulled from the database query.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param array|object Object data.
+	 */
 	public function fill( $vars ) {
 		foreach ( $vars as $key => $value ) {
 			$this->{$key} = $value;
 		}
 	}
 
+	/**
+	 * Populates the object based on ID.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param int $id Primary object ID.
+	 */
 	protected function populate( $id ) {
 		global $wpdb;
 
@@ -81,6 +142,13 @@ abstract class BPGES_Database_Object {
 		}
 	}
 
+	/**
+	 * Saves the object to the database.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return bool
+	 */
 	public function save() {
 		global $wpdb;
 
@@ -120,6 +188,13 @@ abstract class BPGES_Database_Object {
 		return $retval;
 	}
 
+	/**
+	 * Deletes the object from the database.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return bool
+	 */
 	public function delete() {
 		global $wpdb;
 

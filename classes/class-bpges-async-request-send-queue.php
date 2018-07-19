@@ -91,6 +91,13 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		}
 	}
 
+	/**
+	 * Processes 'immediate' queue batches.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param int $activity_id The activity ID that triggered this batch.
+	 */
 	protected function handle_immediate_queue( $activity_id ) {
 		bpges_log( "Beginning batch of immediate notifications for $activity_id." );
 
@@ -138,6 +145,14 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		) )->dispatch();
 	}
 
+	/**
+	 * Processes digest queue batches.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @param string $type      The digest type.
+	 * @param string $timestamp The run timestamp.
+	 */
 	protected function handle_digest_queue( $type, $timestamp ) {
 		bpges_log( "Beginning digest batch of type $type for timestamp $timestamp." );
 
@@ -193,6 +208,8 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	 *
 	 * Copied from WP_Background_Process.
 	 *
+	 * @since 3.9.0
+	 *
 	 * @return bool
 	 */
 	protected function memory_exceeded() {
@@ -211,6 +228,8 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	 * Get memory limit
 	 *
 	 * Copied from WP_Background_Process.
+	 *
+	 * @since 3.9.0
 	 *
 	 * @return int
 	 */
@@ -237,6 +256,8 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	 * A timeout limit of 30s is common on shared hosting.
 	 *
 	 * Copied mostly from WP_Background_Process.
+	 *
+	 * @since 3.9.0
 	 *
 	 * @return bool
 	 */

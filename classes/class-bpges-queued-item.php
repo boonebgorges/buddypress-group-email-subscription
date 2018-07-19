@@ -2,12 +2,28 @@
 
 /**
  * Queued item database methods.
+ *
+ * @since 3.9.0
  */
 class BPGES_Queued_Item extends BPGES_Database_Object {
+	/**
+	 * Returns the table name.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return string
+	 */
 	protected static function get_table_name() {
 		return bp_core_get_table_prefix() . 'bpges_queued_items';
 	}
 
+	/**
+	 * Returns the database table columns.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return array
+	 */
 	protected function get_columns() {
 		return array(
 			'id'            => '%d',
@@ -21,6 +37,8 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 
 	/**
 	 * Insert multiple records in a single command.
+	 *
+	 * @since 3.9.0
 	 *
 	 * @param array $data Array of records, in associative array format. Each record should
 	 *                    have `user_id`, `group_id`, `activity_id`, `type`, `date_recorded`.
@@ -48,6 +66,8 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 
 	/**
 	 * Bulk deletion.
+	 *
+	 * @since 3.9.0
 	 *
 	 * @param array $ids Array of queued-item IDs.
 	 */
