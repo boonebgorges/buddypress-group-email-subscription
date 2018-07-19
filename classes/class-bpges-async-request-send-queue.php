@@ -46,15 +46,13 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		$this->query_url = apply_filters( 'bpges_async_request_query_url', admin_url( 'admin-ajax.php' ) );
 
 		/**
-		 * Filters the timeout for BPGES async requests.
+		 * Filters the remote post args for BPGES async requests.
 		 *
 		 * @since 3.9.0
 		 *
-		 * @param int $timeout Timeout in seconds. Default 5.
+		 * @param array $post_args
 		 */
-		$timeout = apply_filters( 'bpges_async_request_timeout', 5 );
-
-		$this->post_args = array(
+		$this->post_args = apply_filters( 'bpges_async_request_post_args', array(
 			'timeout'   => $timeout,
 			'blocking'  => false,
 			'body'      => $this->data,
