@@ -2,6 +2,12 @@
 
 class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	/**
+	 * @var   array
+	 * @since 3.9.0
+	 */
+	protected $post_args;
+
+	/**
 	 * @var   string
 	 * @since 3.9.0
 	 */
@@ -17,6 +23,32 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 	 * @since 3.9.0
 	 */
 	protected $start_time = 0;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 3.9.0
+	 */
+	public function __construct() {
+		/**
+		 * Filters the timeout for BPGES async requests.
+		 *
+		 * @since 3.9.0
+		 *
+		 * @param int $timeout Timeout in seconds. Default 5.
+		 */
+		$timeout = apply_filters( 'bpges_async_request_timeout', 5 );
+
+		$this->post_args = array(
+			'timeout'   => $timeout,
+			'blocking'  => false,
+			'body'      => $this->data,
+			'cookies'   => $_COOKIE,
+			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+		);
+
+		parent::__construct();
+	}
 
 	/**
 	 * Migrate a batch of outgoing notifications.
