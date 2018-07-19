@@ -58,7 +58,7 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 			'body'      => $this->data,
 			'cookies'   => $_COOKIE,
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
-		);
+		) );
 
 		parent::__construct();
 	}
