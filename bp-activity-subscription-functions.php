@@ -258,13 +258,15 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 	}
 
 	// Bulk insert.
-	BPGES_Queued_Item::bulk_insert( $to_queue );
+	if ( $to_queue ) {
+		BPGES_Queued_Item::bulk_insert( $to_queue );
 
-	// Trigger the batch process.
-	bpges_send_queue()->data( array(
-		'type'        => 'immediate',
-		'activity_id' => $activity->id,
-	) )->dispatch();
+		// Trigger the batch process.
+		bpges_send_queue()->data( array(
+			'type'        => 'immediate',
+			'activity_id' => $activity->id,
+		) )->dispatch();
+	}
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
