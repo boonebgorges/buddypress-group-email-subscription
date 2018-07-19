@@ -45,7 +45,7 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends WP_Async_Request {
 		 * @param array $post_args
 		 */
 		$this->post_args = apply_filters( 'bpges_async_request_post_args', array(
-			'timeout'   => $timeout,
+			'timeout'   => 5,
 			'blocking'  => false,
 			'body'      => $this->data,
 			'cookies'   => $_COOKIE,
