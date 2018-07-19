@@ -1197,6 +1197,23 @@ function ass_group_activity_edits( $activity ) {
 add_action( 'bp_activity_before_save', 'ass_group_activity_edits' );
 
 /**
+ * Deletes queued items for the specified activity IDs.
+ *
+ * @since 3.9.0
+ */
+function bpges_delete_queued_items_for_activity_ids( $activity_ids ) {
+	foreach ( $activity_ids as $activity_id ) {
+		$query = new BPGES_Queued_Item_Query( array(
+			'activity_id' => $activity_id,
+		) );
+
+		$queued_ids = array_keys( $query->get_results() );
+		BPGES_Queued_Item::bulk_delete( $queued_ids );
+	}
+}
+add_action( 'bp_activity_deleted_activities', 'bpges_delete_queued_items_for_activity_ids' );
+
+/**
  * Queue an activity item for sending.
  *
  * @since 3.9.0
