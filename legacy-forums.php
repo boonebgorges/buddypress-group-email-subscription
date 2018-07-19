@@ -77,7 +77,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$activity->secondary_item_id = $topic->topic_id;
 		$activity->primary_link      = $primary_link;
 
-		$action = $activity->action  = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
+		$action = $activity->action  = sprintf( __( '%s started the forum topic "%s" in the group "%s"', 'buddypress-group-email-subscription' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		$subject     = apply_filters( 'bp_ass_new_topic_subject', $action . ' ' . $blogname, $action, $blogname );
 		$the_content = apply_filters( 'bp_ass_new_topic_content', $post->post_text, $activity, $topic, $group );
@@ -88,7 +88,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$activity->type              = 'new_forum_post';
 		$activity->secondary_item_id = $post_id;
 
-		$action = $activity->action  = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'bp-ass' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
+		$action = $activity->action  = sprintf( __( '%s replied to the forum topic "%s" in the group "%s"', 'buddypress-group-email-subscription' ), bp_core_get_user_displayname( $post->poster_id ), $topic->topic_title, $group->name );
 
 		// calculate the topic page for pagination purposes
 		$pag_num = apply_filters( 'bp_ass_topic_pag_num', 15 );
@@ -113,11 +113,11 @@ function ass_group_notification_forum_posts( $post_id ) {
 	if ( $group->status != 'public' ) {
 		$primary_link = ass_get_login_redirect_url( $primary_link, 'legacy_forums_view' );
 
-		$text_before_primary = __( 'To view or reply to this topic, go to:', 'bp-ass' );
+		$text_before_primary = __( 'To view or reply to this topic, go to:', 'buddypress-group-email-subscription' );
 
 	// if public, show standard text
 	} else {
-		$text_before_primary = __( 'To view or reply to this topic, log in and go to:', 'bp-ass' );
+		$text_before_primary = __( 'To view or reply to this topic, log in and go to:', 'buddypress-group-email-subscription' );
 	}
 
 	// setup the email meessage
@@ -129,7 +129,7 @@ function ass_group_notification_forum_posts( $post_id ) {
 %s
 
 ---------------------
-', 'bp-ass'), $action . ':', $the_content, $text_before_primary, $primary_link);
+', 'buddypress-group-email-subscription'), $action . ':', $the_content, $text_before_primary, $primary_link);
 
 	// get subscribed users
 	$subscribed_users = groups_get_groupmeta( $group->id, 'ass_subscribed_users' );
@@ -189,24 +189,24 @@ function ass_group_notification_forum_posts( $post_id ) {
 			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
 
 			// set notice
-			$notice  = __( 'You are currently receiving notifications for your own posts.', 'bp-ass' );
-			$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-			$notice .= "\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'bp-ass' );
+			$notice  = __( 'You are currently receiving notifications for your own posts.', 'buddypress-group-email-subscription' );
+			$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
+			$notice .= "\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'buddypress-group-email-subscription' );
 
 		// do the following for new topics
 		} elseif ( $is_topic ) {
 			if ( $group_status == 'sub' || $group_status == 'supersub' ) {
 				$send_it = true;
 
-				$notice .= "\n" . __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
+				$notice .= "\n" . __( 'Your email setting for this group is: ', 'buddypress-group-email-subscription' ) . ass_subscribe_translate( $group_status );
 
 				// until we get a real follow link, this will have to do
 				if ( $group_status == 'sub' ) {
-					$notice .= __( ", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'bp-ass' );
+					$notice .= __( ", therefore you won't receive replies to this topic. To get them, click the link to view this topic on the web then click the 'Follow this topic' button.", 'buddypress-group-email-subscription' );
 				}
 				// user's group setting is "All Mail"
 				elseif ( $group_status == 'supersub' ) {
-					$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+					$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 				}
 
 				$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
@@ -229,8 +229,8 @@ function ass_group_notification_forum_posts( $post_id ) {
 			if ( $group_status == 'supersub' ) {
 				$send_it = true;
 
-				$notice  = __( 'Your email setting for this group is: ', 'bp-ass' ) . ass_subscribe_translate( $group_status );
-				$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'bp-ass' ), $settings_link );
+				$notice  = __( 'Your email setting for this group is: ', 'buddypress-group-email-subscription' ) . ass_subscribe_translate( $group_status );
+				$notice .= "\n" . sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 				$notice .= "\n\n" . ass_group_unsubscribe_links( $user_id );
 			}
 
@@ -244,8 +244,8 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$settings_link = trailingslashit( strtok( $primary_link, '?' ) );
 
 				// let's change the notice to accurately reflect that the user is following this topic
-				$notice  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-				$notice .= "\n" . __( 'Once you are logged in, click on the "Mute this topic" button to unsubscribe from the forum thread.', 'bp-ass' );
+				$notice  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
+				$notice .= "\n" . __( 'Once you are logged in, click on the "Mute this topic" button to unsubscribe from the forum thread.', 'buddypress-group-email-subscription' );
 			}
 
 			// User started the topic and wants to receive email replies to his/her topic
@@ -257,9 +257,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
-				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'bp-ass' );
-				$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-				$notice .= "\n" . __( 'Once you are logged in, uncheck "A member replies in a forum topic you\'ve started".', 'bp-ass' );
+				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'buddypress-group-email-subscription' );
+				$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
+				$notice .= "\n" . __( 'Once you are logged in, uncheck "A member replies in a forum topic you\'ve started".', 'buddypress-group-email-subscription' );
 			}
 
 			// User posted in this topic and wants to receive all subsequent replies
@@ -271,9 +271,9 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
-				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'bp-ass' );
-				$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'bp-ass' ), $settings_link );
-				$notice .= "\n" . __( 'Once you are logged in, uncheck "A member replies after you in a forum topic".', 'bp-ass' );
+				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'buddypress-group-email-subscription' );
+				$notice .= "\n\n" . sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
+				$notice .= "\n" . __( 'Once you are logged in, uncheck "A member replies after you in a forum topic".', 'buddypress-group-email-subscription' );
 			}
 		}
 
@@ -377,22 +377,22 @@ function ass_topic_follow_or_mute_link() {
 
 	if ( $topic_status == 'mute' || ( $group_status != 'supersub' && !$topic_status ) ) {
 		$action = 'follow';
-		$link_text = __('Follow','bp-ass');
-		$title = __('You are not following this topic. Click to follow it and get email updates for new posts','bp-ass');
+		$link_text = __('Follow','buddypress-group-email-subscription');
+		$title = __('You are not following this topic. Click to follow it and get email updates for new posts','buddypress-group-email-subscription');
 	} else if ( $topic_status == 'sub' || ( $group_status == 'supersub' && !$topic_status ) ) {
 		$action = 'mute';
-		$link_text = __('Mute','bp-ass');
-		$title = __('You are following this topic. Click to stop getting email updates','bp-ass');
+		$link_text = __('Mute','buddypress-group-email-subscription');
+		$title = __('You are following this topic. Click to stop getting email updates','buddypress-group-email-subscription');
 	} else {
 		echo 'nothing'; // do nothing
 	}
 
 	if ( $topic_status == 'mute' )
-		$title = __('This conversation is muted. Click to follow it','bp-ass');
+		$title = __('This conversation is muted. Click to follow it','buddypress-group-email-subscription');
 
 	if ( $action && bp_is_action_variable( 'topic', 0 ) ) { // we're viewing one topic
 		echo '<div class="generic-button ass-topic-subscribe"><a title="'.$title.'"
-			id="'.$action.'-'.$topic_id.'-'.bp_get_current_group_id().'">'.$link_text.' '.__('this topic','bp-ass').'</a></div>';
+			id="'.$action.'-'.$topic_id.'-'.bp_get_current_group_id().'">'.$link_text.' '.__('this topic','buddypress-group-email-subscription').'</a></div>';
 	} else if ( $action )  { // we're viewing a list of topics
 		echo '<td class="td-email-sub"><div class="generic-button ass-topic-subscribe"><a title="'.$title.'"
 			id="'.$action.'-'.$topic_id.'-'.bp_get_current_group_id().'">'.$link_text.'</a></div></td>';
@@ -411,7 +411,7 @@ function ass_after_topic_title_head() {
 	if ( empty( $bp->groups->current_group->is_member ) )
 		return;
 
-	echo '<th id="th-email-sub">'.__('Email','bp-ass').'</th>';
+	echo '<th id="th-email-sub">'.__('Email','buddypress-group-email-subscription').'</th>';
 }
 add_filter( 'bp_directory_forums_extra_cell_head', 'ass_after_topic_title_head', 3 );
 

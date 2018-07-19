@@ -125,7 +125,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	$subject = apply_filters( 'ass_digest_subject', "$title [$blogname]", $blogname, $title, $type );
 
 	$footer = "\n\n<div class=\"digest-footer\" {$ass_email_css['footer']}>";
-	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'bp-ass' ), $blogname );
+	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'buddypress-group-email-subscription' ), $blogname );
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
 
 	// initialize some strings
@@ -145,7 +145,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	// Keep an unmodified copy of the activity IDs to be passed to filters.
 	$group_activity_ids_pristine = $group_activity_ids;
 
-	$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'bp-ass')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
+	$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'buddypress-group-email-subscription')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
 	$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
 	$sent_activity_ids = array();
@@ -186,7 +186,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 		// Might be nice here to link to anchor tags in the message.
 		if ( 'dig' == $type ) {
-			$summary .= apply_filters( 'ass_digest_summary', "<li class=\"digest-group-summary\" {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'bp-ass' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
+			$summary .= apply_filters( 'ass_digest_summary', "<li class=\"digest-group-summary\" {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'buddypress-group-email-subscription' ), count( $activity_ids ) ) ."</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 		}
 
 		$activity_message .= ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_name, $group_slug, $user_id );
@@ -201,7 +201,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 	// show group summary for digest, and follow help text for weekly summary
 	if ( 'dig' == $type ) {
-		$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass') . ":\n<ul class=\"digest-group-summaries\" {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+		$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'buddypress-group-email-subscription') . ":\n<ul class=\"digest-group-summaries\" {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
 	}
 
 	// the meat of the message which we generated above goes here
@@ -211,16 +211,16 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	// user is subscribed to "New Topics"
 	// add follow help text only if bundled forums are enabled
 	if ( 'sum' == $type && class_exists( 'BP_Forums_Component' ) ) {
-		$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'bp-ass' ) . "</div>\n", $ass_email_css['follow_topic'] );
+		$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'buddypress-group-email-subscription' ) . "</div>\n", $ass_email_css['follow_topic'] );
 	}
 
 	$message .= $footer;
 
-	$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'bp-ass' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'bp-ass' ) . "</a>" );
+	$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'buddypress-group-email-subscription' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'buddypress-group-email-subscription' ) . "</a>" );
 
 	if ( bp_get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
-		$unsubscribe_message .= "\n\n<br><br><a class=\"digest-unsubscribe-link\" href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'bp-ass' ) . '</a>';
+		$unsubscribe_message .= "\n\n<br><br><a class=\"digest-unsubscribe-link\" href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'buddypress-group-email-subscription' ) . '</a>';
 	}
 
 	$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
@@ -255,7 +255,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 		// Digest summary only available for daily digests.
 		$user_message_args['ges.digest-summary'] = '';
 		if ( 'dig' == $type ) {
-			$user_message_args['ges.digest-summary'] = apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'bp-ass' ) . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+			$user_message_args['ges.digest-summary'] = apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'buddypress-group-email-subscription' ) . ":\n<ul {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
 		}
 
 		$user_message_args['ges.subject']       = $title;
@@ -322,9 +322,9 @@ function ass_digest_fire( $type ) {}
  */
 function ass_digest_get_title( $type = '' ) {
 	if ( $type == 'dig' ) {
-		$title = sprintf( __( 'Your daily digest of group activity', 'bp-ass' ) );
+		$title = sprintf( __( 'Your daily digest of group activity', 'buddypress-group-email-subscription' ) );
 	} else {
-		$title = sprintf( __( 'Your weekly summary of group topics', 'bp-ass' ) );
+		$title = sprintf( __( 'Your weekly summary of group topics', 'buddypress-group-email-subscription' ) );
 	}
 
 	return apply_filters( 'ass_digest_title', $title, $type );
@@ -392,9 +392,9 @@ add_action( 'ass_digest_event_weekly', 'ass_weekly_digest_fire' );
 // for testing the digest firing in real-time, add /?sum=1 to the url
 function ass_digest_fire_test() {
 	if ( isset( $_GET['sum'] ) && is_super_admin() ){
-		echo '<h2>' . __( 'DAILY DIGEST:','bp-ass' ) . '</h2>';
+		echo '<h2>' . __( 'DAILY DIGEST:','buddypress-group-email-subscription' ) . '</h2>';
 		bpges_generate_digest_preview_for_type( 'dig' );
-		echo '<h2 style="margin-top:150px">' . __( 'WEEKLY DIGEST:','bp-ass' ) . '</h2>';
+		echo '<h2 style="margin-top:150px">' . __( 'WEEKLY DIGEST:','buddypress-group-email-subscription' ) . '</h2>';
 		bpges_generate_digest_preview_for_type( 'sum' );
 		die();
 	}
@@ -456,15 +456,15 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 	// add the group title bar
 	if ( $type == 'dig' ) {
-		$group_message = "\n---\n\n<div class=\"item-group-title\" {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s', 'bp-ass' ), $group_name_link ) . "</div>\n\n";
+		$group_message = "\n---\n\n<div class=\"item-group-title\" {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s', 'buddypress-group-email-subscription' ), $group_name_link ) . "</div>\n\n";
 	} elseif ( $type == 'sum' ) {
-		$group_message = "\n---\n\n<div class=\"item-group-title\" {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s weekly summary', 'bp-ass' ), $group_name_link ) . "</div>\n";
+		$group_message = "\n---\n\n<div class=\"item-group-title\" {$ass_email_css['group_title']}>". sprintf( __( 'Group: %s weekly summary', 'buddypress-group-email-subscription' ), $group_name_link ) . "</div>\n";
 	}
 
 	// add change email settings link
 	$group_message .= "\n<div class=\"item-group-settings-link\" {$ass_email_css['change_email']}>";
-	$group_message .= __('To disable these notifications for this group click ', 'bp-ass'). " <a href=\"$unsubscribe_link\">" . __( 'unsubscribe', 'bp-ass' ) . '</a> - ';
-	$group_message .=  __('change ', 'bp-ass') . '<a href="' . $gnotifications_link . '">' . __( 'email options', 'bp-ass' ) . '</a>';
+	$group_message .= __('To disable these notifications for this group click ', 'buddypress-group-email-subscription'). " <a href=\"$unsubscribe_link\">" . __( 'unsubscribe', 'buddypress-group-email-subscription' ) . '</a> - ';
+	$group_message .=  __('change ', 'buddypress-group-email-subscription') . '<a href="' . $gnotifications_link . '">' . __( 'email options', 'buddypress-group-email-subscription' ) . '</a>';
 	$group_message .= "</div>\n\n";
 
 	$group_message = apply_filters( 'ass_digest_group_message_title', $group_message, $group_id, $type );
@@ -541,7 +541,7 @@ function ass_digest_format_item( $item, $type ) {
 	//$item_message = strip_tags( $action ) . ": \n";
 	$item_message =  "<div class=\"digest-item\" {$ass_email_css['item_div']}>";
 	$item_message .=  "<span class=\"digest-item-action\" {$ass_email_css['item_action']}>" . $action . ": ";
-	$item_message .= "<span class=\"digest-item-timestamp\" {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'bp-ass'), $time_posted, $date_posted ) ."</span>";
+	$item_message .= "<span class=\"digest-item-timestamp\" {$ass_email_css['item_date']}>" . sprintf( __('at %s, %s', 'buddypress-group-email-subscription'), $time_posted, $date_posted ) ."</span>";
 	$item_message .=  "</span>\n";
 
 	// activity content
@@ -555,7 +555,7 @@ function ass_digest_format_item( $item, $type ) {
 		$view_link = $item->primary_link;
 	}
 
-	$item_message .= ' - <a class="digest-item-view-link" href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'bp-ass' ) . '</a>';
+	$item_message .= ' - <a class="digest-item-view-link" href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'buddypress-group-email-subscription' ) . '</a>';
 
 	$item_message .= "</div>\n\n";
 
@@ -754,7 +754,7 @@ function bpges_get_digest_queue_for_user( $user_id, $type ) {
 
 function ass_cron_add_weekly( $schedules ) {
 	if ( !isset( $schedules[ 'weekly' ] ) ) {
-		$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'bp-ass' ) );
+		$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'buddypress-group-email-subscription' ) );
 	}
 	return $schedules;
 }

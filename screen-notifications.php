@@ -20,44 +20,44 @@ function ass_group_subscribe_settings () {
 
 	?>
 	<div id="ass-email-subscriptions-options-page">
-	<h3 class="activity-subscription-settings-title"><?php _e('Email Subscription Options', 'bp-ass') ?></h3>
+	<h3 class="activity-subscription-settings-title"><?php _e('Email Subscription Options', 'buddypress-group-email-subscription') ?></h3>
 	<form action="<?php echo $submit_link ?>" method="post">
 	<input type="hidden" name="ass_group_id" value="<?php echo $group->id; ?>"/>
 	<?php wp_nonce_field( 'ass_subscribe' ); ?>
 
-	<b><?php _e('How do you want to read this group?', 'bp-ass'); ?></b>
+	<b><?php _e('How do you want to read this group?', 'buddypress-group-email-subscription'); ?></b>
 
 	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="no" <?php if ( $group_status == "no" || $group_status == "un" || !$group_status ) echo 'checked="checked"'; ?>><?php _e('No Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('I will read this group on the web', 'bp-ass'); ?></div>
+	<label><input type="radio" name="ass_group_subscribe" value="no" <?php if ( $group_status == "no" || $group_status == "un" || !$group_status ) echo 'checked="checked"'; ?>><?php _e('No Email', 'buddypress-group-email-subscription'); ?></label>
+	<div class="ass-email-explain"><?php _e('I will read this group on the web', 'buddypress-group-email-subscription'); ?></div>
 	</div>
 
 	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="sum" <?php if ( $group_status == "sum" ) echo 'checked="checked"'; ?>><?php _e('Weekly Summary Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Get a summary of new topics each week', 'bp-ass'); ?></div>
+	<label><input type="radio" name="ass_group_subscribe" value="sum" <?php if ( $group_status == "sum" ) echo 'checked="checked"'; ?>><?php _e('Weekly Summary Email', 'buddypress-group-email-subscription'); ?></label>
+	<div class="ass-email-explain"><?php _e('Get a summary of new topics each week', 'buddypress-group-email-subscription'); ?></div>
 	</div>
 
 	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="dig" <?php if ( $group_status == "dig" ) echo 'checked="checked"'; ?>><?php _e('Daily Digest Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Get all the day\'s activity bundled into a single email', 'bp-ass'); ?></div>
+	<label><input type="radio" name="ass_group_subscribe" value="dig" <?php if ( $group_status == "dig" ) echo 'checked="checked"'; ?>><?php _e('Daily Digest Email', 'buddypress-group-email-subscription'); ?></label>
+	<div class="ass-email-explain"><?php _e('Get all the day\'s activity bundled into a single email', 'buddypress-group-email-subscription'); ?></div>
 	</div>
 
 	<?php if ( ass_get_forum_type() ) : ?>
 		<div class="ass-email-type">
-		<label><input type="radio" name="ass_group_subscribe" value="sub" <?php if ( $group_status == "sub" ) echo 'checked="checked"'; ?>><?php _e('New Topics Email', 'bp-ass'); ?></label>
-		<div class="ass-email-explain"><?php _e('Send new topics as they arrive (but don\'t send replies)', 'bp-ass'); ?></div>
+		<label><input type="radio" name="ass_group_subscribe" value="sub" <?php if ( $group_status == "sub" ) echo 'checked="checked"'; ?>><?php _e('New Topics Email', 'buddypress-group-email-subscription'); ?></label>
+		<div class="ass-email-explain"><?php _e('Send new topics as they arrive (but don\'t send replies)', 'buddypress-group-email-subscription'); ?></div>
 		</div>
 	<?php endif; ?>
 
 	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('All Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Send all group activity as it arrives', 'bp-ass'); ?></div>
+	<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('All Email', 'buddypress-group-email-subscription'); ?></label>
+	<div class="ass-email-explain"><?php _e('Send all group activity as it arrives', 'buddypress-group-email-subscription'); ?></div>
 	</div>
 
-	<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="ass-save" name="ass-save" class="button-primary">
+	<input type="submit" value="<?php _e('Save Settings', 'buddypress-group-email-subscription') ?>" id="ass-save" name="ass-save" class="button-primary">
 
 	<?php if ( ass_get_forum_type() == 'buddypress' ) : ?>
-		<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'bp-ass'); ?> <a href="<?php echo bp_loggedin_user_domain() . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'bp-ass'); ?></a>.</p>
+		<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription'); ?> <a href="<?php echo bp_loggedin_user_domain() . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'buddypress-group-email-subscription'); ?></a>.</p>
 	<?php endif; ?>
 
 	</form>
@@ -85,7 +85,7 @@ function ass_update_group_subscribe_settings() {
 
 			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
 
-			bp_core_add_message( sprintf( __( 'Your email notifications are set to %s for this group.', 'bp-ass' ), ass_subscribe_translate( $action ) ) );
+			bp_core_add_message( sprintf( __( 'Your email notifications are set to %s for this group.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
 			bp_core_redirect( trailingslashit( bp_get_group_permalink( groups_get_current_group() ) . 'notifications' ) );
 		}
 	}

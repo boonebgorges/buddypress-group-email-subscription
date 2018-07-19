@@ -67,7 +67,7 @@ if ( defined( 'WP_CLI' ) ) {
 class Group_Activity_Subscription extends BP_Group_Extension {
 
 	public function __construct() {
-		$this->name = __('Email Options', 'bp-ass');
+		$this->name = __('Email Options', 'buddypress-group-email-subscription');
 		$this->slug = 'notifications';
 
 		// Only enable the notifications nav item if the user is a member of the group
@@ -118,9 +118,9 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 			wp_enqueue_script( 'bp-activity-subscription-js' );
 
 			wp_localize_script( 'bp-activity-subscription-js', 'bp_ass', array(
-				'mute'   => __( 'Mute', 'bp-ass' ),
-				'follow' => __( 'Follow', 'bp-ass' ),
-				'error'  => __( 'Error', 'bp-ass' )
+				'mute'   => __( 'Mute', 'buddypress-group-email-subscription' ),
+				'follow' => __( 'Follow', 'buddypress-group-email-subscription' ),
+				'error'  => __( 'Error', 'buddypress-group-email-subscription' )
 			) );
 		}
 	}
