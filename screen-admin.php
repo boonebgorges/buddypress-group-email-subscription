@@ -138,9 +138,11 @@ function ass_admin_notice() {
 	}
 
 	// make sure the correct form variables are here
-	if ( ! isset( $_POST[ 'ass_admin_notice_send' ] ) ) {
+	if ( ! isset( $_POST['ass_admin_notice_send'] ) ) {
 		return;
 	}
+
+	check_admin_referer( 'bpges_admin_notice', 'bpges-admin-notice-nonce' );
 
 	if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
 		bp_core_add_message( __( 'The email notice was not sent. Please enter email content.', 'buddypress-group-email-subscription' ), 'error' );
