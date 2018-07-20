@@ -687,6 +687,8 @@ To view or reply, log in and go to:
 	$group_name = bp_get_group_name( $group );
 	$group_link = bp_get_group_permalink( $group );
 
+	$subject = strip_tags( stripslashes( $activity->action ) );
+
 	// bpges_notice is a special activity type and gets some overrides.
 	if ( 'bpges_notice' === $activity->type ) {
 		$email_type = 'bp-ges-notice';
@@ -734,7 +736,7 @@ If you feel this service is being misused please speak to the website administra
 	if ( $user->user_email ) {
 		// Custom GES email tokens.
 		$user_message_args['ges.action']  = stripslashes( $activity->action ); // Unfiltered.
-		$user_message_args['ges.subject'] = strip_tags( stripslashes( $activity->action ) ); // Unfiltered.
+		$user_message_args['ges.subject'] = $subject; // Unfiltered.
 		$user_message_args['ges.email-setting-description'] = $email_setting_desc;
 		$user_message_args['ges.email-setting-links']       = $email_setting_links;
 		$user_message_args['ges.unsubscribe-global']        = ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true );
