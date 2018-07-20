@@ -157,8 +157,9 @@ function ass_admin_notice() {
 		}
 
 		$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-		$subject    = $_POST[ 'ass_admin_notice_subject' ];
-		$subject   .= __(' - sent from the group ', 'buddypress-group-email-subscription') . $group_name . ' ' . $blogname;
+
+		$_subject   = $_POST[ 'ass_admin_notice_subject' ];
+		$subject    = $_subject . __(' - sent from the group ', 'buddypress-group-email-subscription') . $group_name . ' ' . $blogname;
 		$subject    = apply_filters( 'ass_admin_notice_subject', $subject, $_POST[ 'ass_admin_notice_subject' ], $group_name, $blogname );
 		$subject    = ass_clean_subject( $subject, false );
 		$notice     = apply_filters( 'ass_admin_notice_message', $_POST['ass_admin_notice'] );
@@ -180,48 +181,33 @@ To view this group log in and follow the link below:
 If you feel this service is being misused please speak to the website administrator.', 'buddypress-group-email-subscription' );
 
 		$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
-		$admin_info = bp_core_get_core_userdata( bp_loggedin_user_id() );
 
-		$email_tokens = array(
-			'ges.subject'  => stripslashes( strip_tags( $subject ) ),
-			'usermessage'  => $notice,
-			'group.link'   => sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name ),
-			'group.name'   => $group_name,
-			'group.url'    => esc_url( $group_link ),
-			'group.id'     => $group_id,
-			'group.admin'  => $admin_info->display_name,
-			'ges.settings-link' => ass_get_login_redirect_url( trailingslashit( $group_link . 'notifications' ), 'welcome' ),
-			'ges.unsubscribe'   => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id ),
-			'ges.unsubscribe-global' => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true ),
+		add_filter( 'bp_ass_send_activity_notification_for_user', '__return_true' );
+		add_filter( 'bp_ges_add_to_digest_queue_for_user', '__return_false' );
+
+		$activity_id = bp_activity_add(
+			array(
+				'component' => buddypress()->groups->id,
+				'type'      => 'bpges_notice',
+				'content'   => $notice,
+				'item_id'   => $group_id,
+				'action'    => '',
+			)
 		);
 
-		// allow others to perform an action when this type of email is sent, like adding to the activity feed
-		do_action( 'ass_admin_notice', $group_id, $subject, $notice );
+		remove_filter( 'bp_ass_send_activity_notification_for_user', '__return_true' );
+		remove_filter( 'bp_ges_remove_to_digest_queue_for_user', '__return_false' );
 
-		// cycle through all group members
-		foreach ( (array)$user_ids as $user_id ) {
-			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
-
-			if ( empty( $user->user_email ) ) {
-				continue;
-			}
-
-			$email_tokens['recipient.id'] = $user->ID;
-
-			ass_send_email( 'bp-ges-notice', $user->user_email, array(
-				'tokens'  => $email_tokens,
-				'subject' => $subject,
-				'content' => $message,
-				'from' => array(
-					'name'   => $admin_info->display_name,
-					'email'  => $admin_info->user_email,
-				)
-			) );
+		if ( ! $activity_id ) {
+			return;
 		}
 
+		// Store subject for later use.
+		bp_activity_add_meta( $activity_id, 'bpges_notice_subject', $_subject );
+
+		do_action( 'ass_admin_notice', $group_id, $_subject, $notice );
+
 		bp_core_add_message( __( 'The email notice was sent successfully.', 'buddypress-group-email-subscription' ) );
-		//echo '<p>Subject: ' . $subject;
-		//echo '<pre>'; print_r( $message ); echo '</pre>';
 	}
 
 	bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );

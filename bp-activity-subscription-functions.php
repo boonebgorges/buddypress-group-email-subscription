@@ -683,6 +683,38 @@ To view or reply, log in and go to:
 		$notice .= "\n" . $email_setting_links;
 	}
 
+	$email_type = 'bp-ges-single';
+	$group_name = bp_get_group_name( $group );
+	$group_link = bp_get_group_permalink( $group );
+
+	// bpges_notice is a special activity type and gets some overrides.
+	if ( 'bpges_notice' === $activity->type ) {
+		$email_type = 'bp-ges-notice';
+
+		$subject = sprintf(
+			/* translators: 1. notice subject, 2. group name, 3. blog name in brackets */
+			'%1$s - sent from the group %2$s $3$s',
+			bp_activity_get_meta( $activity_id, 'bpges_notice_subject', true ),
+			$group_name,
+			$blogname
+		);
+
+		$message = sprintf( __(
+'This is a notice from the group \'%s\':
+
+"%s"
+
+
+To view this group log in and follow the link below:
+%s
+
+---------------------
+', 'buddypress-group-email-subscription' ), $group_name, $the_content, bp_get_group_permalink( $group ) );
+
+		$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
+If you feel this service is being misused please speak to the website administrator.', 'buddypress-group-email-subscription' );
+	}
+
 	$user_message_args = array(
 		'message'           => $message,
 		'notice'            => $notice,
@@ -716,6 +748,10 @@ To view or reply, log in and go to:
 		$user_message_args['poster.name'] = bp_core_get_user_displayname( $activity->user_id );
 		$user_message_args['thread.url']  = $link;
 		$user_message_args['group.id']    = $group_id;
+		$user_message_args['group.link']  = sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name );
+		$user_message_args['group.name']  = $group_name;
+		$user_message_args['group.url']   = esc_url( $group_link );
+		$user_message_args['group.admin'] = bp_core_get_user_displayname( $user_id );
 
 		// Remove tokens that we're not using.
 		unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
@@ -726,7 +762,7 @@ To view or reply, log in and go to:
 		}
 
 		// Sending time!
-		ass_send_email( 'bp-ges-single', $user->user_email, array(
+		ass_send_email( $email_type, $user->user_email, array(
 			'tokens'   => $user_message_args,
 			'subject'  => $subject,
 			'content'  => $user_message,
@@ -1235,6 +1271,47 @@ function ass_queue_activity_item( $activity_id, $user_id, $group_id, $type ) {
 	$queued_item->date_recorded = date( 'Y-m-d H:i:s' );
 
 	return $queued_item->save();
+}
+
+/**
+ * Registers activity actions.
+ *
+ * @since 3.9.0
+ */
+function bpges_register_activity_actions() {
+	bp_activity_set_action(
+		buddypress()->groups->id,
+		'bpges_notice',
+		__( 'Posted a Group Notice', 'buddypress-docs' ),
+		'bpges_format_activity_action_bpges_notice'
+	);
+}
+add_action( 'bp_register_activity_actions', 'bpges_register_activity_actions' );
+
+/**
+ * Formats activity actions of type 'bpges_notice'.
+ *
+ * @since 3.9.0
+ *
+ * @param string $action   Activity action.
+ * @param object $activity Activity object.
+ * @return string
+ */
+function bpges_format_activity_action_bpges_notice( $action, $activity ) {
+	$group      = groups_get_group( $activity->item_id );
+	$group_link = bp_get_group_permalink( $group );
+
+	$user_link = bp_core_get_userlink( $activity->user_id );
+
+	$subject = bp_activity_get_meta( $activity->id, 'bpges_notice_subject', true );
+
+	/* translators: 1. Group admin link, 2. Group link, 3. Notice subject */
+	return sprintf(
+		'%1$s posted a notice in the group %2$s: "%3$s"',
+		$user_link,
+		sprintf( '<a href="%s">%s</a>', esc_attr( $group_link ), esc_html( bp_get_group_name( $group ) ) ),
+		$subject
+	);
 }
 
 /**
