@@ -693,13 +693,7 @@ To view or reply, log in and go to:
 	if ( 'bpges_notice' === $activity->type ) {
 		$email_type = 'bp-ges-notice';
 
-		$subject = sprintf(
-			/* translators: 1. notice subject, 2. group name, 3. blog name in brackets */
-			'%1$s - sent from the group %2$s $3$s',
-			bp_activity_get_meta( $activity_id, 'bpges_notice_subject', true ),
-			$group_name,
-			$blogname
-		);
+		$subject = bp_activity_get_meta( $activity_id, 'bpges_notice_subject', true );
 
 		$message = sprintf( __(
 'This is a notice from the group \'%s\':
