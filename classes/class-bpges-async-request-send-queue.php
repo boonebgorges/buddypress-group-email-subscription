@@ -1,17 +1,11 @@
 <?php
 
-class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
+class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 	/**
 	 * @var   string
 	 * @since 3.9.0
 	 */
 	protected $query_url;
-
-	/**
-	 * @var   array
-	 * @since 3.9.0
-	 */
-	protected $post_args;
 
 	/**
 	 * @var   string
@@ -44,21 +38,6 @@ class BPGES_Async_Request_Send_Queue extends WP_Async_Request {
 		 * @param string $url
 		 */
 		$this->query_url = apply_filters( 'bpges_async_request_query_url', admin_url( 'admin-ajax.php' ) );
-
-		/**
-		 * Filters the remote post args for BPGES async requests.
-		 *
-		 * @since 3.9.0
-		 *
-		 * @param array $post_args
-		 */
-		$this->post_args = apply_filters( 'bpges_async_request_post_args', array(
-			'timeout'   => 5,
-			'blocking'  => false,
-			'body'      => $this->data,
-			'cookies'   => $_COOKIE,
-			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
-		) );
 
 		parent::__construct();
 	}

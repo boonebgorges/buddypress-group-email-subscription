@@ -40,6 +40,8 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
 }
 
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+
 if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
 	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
 	$bpges_subscription_migration = new BPGES_Async_Request_Subscription_Migrate();
