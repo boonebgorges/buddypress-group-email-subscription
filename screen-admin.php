@@ -124,40 +124,45 @@ function ass_admin_notice_form() {
 // This function sends an email out to all group members regardless of subscription status.
 // TODO: change this function so the separate from is remove from the admin area and make it a checkbox under the 'add new topic' form. that way group admins can simply check off the box and it'll go to everyone. The benefit: notices are stored in the discussion form for later viewing. We should also alert the admin just how many people will get his post.
 function ass_admin_notice() {
-    if ( bp_is_groups_component() && bp_is_current_action( 'admin' ) && bp_is_action_variable( 'notifications', 0 ) ) {
+	if ( ! bp_is_groups_component() || ! bp_is_current_action( 'admin' ) || ! bp_is_action_variable( 'notifications', 0 ) ) {
+		return;
+	}
 
-	    	// Make sure the user is an admin
-		if ( !groups_is_user_admin( bp_loggedin_user_id(), bp_get_current_group_id() ) && ! is_super_admin() )
-			return;
+	// Make sure the user is an admin
+	if ( ! groups_is_user_admin( bp_loggedin_user_id(), bp_get_current_group_id() ) && ! is_super_admin() ) {
+		return;
+	}
 
-		if ( get_option('ass-admin-can-send-email') == 'no' )
-			return;
+	if ( get_option( 'ass-admin-can-send-email' ) == 'no' ) {
+		return;
+	}
 
-		// make sure the correct form variables are here
-		if ( ! isset( $_POST[ 'ass_admin_notice_send' ] ) )
-			return;
+	// make sure the correct form variables are here
+	if ( ! isset( $_POST[ 'ass_admin_notice_send' ] ) ) {
+		return;
+	}
 
-		if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
-			bp_core_add_message( __( 'The email notice was not sent. Please enter email content.', 'buddypress-group-email-subscription' ), 'error' );
-		} else {
-			$group      = groups_get_current_group();
-			$group_id   = $group->id;
-			$group_name = bp_get_current_group_name();
-			$group_link = bp_get_group_permalink( $group );
+	if ( empty( $_POST[ 'ass_admin_notice' ] ) ) {
+		bp_core_add_message( __( 'The email notice was not sent. Please enter email content.', 'buddypress-group-email-subscription' ), 'error' );
+	} else {
+		$group      = groups_get_current_group();
+		$group_id   = $group->id;
+		$group_name = bp_get_current_group_name();
+		$group_link = bp_get_group_permalink( $group );
 
-			if ( $group->status != 'public' ) {
-				$group_link = ass_get_login_redirect_url( $group_link, 'admin_notice' );
-			}
+		if ( $group->status != 'public' ) {
+			$group_link = ass_get_login_redirect_url( $group_link, 'admin_notice' );
+		}
 
-			$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-			$subject    = $_POST[ 'ass_admin_notice_subject' ];
-			$subject   .= __(' - sent from the group ', 'buddypress-group-email-subscription') . $group_name . ' ' . $blogname;
-			$subject    = apply_filters( 'ass_admin_notice_subject', $subject, $_POST[ 'ass_admin_notice_subject' ], $group_name, $blogname );
-			$subject    = ass_clean_subject( $subject, false );
-			$notice     = apply_filters( 'ass_admin_notice_message', $_POST['ass_admin_notice'] );
-			$notice     = ass_clean_content( $notice );
+		$blogname   = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
+		$subject    = $_POST[ 'ass_admin_notice_subject' ];
+		$subject   .= __(' - sent from the group ', 'buddypress-group-email-subscription') . $group_name . ' ' . $blogname;
+		$subject    = apply_filters( 'ass_admin_notice_subject', $subject, $_POST[ 'ass_admin_notice_subject' ], $group_name, $blogname );
+		$subject    = ass_clean_subject( $subject, false );
+		$notice     = apply_filters( 'ass_admin_notice_message', $_POST['ass_admin_notice'] );
+		$notice     = ass_clean_content( $notice );
 
-			$message    = sprintf( __(
+		$message    = sprintf( __(
 'This is a notice from the group \'%s\':
 
 "%s"
@@ -169,56 +174,55 @@ To view this group log in and follow the link below:
 ---------------------
 ', 'buddypress-group-email-subscription' ), $group_name,  $notice, $group_link );
 
-			$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
+		$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
 If you feel this service is being misused please speak to the website administrator.', 'buddypress-group-email-subscription' );
 
-			$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
-			$admin_info = bp_core_get_core_userdata( bp_loggedin_user_id() );
+		$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
+		$admin_info = bp_core_get_core_userdata( bp_loggedin_user_id() );
 
-			$email_tokens = array(
-				'ges.subject'  => stripslashes( strip_tags( $subject ) ),
-				'usermessage'  => $notice,
-				'group.link'   => sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name ),
-				'group.name'   => $group_name,
-				'group.url'    => esc_url( $group_link ),
-				'group.id'     => $group_id,
-				'group.admin'  => $admin_info->display_name,
-				'ges.settings-link' => ass_get_login_redirect_url( trailingslashit( $group_link . 'notifications' ), 'welcome' ),
-				'ges.unsubscribe'   => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id ),
-				'ges.unsubscribe-global' => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true ),
-			);
+		$email_tokens = array(
+			'ges.subject'  => stripslashes( strip_tags( $subject ) ),
+			'usermessage'  => $notice,
+			'group.link'   => sprintf( '<a href="%1$s">%2$s</a>', esc_url( $group_link ), $group_name ),
+			'group.name'   => $group_name,
+			'group.url'    => esc_url( $group_link ),
+			'group.id'     => $group_id,
+			'group.admin'  => $admin_info->display_name,
+			'ges.settings-link' => ass_get_login_redirect_url( trailingslashit( $group_link . 'notifications' ), 'welcome' ),
+			'ges.unsubscribe'   => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id ),
+			'ges.unsubscribe-global' => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true ),
+		);
 
-			// allow others to perform an action when this type of email is sent, like adding to the activity feed
-			do_action( 'ass_admin_notice', $group_id, $subject, $notice );
+		// allow others to perform an action when this type of email is sent, like adding to the activity feed
+		do_action( 'ass_admin_notice', $group_id, $subject, $notice );
 
-			// cycle through all group members
-			foreach ( (array)$user_ids as $user_id ) {
-				$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
+		// cycle through all group members
+		foreach ( (array)$user_ids as $user_id ) {
+			$user = bp_core_get_core_userdata( $user_id ); // Get the details for the user
 
-				if ( empty( $user->user_email ) ) {
-					continue;
-				}
-
-				$email_tokens['recipient.id'] = $user->ID;
-
-				ass_send_email( 'bp-ges-notice', $user->user_email, array(
-					'tokens'  => $email_tokens,
-					'subject' => $subject,
-					'content' => $message,
-					'from' => array(
-						'name'   => $admin_info->display_name,
-						'email'  => $admin_info->user_email,
-					)
-				) );
+			if ( empty( $user->user_email ) ) {
+				continue;
 			}
 
-			bp_core_add_message( __( 'The email notice was sent successfully.', 'buddypress-group-email-subscription' ) );
-			//echo '<p>Subject: ' . $subject;
-			//echo '<pre>'; print_r( $message ); echo '</pre>';
+			$email_tokens['recipient.id'] = $user->ID;
+
+			ass_send_email( 'bp-ges-notice', $user->user_email, array(
+				'tokens'  => $email_tokens,
+				'subject' => $subject,
+				'content' => $message,
+				'from' => array(
+					'name'   => $admin_info->display_name,
+					'email'  => $admin_info->user_email,
+				)
+			) );
 		}
 
-		bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );
+		bp_core_add_message( __( 'The email notice was sent successfully.', 'buddypress-group-email-subscription' ) );
+		//echo '<p>Subject: ' . $subject;
+		//echo '<pre>'; print_r( $message ); echo '</pre>';
 	}
+
+	bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );
 }
 add_action( 'bp_actions', 'ass_admin_notice', 1 );
 
