@@ -185,13 +185,19 @@ If you feel this service is being misused please speak to the website administra
 		add_filter( 'bp_ass_send_activity_notification_for_user', '__return_true' );
 		add_filter( 'bp_ges_add_to_digest_queue_for_user', '__return_false' );
 
+		// Fake it.
+		$_a = new stdClass;
+		$_a->item_id = $group_id;
+		$_a->user_id = bp_loggedin_user_id();
+		$action = bpges_format_activity_action_bpges_notice( '', $_a, $_subject );
+
 		$activity_id = bp_activity_add(
 			array(
 				'component' => buddypress()->groups->id,
 				'type'      => 'bpges_notice',
 				'content'   => $notice,
 				'item_id'   => $group_id,
-				'action'    => '',
+				'action'    => $action,
 			)
 		);
 

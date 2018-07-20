@@ -1297,13 +1297,15 @@ add_action( 'bp_register_activity_actions', 'bpges_register_activity_actions' );
  * @param object $activity Activity object.
  * @return string
  */
-function bpges_format_activity_action_bpges_notice( $action, $activity ) {
+function bpges_format_activity_action_bpges_notice( $action, $activity, $subject = '' ) {
 	$group      = groups_get_group( $activity->item_id );
 	$group_link = bp_get_group_permalink( $group );
 
 	$user_link = bp_core_get_userlink( $activity->user_id );
 
-	$subject = bp_activity_get_meta( $activity->id, 'bpges_notice_subject', true );
+	if ( isset( $activity->id ) ) {
+		$subject = bp_activity_get_meta( $activity->id, 'bpges_notice_subject', true );
+	}
 
 	/* translators: 1. Group admin link, 2. Group link, 3. Notice subject */
 	return sprintf(
