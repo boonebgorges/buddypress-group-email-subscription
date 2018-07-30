@@ -652,7 +652,7 @@ To view or reply, log in and go to:
 
 		// Check for $self_notify status.
 		$self_notify = ass_self_post_notification( $user_id );
-		if ( ! empty( $self_notify ) ) {
+		if ( ! empty( $self_notify ) && (int) $activity->user_id === (int) $user_id ) {
 			$group_status = 'self_notify';
 		}
 	}
