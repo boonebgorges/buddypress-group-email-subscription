@@ -385,6 +385,12 @@ function bpges_39_launch_legacy_subscription_migration() {
 	global $wpdb;
 
 	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
+		if ( ! class_exists( 'WP_Background_Process' ) ) {
+			require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+		}
+
+		require_once( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+
 		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
 	}
 
