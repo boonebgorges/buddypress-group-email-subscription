@@ -13,6 +13,10 @@ if ( defined( 'BP_VERSION' ) ) {
 	}
 }
 
+if ( ! class_exists( 'WP_Background_Process' ) ) {
+	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+}
+
 // Admin-related code.
 if ( defined( 'WP_NETWORK_ADMIN' ) ) {
 	require_once( dirname( __FILE__ ) . '/admin.php' );
@@ -35,10 +39,6 @@ require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription.php' );
 require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription-query.php' );
 require_once( dirname( __FILE__ ) . '/classes/class-bpges-queued-item.php' );
 require_once( dirname( __FILE__ ) . '/classes/class-bpges-queued-item-query.php' );
-
-if ( ! class_exists( 'WP_Background_Process' ) ) {
-	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
-}
 
 require_once( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
 
