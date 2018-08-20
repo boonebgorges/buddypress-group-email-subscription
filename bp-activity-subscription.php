@@ -71,6 +71,7 @@ function activitysub_setup_defaults() {
 	ass_set_weekly_digest_time( '4' );
 
 	// Run updater on activation.
+	ass_loader();
 	require_once( dirname( __FILE__ ) . '/admin.php' );
 	require_once( dirname( __FILE__ ) . '/updater.php' );
 	new GES_Updater( true );
