@@ -2004,50 +2004,59 @@ add_action( 'bp_actions', 'ass_user_unsubscribe_action' );
 function ass_user_unsubscribe_form() {
 	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
 
-	if ( 'unsubscribe' != $action )
+	if ( 'unsubscribe' !== $action ) {
 		return;
+	}
 
-	if ( empty( $_GET['group'] ) && get_option( 'ass-global-unsubscribe-link' ) != 'yes' )
+	if ( empty( $_GET['group'] ) && get_option( 'ass-global-unsubscribe-link' ) != 'yes' ) {
 		return;
+	}
 
-	$user_id = bp_displayed_user_id();
-	$access_key = $_GET['access_key'];
+	$user_id       = bp_displayed_user_id();
+	$access_key    = $_GET['access_key'];
+	$message       = '';
+	$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'buddypress-group-email-subscription' ), bp_get_root_domain(), get_option( 'blogname' ) );
 
-	// unsubscribing from one group only
-	if ( isset( $_GET['group'] ) ) {
-		$group = groups_get_group( array( 'group_id' => $_GET['group'] ) );
+	// Unsubscribe time.
+	if ( isset( $_POST['submit'] ) ) {
+		$group = groups_get_group( array( 'group_id' => $_POST['group_id'] ) );
 
-		if ( $access_key != md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) )
-			return;
+		// Single group.
+		if ( ! empty( $_POST['group_id'] ) && ! empty( $group->id ) ) {
+			check_admin_referer( 'bp_ges_unsubscribe_group_' . $group->id );
 
-		ass_unsubscribe_user( $user_id, (array) $group->id );
+			$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_group_permalink( $group ), bp_get_group_name( $group ) );
 
-		$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ), '<a href="' . bp_get_group_permalink( $group ) . '">' . $group->name . '</a>' );
+			if ( $access_key != md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) ) {
+				$message = esc_html__( 'There was a problem unsubscribing you from the group.', 'buddypress-group-email-subscription' );
 
-		$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'buddypress-group-email-subscription' ), bp_get_group_permalink( $group ), esc_html( $group->name ) );
+			} else {
+				ass_unsubscribe_user( $user_id, (array) $group->id );
 
-		$unsubscribed = true;
-	} else {
-		// unsubscribe from all groups
-		if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) )
-			return;
+				$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ), '<a href="' . bp_get_group_permalink( $group ) . '">' . bp_get_group_name( $group ) . '</a>' );
+			}
 
-		if ( isset( $_GET['submit'] ) ) {
-			ass_unsubscribe_user( $user_id );
+		// All groups.
+		} elseif ( 0 === $_POST['group_id'] ) {
+			check_admin_referer( 'bp_ges_unsubscribe_group_all' );
 
-			$message = __( 'Your unsubscription was successful. You will no longer receive email notifications from any of your groups.', 'buddypress-group-email-subscription' );
+			if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) ) {
+				$message = esc_html__( 'There was a problem unsubscribing you from all of your groups.', 'buddypress-group-email-subscription' );
 
-			$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'buddypress-group-email-subscription' ), bp_get_root_domain(), get_option( 'blogname' ) );
+			} else {
+				ass_unsubscribe_user( $user_id );
 
-			$unsubscribed = true;
+				$message = __( 'Your unsubscription was successful. You will no longer receive email notifications from any of your groups.', 'buddypress-group-email-subscription' );
+			}
 		}
 	}
+
 ?>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name = "viewport" content="width=640" />
-	<title><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe from all groups notifications' ); ?></title>
+	<title><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe from group notifications', 'buddypress-group-email-subscription' ); ?></title>
 	<style type="text/css">
 		.container {
 			background-color:#fff;
@@ -2061,18 +2070,32 @@ function ass_user_unsubscribe_form() {
 </head>
 <body>
 	<div class="container">
-		<h1><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe' ); ?></h1>
-		<?php if ( isset( $unsubscribed ) ) : ?>
+		<h1><?php echo bloginfo( 'name' ); ?> - <?php _e( 'Unsubscribe', 'buddypress-group-email-subscription' ); ?></h1>
+		<?php if ( ! empty( $message ) ) : ?>
+
 			<p><?php echo $message ?></p>
 			<p><?php echo $continue_link ?></p>
-		<?php else : ?>
-			<p><?php _e( 'Do you really want to unsubscribe from all groups notifications?' ); ?></p>
 
-			<form id="ass-unsubscribe-form" action="" method="get">
-				<input type="hidden" name="bpass-action" value="<?php echo $action; ?>" />
-				<input type="hidden" name="access_key" value="<?php echo $access_key; ?>" />
-				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe from all my groups' ); ?>" />
+		<?php elseif ( isset( $_GET['group'] ) ) : $group = groups_get_group( array( 'group_id' => $_GET['group'] ) ); ?>
+
+			<p><?php printf( __( 'Do you really want to unsubscribe from all notifications for the group, %s?', 'buddypress-group-email-subscription' ), '<a href="' . bp_get_group_permalink( $group ) . '">' . bp_get_group_name( $group ) . '</a>' ); ?></p>
+
+			<form id="ass-unsubscribe-form" action="" method="POST">
+				<input type="hidden" name="group_id" value="<?php echo (int) $_GET['group']; ?>" />
+				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe from this group', 'buddypress-group-email-subscription' ); ?>" />
+				<a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'No, close', 'buddypress-group-email-subscription' ); ?></a>
+				<?php wp_nonce_field( 'bp_ges_unsubscribe_group_' . (int) $_GET['group'] ); ?>
+			</form>
+
+		<?php else : ?>
+
+			<p><?php _e( 'Do you really want to unsubscribe from all groups notifications?', 'buddypress-group-email-subscription' ); ?></p>
+
+			<form id="ass-unsubscribe-form" action="" method="POST">
+				<input type="hidden" name="group_id" value="0" />
+				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe from all my groups', 'buddypress-group-email-subscription' ); ?>" />
 				<a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'No, close' ); ?></a>
+				<?php wp_nonce_field( 'bp_ges_unsubscribe_group_all' ); ?>
 			</form>
 		<?php endif; ?>
 	</div>
