@@ -2015,7 +2015,11 @@ function ass_user_unsubscribe_form() {
 	$user_id       = bp_displayed_user_id();
 	$access_key    = $_GET['access_key'];
 	$message       = '';
-	$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'buddypress-group-email-subscription' ), bp_get_root_domain(), get_option( 'blogname' ) );
+
+	/* translators: Continue to "SITE NAME or GROUP NAME" */
+	$link_label = esc_html__( 'Continue to %s', 'buddypress-group-email-subscription' );
+	$link_href  = bp_get_root_domain();
+	$link_text  = get_option( 'blogname' );
 
 	// Unsubscribe time.
 	if ( isset( $_POST['submit'] ) ) {
@@ -2025,7 +2029,8 @@ function ass_user_unsubscribe_form() {
 		if ( ! empty( $_POST['group_id'] ) && ! empty( $group->id ) ) {
 			check_admin_referer( 'bp_ges_unsubscribe_group_' . $group->id );
 
-			$continue_link = sprintf( __( '<a href="%1$s">Continue to %2$s</a>', 'bp-ass' ), bp_get_group_permalink( $group ), bp_get_group_name( $group ) );
+			$link_href = bp_get_group_permalink( $group );
+			$link_text = bp_get_group_name( $group );
 
 			if ( $access_key != md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) ) {
 				$message = esc_html__( 'There was a problem unsubscribing you from the group.', 'buddypress-group-email-subscription' );
@@ -2033,7 +2038,9 @@ function ass_user_unsubscribe_form() {
 			} else {
 				ass_unsubscribe_user( $user_id, (array) $group->id );
 
-				$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ), '<a href="' . bp_get_group_permalink( $group ) . '">' . bp_get_group_name( $group ) . '</a>' );
+				$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ),
+					sprintf( '<a href="%1$s">%2$s</a>', esc_url( $link_href ), $link_text )
+				);
 			}
 
 		// All groups.
@@ -2050,6 +2057,12 @@ function ass_user_unsubscribe_form() {
 			}
 		}
 	}
+
+	$continue_link = sprintf(
+		'<a href="%1$s">%2$s</a>',
+		esc_url( $link_href ),
+		sprintf( $link_label, $link_text )
+	);
 
 ?>
 <html>
