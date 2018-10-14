@@ -1242,6 +1242,9 @@ function bpges_delete_queued_items_for_activity_ids( $activity_ids ) {
 		) );
 
 		$queued_ids = array_keys( $query->get_results() );
+		if ( empty( $queued_ids ) ) {
+			return;
+		}
 		BPGES_Queued_Item::bulk_delete( $queued_ids );
 	}
 }
