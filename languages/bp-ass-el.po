@@ -1,0 +1,1186 @@
+# Copyright (C) 2012 
+# This file is distributed under the same license as the  package.
+msgid ""
+msgstr ""
+"Project-Id-Version: bp-ass-el\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-"
+"email-subscription\n"
+"POT-Creation-Date: 2018-03-02 18:56:09+00:00\n"
+"PO-Revision-Date: 2018-10-16 12:41+0300\n"
+"Last-Translator: Lena Stergatu <stergatu@cti.gr>\n"
+"Language-Team: nts\n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: _e;__\n"
+"X-Poedit-Basepath: C:/xampp/htdocs/blogsRun/wp-content/plugins/buddypress-"
+"group-email-subscription\n"
+"X-Poedit-SearchPath-0: C:/xampp/htdocs/blogsRun/wp-content/plugins/"
+"buddypress-group-email-subscription\n"
+
+#: admin.php:25
+msgid "BP Group Email Options"
+msgstr "Ρυθμίσεις BP Group Email"
+
+#: admin.php:30
+msgid "Group Email Options"
+msgstr "Ρυθμίσεις Group Email"
+
+#: admin.php:56
+msgid "Settings saved."
+msgstr "Οι ρυθμίσεις αποθηκεύτηκαν."
+
+#: admin.php:74
+msgid "Group Email Subscription Settings"
+msgstr "Ρυθμίσεις Group Email Subscription"
+
+#: admin.php:79
+msgid "Digests & Summaries"
+msgstr "Συνόψεις & Περιλήψεις"
+
+#: admin.php:81
+msgid ""
+"View queued digest items</a></b> (in new window)<br>As admin, you can see "
+"what is currently in the email queue by adding ?sum=1 to your url. This will "
+"not fire the digest, it will just show you what is waiting to be sent."
+msgstr ""
+"Προβολή στοιχείων αναμονής στην ουρά </a> </ b> (σε νέο παράθυρο) <br> Ως "
+"διαχειριστής, μπορείτε να δείτε τι υπάρχει στην ουρά μηνυμάτων ηλεκτρονικού "
+"ταχυδρομείου, προσθέτοντας το ?sum=1 στη διεύθυνση URL σας. Αυτό δεν θα "
+"πυροδοτήσει το digest, απλά θα σας δείξει ακριβώς τι περιμένει να σταλεί."
+
+#: admin.php:85
+msgid "<strong>Daily Digests</strong> should be sent at this time:"
+msgstr "Η <strong>Ημερήσια σύνοψη</strong> να στέλνεται στις:"
+
+#: admin.php:102
+msgid "<strong>Weekly Summaries</strong> should be sent on:"
+msgstr "Οι <strong>Εβδομαδιαίες περιλήψεις</strong> να στέλνονται κάθε :"
+
+#: admin.php:106 admin.php:117 bp-activity-subscription-functions.php:1867
+msgid "Monday"
+msgstr "Δευτέρα"
+
+#: admin.php:107 admin.php:117 bp-activity-subscription-functions.php:1869
+msgid "Tuesday"
+msgstr "Τρίτη"
+
+#: admin.php:108 admin.php:117 bp-activity-subscription-functions.php:1871
+msgid "Wednesday"
+msgstr "Τετάρτη"
+
+#: admin.php:109 admin.php:117 bp-activity-subscription-functions.php:1873
+msgid "Thursday"
+msgstr "Πέμπτη"
+
+#: admin.php:110 admin.php:117 bp-activity-subscription-functions.php:1875
+msgid "Friday"
+msgstr "Παρασκευή"
+
+#: admin.php:111 admin.php:117 bp-activity-subscription-functions.php:1877
+msgid "Saturday"
+msgstr "Σάββατο"
+
+#: admin.php:112 admin.php:117 bp-activity-subscription-functions.php:1879
+msgid "Sunday"
+msgstr "Κυριακή"
+
+#: admin.php:117
+msgid ""
+"The server timezone is %s (%s); the current server time is %s (%s); and the "
+"day is %s."
+msgstr ""
+"Η ζώνη ώρας του διακομιστή είναι%s (%s). ο τρέχων χρόνος διακομιστή είναι %s "
+"(%s). και η ημέρα είναι %s."
+
+#: admin.php:121
+msgid "Global Unsubscribe Link"
+msgstr "Σύνδεσμος για μαζική ακύρωση ειδοποιήσεων"
+
+#: admin.php:122
+msgid ""
+"Add a link in the emails and on the notifications settings page allowing "
+"users to unsubscribe from all their groups at once:"
+msgstr ""
+"Προσθήκη συνδέσμου σε κάθε email και στην σελίδα ρυθμίσεων ειδοποιήσεων που "
+"επιτρέπει στους χρήστες να ακυρώσουν την λήψη ειδοποίησεων μαζικά από όλες "
+"τις ομάδες τους:"
+
+#: admin.php:124 admin.php:133 admin.php:138
+msgid "yes"
+msgstr "ναι"
+
+#: admin.php:125 admin.php:134 admin.php:139
+msgid "no"
+msgstr "όχι"
+
+#: admin.php:130
+msgid "Group Admin Abilities"
+msgstr "Δυνατότητες διαχειριστή ομάδας"
+
+#: admin.php:131
+msgid ""
+"Allow group admins and mods to change members' email subscription settings: "
+msgstr ""
+"Να μπορούν οι διαχειριστές και οι συντονιστές ομάδας να αλλάξουν τις "
+"ρυθμίσεις συνδρομής ηλεκτρονικού ταχυδρομείου των μελών: "
+
+#: admin.php:136
+msgid ""
+"Allow group admins to override subscription settings and send an email to "
+"everyone in their group: "
+msgstr ""
+"Να μπορούν οι διαχειριστές ομάδων να παρακάμψουν τις ρυθμίσεις συνδρομής και "
+"να στείλουν email σε όλα τα μέλη της ομάδας: "
+
+#: admin.php:143
+msgid "Spam Prevention"
+msgstr "Πρόληψη spam"
+
+#: admin.php:144
+msgid ""
+"To help protect against spam, you may wish to require a user to have been a "
+"member of the site for a certain amount of days before any group updates are "
+"emailed to the other group members. This is disabled by default."
+msgstr ""
+"Για να προστατεύτείτε από τα spam, ίσως θέλετε να καθορίσετε ένα ελάχιστο "
+"αριθμό ημερών που θα πρέπει να είναι κανές μέλος του ιστότοπου σας πριν από "
+"την αποστολή οποιωνδήποτε ενημερώσεων ομάδας σε άλλα μέλη της ομάδας. Αυτό "
+"είναι απενεργοποιημένο από προεπιλογή."
+
+#: admin.php:145
+msgid "Member must be registered for"
+msgstr "Ο χρήστης θα πρέπει να είναι εγγεγραμένος για να"
+
+#: admin.php:145
+msgid "days"
+msgstr "ημέρες"
+
+#: admin.php:149 screen-notifications.php:57
+msgid "Save Settings"
+msgstr "Αποθήκευση ρυθμίσεων"
+
+#: admin.php:156
+msgid "If you enjoy using this plugin %s please rate it %s."
+msgstr ""
+"Εάν σας αρέσει να χρησιμοποιείτε αυτό το πρόσθετο %s, παρακαλούμε "
+"βαθμολογήστε το %s."
+
+#: admin.php:157
+msgid "Please make a donation to the team to support ongoing development."
+msgstr ""
+"Παρακαλούμε κάνετε μια δωρεά στην ομάδα για να υποστηρίξετε τη συνεχή "
+"εξέλιξη."
+
+#: admin.php:297
+msgid ""
+"This email is handled by the Group Email Subscription plugin and uses "
+"customized tokens.  <a target=\"_blank\" href=\"%s\">Learn more about GES "
+"tokens on our wiki</a>."
+msgstr ""
+"Αυτό το email προέρχεται το πρόσθετο Group Email Subscription και "
+"χρησιμοποιεί εξατομικευμένα tokens. <a target=\"_blank\" href=\"%s\"> Μάθετε "
+"περισσότερα σχετικά με τα GES tokens στο wiki </a>."
+
+#: bp-activity-subscription-digest.php:70
+msgid ""
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on %s."
+msgstr ""
+"Λαμβάνετε αυτό το μήνυμα γιατί έχετε εγγραφεί στην σύνοψη της δραστηριότητας "
+"κάποιας/ών από τις ομάδες σας στο %s."
+
+#: bp-activity-subscription-digest.php:177
+msgid "at"
+msgstr "στις"
+
+#: bp-activity-subscription-digest.php:212
+msgid "(%s items)"
+msgstr "(%s στοιχεία)"
+
+#: bp-activity-subscription-digest.php:242
+#: bp-activity-subscription-digest.php:301
+msgid "Group Summary"
+msgstr "Περίληψη ομάδας"
+
+#: bp-activity-subscription-digest.php:252
+msgid ""
+"How to follow a topic: to get email updates for a specific topic, click the "
+"topic title - then on the webpage click the <i>Follow this topic</i> button. "
+"(If you don't see the button you need to login first.)"
+msgstr ""
+"Πώς να παρακολουθήσετε ένα θέμα: για να λαμβάνετε ενημερώσεις email για ένα "
+"συγκεκριμένο θέμα, κάντε κλικ στον τίτλο του θέματος - στη συνέχεια στην "
+"σελίδα κάντε κλικ στο κουμπί <i> Ακολουθήστε αυτό το θέμα </ i>. (Εάν δεν "
+"βλέπετε το κουμπί θα πρέπει να συνδεθείτε πρώτα.)"
+
+#: bp-activity-subscription-digest.php:257
+msgid ""
+"To disable these notifications per group please login and go to: %s where "
+"you can change your email settings for each group."
+msgstr ""
+"Για να απενεργοποιήσετε αυτές τις ειδοποιήσεις ανά ομάδα, συνδεθείτε και "
+"μεταβείτε στο: %s. Εκεί μπορείτε να αλλάξετε τις ρυθμίσεις ειδοποιήσεων για "
+"κάθε μία ομάδα."
+
+#: bp-activity-subscription-digest.php:257 screen-user-settings.php:93
+msgid "My Groups"
+msgstr "Οι Ομάδες μου"
+
+#: bp-activity-subscription-digest.php:261
+msgid "Disable these notifications for all my groups at once."
+msgstr "Απενεργοποίηση των ειδοποιήσεων για όλες μου τις ομάδες."
+
+#: bp-activity-subscription-digest.php:367
+msgid "Your daily digest of group activity"
+msgstr "Η ημερήσια σύνοψη σας για δραστηριότητα ομάδας"
+
+#: bp-activity-subscription-digest.php:369
+msgid "Your weekly summary of group topics"
+msgstr "Η εβδομαδιαία περίληψη για τα θέματα ομάδας"
+
+#: bp-activity-subscription-digest.php:443
+msgid "DAILY DIGEST:"
+msgstr "ΗΜΕΡΗΣΙΑ ΣΥΝΟΨΗ:"
+
+#: bp-activity-subscription-digest.php:445
+msgid "WEEKLY DIGEST:"
+msgstr "ΕΒΔΟΜΑΔΙΑΙΑ ΣΥΝΟΨΗ:"
+
+#: bp-activity-subscription-digest.php:481
+msgid "Group: %s"
+msgstr "Ομάδα: %s"
+
+#: bp-activity-subscription-digest.php:483
+msgid "Group: %s weekly summary"
+msgstr "Εβδομαδιαία σύνοψη για την ομάδα: %s"
+
+#: bp-activity-subscription-digest.php:488
+msgid "To disable these notifications for this group click "
+msgstr ""
+"Για να απενεργοποιήσετε αυτές τις ειδοποιήσεις από την αυτή ομάδα, πατήστε "
+
+#: bp-activity-subscription-digest.php:488
+msgid "unsubscribe"
+msgstr "διαγραφή από τη λίστα"
+
+#: bp-activity-subscription-digest.php:489
+msgid "change "
+msgstr "αλλαγή "
+
+#: bp-activity-subscription-digest.php:489
+msgid "email options"
+msgstr "επιλογές email"
+
+#: bp-activity-subscription-digest.php:567
+msgid "at %s, %s"
+msgstr "στις %s,  %s"
+
+#: bp-activity-subscription-digest.php:581
+msgid "View"
+msgstr "Προβολή"
+
+#: bp-activity-subscription-digest.php:764
+msgid "Once Weekly"
+msgstr "Μία φορά την εβδομάδα"
+
+#: bp-activity-subscription-functions.php:21
+msgid "To disable all notifications for this group, click: %s"
+msgstr ""
+"Για να απενεργοποιήστε όλες τις ειδοποιήσεις από την ομάδα, πατήστε: %s"
+
+#: bp-activity-subscription-functions.php:24
+msgid "Or to disable notifications for *all* your groups, click: %s"
+msgstr ""
+"Ή για να απενεργοποιήσετε τις ειδοποιήσεις για *όλες* τις ομάδες σας, "
+"πατήστε: %s"
+
+#: bp-activity-subscription-functions.php:135
+msgid "in the group"
+msgstr "στην oμάδα"
+
+#: bp-activity-subscription-functions.php:207
+msgid ""
+"%1$s\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%2$s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%1$s\n"
+"\n"
+"Για να δείτε ή να απαντήσετε, συνδεθείτε και μεταβείτε στο:\n"
+"%2$s\n"
+"\n"
+"---------------------\n"
+
+#: bp-activity-subscription-functions.php:216
+msgid ""
+"%1$s\n"
+"\n"
+"\"%2$s\"\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%1$s\n"
+"\n"
+"\"%2$s\"\n"
+"\n"
+"Για να δείτε ή να απαντήσετε, συνδεθείτε και μεταβείτε στο:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
+
+#: bp-activity-subscription-functions.php:360 legacy-forums.php:192
+msgid "You are currently receiving notifications for your own posts."
+msgstr "Λαμβάνετε ειδοποιήσεις για τις δικές σας ενημερώσεις."
+
+#: bp-activity-subscription-functions.php:362 legacy-forums.php:193
+#: legacy-forums.php:247 legacy-forums.php:261 legacy-forums.php:275
+msgid "To disable these notifications please log in and go to: %s"
+msgstr ""
+"Για να απενεργοποιήσετε τις ειδοποιήσεις παρακαλούμε συνδεθείτε και "
+"πηγαίνετε στο: %s"
+
+#: bp-activity-subscription-functions.php:363
+#: bp-activity-subscription-functions.php:828 legacy-forums.php:194
+msgid ""
+"Once you are logged in, uncheck \"Receive notifications of your own posts?\"."
+msgstr ""
+"Συνδεθείτε, και αποεπιλέξτε το  \"Λήψη ειδοποιήσεων για τις δικές σας "
+"δημοσιεύσεις; \"."
+
+#: bp-activity-subscription-functions.php:371
+msgid "Your email setting for this group is: %s"
+msgstr "Οι ρυθμίσεις ειδοποιήσεων email για αυτή την ομάδα είναι:  %s"
+
+#: bp-activity-subscription-functions.php:377 legacy-forums.php:209
+#: legacy-forums.php:233
+msgid ""
+"To change your email setting for this group, please log in and go to: %s"
+msgstr ""
+"Για να αλλάξετε τις ρυθμίσεις email ειδοποιήσεων για αυτή την ομάδας, "
+"συνδεθείτε και μεταβείτε στο: %s"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:590
+#: bp-activity-subscription-functions.php:605
+#: bp-activity-subscription-functions.php:635
+msgid "[{{{site.name}}}] {{{ges.subject}}}"
+msgstr "[{{{site.name}}}] {{{ges.subject}}}"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:593
+msgid ""
+"{{{ges.action}}}:\n"
+"\n"
+"<blockquote>{{{usermessage}}}</blockquote>\n"
+"&ndash;\n"
+"<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up "
+"on the conversation.\n"
+"{{{ges.email-setting-description}}}"
+msgstr ""
+"{{{ges.action}}}:\n"
+"\n"
+"<blockquote>{{{usermessage}}}</blockquote>\n"
+"&ndash;\n"
+"<a href=\"{{{thread.url}}}\">Πηγαίνετε στη συζήτηση </a> να απαντήσετε ή να "
+"δείτε όλη τη συνομιλία.\n"
+"{{{ges.email-setting-description}}}"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:596
+msgid ""
+"{{{ges.action}}}:\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"Go to the discussion to reply or catch up on the conversation:\n"
+"{{{thread.url}}}\n"
+"\n"
+"----\n"
+"\n"
+"{{{ges.email-setting-description}}}\n"
+"\n"
+"{{{ges.email-setting-links}}}"
+msgstr ""
+"{{{ges.action}}}:\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"Πηγαίνετε στη συζήτηση για να απαντήσετε ή διαβάσετε όλη την συνομιλία:\n"
+"{{{thread.url}}}\n"
+"\n"
+"----\n"
+"\n"
+"{{{ges.email-setting-description}}}\n"
+"\n"
+"{{{ges.email-setting-links}}}"
+
+#: bp-activity-subscription-functions.php:598
+msgid ""
+"A member created a group activity entry. Used by the Group Email "
+"Subscription plugin during immediate sendouts."
+msgstr ""
+"Ένα μέλος δημιούργησε μια καταχώρηση δραστηριότητας ομάδας. Χρησιμοποιείται "
+"από το πρόσθετο Group Email Subscription κατά τη διάρκεια των άμεσων "
+"αποστολών."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:608
+msgid ""
+"{{{ges.digest-summary}}}{{{usermessage}}}\n"
+"&ndash;\n"
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on {{site.name}}."
+msgstr ""
+"{{{ges.digest-summary}}}{{{usermessage}}}\n"
+"&ndash;\n"
+"Λαμβάνετε αυτό το μήνυμα επειδή έχετε εγγραφεί για να λάβετε ανασκόπηση της "
+"δραστηριότητας σε ορισμένες από τις ομάδες σας στο {{site.name}}."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:611
+msgid ""
+"{{{ges.digest-summary}}}\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"----\n"
+"\n"
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on {{{site.name}}}.\n"
+"\n"
+"To disable these notifications per group, please login and [visit your "
+"groups page]({{{ges.settings-link}}}) where you can manage your email "
+"settings for each group."
+msgstr ""
+"{{{ges.digest-summary}}}\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"----\n"
+"\n"
+"Έχετε λάβει αυτό το μήνυμα επειδή έχετε εγγραφεί για να λάβετε ανασκόπηση "
+"της δραστηριότητας σε ορισμένες από τις ομάδες σας στο {{{site.name}}}.\n"
+"\n"
+"Για να απενεργοποιήσετε αυτές τις ειδοποιήσεις ανά ομάδα, παρακαλώ "
+"συνδεθείτε και [επισκεφτείτε τη σελίδα των ομάδων σας]({{{ges.settings-"
+"link}}}) όπου μπορείτε να διαχειριστείτε τις ρυθμίσεις email σας για κάθε "
+"ομάδα."
+
+#: bp-activity-subscription-functions.php:613
+msgid ""
+"An email digest is sent to a member. Used by the Group Email Subscription "
+"plugin during daily or weekly digest sendouts."
+msgstr ""
+"Ένα μήνυμα email αποστέλλεται σε ένα μέλος. Χρησιμοποιείται από το πρόσθετο "
+"Group Email Subscription κατά τη διάρκεια καθημερινών ή εβδομαδιαίων "
+"συνόψεων."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:620
+msgid ""
+"[{{{site.name}}}] {{{ges.subject}}} - from the group \"{{{group.name}}}\""
+msgstr ""
+"[{{{site.name}}}] {{{ges.subject}}} - από την ομάδα \"{{{group.name}}}\""
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:623
+msgid ""
+"This is a notice from the group {{{group.link}}}:\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"&ndash;\n"
+"<strong>Please note:</strong> admin notices are sent to everyone in the "
+"group and cannot be disabled.\n"
+"If you feel this service is being misused please speak to the website "
+"administrator."
+msgstr ""
+"Αυτή είναι μια ανακοίνωση από την ομάδα {{{group.link}}}:\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"&ndash;\n"
+"<strong>Παρακαλώ σημειώστε:</strong> Οι  ειδοποιήσεις διαχειριστή "
+"αποστέλλονται σε όλους στην ομάδα και δεν μπορούν να απενεργοποιηθούν.\n"
+"Εάν αισθάνεστε ότι γίνεται κατάχρηση της δυνατότητας αυτής παρακαλούμε "
+"επικοινωνήστε τον διαχειριστή του ιστοτόπου."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:626
+msgid ""
+"This is a notice from the group \"{{{group.name}}}\":\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"----\n"
+"\n"
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"\n"
+"If you feel this service is being misused please speak to the website "
+"administrator.\n"
+"\n"
+"To visit the group homepage, click on the link below:\n"
+"{{{group.url}}}"
+msgstr ""
+"Αυτή είναι μια ενημέρωση από την ομάδα \"{{{group.name}}}\":\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"----\n"
+"\n"
+"Παρακαλώ σημειώστε: Οι ανακοινώσεις διαχειριστή αποστέλλονται σε όλους στην "
+"ομάδα και δεν μπορούν να απενεργοποιηθούν.\n"
+"\n"
+"Εάν αισθάνεστε ότι γίνεται κατάχρηση της υπηρεσίας απευθυνθείτε στο "
+"διαχειριστή του δικτυακού τόπου.\n"
+"\n"
+"Για να επισκεφτείτε την αρχική σελίδα της ομάδας, κάντε κλικ στον παρακάτω "
+"σύνδεσμο:\n"
+"{{{group.url}}}"
+
+#: bp-activity-subscription-functions.php:628
+msgid ""
+"An email notice is sent by a group administrator to all members of the "
+"group. Used by the Group Email Subscription plugin."
+msgstr ""
+"Μια ειδοποίηση μέσω email αποστέλλεται από έναν διαχειριστή ομάδας σε όλα τα "
+"μέλη της ομάδας. Χρησιμοποιείται από το πρόσθετο Group Email Subscription."
+
+#: bp-activity-subscription-functions.php:639
+msgid ""
+"A welcome email is sent to new members of a group. Used by the Group Email "
+"Subscription plugin."
+msgstr ""
+"Ένα email καλωσορίσματος στέλνεται στα νέα μέλη μιας ομάδας. Χρησιμοποιείται "
+"από το πρόσθετο Group Email Subscription."
+
+#: bp-activity-subscription-functions.php:829
+#: bp-activity-subscription-functions.php:865
+msgid "Change email settings"
+msgstr "Αλλαγή ρυθμίσεων email"
+
+#: bp-activity-subscription-functions.php:839
+msgid "To change your email settings for this group only, click on this link"
+msgstr ""
+"Για να αλλάξετε τις ρυθμίσεις email σας για μόνο αυτή η ομάδα, κάντε κλικ σε "
+"αυτό το σύνδεσμο"
+
+#: bp-activity-subscription-functions.php:840
+msgid "Change group email Settings"
+msgstr "Αλλαγή ρυθμίσεων email ομάδας"
+
+#: bp-activity-subscription-functions.php:845
+msgid "To disable all notifications for this group, click on this link"
+msgstr ""
+"Για να απενεργοποιήστε όλες τις ειδοποιήσεις από την ομάδα, πατήστε στον "
+"παρακάτω σύνδεσμο"
+
+#: bp-activity-subscription-functions.php:846
+msgid "Unsubscribe from this group"
+msgstr "Διαγραφή από αυτή την ομάδα"
+
+#: bp-activity-subscription-functions.php:852
+msgid "To disable notifications from all your groups, click on this link"
+msgstr ""
+"Για να απενεργοποιήσετε τις ειδοποιήσεις για όλες τις ομάδες σας, πατήστε "
+"στον παρακάτω σύνδεσμο"
+
+#: bp-activity-subscription-functions.php:853
+msgid "Unsubscribe from all groups"
+msgstr "Διαγραφή από όλες τις ομάδες"
+
+#: bp-activity-subscription-functions.php:864
+msgid "Once you are logged in, change your email settings for each group."
+msgstr "Όταν συνδεθείτε, αλλάξτε τις ρυθμίσεις email σας για κάθε ομάδα."
+
+#: bp-activity-subscription-functions.php:1171
+#: bp-activity-subscription-functions.php:1518 screen-notifications.php:31
+#: screen.php:53
+msgid "No Email"
+msgstr "Μη αποστολή"
+
+#: bp-activity-subscription-functions.php:1173 screen.php:54
+msgid "Weekly Summary"
+msgstr "Εβδομαδιαία περίληψη"
+
+#: bp-activity-subscription-functions.php:1175 screen.php:55
+msgid "Daily Digest"
+msgstr "Ημερήσια σύνοψη"
+
+#: bp-activity-subscription-functions.php:1177
+#: bp-activity-subscription-functions.php:1523 screen.php:58
+msgid "New Topics"
+msgstr "Νέα θέματα"
+
+#: bp-activity-subscription-functions.php:1179
+#: bp-activity-subscription-functions.php:1526 screen-notifications.php:53
+#: screen.php:61
+msgid "All Email"
+msgstr "Αποστολή email για κάθε ενέργεια"
+
+#: bp-activity-subscription-functions.php:1516 screen.php:98
+msgid "Email status:"
+msgstr "Κατάσταση ενημέρωσης μέσω email:"
+
+#: bp-activity-subscription-functions.php:1517
+msgid "Change to:"
+msgstr "Αλλαγή σε:"
+
+#: bp-activity-subscription-functions.php:1519
+msgid "Weekly"
+msgstr "Μία φορά την εβδομάδα"
+
+#: bp-activity-subscription-functions.php:1520
+msgid "Daily"
+msgstr "Hμερήσια"
+
+#: bp-activity-subscription-functions.php:1583
+msgid "You have been unsubscribed from all groups notifications."
+msgstr "Έχετε ακυρώσει τις ειδοποιήσεις μέσω email για όλες τις ομάδες σας."
+
+#: bp-activity-subscription-functions.php:1585
+msgid "This user's has been unsubscribed from all groups notifications."
+msgstr ""
+"Το μέλος αυτό έχει ακυρώσει τις ειδοποιήσεις μέσω email για όλες τις ομάδες."
+
+#: bp-activity-subscription-functions.php:1613
+msgid ""
+"Your unsubscription was successful. You will no longer receive email "
+"notifications from the group %s."
+msgstr ""
+"Επιτυχής ακύρωση λήψης ειδοποιήσεων. Δεν θα λαμβάνετε πλέον ειδοποιήσεις "
+"email από την ομάδα  %s."
+
+#: bp-activity-subscription-functions.php:1615
+#: bp-activity-subscription-functions.php:1628
+msgid "<a href=\"%1$s\">Continue to %2$s</a>"
+msgstr "<a href=\"%1$s\">Μετάβαση στο %2$s</a>"
+
+#: bp-activity-subscription-functions.php:1626
+msgid ""
+"Your unsubscription was successful. You will no longer receive email "
+"notifications from any of your groups."
+msgstr ""
+"Επιτυχής ακύρωση λήψης ειδοποιήσεων. Δεν θα λαμβάνετε πλέον ειδοποιήσεις "
+"email από καμία ομάδα σας."
+
+#: bp-activity-subscription-functions.php:1638
+msgid "Unsubscribe from all groups notifications"
+msgstr "Να μην λαμβάνω ειδοποιήσεις email απο καμία ομάδα"
+
+#: bp-activity-subscription-functions.php:1652
+msgid "Unsubscribe"
+msgstr "Διαγραφή από τη λίστα"
+
+#: bp-activity-subscription-functions.php:1657
+msgid "Do you really want to unsubscribe from all groups notifications?"
+msgstr ""
+"Είστε βέβαιος ότι θέλετε να διαγραφείτε από τις ειδοποιήσεις για όλες σας "
+"τις ομάδες;"
+
+#: bp-activity-subscription-functions.php:1662
+msgid "Yes, unsubscribe from all my groups"
+msgstr "Ναι, διαγραφή από τις ειδοποιήσεις όλων των ομάδων μου"
+
+#: bp-activity-subscription-functions.php:1663
+msgid "No, close"
+msgstr "Όχι, κλείσιμο"
+
+#: bp-activity-subscription-functions.php:1718
+msgid "To disable emails from all your groups at once click: %s"
+msgstr ""
+"Για να απενεργοποιήσετε τις ειδοποιήσεις email από όλες τις ομάδες σας, "
+"πατήστε: %s"
+
+#: bp-activity-subscription-functions.php:1829
+msgid "This post has attachments:"
+msgstr "Αυτή η ενημέρωση έχει συνημμένα:"
+
+#: bp-activity-subscription-main.php:42
+msgid "Email Options"
+msgstr "Επιλογές E-mail"
+
+#: bp-activity-subscription-main.php:93 legacy-forums.php:384
+msgid "Mute"
+msgstr "Σίγαση"
+
+#: bp-activity-subscription-main.php:94 legacy-forums.php:380
+msgid "Follow"
+msgstr "Παρακολούθηση"
+
+#: bp-activity-subscription-main.php:95
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: bp-activity-subscription.php:35
+msgid ""
+"Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  "
+"If you are still using BuddyPress 1.2 and you don't plan on upgrading, use "
+"<a href='%s'>BP Group Email Subscription v3.6.2 instead</a>."
+msgstr ""
+"Γεια σου! Το BP Group Email Subscription v3.7.0 απαιτεί BuddyPress 1.5 ή "
+"νεότερη έκδοση. Εάν εξακολουθείτε να χρησιμοποιείτε το BuddyPress 1.2 και "
+"δεν σχεδιάζετε αναβάθμιση, χρησιμοποιήστε <a href='%s'> BP Group "
+"Subscription Email v3.6.2</a>."
+
+#: legacy-forums.php:80
+msgid "%s started the forum topic \"%s\" in the group \"%s\""
+msgstr "%s ξεκίνησε το θέμα συζήτησης <b>%s</b> στην ομάδα %s:"
+
+#: legacy-forums.php:91
+msgid "%s replied to the forum topic \"%s\" in the group \"%s\""
+msgstr "%s απάντησε στο θέμα συζήτησης <b>%s</b> της ομάδας %s"
+
+#: legacy-forums.php:116
+msgid "To view or reply to this topic, go to:"
+msgstr "Για να διαβάσετε ή να απαντήσετε σε αυτό το θέμα, μεταβείτε στο:"
+
+#: legacy-forums.php:120
+msgid "To view or reply to this topic, log in and go to:"
+msgstr ""
+"Για να διαβάσετε ή να απαντήσετε σε αυτό το θέμα, συνδεθείτε και πηγαίνετε "
+"στο:"
+
+#: legacy-forums.php:124
+msgid ""
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"---------------------\n"
+
+#: legacy-forums.php:201 legacy-forums.php:232
+msgid "Your email setting for this group is: "
+msgstr "Οι ρυθμίσεις ειδοποιήσεων email για αυτή την ομάδα είναι: "
+
+#: legacy-forums.php:205
+msgid ""
+", therefore you won't receive replies to this topic. To get them, click the "
+"link to view this topic on the web then click the 'Follow this topic' button."
+msgstr ""
+", γι' αυτό δεν λαμβάνετε απαντήσεις για αυτό το θέμα. Για να αρχίσετε να "
+"λαμβάνετε ειδοποιήσεις, πατήσεων στον σύνδεσμο για να μεταβείτε στο θέμα και "
+"στην συνέχεια πατήστε το κουμπί \"Παρακολούθηση θέματος\"."
+
+#: legacy-forums.php:248
+msgid ""
+"Once you are logged in, click on the \"Mute this topic\" button to "
+"unsubscribe from the forum thread."
+msgstr ""
+"Μόλις συνδεθείτε, κάντε κλικ στο κουμπί \"Σίγαση αυτού του θέματος\" για να "
+"καταργήσετε την εγγραφή σας από τη συζήτηση του φόρουμ."
+
+#: legacy-forums.php:260
+msgid ""
+"You are currently receiving notifications to topics that you have started."
+msgstr "Λαμβάνετε ειδοποιήσεις για τα θέματα που έχετε ξεκινήσει."
+
+#: legacy-forums.php:262
+msgid ""
+"Once you are logged in, uncheck \"A member replies in a forum topic you've "
+"started\"."
+msgstr ""
+"Όταν συνδεθείτε, καταργήστε την επιλογή \"Ένα μέλος απαντά σε ένα θέμα του "
+"φόρουμ που έχετε ξεκινήσει\"."
+
+#: legacy-forums.php:274
+msgid ""
+"You are currently receiving notifications to topics that you have replied in."
+msgstr "Λαμβάνετε ειδοποιήσεις για τα θέματα στα οποία έχετε απαντήσει."
+
+#: legacy-forums.php:276
+msgid ""
+"Once you are logged in, uncheck \"A member replies after you in a forum topic"
+"\"."
+msgstr ""
+"Όταν συνδεθείτε, καταργήστε την επιλογή \"Ένα μέλος απαντά μετά από εσάς σε "
+"ένα θέμα συζήτησης\"."
+
+#: legacy-forums.php:381
+msgid ""
+"You are not following this topic. Click to follow it and get email updates "
+"for new posts"
+msgstr ""
+"Δεν παρακολουθείτε αυτό το θέμα. Πατήστε εδώ για να το παρακολουθείτε και να "
+"λαμβάνετε ειδοποιήσεις email για νέες απαντήσεις"
+
+#: legacy-forums.php:385
+msgid "You are following this topic. Click to stop getting email updates"
+msgstr ""
+"Παρακολουθείτε αυτό το θέμα. Πατήστε για να σταματήσετε να λαμβάνετε "
+"ενημερώσεις μέσω email"
+
+#: legacy-forums.php:391
+msgid "This conversation is muted. Click to follow it"
+msgstr "Αυτή η συνομιλία είναι σε σίγαση. Κάντε κλικ για να την ακολουθήστε"
+
+#: legacy-forums.php:395
+msgid "this topic"
+msgstr "αυτό το θέμα"
+
+#: legacy-forums.php:414
+msgid "Email"
+msgstr "Email"
+
+#: screen-admin.php:11
+msgid "Email Subscription Defaults"
+msgstr "Προκαθορισμένες τιμές Email Subscription"
+
+#: screen-admin.php:12
+msgid ""
+"When new users join this group, their default email notification settings "
+"will be:"
+msgstr ""
+"Για τα νέα μέλη της ομάδας, οι ρυθμίσεις για ειδοποιήσεις μέσω email θα "
+"είναι:"
+
+#: screen-admin.php:15
+msgid "No Email (users will read this group on the web - good for any group)"
+msgstr ""
+"Δίχως αποστολή Email (οι χρήστες θα διαβάσουν αυτή την ομάδα στο διαδίκτυο - "
+"καλό για κάθε ομάδα)"
+
+#: screen-admin.php:17
+msgid "Weekly Summary Email (the week's topics - good for large groups)"
+msgstr ""
+"Εβδομαδιαία περίληψη ( τα νέα θέματα συζήτησης - κατάλληλο για μεγάλες "
+"ομάδες)"
+
+#: screen-admin.php:19
+msgid ""
+"Daily Digest Email (all daily activity bundles in one email - good for "
+"medium-size groups)"
+msgstr ""
+"Email ημερήσιας σύνοψης (όλη η δραστηριότητα της ημέρας σε ένα μόνο email - "
+"χρήσιμο για μεσαίου μεγέθους ομάδες)"
+
+#: screen-admin.php:23
+msgid ""
+"New Topics Email (new topics are sent as they arrive, but not replies - good "
+"for small groups)"
+msgstr ""
+"Email για νέα θέματα συζήτησης (αποστέλλεται ειδοποίηση μόνο για τα νέα "
+"θέματα - όχι τις απαντήσεις - κατάλληλο για μικρές ομάδες)"
+
+#: screen-admin.php:27
+msgid ""
+"All Email (send emails about everything - recommended only for working "
+"groups)"
+msgstr ""
+"Email για όλα ( αποστολή email για κάθε ενέργεια στην ομάδα - συνιστάται "
+"μόνο για ομάδες εργασίας)"
+
+#: screen-admin.php:54
+msgid "User email status changed successfully"
+msgstr "Επιτυχής αλλαγή ρυθμίσεων λήψης ειδοποιήσεων email για τον χρήστη"
+
+#: screen-admin.php:73
+msgid ""
+"Site Admin Only: update email subscription settings for ALL members to the "
+"default:"
+msgstr ""
+"Μόνο για τον διαχειριστή του δικτυακού τόπου: Επαναφορά της ρύθμισης "
+"ειδοποιήσεων μέσω email για ΟΛΑ τα μέλη στην προκαθορισμένη:"
+
+#: screen-admin.php:73
+msgid "Warning: this is not reversible so use with caution."
+msgstr ""
+"Προειδοποίηση: Αυτό δεν είναι αναστρέψιμο, γιαυτό χρησιμοποιήστε το με "
+"σύνεση."
+
+#: screen-admin.php:73
+msgid "Make it so!"
+msgstr "Ας το κάνουμε!"
+
+#: screen-admin.php:100
+msgid "All user email status's changed successfully"
+msgstr "Επιτυχής αλλαγή ρυθμίσεων λήψης ειδοποιήσεων email για τον χρήστη"
+
+#: screen-admin.php:141
+msgid "The email notice was not sent. Please enter email content."
+msgstr ""
+"Η ειδοποίηση μέσω ηλεκτρονικού ταχυδρομείου δεν εστάλη. Παρακαλώ εισάγετε το "
+"περιεχόμενο της ειδοποίησης."
+
+#: screen-admin.php:154
+msgid " - sent from the group "
+msgstr " - στάλθηκε από  την ομάδα "
+
+#: screen-admin.php:160
+msgid ""
+"This is a notice from the group '%s':\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"\n"
+"To view this group log in and follow the link below:\n"
+"%s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"Ενημέρωση για όλα τα μέλη της  ομάδας '%s':\n"
+"\n"
+"%s\n"
+"\n"
+"\n"
+"Για να μεταβείτε στην ομάδας, συνδεθείτε και πατήστε στον παρακάτω "
+"σύνδεσμο:\n"
+"%s\n"
+"\n"
+"---------------------\n"
+
+#: screen-admin.php:172
+msgid ""
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"If you feel this service is being misused please speak to the website "
+"administrator."
+msgstr ""
+"Σημείωση: Οι ειδοποιήσεις του διαχειριστή της ομάδας αποστέλλονται σε όλα τα "
+"μέλη της ομάδας και δεν μπορείτε να τις απενεργοποιήσετε.\n"
+" Αν πιστεύετε ότι γίνεται κακή χρήση τους παρακαλούμε επικοινωνήστε με την "
+"υπηρεσία υποστήριξης."
+
+#: screen-admin.php:215
+msgid "The email notice was sent successfully."
+msgstr "Το email αποστάλθηκε."
+
+#: screen-admin.php:240
+msgid "The welcome email option has been saved."
+msgstr "Αποθηκεύτηκαν οι ρυθμίσεις για το email καλωσορίσματος."
+
+#: screen-notifications.php:23
+msgid "Email Subscription Options"
+msgstr "Επιλογές συνδρομής μέσω email"
+
+#: screen-notifications.php:28
+msgid "How do you want to read this group?"
+msgstr "Πως θέλετε να ενημερώστε για την δραστηριότητα της ομάδας;"
+
+#: screen-notifications.php:32 screen.php:53
+msgid "I will read this group on the web"
+msgstr "Θα ενημερώνομαι για αυτή την ομάδα από το διαδίκτυο"
+
+#: screen-notifications.php:36
+msgid "Weekly Summary Email"
+msgstr "Email εβδομαδιαίας σύνοψης"
+
+#: screen-notifications.php:37
+msgid "Get a summary of new topics each week"
+msgstr "Να λαμβάνω περίληψη για νέα θέματα μία φορά την εβδομάδα"
+
+#: screen-notifications.php:41
+msgid "Daily Digest Email"
+msgstr "Email ημερήσιας σύνοψης"
+
+#: screen-notifications.php:42
+msgid "Get all the day's activity bundled into a single email"
+msgstr "Να λαμβάνω όλη την δραστηριότητα της ημέρας σε ένα μόνο email"
+
+#: screen-notifications.php:47
+msgid "New Topics Email"
+msgstr "Email για νέα θέματα"
+
+#: screen-notifications.php:48
+msgid "Send new topics as they arrive (but don't send replies)"
+msgstr "Λήψη email για κάθε νέο θέμα (άλλα όχι για τις απαντήσεις)"
+
+#: screen-notifications.php:54 screen.php:61
+msgid "Send all group activity as it arrives"
+msgstr "Λήψη email για κάθε δραστηριότητα στην ομάδα"
+
+#: screen-notifications.php:60
+msgid ""
+"Note: Normally, you receive email notifications for topics you start or "
+"comment on. This can be changed at"
+msgstr ""
+"Σημείωση: Κανονικά λαμβάνετε ειδοποιήσεις για θέματα συζητήσεων που έχετε "
+"ξεκινήσει ή έχετε απαντήσει. Μπορείτε να αλλάξετε την ρύθμιση μέσω της "
+"σελίδας"
+
+#: screen-notifications.php:60
+msgid "email notifications"
+msgstr "ειδοποιήσεις email"
+
+#: screen-notifications.php:88
+msgid "Your email notifications are set to %s for this group."
+msgstr ""
+"Ο τρόπος που θα λαμβάνετε ειδοποιήσεις μέσω email για την ομάδα ορίστηκε σε: "
+"%s ."
+
+#: screen-user-settings.php:23
+msgid "Group Forum"
+msgstr "Συζητήσεις oμάδας"
+
+#: screen-user-settings.php:24
+msgid "Yes"
+msgstr "Ναι"
+
+#: screen-user-settings.php:25
+msgid "No"
+msgstr "Όχι"
+
+#: screen-user-settings.php:47
+msgid "A member replies in a forum topic you've started"
+msgstr "Όταν κάποιος γράψει σε θέμα συζήτησης που έχετε ξεκινήσει"
+
+#: screen-user-settings.php:54
+msgid "A member replies after you in a forum topic"
+msgstr "Ένα μέλος απαντά σε θέμα συζήτησης που έχετε απαντήσει και εσείς"
+
+#: screen-user-settings.php:63
+msgid "Receive notifications of your own posts?"
+msgstr "Λήψη ειδοποιήσεων για τις δικές σας αναρτήσεις;"
+
+#: screen-user-settings.php:85
+msgid "Individual Group Email Settings"
+msgstr "Ειδοποιήσεις email για κάθε ομάδα ξεχωριστά"
+
+#: screen-user-settings.php:93
+msgid ""
+"To change the email notification settings for your groups, go to %s and "
+"click \"Change\" for each group."
+msgstr ""
+"Για να αλλάξετε τις ρυθμίσεις ειδοποιήσεων μέσω email για την κάθε ομάδα, "
+"μεταβείτε στο  %s και πατήστε  \"Αλλαγή\" ή \"Ενημέρωση μέσω email\" για "
+"κάθε μία ομάδα."
+
+#: screen-user-settings.php:96
+msgid "Or set all your group's email options to No Email"
+msgstr "Ή ορίστε τις επιλογές για όλες τις ομάδες σε: Μη αποστολή"
+
+#: screen.php:31
+msgid "Your email status is "
+msgstr "Η επιλογή σας για ενημέρωση μέσω email είναι: "
+
+#: screen.php:32
+msgid "change"
+msgstr "αλλαγή"
+
+#: screen.php:38
+msgid "Get email updates"
+msgstr "Ενημέρωση μέσω email"
+
+#: screen.php:49
+msgid "Change your email subscription options for this group"
+msgstr "Αλλαγή των ειδοποιήσεων email για αυτή την ομάδα"
+
+#: screen.php:54
+msgid "Get a summary of topics each"
+msgstr "Λήψη ενός mail κάθε"
+
+#: screen.php:55
+msgid "Get the day's activity bundled into one email"
+msgstr "Όλη η δραστηριότητα της ημέρας σε ένα μόνο email"
+
+#: screen.php:58
+msgid "Send new topics as they arrive (but no replies)"
+msgstr "Λήψη email για κάθε νέο θέμα (άλλα όχι για τις απαντήσεις)"
+
+#: screen.php:62
+msgid "close"
+msgstr "κλείσιμο"
+
+#: screen.php:83
+msgid "You successfully joined the group. Your group email status is: "
+msgstr "Γίνατε μέλος της ομάδας. Η κατάσταση email της ομάδας σας είναι: "
+
+#: templates/groups/single/admin/ges-email-notice.php:1
+msgid "Send an email notice to everyone in the group"
+msgstr "Αποστολή email σε όλα τα μέλη της ομάδας"
+
+#: templates/groups/single/admin/ges-email-notice.php:2
+msgid ""
+"You can use the form below to send an email notice to all group members."
+msgstr ""
+"Συμπληρώστε την παρακάτω φόρμα για να στείλετε email σε όλα τα μέλη της "
+"ομάδας,."
+
+#: templates/groups/single/admin/ges-email-notice.php:3
+msgid ""
+"Everyone in the group will receive the email -- regardless of their email "
+"settings -- so use with caution"
+msgstr ""
+"Όλα τα μέλη της ομάδας θα λάβουν το email -- ανεξάρτητα από τις ρυθμίσεις "
+"που έχουν κάνει για ειδοποιήσεις μέσω email -- οπότε χρησιμοποιήστε το με "
+"σύνεση"
+
+#: templates/groups/single/admin/ges-email-notice.php:6
+#: templates/groups/single/admin/ges-welcome-email.php:15
+msgid "Email Subject:"
+msgstr "Θέμα email:"
+
+#: templates/groups/single/admin/ges-email-notice.php:11
+#: templates/groups/single/admin/ges-welcome-email.php:20
+msgid "Email Content:"
+msgstr "Περιεχόμενο του email:"
+
+#: templates/groups/single/admin/ges-email-notice.php:16
+msgid "Email this notice to everyone in the group"
+msgstr "Αποστολή σε όλα τα μέλη της ομάδας"
+
+#: templates/groups/single/admin/ges-welcome-email.php:4
+msgid "Welcome Email"
+msgstr "Email καλωσορίσματος"
+
+#: templates/groups/single/admin/ges-welcome-email.php:5
+msgid "Send an email when a new member join the group."
+msgstr ""
+"Θα απoστέλλεται αυτόματα το παρακάτω μήνυμα σε κάθε νέο μέλος της ομάδας."
+
+#: templates/groups/single/admin/ges-welcome-email.php:10
+msgid "Enable welcome email"
+msgstr "Ενεργοποίηση email καλωσορίσματος"
+
+#: templates/groups/single/admin/ges-welcome-email.php:25
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#. Plugin Name of the plugin/theme
+msgid "BuddyPress Group Email Subscription"
+msgstr "BuddyPress Group Email Subscription"
+
+#. Plugin URI of the plugin/theme
+msgid ""
+"http://wordpress.org/extend/plugins/buddypress-group-email-subscription/"
+msgstr ""
+"http://wordpress.org/extend/plugins/buddypress-group-email-subscription/"
+
+#. Description of the plugin/theme
+msgid ""
+"Allows group members to receive email notifications for group activity and "
+"forum posts instantly or as daily digest or weekly summary."
+msgstr ""
+"Επιτρέπει στα μέλη της ομάδας να λαμβάνουν ειδοποιήσεις μέσω ηλεκτρονικού "
+"ταχυδρομείου για τη δραστηριότητα ομάδας και τις συζητήσεις του φόρουμ "
+"αμέσως ή ως ημερήσια περίληψη ή εβδομαδιαία σύνοψη."
+
+#. Author of the plugin/theme
+msgid "Deryk Wenaus, boonebgorges, r-a-y"
+msgstr "Deryk Wenaus, boonebgorges, r-a-y"
+
+#~ msgid "(%s replies)"
+#~ msgstr "(%s απαντήσεις)"
