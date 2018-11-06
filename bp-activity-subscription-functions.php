@@ -149,11 +149,6 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 	foreach ( $subscribed_users as $user_id => $subscription_type ) {
 		$self_notify = false;
 
-		// If user is banned from group, do not send mail.
-		if ( groups_is_user_banned( $user_id, $group->id ) ) {
-			continue;
-		}
-
 		// Does the author want updates of their own forum posts?
 		if ( $activity->type == 'bbp_topic_create' || $activity->type == 'bbp_reply_create' ) {
 			if ( $user_id === $activity->user_id ) {
