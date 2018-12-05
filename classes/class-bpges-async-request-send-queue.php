@@ -37,7 +37,7 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 		 *
 		 * @param string $url
 		 */
-		$this->query_url = apply_filters( 'bpges_async_request_query_url', admin_url( 'admin-ajax.php' ) );
+		$this->query_url = apply_filters( 'bpges_async_request_query_url', get_admin_url( bp_get_root_blog_id(), 'admin-ajax.php' ) );
 
 		parent::__construct();
 	}
