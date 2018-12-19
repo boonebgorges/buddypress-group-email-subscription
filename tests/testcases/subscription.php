@@ -57,4 +57,34 @@ class BPGES_Tests_Subscription extends BP_UnitTestCase {
 
 		$this->assertSame( $expected, $queue );
 	}
+
+	public function test_record_duplicate_activity_should_not_be_allowed() {
+		$activity_id = 123;
+
+		$activity = array(
+			'user_id'       => self::$user_ids[0],
+			'group_id'      => self::$group_ids[0],
+			'activity_id'   => $activity_id,
+			'type'          => 'immediate',
+			'date_recorded' => date( 'Y-m-d H:i:s', time() - 3600 ),
+		);
+
+		// Add the item to the queue.
+		$add = array( $activity );
+		BPGES_Queued_Item::bulk_insert( $add );
+
+		// Add the same item to the queue with a slightly different date.
+		$activity['date_recorded'] = date( 'Y-m-d H:i:s' );
+		$add = array( $activity );
+		BPGES_Queued_Item::bulk_insert( $add );
+
+		// Fetch queued items for our group.
+		$sub = new BPGES_Queued_Item_Query( array(
+			'group_id' => self::$group_ids[0],
+		) );
+		$sub = $sub->get_results();
+
+		// Assert that only 1 item was added to the queued items DB table.
+		$this->assertSame( 1, count( $sub ) );
+	}
 }
