@@ -368,9 +368,10 @@ function bpges_install_queued_items_table() {
 				type varchar(75) NOT NULL,
 				date_recorded datetime NOT NULL default '0000-00-00 00:00:00',
 				KEY user_id (user_id),
-				KEY group_id (user_id),
+				KEY group_id (group_id),
 				KEY activity_id (activity_id),
-				KEY user_group_type_date (user_id,type,date_recorded)
+				KEY user_group_type_date (user_id,type,date_recorded),
+				UNIQUE KEY user_group_activity_type (user_id,group_id,activity_id,type)
 			) {$charset_collate};";
 
 	dbDelta( $sql );
