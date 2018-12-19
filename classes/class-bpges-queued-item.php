@@ -60,7 +60,7 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 
 		$table_name = self::get_table_name();
 		$values_sql = implode( ', ', $values );
-		$sql = "INSERT INTO {$table_name} (user_id, group_id, activity_id, type, date_recorded) VALUES {$values_sql}";
+		$sql = "INSERT IGNORE INTO {$table_name} (user_id, group_id, activity_id, type, date_recorded) VALUES {$values_sql}";
 		return $wpdb->query( $sql );
 	}
 
