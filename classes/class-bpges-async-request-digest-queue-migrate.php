@@ -74,13 +74,20 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends BPGES_Async_Request {
 
 					$subscription = reset( $existing );
 
-					if ( 'dig' === $digest_type ) {
-						$subscription->items_dig = $activity_ids;
-					} else {
-						$subscription->items_sum = $activity_ids;
+					$to_queue = array();
+					foreach ( $activity_ids as $activity_id ) {
+						$to_queue[] = array(
+							'user_id'       => $user_id,
+							'group_id'      => $group_id,
+							'activity_id'   => $activity_id,
+							'type'          => $digest_type,
+							'date_recorded' => date( 'Y-m-d H:i:s' ),
+						);
 					}
 
-					$subscription->save();
+					if ( $to_queue ) {
+						BPGES_Queued_Item::bulk_insert( $to_queue );
+					}
 				}
 			}
 
