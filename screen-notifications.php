@@ -27,32 +27,40 @@ function ass_group_subscribe_settings () {
 
 	<b><?php _e('How do you want to read this group?', 'bp-ass'); ?></b>
 
-	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="no" <?php if ( $group_status == "no" || $group_status == "un" || !$group_status ) echo 'checked="checked"'; ?>><?php _e('No Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('I will read this group on the web', 'bp-ass'); ?></div>
-	</div>
+	<?php if ( display_subscription_option('no') ) : ?>
+		<div class="ass-email-type">
+		<label><input type="radio" name="ass_group_subscribe" value="no" <?php if ( $group_status == "no" || $group_status == "un" || !$group_status ) echo 'checked="checked"'; ?>><?php _e('No Email', 'bp-ass'); ?></label>
+		<div class="ass-email-explain"><?php _e('I will read this group on the web', 'bp-ass'); ?></div>
+		</div>
+	<?php endif; ?>
 
-	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="sum" <?php if ( $group_status == "sum" ) echo 'checked="checked"'; ?>><?php _e('Weekly Summary Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Get a summary of new topics each week', 'bp-ass'); ?></div>
-	</div>
+	<?php if ( display_subscription_option('sum') ) : ?>	
+		<div class="ass-email-type">
+		<label><input type="radio" name="ass_group_subscribe" value="sum" <?php if ( $group_status == "sum" ) echo 'checked="checked"'; ?>><?php _e('Weekly Summary Email', 'bp-ass'); ?></label>
+		<div class="ass-email-explain"><?php _e('Get a summary of new topics each week', 'bp-ass'); ?></div>
+		</div>
+	<?php endif; ?>
 
-	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="dig" <?php if ( $group_status == "dig" ) echo 'checked="checked"'; ?>><?php _e('Daily Digest Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Get all the day\'s activity bundled into a single email', 'bp-ass'); ?></div>
-	</div>
+	<?php if ( display_subscription_option('dig') ) : ?>
+		<div class="ass-email-type">
+		<label><input type="radio" name="ass_group_subscribe" value="dig" <?php if ( $group_status == "dig" ) echo 'checked="checked"'; ?>><?php _e('Daily Digest Email', 'bp-ass'); ?></label>
+		<div class="ass-email-explain"><?php _e('Get all the day\'s activity bundled into a single email', 'bp-ass'); ?></div>
+		</div>
+	<?php endif; ?>
 
-	<?php if ( ass_get_forum_type() ) : ?>
+	<?php if ( ass_get_forum_type() && display_subscription_option('sub') ) : ?>
 		<div class="ass-email-type">
 		<label><input type="radio" name="ass_group_subscribe" value="sub" <?php if ( $group_status == "sub" ) echo 'checked="checked"'; ?>><?php _e('New Topics Email', 'bp-ass'); ?></label>
 		<div class="ass-email-explain"><?php _e('Send new topics as they arrive (but don\'t send replies)', 'bp-ass'); ?></div>
 		</div>
 	<?php endif; ?>
 
-	<div class="ass-email-type">
-	<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('All Email', 'bp-ass'); ?></label>
-	<div class="ass-email-explain"><?php _e('Send all group activity as it arrives', 'bp-ass'); ?></div>
-	</div>
+	<?php if ( display_subscription_option('supersub') ) : ?>
+		<div class="ass-email-type">
+		<label><input type="radio" name="ass_group_subscribe" value="supersub" <?php if ( $group_status == "supersub" ) echo 'checked="checked"'; ?>><?php _e('All Email', 'bp-ass'); ?></label>
+		<div class="ass-email-explain"><?php _e('Send all group activity as it arrives', 'bp-ass'); ?></div>
+		</div>
+	<?php endif; ?>	
 
 	<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="ass-save" name="ass-save" class="button-primary">
 
