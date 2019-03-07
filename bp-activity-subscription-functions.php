@@ -1669,8 +1669,11 @@ add_action( 'groups_member_before_save', 'bpges_unsubscribe_on_membership_ban' )
 function ass_set_default_subscription( $groups_member ){
 	global $bp;
 
+	$user_id  = (int) $groups_member->user_id;
+	$group_id = (int) $groups_member->group_id;
+
 	// only set the default if the user has no subscription history for this group
-	if ( ass_get_group_subscription_status( $groups_member->user_id, $groups_member->group_id ) )
+	if ( ass_get_group_subscription_status( $user_id, $group_id ) )
 		return;
 
 	//if the person has requested access to a private group but has not been approved, don't subscribe them
@@ -1682,10 +1685,10 @@ function ass_set_default_subscription( $groups_member ){
 		return;
 	}
 
-	$default_gsub = ass_get_default_subscription( $groups_member->group_id );
+	$default_gsub = ass_get_default_subscription( $group_id );
 
 	if ( $default_gsub ) {
-		ass_group_subscription( $default_gsub, $groups_member->user_id, $groups_member->group_id );
+		ass_group_subscription( $default_gsub, $user_id, $group_id );
 	}
 }
 add_action( 'groups_member_after_save', 'ass_set_default_subscription', 20, 1 );
