@@ -65,8 +65,13 @@ class BPGES_Subscription_Query {
 		}
 		*/
 
-		$query = $sql['select'] . $where . $sql['order'] . $sql['limits'];
-		$results = $wpdb->get_results( $query );
+		$query     = $sql['select'] . $where . $sql['order'] . $sql['limits'];
+		$cache_key = md5( $query );
+		$results   = wp_cache_get( $cache_key, 'bpges_subscriptions' );
+		if ( false === $results ) {
+			$results = $wpdb->get_results( $query );
+			wp_cache_set( $cache_key, $results, 'bpges_subscriptions' );
+		}
 
 		$retval = array();
 
