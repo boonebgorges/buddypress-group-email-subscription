@@ -35,6 +35,15 @@ abstract class BPGES_Database_Object {
 	abstract protected function get_columns();
 
 	/**
+	 * Returns the cache group for the object.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return string
+	 */
+	abstract protected function get_cache_group();
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 3.9.0
@@ -185,6 +194,8 @@ abstract class BPGES_Database_Object {
 			}
 		}
 
+		wp_cache_delete( 'last_changed', $this->get_cache_group() );
+
 		return $retval;
 	}
 
@@ -203,6 +214,8 @@ abstract class BPGES_Database_Object {
 			array( 'id' => $this->id ),
 			array( '%d' )
 		);
+
+		wp_cache_delete( 'last_changed', $this->get_cache_group() );
 
 		return (bool) $deleted;
 	}

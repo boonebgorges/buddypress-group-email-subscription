@@ -36,6 +36,17 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 	}
 
 	/**
+	 * Returns the cache group for this item.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return string
+	 */
+	protected function get_cache_group() {
+		return 'bpges_queued_items';
+	}
+
+	/**
 	 * Insert multiple records in a single command.
 	 *
 	 * @since 3.9.0

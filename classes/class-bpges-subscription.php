@@ -32,4 +32,15 @@ class BPGES_Subscription extends BPGES_Database_Object {
 			'type'     => '%s',
 		);
 	}
+
+	/**
+	 * Returns the cache group for this item.
+	 *
+	 * @since 3.9.0
+	 *
+	 * @return string
+	 */
+	protected function get_cache_group() {
+		return 'bpges_subscriptions';
+	}
 }

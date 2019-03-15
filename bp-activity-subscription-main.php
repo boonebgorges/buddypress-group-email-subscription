@@ -55,8 +55,6 @@ if ( ! bp_get_option( '_ges_39_digest_queue_migrated' ) ) {
 require dirname( __FILE__ ) . '/classes/class-bpges-async-request-send-queue.php';
 bpges_send_queue();
 
-wp_cache_add_non_persistent_groups( [ 'bpges_subscriptions'] );
-
 // CLI.
 if ( defined( 'WP_CLI' ) ) {
 	require_once( dirname( __FILE__ ) . '/classes/class-bpges-command.php' );
