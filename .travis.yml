@@ -4,10 +4,8 @@ dist: trusty
 
 matrix:
   include:
-    - php: 5.3
-      dist: precise
-    - php: 5.6
     - php: 7.2
+    - php: 7.3
 
 env:
     - WP_VERSION=latest WP_MULTISITE=0 BP_VERSION=master
