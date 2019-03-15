@@ -76,6 +76,11 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends BPGES_Async_Request {
 
 					$to_queue = array();
 					foreach ( $activity_ids as $activity_id ) {
+						// Don't migrate deleted, stale, or other invalid items.
+						if ( ! bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_id ) ) {
+							continue;
+						}
+
 						$to_queue[] = array(
 							'user_id'       => $user_id,
 							'group_id'      => $group_id,
