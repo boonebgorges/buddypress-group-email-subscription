@@ -339,7 +339,8 @@ function ass_digest_get_title( $type = '' ) {
  * @return string
  */
 function ass_digest_filter_salutation( $retval = '' ) {
-	if ( true === empty( buddypress()->ges_tokens ) ) {
+	$tokens = buddypress()->ges_tokens;
+	if ( empty( $tokens ) ) {
 		return $retval;
 	}
 
