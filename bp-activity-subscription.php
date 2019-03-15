@@ -30,21 +30,30 @@ function ass_loader() {
 		define( 'BPGES_DEBUG_LOG_PATH', trailingslashit( $dir['basedir'] ) . 'bpges-debug.log' );
 	}
 
-	// Only supported in BP 1.5+.
-	if ( version_compare( BP_VERSION, '1.3', '>' ) ) {
-		// Make sure the group and activity components are active.
-		if ( bp_is_active( 'groups' ) && bp_is_active( 'activity' ) ) {
-			require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
+	$error = '';
+
+	// Old BP.
+	if ( version_compare( BP_VERSION, '1.3', '<' ) ) {
+		$error = sprintf( __( "Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  If you are still using BuddyPress 1.2 and you don't plan on upgrading, use <a href='%s'>BP Group Email Subscription v3.6.2 instead</a>.", 'buddypress-group-email-subscription' ), 'https://downloads.wordpress.org/plugin/buddypress-group-email-subscription.3.6.1.zip' );
+	} elseif ( ! bp_is_active( 'groups' ) || ! bp_is_active( 'activity' ) ) {
+		$admin_url = bp_get_admin_url( add_query_arg( array( 'page' => 'bp-components' ), 'admin.php' ) );
+		$error     = sprintf( __( 'BuddyPress Group Email Subscription requires the BP Groups and Activity components. Please <a href="%s">activate them</a> to use this plugin.', 'buddypress-group-email-subscription' ), esc_url( $admin_url ) );
+	}
+
+	if ( $error ) {
+		if ( current_user_can( 'bp_moderate' ) ) {
+			$error_cb = function() use ( $error ) {
+				echo '<div class="error"><p>' . $error . '</p></div>';
+			};
+
+			add_action( 'admin_notices', $error_cb );
+			add_action( 'network_admin_notices', $error_cb );
 		}
 
-	// Show admin notice for those on BP 1.2.x.
-	} else {
-		$older_version_notice = sprintf( __( "Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  If you are still using BuddyPress 1.2 and you don't plan on upgrading, use <a href='%s'>BP Group Email Subscription v3.6.2 instead</a>.", 'buddypress-group-email-subscription' ), 'https://downloads.wordpress.org/plugin/buddypress-group-email-subscription.3.6.1.zip' );
-
-		add_action( 'admin_notices', function() use ( $older_version_notice ) {
-			echo '<div class="error"><p>' . $older_version_notice . '</p></div>';
-		} );
+		return;
 	}
+
+	require_once( dirname( __FILE__ ) . '/bp-activity-subscription-main.php' );
 }
 add_action( 'bp_include', 'ass_loader' );
 
