@@ -37,4 +37,6 @@ before_script:
     - pwd
     - composer install
 
-script: vendor/bin/phpunit
+script:
+  - vendor/bin/phpcs -p --standard=PHPCompatibilityWP --runtime-set testVersion 5.3- bp-activity-subscription* classes/ screen*.php templates/ lib/
+  - vendor/bin/phpunit
