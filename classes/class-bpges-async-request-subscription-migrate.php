@@ -50,6 +50,7 @@ class BPGES_Async_Request_Subscription_Migrate extends BPGES_Async_Request {
 
 		if ( ! $group_ids ) {
 			bp_update_option( '_ges_39_subscriptions_migrated', 1 );
+			bp_delete_option( '_ges_39_subscription_migration_in_progress' );
 
 			groups_delete_groupmeta( 1, '_ges_subscriptions_migrated', false, true );
 
@@ -61,6 +62,8 @@ class BPGES_Async_Request_Subscription_Migrate extends BPGES_Async_Request {
 			bpges_39_launch_legacy_digest_queue_migration();
 			return;
 		}
+
+		bp_update_option( '_ges_39_subscription_migration_in_progress', time() );
 
 		foreach ( $group_ids as $group_id ) {
 			$group_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users', true );

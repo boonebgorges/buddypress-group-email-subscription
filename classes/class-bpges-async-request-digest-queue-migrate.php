@@ -50,11 +50,14 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends BPGES_Async_Request {
 
 		if ( ! $user_ids ) {
 			bp_update_option( '_ges_39_digest_queue_migrated', 1 );
+			bp_delete_option( '_ges_39_digest_queue_migration_in_progress' );
 
 			delete_metadata( 'user', 1, '_ges_digest_queue_migrated', false, true );
 
 			return;
 		}
+
+		bp_update_option( '_ges_39_digest_queue_migration_in_progress', time() );
 
 		foreach ( $user_ids as $user_id ) {
 			$user_queues = bp_get_user_meta( $user_id, 'ass_digest_items', true );
