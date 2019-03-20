@@ -91,6 +91,18 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.9.0 =
+* Move to a new system for storing subscription and digest data, for improved performance and scalability
+* Improve the ?sum=1 debugging tool, with support for `user_ids` and `user_count` URL paramaters.
+* Add the ability to log debugging information about outgoing messages, using the `BPGES_DEBUG` constant. See https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/How-to-troubleshoot-missing-emails
+* Require a form submission when clicking on the Unsubscribe link in email footers.
+* Move to the wordpress.org translation infrastructure.
+* Improve compatibility with new versions of PHP.
+* Improve admin-facing notices when minimum requirements (BP components, PHP version) are not met.
+* Localization improvements.
+* Accessibility improvements for user settings interface.
+* Fix bug that could prevent hidden activity items from being fetched when generating digest text.
+
 = 3.8.2 =
 * Improve logic in activation routine, to avoid fatal errors in cases where load order is non-standard.
 
