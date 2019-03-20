@@ -174,6 +174,8 @@ function ass_admin_options() {
 					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
 				<?php endif; ?>
 
+				<p><a href="https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Migrating-to-3.9.0"><?php esc_html_e( 'Learn more about the 3.9 migration process.', 'buddypress-group-email-subscription' ); ?></a></p>
+
 				<style type="text/css">
 					.bpges-migration-step:before {
 						font-family: "dashicons";
