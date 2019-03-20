@@ -9,7 +9,9 @@ Stable tag: 3.8.2
 
 == Description ==
 
-This powerful plugin allows users to receive email notifications of group activity.  Weekly or daily digests are available.  Each user can choose how they want to subscribe to their groups.
+This powerful plugin allows users to receive email notifications of group activity. Weekly or daily digests are available. Each user can choose how they want to subscribe to their groups.
+
+Please note that this plugin requires BuddyPress, as well as the BuddyPress Groups and Activity components.
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options:
