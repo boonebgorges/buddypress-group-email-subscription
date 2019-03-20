@@ -28,14 +28,14 @@ function ass_group_subscribe_button() {
 	if ( $group_status == 'no' )
 		$group_status = NULL;
 
-	$status_desc = __('Your email status is ', 'bp-ass');
-	$link_text = __('change', 'bp-ass');
+	$status_desc = __('Your email status is ', 'buddypress-group-email-subscription');
+	$link_text = __('change', 'buddypress-group-email-subscription');
 	$gemail_icon_class = ' gemail_icon';
 	$sep = '';
 
 	if ( !$group_status ) {
 		//$status_desc = '';
-		$link_text = __('Get email updates', 'bp-ass');
+		$link_text = __('Get email updates', 'buddypress-group-email-subscription');
 		$gemail_icon_class = '';
 		$sep = '';
 	}
@@ -46,20 +46,20 @@ function ass_group_subscribe_button() {
 	<div class="group-subscription-div">
 		<span class="group-subscription-status-desc"><?php echo $status_desc; ?></span>
 		<span class="group-subscription-status<?php echo $gemail_icon_class ?>" id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>
-		(<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>" href="javascript:void(0);" title="<?php _e('Change your email subscription options for this group','bp-ass');?>"><?php echo $link_text; ?></a>)
+		(<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>" href="javascript:void(0);" title="<?php _e('Change your email subscription options for this group','buddypress-group-email-subscription');?>"><?php echo $link_text; ?></a>)
 		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
 	</div>
 	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>" style="display:none;">
-		<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'bp-ass') ?></a> <?php _e('I will read this group on the web', 'bp-ass') ?><br>
-		<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'bp-ass') ?></a> <?php _e('Get a summary of topics each', 'bp-ass') ?> <?php echo ass_weekly_digest_week(); ?><br>
-		<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'bp-ass') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'bp-ass') ?><br>
+		<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'buddypress-group-email-subscription') ?></a> <?php _e('I will read this group on the web', 'buddypress-group-email-subscription') ?><br>
+		<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'buddypress-group-email-subscription') ?></a> <?php _e('Get a summary of topics each', 'buddypress-group-email-subscription') ?> <?php echo ass_weekly_digest_week(); ?><br>
+		<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'buddypress-group-email-subscription') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription') ?><br>
 
 		<?php if ( ass_get_forum_type() ) : ?>
-			<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'bp-ass') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'bp-ass') ?><br>
+			<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'buddypress-group-email-subscription') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription') ?><br>
 		<?php endif; ?>
 
-		<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'bp-ass') ?></a> <?php _e('Send all group activity as it arrives', 'bp-ass') ?><br>
-		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php _e('close', 'bp-ass') ?></a>
+		<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'buddypress-group-email-subscription') ?></a> <?php _e('Send all group activity as it arrives', 'buddypress-group-email-subscription') ?><br>
+		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php _e('close', 'buddypress-group-email-subscription') ?></a>
 	</div>
 
 	<?php
@@ -80,7 +80,7 @@ function ass_join_group_message( $group_id, $user_id ) {
 	if ( !$status )
 		$status = 'no';
 
-	bp_core_add_message( __( 'You successfully joined the group. Your group email status is: ', 'bp-ass' ) . ass_subscribe_translate( $status ) );
+	bp_core_add_message( __( 'You successfully joined the group. Your group email status is: ', 'buddypress-group-email-subscription' ) . ass_subscribe_translate( $status ) );
 
 }
 add_action( 'groups_join_group', 'ass_join_group_message', 1, 2 );
@@ -95,7 +95,7 @@ function ass_show_subscription_status_in_member_list( $user_id='' ) {
 		if ( !$user_id )
 			$user_id = $members_template->member->user_id;
 		$sub_type = ass_get_group_subscription_status( $user_id, $group_id );
-		echo '<div class="ass_members_status">'.__('Email status:','bp-ass'). ' ' . ass_subscribe_translate( $sub_type ) . '</div>';
+		echo '<div class="ass_members_status">'.__('Email status:','buddypress-group-email-subscription'). ' ' . ass_subscribe_translate( $sub_type ) . '</div>';
 	}
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );

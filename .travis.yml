@@ -4,16 +4,12 @@ dist: trusty
 
 matrix:
   include:
-    - php: 5.3
-      dist: precise
-    - php: 5.6
-    - php: 7.1
+    - php: 7.2
+    - php: 7.3
 
 env:
     - WP_VERSION=latest WP_MULTISITE=0 BP_VERSION=master
     - WP_VERSION=latest WP_MULTISITE=1 BP_VERSION=master
-#    - WP_VERSION=3.8 WP_MULTISITE=0
-#    - WP_VERSION=3.8 WP_MULTISITE=1
 
 before_script:
     - export WP_DEVELOP_DIR=/tmp/wordpress-develop/
@@ -39,5 +35,8 @@ before_script:
     # prepare for running the tests
     - cd $plugin_dir
     - pwd
+    - composer install
 
-script: phpunit
+script:
+  - vendor/bin/phpcs -p --standard=PHPCompatibilityWP --runtime-set testVersion 5.3- bp-activity-subscription* classes/ screen*.php templates/ lib/
+  - vendor/bin/phpunit

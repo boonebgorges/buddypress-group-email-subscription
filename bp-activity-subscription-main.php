@@ -13,8 +13,12 @@ if ( defined( 'BP_VERSION' ) ) {
 	}
 }
 
+if ( ! class_exists( 'WP_Background_Process' ) ) {
+	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+}
+
 // Admin-related code.
-if ( defined( 'WP_NETWORK_ADMIN' ) ) {
+if ( defined( 'WP_NETWORK_ADMIN' ) || defined( 'WP_ADMIN' ) ) {
 	require_once( dirname( __FILE__ ) . '/admin.php' );
 
 	// Updater.
@@ -30,6 +34,32 @@ if ( function_exists( 'bp_setup_forums' ) ) {
 // Core.
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-database-object.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-subscription-query.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-queued-item.php' );
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-queued-item-query.php' );
+
+require_once( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+
+if ( ! bp_get_option( '_ges_39_subscriptions_migrated' ) ) {
+	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
+	$bpges_subscription_migration = new BPGES_Async_Request_Subscription_Migrate();
+}
+
+if ( ! bp_get_option( '_ges_39_digest_queue_migrated' ) ) {
+	require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+	$bpges_digest_queue_migration = new BPGES_Async_Request_Digest_Queue_Migrate();
+}
+
+require dirname( __FILE__ ) . '/classes/class-bpges-async-request-send-queue.php';
+bpges_send_queue();
+
+// CLI.
+if ( defined( 'WP_CLI' ) ) {
+	require_once( dirname( __FILE__ ) . '/classes/class-bpges-command.php' );
+	WP_CLI::add_command( 'bpges', 'BPGES_Command' );
+}
 
 /**
  * Group extension for GES.
@@ -39,7 +69,7 @@ require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
 class Group_Activity_Subscription extends BP_Group_Extension {
 
 	public function __construct() {
-		$this->name = __('Email Options', 'bp-ass');
+		$this->name = __('Email Options', 'buddypress-group-email-subscription');
 		$this->slug = 'notifications';
 
 		// Only enable the notifications nav item if the user is a member of the group
@@ -90,9 +120,9 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 			wp_enqueue_script( 'bp-activity-subscription-js' );
 
 			wp_localize_script( 'bp-activity-subscription-js', 'bp_ass', array(
-				'mute'   => __( 'Mute', 'bp-ass' ),
-				'follow' => __( 'Follow', 'bp-ass' ),
-				'error'  => __( 'Error', 'bp-ass' )
+				'mute'   => __( 'Mute', 'buddypress-group-email-subscription' ),
+				'follow' => __( 'Follow', 'buddypress-group-email-subscription' ),
+				'error'  => __( 'Error', 'buddypress-group-email-subscription' )
 			) );
 		}
 	}

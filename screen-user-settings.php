@@ -19,10 +19,10 @@ function ass_group_subscription_notification_settings() {
 	<table class="notification-settings zebra" id="groups-subscription-notification-settings">
 	<thead>
 		<tr>
-			<th class="icon"></th>
-			<th class="title"><?php _e( 'Group Forum', 'bp-ass' ) ?></th>
-			<th class="yes"><?php _e( 'Yes', 'bp-ass' ) ?></th>
-			<th class="no"><?php _e( 'No', 'bp-ass' )?></th>
+			<th class="icon"><span class="bp-screen-reader-text"><?php esc_html_e( 'Item icon', 'buddypress-group-email-subscription' ); ?></span></th>
+			<th class="title"><?php _e( 'Group Forum', 'buddypress-group-email-subscription' ) ?></th>
+			<th class="yes"><?php _e( 'Yes', 'buddypress-group-email-subscription' ) ?></th>
+			<th class="no"><?php _e( 'No', 'buddypress-group-email-subscription' )?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -44,25 +44,49 @@ function ass_group_subscription_notification_settings() {
 
 		<tr>
 			<td></td>
-			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="yes" <?php checked( $replies_to_topic, 'yes', true ); ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" <?php checked( $replies_to_topic, 'no', true ); ?>/></td>
+			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'buddypress-group-email-subscription' ) ?></td>
+
+			<td class="yes">
+				<input type="radio" name="notifications[ass_replies_to_my_topic]" id="notification-ass-replies-to-my-topic-yes" value="yes" <?php checked( $replies_to_topic, 'yes', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-to-my-topic-yes"><?php esc_html_e( 'Yes, send email', 'buddypress-group-email-subscription' ); ?></label>
+			</td>
+
+			<td class="no">
+				<input type="radio" name="notifications[ass_replies_to_my_topic]" value="no" id="notification-ass-replies-to-my-topic-no" <?php checked( $replies_to_topic, 'no', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-to-my-topic-no"><?php esc_html_e( 'Yes, send email', 'buddypress-group-email-subscription' ); ?></label>
+			</td>
 		</tr>
 
 		<tr>
 			<td></td>
-			<td><?php _e( 'A member replies after you in a forum topic', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="yes" <?php checked( $replies_after_me, 'yes', true ); ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_replies_after_me_topic]" value="no" <?php checked( $replies_after_me, 'no', true ); ?>/></td>
+			<td><?php _e( 'A member replies after you in a forum topic', 'buddypress-group-email-subscription' ) ?></td>
+
+			<td class="yes">
+				<input type="radio" name="notifications[ass_replies_after_me_topic]" id="notification-ass-replies-after-me-yes" value="yes" <?php checked( $replies_after_me, 'yes', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-after-me-no"><?php esc_html_e( 'Yes, send email', 'buddypress-group-email-subscription' ); ?></label>
+			</td>
+
+			<td class="no">
+				<input type="radio" name="notifications[ass_replies_after_me_topic]" id="notification-ass-replies-after-me-no" value="no" <?php checked( $replies_after_me, 'no', true ); ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-replies-after-me-yes"><?php esc_html_e( 'No, do not send email', 'buddypress-group-email-subscription' ); ?></label>
+			</td>
 		</tr>
 
 	<?php endif; ?>
 
 		<tr>
 			<td></td>
-			<td><?php _e( 'Receive notifications of your own posts?', 'bp-ass' ) ?></td>
-			<td class="yes"><input type="radio" name="notifications[ass_self_post_notification]" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/></td>
-			<td class="no"><input type="radio" name="notifications[ass_self_post_notification]" value="no" <?php if ( !ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/></td>
+			<td><?php _e( 'Receive notifications of your own posts?', 'buddypress-group-email-subscription' ) ?></td>
+
+			<td class="yes">
+				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-yes" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-self-post-yes"><?php esc_html_e( 'No, do not send email', 'buddypress-group-email-subscription' ); ?></label>
+			</td>
+
+			<td class="no">
+				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-no" value="no" <?php if ( !ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
+				<label class="bp-screen-reader-text" for="notification-ass-self-post-no"><?php esc_html_e( 'No, do not send email', 'buddypress-group-email-subscription' ); ?></label>
+			</td>
 		</tr>
 
 		<?php do_action( 'ass_group_subscription_notification_settings' ); ?>
@@ -82,7 +106,7 @@ function ass_add_notice_to_notifications_page() {
 				<thead>
 					<tr>
 						<th class="icon">&nbsp;</th>
-						<th class="title"><?php _e( 'Individual Group Email Settings', 'bp-ass' ); ?></th>
+						<th class="title"><?php _e( 'Individual Group Email Settings', 'buddypress-group-email-subscription' ); ?></th>
 					</tr>
 				</thead>
 
@@ -90,10 +114,10 @@ function ass_add_notice_to_notifications_page() {
 					<tr>
 						<td>&nbsp;</td>
 						<td>
-							<p><?php printf( __('To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'bp-ass' ), '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">' . __( 'My Groups' ,'bp-ass' ) . '</a>' ); ?></p>
+							<p><?php printf( __('To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'buddypress-group-email-subscription' ), '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">' . __( 'My Groups' ,'buddypress-group-email-subscription' ) . '</a>' ); ?></p>
 
 							<?php if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) : ?>
-								<p><a href="<?php echo wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ); ?>"><?php _e( "Or set all your group's email options to No Email", 'bp-ass' ); ?></a></p>
+								<p><a href="<?php echo wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ); ?>"><?php _e( "Or set all your group's email options to No Email", 'buddypress-group-email-subscription' ); ?></a></p>
 							<?php endif; ?>
 						</td>
 					</tr>

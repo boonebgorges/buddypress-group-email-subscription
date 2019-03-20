@@ -11,6 +11,29 @@
  * @since 2.1b
  */
 function ass_admin_menu() {
+	// Catch manual migration requests.
+	if ( current_user_can( 'manage_options' ) && ! empty( $_GET['page'] ) && 'ass_admin_options' === $_GET['page'] ) {
+		if ( ! empty( $_GET['action'] ) && 'migrate_39' === $_GET['action'] ) {
+			check_admin_referer( 'bpges_migrate_39' );
+
+			$status = bpges_39_migration_status();
+
+			if ( ! $status['subscription_table_created'] ) {
+				bpges_install_subscription_table();
+			} elseif ( ! $status['queued_items_table_created'] ) {
+				bpges_install_queued_items_table();
+			} elseif( ! $status['subscriptions_migrated'] ) {
+				bpges_39_launch_legacy_subscription_migration();
+			} elseif ( $status['queued_items_migrated'] ) {
+				bpges_39_launch_legacy_queued_items_migration();
+			} else {
+				return;
+			}
+
+			wp_safe_redirect( bpges_get_admin_panel_url() );
+		}
+	}
+
 	// BP 1.6+ deprecated the "BuddyPress" top-level menu item.
 	if ( function_exists( 'bp_version' ) ) {
 		// GES is network-activated, so show under Network Settings.
@@ -22,12 +45,12 @@ function ass_admin_menu() {
 			$settings_page = 'options-general.php';
 		}
 
-		$title = __( 'BP Group Email Options', 'bp-ass' );
+		$title = __( 'BP Group Email Options', 'buddypress-group-email-subscription' );
 
 	// BP 1.5 - Keep using the top-level "BuddyPress" menu item.
 	} else {
 		$settings_page = 'bp-general-settings';
-		$title = __( 'Group Email Options', 'bp-ass' );
+		$title = __( 'Group Email Options', 'buddypress-group-email-subscription' );
 	}
 
 	add_submenu_page(
@@ -43,6 +66,24 @@ add_action( 'admin_menu', 'ass_admin_menu' );
 add_action( 'network_admin_menu', 'ass_admin_menu' );
 
 /**
+ * Gets the URL for the BPGES options panel.
+ *
+ * @since 3.9.0
+ */
+function bpges_get_admin_panel_url() {
+	// GES is network-activated, so show under Network Settings.
+	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
+		$url = bp_get_admin_url( 'settings.php' );
+
+	// Everything else.
+	} else {
+		$url = bp_get_admin_url( 'options-general.php' );
+	}
+
+	return add_query_arg( 'page', 'ass_admin_options', $url );
+}
+
+/**
  * Function to create the back end admin form.
  */
 function ass_admin_options() {
@@ -53,10 +94,47 @@ function ass_admin_options() {
 			?>
 
 			<div id="message" class="updated">
-				<p><?php _e( 'Settings saved.', 'bp-ass' ) ?></p>
+				<p><?php _e( 'Settings saved.', 'buddypress-group-email-subscription' ) ?></p>
 			</div>
 
 			<?php
+		}
+	}
+
+	$show_migration_panel = false;
+	$is_pre_39_install    = bp_get_option( '_ges_installed_before_39' );
+	if ( bp_get_option( '_ges_installed_before_39' ) ) {
+		$status = bpges_39_migration_status();
+
+		$show_migration_panel = ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] || ! $status['subscriptions_migrated'] || ! $status['queued_items_migrated'];
+
+		if ( $show_migration_panel ) {
+			$table_class   = 'bpges-migration-step-success';
+			$table_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+			if ( ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] ) {
+				$table_class   = 'bpges-migration-step-failure';
+				$table_message = '';
+			}
+
+			$subs_class   = 'bpges-migration-step-success';
+			$subs_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+			if ( $status['subscription_migration_in_progress'] ) {
+				$subs_class   = 'bpges-migration-step-in-progress';
+				$subs_message = __( 'In Progress', 'buddypress-group-email-subscription' );
+			} elseif ( ! $status['subscriptions_migrated'] ) {
+				$subs_class   = 'bpges-migration-step-failure';
+				$subs_message = '';
+			}
+
+			$queued_class   = 'bpges-migration-step-success';
+			$queued_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+			if ( $status['queued_items_migration_in_progress'] ) {
+				$queued_class   = 'bpges-migration-step-in-progress';
+				$queued_message = __( 'In Progress', 'buddypress-group-email-subscription' );
+			} elseif ( ! $status['queued_items_migrated'] ) {
+				$queued_class   = 'bpges-migration-step-failure';
+				$queued_message = '';
+			}
 		}
 	}
 
@@ -71,18 +149,65 @@ function ass_admin_options() {
 	$next = date( "r", wp_next_scheduled( 'ass_digest_event' ) );
 	?>
 	<div class="wrap">
-		<h2><?php _e('Group Email Subscription Settings', 'bp-ass'); ?></h2>
+		<h2><?php _e('Group Email Subscription Settings', 'buddypress-group-email-subscription'); ?></h2>
+
+		<?php if ( $show_migration_panel ) : ?>
+			<div class="bpges-migration-tools">
+				<h3><?php esc_html_e( 'Migration Status', 'buddypress-group-email-subscription' ); ?></h3>
+				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines. Some of these tasks could not be performed automatically.', 'buddypress-group-email-subscription' ); ?></p>
+
+				<ol>
+					<li class="bpges-migration-step <?php echo esc_attr( $table_class ); ?>"><?php esc_html_e( 'Create database tables', 'buddypress-group-email-subscription' ); ?> <?php if ( $table_message ) : ?><em> - <?php echo esc_html( $table_message ); ?></em><?php endif; ?></li>
+					<li class="bpges-migration-step <?php echo esc_attr( $subs_class ); ?>"><?php esc_html_e( 'Migrate subscriptions', 'buddypress-group-email-subscription' ); ?> <?php if ( $subs_message ) : ?><em> - <?php echo esc_html( $subs_message ); ?></em><?php endif; ?></li>
+					<li class="bpges-migration-step <?php echo esc_attr( $queued_class ); ?>"><?php esc_html_e( 'Migrate queued items', 'buddypress-group-email-subscription' ); ?> <?php if ( $queued_message ) : ?><em> - <?php echo esc_html( $queued_message ); ?></em><?php endif; ?></li>
+				</ol>
+
+				<?php
+				$fix_link = bpges_get_admin_panel_url();
+				$fix_link = add_query_arg( 'action', 'migrate_39', $fix_link );
+				$fix_link = wp_nonce_url( $fix_link, 'bpges_migrate_39' );
+				?>
+
+				<?php if ( ! $status['subscription_migration_in_progress'] && ! $status['queued_items_migration_in_progress'] ) : ?>
+					<p><?php esc_html_e( 'We can try to finish the migration at this time.', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Complete the migration process.</a></p>
+				<?php else : ?>
+					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
+				<?php endif; ?>
+
+				<p><a href="https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Migrating-to-3.9.0"><?php esc_html_e( 'Learn more about the 3.9 migration process.', 'buddypress-group-email-subscription' ); ?></a></p>
+
+				<style type="text/css">
+					.bpges-migration-step:before {
+						font-family: "dashicons";
+						font-size: 2em;
+						margin-left: 8px;
+						vertical-align: middle;
+					}
+					.bpges-migration-step-success:before {
+						color: green;
+						content: "\f147";
+					}
+					.bpges-migration-step-failure:before {
+						color: red;
+						content: "\f158";
+					}
+					.bpges-migration-step-in-progress:before {
+						content: "\f469";
+					}
+				</style>
+			</div>
+		<?php endif; ?>
 
 		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 
-		<h3><?php _e( 'Digests & Summaries', 'bp-ass' ) ?></h3>
+		<h3><?php _e( 'Digests & Summaries', 'buddypress-group-email-subscription' ) ?></h3>
 
-		<p><b><a href="<?php bloginfo('url') ?>?sum=1" target="_blank"><?php _e('View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.', 'bp-ass') ?><br>
+		<p><b><a href="<?php bloginfo('url') ?>?sum=1" target="_blank"><?php _e('View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.', 'buddypress-group-email-subscription') ?><br>
 		</p>
 
 		<p>
-			<label for="ass_digest_time"><?php _e( '<strong>Daily Digests</strong> should be sent at this time:', 'bp-ass' ) ?> </label>
+			<label for="ass_digest_time"><?php _e( '<strong>Daily Digests</strong> should be sent at this time:', 'buddypress-group-email-subscription' ) ?> </label>
 			<select name="ass_digest_time[hours]" id="ass_digest_time[hours]">
 				<?php for( $i = 0; $i <= 23; $i++ ) : ?>
 					<?php if ( $i < 10 ) $i = '0' . $i ?>
@@ -99,10 +224,10 @@ function ass_admin_options() {
 		</p>
 
 		<p>
-			<label for="ass_weekly_digest"><?php _e( '<strong>Weekly Summaries</strong> should be sent on:', 'bp-ass' ) ?> </label>
+			<label for="ass_weekly_digest"><?php _e( '<strong>Weekly Summaries</strong> should be sent on:', 'buddypress-group-email-subscription' ) ?> </label>
 			<select name="ass_weekly_digest" id="ass_weekly_digest">
 				<?php /* disabling "no weekly digest" option for now because it will complicate the individual settings pages */ ?>
-				<?php /* <option value="No weekly digest" <?php if ( 'No weekly digest' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'No weekly digest', 'bp-ass' ) ?></option> */ ?>
+				<?php /* <option value="No weekly digest" <?php if ( 'No weekly digest' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'No weekly digest', 'buddypress-group-email-subscription' ) ?></option> */ ?>
 				<option value="1" <?php if ( '1' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Monday' ) ?></option>
 				<option value="2" <?php if ( '2' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Tuesday' ) ?></option>
 				<option value="3" <?php if ( '3' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Wednesday' ) ?></option>
@@ -114,47 +239,47 @@ function ass_admin_options() {
 			<!-- (the summary will be sent one hour after the daily digests) -->
 		</p>
 
-		<p><i><?php $weekday = array( __("Sunday"), __("Monday"), __("Tuesday"), __("Wednesday"), __("Thursday"), __("Friday"), __("Saturday") ); echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'bp-ass' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), $weekday[date( 'w' )] ) ?></i>
+		<p><i><?php $weekday = array( __("Sunday"), __("Monday"), __("Tuesday"), __("Wednesday"), __("Thursday"), __("Friday"), __("Saturday") ); echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'buddypress-group-email-subscription' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), $weekday[date( 'w' )] ) ?></i>
 		<br>
 		<br>
 
-		<h3><?php _e( 'Global Unsubscribe Link', 'bp-ass' ); ?></h3>
-		<p><?php _e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'bp-ass' ); ?>
+		<h3><?php _e( 'Global Unsubscribe Link', 'buddypress-group-email-subscription' ); ?></h3>
+		<p><?php _e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'buddypress-group-email-subscription' ); ?>
 		<?php $global_unsubscribe_link = bp_get_option( 'ass-global-unsubscribe-link' ); ?>
-		<input<?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php _e( 'yes', 'bp-ass' ); ?> &nbsp;
-		<input<?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php _e( 'no', 'bp-ass' ); ?>
+		<input<?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php _e( 'yes', 'buddypress-group-email-subscription' ); ?> &nbsp;
+		<input<?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php _e( 'no', 'buddypress-group-email-subscription' ); ?>
 		<br />
 		<br />
 
 
-		<h3><?php _e('Group Admin Abilities', 'bp-ass'); ?></h3>
-		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'bp-ass'); ?>
+		<h3><?php _e('Group Admin Abilities', 'buddypress-group-email-subscription'); ?></h3>
+		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'buddypress-group-email-subscription'); ?>
 		<?php $admins_can_edit_status = bp_get_option('ass-admin-can-edit-email'); ?>
-		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> <?php _e('yes', 'bp-ass') ?> &nbsp;
-		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'bp-ass') ?>
+		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> <?php _e('yes', 'buddypress-group-email-subscription') ?> &nbsp;
+		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'buddypress-group-email-subscription') ?>
 
-		<p><?php _e('Allow group admins to override subscription settings and send an email to everyone in their group: ', 'bp-ass'); ?>
+		<p><?php _e('Allow group admins to override subscription settings and send an email to everyone in their group: ', 'buddypress-group-email-subscription'); ?>
 		<?php $admins_can_send_email = bp_get_option('ass-admin-can-send-email'); ?>
-		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> <?php _e('yes', 'bp-ass') ?> &nbsp;
-		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'bp-ass') ?>
+		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> <?php _e('yes', 'buddypress-group-email-subscription') ?> &nbsp;
+		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'buddypress-group-email-subscription') ?>
 
 		<br>
 		<br>
-		<h3><?php _e('Spam Prevention', 'bp-ass'); ?></h3>
-			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'bp-ass'); ?> </p>
-			<?php _e('Member must be registered for', 'bp-ass'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo bp_get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'bp-ass'); ?></p>
+		<h3><?php _e('Spam Prevention', 'buddypress-group-email-subscription'); ?></h3>
+			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'buddypress-group-email-subscription'); ?> </p>
+			<?php _e('Member must be registered for', 'buddypress-group-email-subscription'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo bp_get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'buddypress-group-email-subscription'); ?></p>
 
 
 			<p class="submit">
-				<input type="submit" value="<?php _e('Save Settings', 'bp-ass') ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
+				<input type="submit" value="<?php _e('Save Settings', 'buddypress-group-email-subscription') ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
 			</p>
 
 		</form>
 
 		<hr>
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-		<?php echo sprintf( __('If you enjoy using this plugin %s please rate it %s.', 'bp-ass'), '<a href="http://wordpress.org/extend/plugins/buddypress-group-email-subscription/" target="_blank">', '</a>'); ?><br>
-		<?php _e('Please make a donation to the team to support ongoing development.', 'bp-ass'); ?><br>
+		<?php echo sprintf( __('If you enjoy using this plugin %s please rate it %s.', 'buddypress-group-email-subscription'), '<a href="http://wordpress.org/extend/plugins/buddypress-group-email-subscription/" target="_blank">', '</a>'); ?><br>
+		<?php _e('Please make a donation to the team to support ongoing development.', 'buddypress-group-email-subscription'); ?><br>
 		<input type="hidden" name="cmd" value="_s-xclick">
 		<input type="hidden" name="hosted_button_id" value="PXD76LU2VQ5AS">
 		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
@@ -294,7 +419,7 @@ function ass_bp_email_admin_notice() {
 	echo '<div id="bp-ges-notice" class="updated" style="display:none;">';
 	printf( '<p>%s</p>',
 		sprintf(
-			__( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'bp-ass' ),
+			__( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'buddypress-group-email-subscription' ),
 			esc_url( 'https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens#tokens' )
 		)
 	);
@@ -318,3 +443,163 @@ EOD;
 	echo "<script type=\"text/javascript\">{$inline_js}</script>";
 }
 add_action( 'admin_head-post.php', 'ass_bp_email_admin_notice' );
+
+/**
+ * Utility function to check for 3.9 migration status.
+ *
+ * @since 3.9.0
+ *
+ * @return array
+ */
+function bpges_39_migration_status() {
+	global $wpdb;
+
+	$retval = array(
+		'subscription_table_created' => (bool) bp_get_option( '_ges_39_subscriptions_table_created' ),
+		'queued_items_table_created' => (bool) bp_get_option( '_ges_39_queued_items_table_created' ),
+		'subscriptions_migrated'     => (bool) bp_get_option( '_ges_39_subscriptions_migrated' ),
+		'queued_items_migrated'      => (bool) bp_get_option( '_ges_39_digest_queue_migrated' ),
+
+		'subscription_migration_in_progress' => (bool) bp_get_option( '_ges_39_subscription_migration_in_progress' ),
+		'queued_items_migration_in_progress' => (bool) bp_get_option( '_ges_39_digest_queue_migration_in_progress' ),
+	);
+
+	return $retval;
+}
+
+/**
+ * Show admin notices related to BPGES 3.9 migration.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_migration_admin_notice() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	// Don't show on BPGES settings panel.
+	if ( isset( $_GET['page'] ) && 'ass_admin_options' === $_GET['page'] ) {
+		return;
+	}
+
+	// No migration is necessary.
+	$is_pre_39_install = bp_get_option( '_ges_installed_before_39' );
+	if ( ! $is_pre_39_install ) {
+		return;
+	}
+
+	$status = bpges_39_migration_status();
+
+	if ( $status['subscription_table_created'] && $status['queued_items_table_created'] && $status['subscriptions_migrated'] && $status['queued_items_migrated'] ) {
+		return;
+	}
+
+	// Output notice; hidden by default.
+	echo '<div id="bp-ges-notice" class="error"><p>';
+	esc_html_e( 'Some BuddyPress Group Email Subscription migration tasks have not successfully completed.', 'buddypress-group-email-subscription' );
+	printf(
+		' <a href="%s">%s</a>',
+		bpges_get_admin_panel_url(),
+		esc_html__( 'Visit the BPGES settings page to fix this problem.', 'buddypress-group-email-subscription' )
+	);
+	echo '</p></div>';
+}
+add_action( 'admin_head', 'bpges_39_migration_admin_notice' );
+
+/**
+ * Install/update subscription database table.
+ *
+ * @since 3.9.0
+ */
+function bpges_install_subscription_table() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	$sql             = array();
+	$charset_collate = $wpdb->get_charset_collate();
+	$bp_prefix       = bp_core_get_table_prefix();
+
+	$sql[] = "CREATE TABLE {$bp_prefix}bpges_subscriptions (
+				id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				user_id bigint(20) NOT NULL,
+				group_id bigint(20) NOT NULL,
+				type varchar(75) NOT NULL,
+				KEY user_id (user_id),
+				KEY group_id (group_id),
+				KEY user_type (user_id,type)
+			) {$charset_collate};";
+
+	dbDelta( $sql );
+
+	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", "{$bp_prefix}bpges_subscriptions" ) ) ) {
+		bp_add_option( '_ges_39_subscriptions_table_created', 1 );
+	}
+}
+
+/**
+ * Install/update queued items database table.
+ *
+ * @since 3.9.0
+ */
+function bpges_install_queued_items_table() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	$sql             = array();
+	$charset_collate = $wpdb->get_charset_collate();
+	$bp_prefix       = bp_core_get_table_prefix();
+
+	$sql[] = "CREATE TABLE {$bp_prefix}bpges_queued_items (
+				id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				user_id bigint(20) NOT NULL,
+				group_id bigint(20) NOT NULL,
+				activity_id bigint(20) NOT NULL,
+				type varchar(75) NOT NULL,
+				date_recorded datetime NOT NULL default '0000-00-00 00:00:00',
+				KEY user_id (user_id),
+				KEY group_id (group_id),
+				KEY activity_id (activity_id),
+				KEY user_group_type_date (user_id,type,date_recorded),
+				UNIQUE KEY user_group_activity_type (user_id,group_id,activity_id,type)
+			) {$charset_collate};";
+
+	dbDelta( $sql );
+
+	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", "{$bp_prefix}bpges_queued_items" ) ) ) {
+		bp_add_option( '_ges_39_queued_items_table_created', 1 );
+	}
+}
+
+/**
+ * Launch the migration of legacy subscriptions.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_launch_legacy_subscription_migration() {
+	global $wpdb;
+
+	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
+	}
+
+	$process = new BPGES_Async_Request_Subscription_Migrate();
+	$process->dispatch();
+}
+
+/**
+ * Launch the migration of legacy digest queues.
+ *
+ * @since 3.9.0
+ */
+function bpges_39_launch_legacy_digest_queue_migration() {
+	global $wpdb;
+
+	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+	}
+
+	$process = new BPGES_Async_Request_Digest_Queue_Migrate();
+	$process->dispatch();
+}

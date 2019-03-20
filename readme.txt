@@ -2,13 +2,16 @@
 Contributors: dwenaus, boonebgorges, r-a-y
 Description: Allow users to receive email notifications of group activity. Weekly or daily digests are available.
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
-Requires at least: 3.2 (BP 1.5)
-Tested up to: 4.9 (BP 2.9)
-Stable tag: 3.8.2
+Requires at least: 3.2
+Requires PHP: 5.3
+Tested up to: 5.2
+Stable tag: 3.9.0
 
 == Description ==
 
-This powerful plugin allows users to receive email notifications of group activity.  Weekly or daily digests are available.  Each user can choose how they want to subscribe to their groups.
+This powerful plugin allows users to receive email notifications of group activity. Weekly or daily digests are available. Each user can choose how they want to subscribe to their groups.
+
+Please note that this plugin requires BuddyPress, as well as the BuddyPress Groups and Activity components.
 
 EMAIL SUBSCRIPTION LEVELS
 There are 5 levels of email subscription options:
@@ -89,6 +92,18 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 3.9.0 =
+* Move to a new system for storing subscription and digest data, for improved performance and scalability
+* Improve the ?sum=1 debugging tool, with support for `user_ids` and `user_count` URL paramaters.
+* Add the ability to log debugging information about outgoing messages, using the `BPGES_DEBUG` constant. See https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/How-to-troubleshoot-missing-emails
+* Require a form submission when clicking on the Unsubscribe link in email footers.
+* Move to the wordpress.org translation infrastructure.
+* Improve compatibility with new versions of PHP.
+* Improve admin-facing notices when minimum requirements (BP components, PHP version) are not met.
+* Localization improvements.
+* Accessibility improvements for user settings interface.
+* Fix bug that could prevent hidden activity items from being fetched when generating digest text.
 
 = 3.8.2 =
 * Improve logic in activation routine, to avoid fatal errors in cases where load order is non-standard.

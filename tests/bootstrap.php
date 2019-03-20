@@ -23,6 +23,10 @@ if ( file_exists( BP_TESTS_DIR . '/bootstrap.php' ) ) {
 		require BP_TESTS_DIR . '/includes/loader.php';
 		require dirname( __FILE__ ) . '/../bp-activity-subscription.php';
 		require dirname( __FILE__ ) . '/includes/ges-mock-mailer.php';
+
+		require dirname( __FILE__ ) . '/../admin.php';
+		bpges_install_subscription_table();
+		bpges_install_queued_items_table();
 	}
 	tests_add_filter( 'muplugins_loaded', '_bootstrap_plugins' );
 
