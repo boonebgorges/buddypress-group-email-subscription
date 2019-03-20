@@ -18,7 +18,7 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 }
 
 // Admin-related code.
-if ( defined( 'WP_NETWORK_ADMIN' ) ) {
+if ( defined( 'WP_NETWORK_ADMIN' ) || defined( 'WP_ADMIN' ) ) {
 	require_once( dirname( __FILE__ ) . '/admin.php' );
 
 	// Updater.
