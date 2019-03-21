@@ -77,7 +77,7 @@ function bpges_get_admin_panel_url() {
 
 	// Everything else.
 	} else {
-		$url = bp_get_admin_url( 'options-general.php' );
+		$url = admin_url( 'options-general.php' );
 	}
 
 	return add_query_arg( 'page', 'ass_admin_options', $url );
