@@ -4,7 +4,7 @@ Description: Allow users to receive email notifications of group activity. Weekl
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 3.2
 Requires PHP: 5.3
-Tested up to: 5.2
+Tested up to: 5.1
 Stable tag: 3.9.1
 
 == Description ==
