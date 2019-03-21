@@ -25,7 +25,7 @@ function ass_admin_menu() {
 			} elseif( ! $status['subscriptions_migrated'] ) {
 				bpges_39_launch_legacy_subscription_migration();
 			} elseif ( $status['queued_items_migrated'] ) {
-				bpges_39_launch_legacy_queued_items_migration();
+				bpges_39_launch_legacy_digest_queue_migration();
 			} else {
 				return;
 			}
