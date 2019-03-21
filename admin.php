@@ -84,6 +84,23 @@ function bpges_get_admin_panel_url() {
 }
 
 /**
+ * Checks whether an installation is from before BPGES 3.9 and needs migration.
+ *
+ * This is very rough!
+ *
+ * @since 3.9.1
+ *
+ * @return bool
+ */
+function bpges_is_legacy_installation() {
+	global $wpdb, $bp;
+
+	$is_legacy = $wpdb->get_var( "SELECT COUNT(*) FROM {$bp->groups->table_name_groupmeta} WHERE meta_key = 'ass_subscribed_users'" );
+
+	return (bool) $is_legacy;
+}
+
+/**
  * Function to create the back end admin form.
  */
 function ass_admin_options() {
@@ -101,40 +118,36 @@ function ass_admin_options() {
 		}
 	}
 
-	$show_migration_panel = false;
-	$is_pre_39_install    = bp_get_option( '_ges_installed_before_39' );
-	if ( bp_get_option( '_ges_installed_before_39' ) ) {
+	$is_legacy_installation = bpges_is_legacy_installation();
+
+	if ( $is_legacy_installation ) {
 		$status = bpges_39_migration_status();
 
-		$show_migration_panel = ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] || ! $status['subscriptions_migrated'] || ! $status['queued_items_migrated'];
+		$table_class   = 'bpges-migration-step-success';
+		$table_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+		if ( ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] ) {
+			$table_class   = 'bpges-migration-step-failure';
+			$table_message = '';
+		}
 
-		if ( $show_migration_panel ) {
-			$table_class   = 'bpges-migration-step-success';
-			$table_message = __( 'Complete!', 'buddypress-group-email-subscription' );
-			if ( ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] ) {
-				$table_class   = 'bpges-migration-step-failure';
-				$table_message = '';
-			}
+		$subs_class   = 'bpges-migration-step-success';
+		$subs_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+		if ( $status['subscription_migration_in_progress'] ) {
+			$subs_class   = 'bpges-migration-step-in-progress';
+			$subs_message = __( 'In Progress', 'buddypress-group-email-subscription' );
+		} elseif ( ! $status['subscriptions_migrated'] ) {
+			$subs_class   = 'bpges-migration-step-failure';
+			$subs_message = '';
+		}
 
-			$subs_class   = 'bpges-migration-step-success';
-			$subs_message = __( 'Complete!', 'buddypress-group-email-subscription' );
-			if ( $status['subscription_migration_in_progress'] ) {
-				$subs_class   = 'bpges-migration-step-in-progress';
-				$subs_message = __( 'In Progress', 'buddypress-group-email-subscription' );
-			} elseif ( ! $status['subscriptions_migrated'] ) {
-				$subs_class   = 'bpges-migration-step-failure';
-				$subs_message = '';
-			}
-
-			$queued_class   = 'bpges-migration-step-success';
-			$queued_message = __( 'Complete!', 'buddypress-group-email-subscription' );
-			if ( $status['queued_items_migration_in_progress'] ) {
-				$queued_class   = 'bpges-migration-step-in-progress';
-				$queued_message = __( 'In Progress', 'buddypress-group-email-subscription' );
-			} elseif ( ! $status['queued_items_migrated'] ) {
-				$queued_class   = 'bpges-migration-step-failure';
-				$queued_message = '';
-			}
+		$queued_class   = 'bpges-migration-step-success';
+		$queued_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+		if ( $status['queued_items_migration_in_progress'] ) {
+			$queued_class   = 'bpges-migration-step-in-progress';
+			$queued_message = __( 'In Progress', 'buddypress-group-email-subscription' );
+		} elseif ( ! $status['queued_items_migrated'] ) {
+			$queued_class   = 'bpges-migration-step-failure';
+			$queued_message = '';
 		}
 	}
 
@@ -151,7 +164,7 @@ function ass_admin_options() {
 	<div class="wrap">
 		<h2><?php _e('Group Email Subscription Settings', 'buddypress-group-email-subscription'); ?></h2>
 
-		<?php if ( $show_migration_panel ) : ?>
+		<?php if ( $is_legacy_installation ) : ?>
 			<div class="bpges-migration-tools">
 				<h3><?php esc_html_e( 'Migration Status', 'buddypress-group-email-subscription' ); ?></h3>
 				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines. Some of these tasks could not be performed automatically.', 'buddypress-group-email-subscription' ); ?></p>
@@ -169,7 +182,7 @@ function ass_admin_options() {
 				?>
 
 				<?php if ( ! $status['subscription_migration_in_progress'] && ! $status['queued_items_migration_in_progress'] ) : ?>
-					<p><?php esc_html_e( 'We can try to finish the migration at this time.', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Complete the migration process.</a></p>
+					<p><?php esc_html_e( 'If you need to re-run or restart the migration process, you can do so with the following link:', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Manually trigger the migration process.</a></p>
 				<?php else : ?>
 					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
 				<?php endif; ?>
