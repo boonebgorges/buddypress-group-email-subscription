@@ -24,13 +24,12 @@ function ass_admin_menu() {
 				bpges_install_queued_items_table();
 			} elseif( ! $status['subscriptions_migrated'] ) {
 				bpges_39_launch_legacy_subscription_migration();
-			} elseif ( $status['queued_items_migrated'] ) {
-				bpges_39_launch_legacy_queued_items_migration();
-			} else {
-				return;
+			} elseif ( ! $status['queued_items_migrated'] ) {
+				bpges_39_launch_legacy_digest_queue_migration();
 			}
 
 			wp_safe_redirect( bpges_get_admin_panel_url() );
+			die;
 		}
 	}
 
@@ -77,10 +76,27 @@ function bpges_get_admin_panel_url() {
 
 	// Everything else.
 	} else {
-		$url = bp_get_admin_url( 'options-general.php' );
+		$url = admin_url( 'options-general.php' );
 	}
 
 	return add_query_arg( 'page', 'ass_admin_options', $url );
+}
+
+/**
+ * Checks whether an installation is from before BPGES 3.9 and needs migration.
+ *
+ * This is very rough!
+ *
+ * @since 3.9.1
+ *
+ * @return bool
+ */
+function bpges_is_legacy_installation() {
+	global $wpdb, $bp;
+
+	$is_legacy = $wpdb->get_var( "SELECT COUNT(*) FROM {$bp->groups->table_name_groupmeta} WHERE meta_key = 'ass_subscribed_users'" );
+
+	return (bool) $is_legacy;
 }
 
 /**
@@ -101,40 +117,36 @@ function ass_admin_options() {
 		}
 	}
 
-	$show_migration_panel = false;
-	$is_pre_39_install    = bp_get_option( '_ges_installed_before_39' );
-	if ( bp_get_option( '_ges_installed_before_39' ) ) {
+	$is_legacy_installation = bpges_is_legacy_installation();
+
+	if ( $is_legacy_installation ) {
 		$status = bpges_39_migration_status();
 
-		$show_migration_panel = ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] || ! $status['subscriptions_migrated'] || ! $status['queued_items_migrated'];
+		$table_class   = 'bpges-migration-step-success';
+		$table_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+		if ( ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] ) {
+			$table_class   = 'bpges-migration-step-failure';
+			$table_message = '';
+		}
 
-		if ( $show_migration_panel ) {
-			$table_class   = 'bpges-migration-step-success';
-			$table_message = __( 'Complete!', 'buddypress-group-email-subscription' );
-			if ( ! $status['subscription_table_created'] || ! $status['queued_items_table_created'] ) {
-				$table_class   = 'bpges-migration-step-failure';
-				$table_message = '';
-			}
+		$subs_class   = 'bpges-migration-step-success';
+		$subs_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+		if ( $status['subscription_migration_in_progress'] ) {
+			$subs_class   = 'bpges-migration-step-in-progress';
+			$subs_message = __( 'In Progress', 'buddypress-group-email-subscription' );
+		} elseif ( ! $status['subscriptions_migrated'] ) {
+			$subs_class   = 'bpges-migration-step-failure';
+			$subs_message = '';
+		}
 
-			$subs_class   = 'bpges-migration-step-success';
-			$subs_message = __( 'Complete!', 'buddypress-group-email-subscription' );
-			if ( $status['subscription_migration_in_progress'] ) {
-				$subs_class   = 'bpges-migration-step-in-progress';
-				$subs_message = __( 'In Progress', 'buddypress-group-email-subscription' );
-			} elseif ( ! $status['subscriptions_migrated'] ) {
-				$subs_class   = 'bpges-migration-step-failure';
-				$subs_message = '';
-			}
-
-			$queued_class   = 'bpges-migration-step-success';
-			$queued_message = __( 'Complete!', 'buddypress-group-email-subscription' );
-			if ( $status['queued_items_migration_in_progress'] ) {
-				$queued_class   = 'bpges-migration-step-in-progress';
-				$queued_message = __( 'In Progress', 'buddypress-group-email-subscription' );
-			} elseif ( ! $status['queued_items_migrated'] ) {
-				$queued_class   = 'bpges-migration-step-failure';
-				$queued_message = '';
-			}
+		$queued_class   = 'bpges-migration-step-success';
+		$queued_message = __( 'Complete!', 'buddypress-group-email-subscription' );
+		if ( $status['queued_items_migration_in_progress'] ) {
+			$queued_class   = 'bpges-migration-step-in-progress';
+			$queued_message = __( 'In Progress', 'buddypress-group-email-subscription' );
+		} elseif ( ! $status['queued_items_migrated'] ) {
+			$queued_class   = 'bpges-migration-step-failure';
+			$queued_message = '';
 		}
 	}
 
@@ -151,7 +163,7 @@ function ass_admin_options() {
 	<div class="wrap">
 		<h2><?php _e('Group Email Subscription Settings', 'buddypress-group-email-subscription'); ?></h2>
 
-		<?php if ( $show_migration_panel ) : ?>
+		<?php if ( $is_legacy_installation ) : ?>
 			<div class="bpges-migration-tools">
 				<h3><?php esc_html_e( 'Migration Status', 'buddypress-group-email-subscription' ); ?></h3>
 				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines. Some of these tasks could not be performed automatically.', 'buddypress-group-email-subscription' ); ?></p>
@@ -169,7 +181,7 @@ function ass_admin_options() {
 				?>
 
 				<?php if ( ! $status['subscription_migration_in_progress'] && ! $status['queued_items_migration_in_progress'] ) : ?>
-					<p><?php esc_html_e( 'We can try to finish the migration at this time.', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Complete the migration process.</a></p>
+					<p><?php esc_html_e( 'If you need to re-run or restart the migration process, you can do so with the following link:', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Manually trigger the migration process.</a></p>
 				<?php else : ?>
 					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
 				<?php endif; ?>
@@ -482,15 +494,14 @@ function bpges_39_migration_admin_notice() {
 		return;
 	}
 
-	// No migration is necessary.
-	$is_pre_39_install = bp_get_option( '_ges_installed_before_39' );
-	if ( ! $is_pre_39_install ) {
-		return;
-	}
-
 	$status = bpges_39_migration_status();
 
 	if ( $status['subscription_table_created'] && $status['queued_items_table_created'] && $status['subscriptions_migrated'] && $status['queued_items_migrated'] ) {
+		return;
+	}
+
+	$is_legacy_installation = bpges_is_legacy_installation();
+	if ( ! $is_legacy_installation ) {
 		return;
 	}
 
@@ -570,6 +581,92 @@ function bpges_install_queued_items_table() {
 	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", "{$bp_prefix}bpges_queued_items" ) ) ) {
 		bp_add_option( '_ges_39_queued_items_table_created', 1 );
 	}
+}
+
+/**
+ * Migrates the legacy subscriptions for a single group.
+ *
+ * @since 3.9.2
+ *
+ * @param int $group_id
+ */
+function bpges_39_migrate_group_subscriptions( $group_id ) {
+	$group_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users', true );
+
+	if ( is_array( $group_subscriptions ) ) {
+		foreach ( $group_subscriptions as $user_id => $type ) {
+			$query = new BPGES_Subscription_Query( array(
+				'user_id'  => $user_id,
+				'group_id' => $group_id,
+			) );
+
+			$existing = $query->get_results();
+			if ( $existing ) {
+				// Nothing to migrate.
+				groups_update_groupmeta( $group_id, '_ges_subscriptions_migrated', 1 );
+				continue;
+			}
+
+			$subscription = new BPGES_Subscription();
+			$subscription->user_id = $user_id;
+			$subscription->group_id = $group_id;
+			$subscription->type = $type;
+			$subscription->save();
+		}
+	}
+
+	groups_update_groupmeta( $group_id, '_ges_subscriptions_migrated', 1 );
+}
+/**
+
+ * Migrates the legacy queued items for a single user.
+ *
+ * @since 3.9.2
+ *
+ * @param int $user_id
+ */
+function bpges_39_migrate_user_queued_items( $user_id ) {
+	$user_queues = bp_get_user_meta( $user_id, 'ass_digest_items', true );
+	foreach ( $user_queues as $digest_type => $user_groups ) {
+		foreach ( $user_groups as $group_id => $activity_ids ) {
+			$query = new BPGES_Subscription_Query( array(
+				'user_id'  => $user_id,
+				'group_id' => $group_id,
+			) );
+
+			$existing = $query->get_results();
+			if ( ! $existing ) {
+				// Nothing to migrate.
+				bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
+				continue;
+			}
+
+			$subscription = reset( $existing );
+
+			$to_queue = array();
+			foreach ( $activity_ids as $activity_id ) {
+				// Don't migrate deleted, stale, or other invalid items.
+				if ( ! bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_id ) ) {
+					continue;
+				}
+
+				$to_queue[] = array(
+					'user_id'       => $user_id,
+					'group_id'      => $group_id,
+					'activity_id'   => $activity_id,
+					'type'          => $digest_type,
+					'date_recorded' => date( 'Y-m-d H:i:s' ),
+				);
+			}
+
+			if ( $to_queue ) {
+				BPGES_Queued_Item::bulk_insert( $to_queue );
+			}
+		}
+	}
+
+	// Delete the legacy queue, to avoid double-processing.
+	bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
 }
 
 /**
