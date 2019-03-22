@@ -60,47 +60,7 @@ class BPGES_Async_Request_Digest_Queue_Migrate extends BPGES_Async_Request {
 		bp_update_option( '_ges_39_digest_queue_migration_in_progress', time() );
 
 		foreach ( $user_ids as $user_id ) {
-			$user_queues = bp_get_user_meta( $user_id, 'ass_digest_items', true );
-			foreach ( $user_queues as $digest_type => $user_groups ) {
-				foreach ( $user_groups as $group_id => $activity_ids ) {
-					$query = new BPGES_Subscription_Query( array(
-						'user_id'  => $user_id,
-						'group_id' => $group_id,
-					) );
-
-					$existing = $query->get_results();
-					if ( ! $existing ) {
-						// Nothing to migrate.
-						bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
-						continue;
-					}
-
-					$subscription = reset( $existing );
-
-					$to_queue = array();
-					foreach ( $activity_ids as $activity_id ) {
-						// Don't migrate deleted, stale, or other invalid items.
-						if ( ! bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_id ) ) {
-							continue;
-						}
-
-						$to_queue[] = array(
-							'user_id'       => $user_id,
-							'group_id'      => $group_id,
-							'activity_id'   => $activity_id,
-							'type'          => $digest_type,
-							'date_recorded' => date( 'Y-m-d H:i:s' ),
-						);
-					}
-
-					if ( $to_queue ) {
-						BPGES_Queued_Item::bulk_insert( $to_queue );
-					}
-				}
-			}
-
-			// Delete the legacy queue, to avoid double-processing.
-			bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
+			bpges_39_migrate_user_queued_items( $user_id );
 		}
 
 		// Launch another item in the queue.

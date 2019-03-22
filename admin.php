@@ -24,10 +24,8 @@ function ass_admin_menu() {
 				bpges_install_queued_items_table();
 			} elseif( ! $status['subscriptions_migrated'] ) {
 				bpges_39_launch_legacy_subscription_migration();
-			} elseif ( $status['queued_items_migrated'] ) {
+			} elseif ( ! $status['queued_items_migrated'] ) {
 				bpges_39_launch_legacy_digest_queue_migration();
-			} else {
-				return;
 			}
 
 			wp_safe_redirect( bpges_get_admin_panel_url() );
@@ -618,6 +616,57 @@ function bpges_39_migrate_group_subscriptions( $group_id ) {
 	}
 
 	groups_update_groupmeta( $group_id, '_ges_subscriptions_migrated', 1 );
+}
+/**
+
+ * Migrates the legacy queued items for a single user.
+ *
+ * @since 3.9.2
+ *
+ * @param int $user_id
+ */
+function bpges_39_migrate_user_queued_items( $user_id ) {
+	$user_queues = bp_get_user_meta( $user_id, 'ass_digest_items', true );
+	foreach ( $user_queues as $digest_type => $user_groups ) {
+		foreach ( $user_groups as $group_id => $activity_ids ) {
+			$query = new BPGES_Subscription_Query( array(
+				'user_id'  => $user_id,
+				'group_id' => $group_id,
+			) );
+
+			$existing = $query->get_results();
+			if ( ! $existing ) {
+				// Nothing to migrate.
+				bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
+				continue;
+			}
+
+			$subscription = reset( $existing );
+
+			$to_queue = array();
+			foreach ( $activity_ids as $activity_id ) {
+				// Don't migrate deleted, stale, or other invalid items.
+				if ( ! bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_id ) ) {
+					continue;
+				}
+
+				$to_queue[] = array(
+					'user_id'       => $user_id,
+					'group_id'      => $group_id,
+					'activity_id'   => $activity_id,
+					'type'          => $digest_type,
+					'date_recorded' => date( 'Y-m-d H:i:s' ),
+				);
+			}
+
+			if ( $to_queue ) {
+				BPGES_Queued_Item::bulk_insert( $to_queue );
+			}
+		}
+	}
+
+	// Delete the legacy queue, to avoid double-processing.
+	bp_update_user_meta( $user_id, '_ges_digest_queue_migrated', 1 );
 }
 
 /**
