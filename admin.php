@@ -31,6 +31,7 @@ function ass_admin_menu() {
 			}
 
 			wp_safe_redirect( bpges_get_admin_panel_url() );
+			die;
 		}
 	}
 
