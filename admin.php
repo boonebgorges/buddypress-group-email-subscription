@@ -496,15 +496,14 @@ function bpges_39_migration_admin_notice() {
 		return;
 	}
 
-	// No migration is necessary.
-	$is_pre_39_install = bp_get_option( '_ges_installed_before_39' );
-	if ( ! $is_pre_39_install ) {
-		return;
-	}
-
 	$status = bpges_39_migration_status();
 
 	if ( $status['subscription_table_created'] && $status['queued_items_table_created'] && $status['subscriptions_migrated'] && $status['queued_items_migrated'] ) {
+		return;
+	}
+
+	$is_legacy_installation = bpges_is_legacy_installation();
+	if ( ! $is_legacy_installation ) {
 		return;
 	}
 
