@@ -586,6 +586,41 @@ function bpges_install_queued_items_table() {
 }
 
 /**
+ * Migrates the legacy subscriptions for a single group.
+ *
+ * @since 3.9.2
+ *
+ * @param int $group_id
+ */
+function bpges_39_migrate_group_subscriptions( $group_id ) {
+	$group_subscriptions = groups_get_groupmeta( $group_id, 'ass_subscribed_users', true );
+
+	if ( is_array( $group_subscriptions ) ) {
+		foreach ( $group_subscriptions as $user_id => $type ) {
+			$query = new BPGES_Subscription_Query( array(
+				'user_id'  => $user_id,
+				'group_id' => $group_id,
+			) );
+
+			$existing = $query->get_results();
+			if ( $existing ) {
+				// Nothing to migrate.
+				groups_update_groupmeta( $group_id, '_ges_subscriptions_migrated', 1 );
+				continue;
+			}
+
+			$subscription = new BPGES_Subscription();
+			$subscription->user_id = $user_id;
+			$subscription->group_id = $group_id;
+			$subscription->type = $type;
+			$subscription->save();
+		}
+	}
+
+	groups_update_groupmeta( $group_id, '_ges_subscriptions_migrated', 1 );
+}
+
+/**
  * Launch the migration of legacy subscriptions.
  *
  * @since 3.9.0

@@ -21,11 +21,51 @@ class BPGES_Command extends WP_CLI_Command {
 	 * @subcommand migrate-legacy-subscriptions
 	 */
 	public function migrate_legacy_subscriptions( $args, $assoc_args ) {
-		if ( ! function_exists( 'bpges_39_launch_legacy_subscription_migration' ) ) {
+		global $wpdb;
+
+		if ( ! function_exists( 'bpges_39_migrate_group_subscriptions' ) ) {
 			require_once dirname( dirname( __FILE__ ) ) . '/admin.php';
 		}
 
-		bpges_39_launch_legacy_subscription_migration();
+		$in_progress = bp_get_option( '_ges_39_subscription_migration_in_progress' );
+		if ( $in_progress ) {
+			$message = sprintf(
+				'A migration is currently in progress, with the last batch processed at %s. Continue anyway?',
+				date( 'Y-m-d H:i:s', $in_progress )
+			);
+			WP_CLI::confirm( $message );
+		}
+
+		$already = bp_get_option( '_ges_39_subscriptions_migrated' );
+		if ( $already ) {
+			WP_CLI::confirm( 'It looks like this migration has already been performed. Continue anyway?' );
+			bp_delete_option( '_ges_39_subscriptions_migrated' );
+		}
+
+		bp_delete_option( '_ges_39_subscription_migration_in_progress' );
+
+		$bp = buddypress();
+
+		$total = $wpdb->get_var( "SELECT COUNT(gm.group_id) FROM {$bp->groups->table_name_groupmeta} gm LEFT JOIN {$bp->groups->table_name_groupmeta} gm2 ON ( gm.group_id = gm2.group_id AND gm2.meta_key = '_ges_subscriptions_migrated' ) WHERE gm.meta_key = 'ass_subscribed_users' AND gm.meta_value IS NOT NULL AND gm2.meta_value IS NULL" );
+
+		WP_CLI::line( "Beginning subscription migration for $total groups..." );
+
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Migration progress', $total );
+		$i        = 0;
+		while ( $i <= $total ) {
+			$group_id = $wpdb->get_var( "SELECT gm.group_id FROM {$bp->groups->table_name_groupmeta} gm LEFT JOIN {$bp->groups->table_name_groupmeta} gm2 ON ( gm.group_id = gm2.group_id AND gm2.meta_key = '_ges_subscriptions_migrated' ) WHERE gm.meta_key = 'ass_subscribed_users' AND gm.meta_value IS NOT NULL AND gm2.meta_value IS NULL LIMIT 1" );
+			if ( ! $group_id ) {
+				break;
+			}
+			bpges_39_migrate_group_subscriptions( $group_id );
+			$progress->tick();
+			sleep( 1 );
+			$i++;
+		}
+
+
+		bp_update_option( '_ges_39_subscriptions_migrated', 1 );
+		WP_CLI::success( 'Migration complete.' );
 	}
 
 	/**
