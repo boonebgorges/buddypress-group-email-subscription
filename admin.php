@@ -677,6 +677,14 @@ function bpges_39_migrate_user_queued_items( $user_id ) {
 function bpges_39_launch_legacy_subscription_migration() {
 	global $wpdb;
 
+	if ( ! class_exists( 'WP_Background_Process' ) ) {
+		require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+	}
+
+	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+	}
+
 	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
 		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
 	}
@@ -692,6 +700,14 @@ function bpges_39_launch_legacy_subscription_migration() {
  */
 function bpges_39_launch_legacy_digest_queue_migration() {
 	global $wpdb;
+
+	if ( ! class_exists( 'WP_Background_Process' ) ) {
+		require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+	}
+
+	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+	}
 
 	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
 		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
