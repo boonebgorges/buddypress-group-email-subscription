@@ -5,7 +5,7 @@ Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifi
 Requires at least: 3.2
 Requires PHP: 5.3
 Tested up to: 5.1
-Stable tag: 3.9.1
+Stable tag: 3.9.2
 
 == Description ==
 
@@ -92,6 +92,11 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 3.9.2 =
+* Improvements to CLI 3.9 migration tools.
+* Improvements to the way that 3.9 migration admin notices are displayed
+* Avoid fatal errors during activation when required BP components are not activated
 
 = 3.9.1 =
 * Improvements to 3.9 migration routine.
