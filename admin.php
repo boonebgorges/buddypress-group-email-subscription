@@ -166,7 +166,7 @@ function ass_admin_options() {
 		<?php if ( $is_legacy_installation ) : ?>
 			<div class="bpges-migration-tools">
 				<h3><?php esc_html_e( 'Migration Status', 'buddypress-group-email-subscription' ); ?></h3>
-				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines. Some of these tasks could not be performed automatically.', 'buddypress-group-email-subscription' ); ?></p>
+				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines.', 'buddypress-group-email-subscription' ); ?></p>
 
 				<ol>
 					<li class="bpges-migration-step <?php echo esc_attr( $table_class ); ?>"><?php esc_html_e( 'Create database tables', 'buddypress-group-email-subscription' ); ?> <?php if ( $table_message ) : ?><em> - <?php echo esc_html( $table_message ); ?></em><?php endif; ?></li>
@@ -677,6 +677,14 @@ function bpges_39_migrate_user_queued_items( $user_id ) {
 function bpges_39_launch_legacy_subscription_migration() {
 	global $wpdb;
 
+	if ( ! class_exists( 'WP_Background_Process' ) ) {
+		require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+	}
+
+	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+	}
+
 	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
 		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
 	}
@@ -692,6 +700,14 @@ function bpges_39_launch_legacy_subscription_migration() {
  */
 function bpges_39_launch_legacy_digest_queue_migration() {
 	global $wpdb;
+
+	if ( ! class_exists( 'WP_Background_Process' ) ) {
+		require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+	}
+
+	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
+		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+	}
 
 	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
 		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
