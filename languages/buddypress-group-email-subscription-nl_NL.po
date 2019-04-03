@@ -1,8 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: buddypress-group-email-subscription v2.7.8\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-22 19:25+0000\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-"
+"email-subscription\n"
+"POT-Creation-Date: 2019-03-28T09:12:56-05:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: anja <anja@werkgroepen.net>\n"
 "Language-Team: werkgroepen.net <team@werkgroepen.net>\n"
@@ -19,198 +20,214 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
 
-#: ../admin.php:25
-msgid "BP Group Email Options"
-msgstr "E-mailinstellingen groep"
+#. Plugin Name of the plugin
+msgid "BuddyPress Group Email Subscription"
+msgstr ""
 
-#: ../admin.php:30
-msgid "Group Email Options"
-msgstr "E-mailinstellingen groep"
-
-#: ../admin.php:56
-msgid "Settings saved."
-msgstr "Instellingen opgeslagen."
-
-#: ../admin.php:74
-msgid "Group Email Subscription Settings"
-msgstr "E-mailininstellingen groep"
-
-#: ../admin.php:79
-msgid "Digests & Summaries"
-msgstr "Verwerking en samenvattingen"
-
-#: ../admin.php:81
+#. Plugin URI of the plugin
 msgid ""
-"View queued digest items</a></b> (in new window)<br>As admin, you can see "
-"what is currently in the email queue by adding ?sum=1 to your url. This will "
-"not fire the digest, it will just show you what is waiting to be sent."
+"http://wordpress.org/extend/plugins/buddypress-group-email-subscription/"
 msgstr ""
-"Bekijk items in de wachtrij</a></b> (in een nieuw venster)<br>Als beheerder, "
-"kun je bekijken wat zich momenteel in de e-mailrij bevindt door ?sum=1 toe "
-"te voegen aan je url (internetadres). Er wordt geen actie ondernomen, alleen "
-"wat er in de wachtrij staat om verzonden te worden wordt getoond."
 
-#: ../admin.php:85
-msgid "<strong>Daily Digests</strong> should be sent at this time:"
-msgstr "<strong>Dagelijkse verwerking</strong> wordt verzonden om:"
-
-#: ../admin.php:102
-msgid "<strong>Weekly Summaries</strong> should be sent on:"
-msgstr "<strong>Wekelijkse samenvattingen</strong> worden verzonden op:"
-
-#: ../admin.php:106 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1773
-msgid "Monday"
-msgstr "Maandag"
-
-#: ../admin.php:107 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1775
-msgid "Tuesday"
-msgstr "Dinsdag"
-
-#: ../admin.php:108 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1777
-msgid "Wednesday"
-msgstr "Woensdag"
-
-#: ../admin.php:109 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1779
-msgid "Thursday"
-msgstr "Donderdag"
-
-#: ../admin.php:110 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1781
-msgid "Friday"
-msgstr "Vrijdag"
-
-#: ../admin.php:111 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1783
-msgid "Saturday"
-msgstr "Zaterdag"
-
-#: ../admin.php:112 ../admin.php:117
-#: ../bp-activity-subscription-functions.php:1785
-msgid "Sunday"
-msgstr "Zondag"
-
-#: ../admin.php:117
-#, php-format
+#. Description of the plugin
 msgid ""
-"The server timezone is %s (%s); the current server time is %s (%s); and the "
-"day is %s."
+"Allows group members to receive email notifications for group activity and "
+"forum posts instantly or as daily digest or weekly summary."
 msgstr ""
-"De servertijdzone is %s (%s); de huidige servertijd is %s (%s); en het is "
-"vandaag %s."
+"Staat groepsleden toe om onmiddelijk, of als dagelijkse of wekelijkse "
+"samenvatting, e-mailnotificaties te ontvangen voor groepsactiviteiten en "
+"forumberichten."
 
-#: ../admin.php:121
-msgid "Global Unsubscribe Link"
-msgstr "Globale uitschrijflink"
+#. Author of the plugin
+msgid "Deryk Wenaus, boonebgorges, r-a-y"
+msgstr ""
 
-#: ../admin.php:122
+#: legacy-forums.php:80
+msgid "%s started the forum topic \"%s\" in the group \"%s\""
+msgstr "%s is het forumonderwerp \"%s\" gestart in de groep \"%s\""
+
+#: legacy-forums.php:91
+msgid "%s replied to the forum topic \"%s\" in the group \"%s\""
+msgstr "%s heeft gereageerd op het forumonderwerp \"%s\" in de groep \"%s\""
+
+#: legacy-forums.php:116
+msgid "To view or reply to this topic, go to:"
+msgstr "Om het onderwerp te tonen of erop te reageren, ga naar:"
+
+#: legacy-forums.php:120
+msgid "To view or reply to this topic, log in and go to:"
+msgstr "Om dit onderwerp te tonen of erop te reageren, log in en ga naar:"
+
+#: legacy-forums.php:124
 msgid ""
-"Add a link in the emails and on the notifications settings page allowing "
-"users to unsubscribe from all their groups at once:"
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"---------------------\n"
 msgstr ""
-"Voeg een link toe aan de e-mails en de notificatie-instellingenpagina zodat "
-"gebruikers zich in een keer uit kunnen schrijven voor al hun groepen:"
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"---------------------\n"
 
-#: ../admin.php:124 ../admin.php:133 ../admin.php:138
-msgid "yes"
-msgstr "ja"
+#: legacy-forums.php:192 bp-activity-subscription-functions.php:461
+#: bp-activity-subscription-functions.php:660
+msgid "You are currently receiving notifications for your own posts."
+msgstr "Je ontvang notificaties over onderwerpen die je bent gestart."
 
-#: ../admin.php:125 ../admin.php:134 ../admin.php:139
-msgid "no"
-msgstr "nee"
+#: legacy-forums.php:193 legacy-forums.php:247 legacy-forums.php:261
+#: legacy-forums.php:275 bp-activity-subscription-functions.php:463
+#: bp-activity-subscription-functions.php:662
+msgid "To disable these notifications please log in and go to: %s"
+msgstr "Om deze notificaties uit te schakelen, login en ga naar: %s"
 
-#: ../admin.php:130
-msgid "Group Admin Abilities"
-msgstr "Rechten groepsbeheerder"
-
-#: ../admin.php:131
+#: legacy-forums.php:194 bp-activity-subscription-functions.php:464
+#: bp-activity-subscription-functions.php:663
+#: bp-activity-subscription-functions.php:1147
 msgid ""
-"Allow group admins and mods to change members' email subscription settings: "
-msgstr ""
-"Laat groepsbeheerders en moderatoren de e-mailinstellingen van de leden "
-"wijzigen: "
+"Once you are logged in, uncheck \"Receive notifications of your own posts?\"."
+msgstr "Notificaties van jouw eigen berichten ontvangen?"
 
-#: ../admin.php:136
+#: legacy-forums.php:201 legacy-forums.php:232
+msgid "Your email setting for this group is: "
+msgstr "Je e-mailinstelling voor deze groep is: "
+
+#: legacy-forums.php:205
 msgid ""
-"Allow group admins to override subscription settings and send an email to "
-"everyone in their group: "
+", therefore you won't receive replies to this topic. To get them, click the "
+"link to view this topic on the web then click the 'Follow this topic' button."
 msgstr ""
-"Laat groepsbeheerders inschrijvingsinstellingen overschrijven en e-mails "
-"verzenden naar iedereen in hun groep: "
+", dus je ontvangt geen reacties op dit onderwerp. Om deze te ontvangen, klik "
+"dan op bovenstaande link en vervolgens op de knop 'Dit onderwerp via e-mail "
+"volgen'."
 
-#: ../admin.php:143
-msgid "Spam Prevention"
-msgstr "Spampreventie"
-
-#: ../admin.php:144
+#: legacy-forums.php:209 legacy-forums.php:233
+#: bp-activity-subscription-functions.php:478
+#: bp-activity-subscription-functions.php:675
 msgid ""
-"To help protect against spam, you may wish to require a user to have been a "
-"member of the site for a certain amount of days before any group updates are "
-"emailed to the other group members. This is disabled by default."
+"To change your email setting for this group, please log in and go to: %s"
 msgstr ""
-"Om je tegen spam van een nieuw lid te helpen beschermen. Misschien wil je "
-"wachten met een e-mailnotificatie van een groep tot het nieuwe lid een "
-"aantal dagen staat ingeschreven. Dit is standaard uitgeschakeld."
+"Om je e-mailinstellingen voor deze groep te wijzigen, login en ga naar: %s"
 
-#: ../admin.php:145
-msgid "Member must be registered for"
-msgstr "Een nieuw lid moet"
-
-#: ../admin.php:145
-msgid "days"
-msgstr ""
-" dagen geregistreerd zijn, voor deze activiteitenmail van de groep ontvangt."
-
-#: ../admin.php:149 ../screen-notifications.php:57
-msgid "Save Settings"
-msgstr "Instellingen opslaan"
-
-#: ../admin.php:156
-#, php-format
-msgid "If you enjoy using this plugin %s please rate it %s."
-msgstr "Vind je deze plugin nuttig, %sgeef een waardering%s."
-
-#: ../admin.php:157
-msgid "Please make a donation to the team to support ongoing development."
-msgstr ""
-"Doneer iets aan het ontwikkelteam van deze plugin, zodat ze de verdere "
-"ontwikkeling kunnen voortzetten."
-
-#: ../admin.php:297
-#, php-format
+#: legacy-forums.php:248
 msgid ""
-"This email is handled by the Group Email Subscription plugin and uses "
-"customized tokens.  <a target=\"_blank\" href=\"%s\">Learn more about GES "
-"tokens on our wiki</a>."
+"Once you are logged in, click on the \"Mute this topic\" button to "
+"unsubscribe from the forum thread."
+msgstr ""
+"Als je ingelogd bent, klik op de knop \"E-mail uitschakelen voor dit bericht."
+"\" om je uit te schrijven voor een forumonderwerp."
+
+#: legacy-forums.php:260
+msgid ""
+"You are currently receiving notifications to topics that you have started."
+msgstr "Je ontvang notificaties over onderwerpen die je bent gestart."
+
+#: legacy-forums.php:262
+msgid ""
+"Once you are logged in, uncheck \"A member replies in a forum topic you've "
+"started\"."
+msgstr ""
+"Als je ingelogd bent, vink \"Een lid reageerde op een forumonderwerp dat je "
+"gestart bent.\" uit."
+
+#: legacy-forums.php:274
+msgid ""
+"You are currently receiving notifications to topics that you have replied in."
+msgstr "Je ontvangt notificaties van onderwerpen waarop je gereageerd hebt."
+
+#: legacy-forums.php:276
+msgid ""
+"Once you are logged in, uncheck \"A member replies after you in a forum topic"
+"\"."
+msgstr ""
+"Als je ingelogd bent, vink \"Een lid reageerde na jou in een forumonderwerp."
+"\" uit."
+
+#: legacy-forums.php:380 bp-activity-subscription-main.php:124
+msgid "Follow"
+msgstr "Zet e-mail aan voor"
+
+#: legacy-forums.php:381
+msgid ""
+"You are not following this topic. Click to follow it and get email updates "
+"for new posts"
+msgstr ""
+"Je volgt dit onderwerp niet via e-mail. Klik om het onderwerp te volgen en e-"
+"mail te ontvangen bij nieuwe berichten"
+
+#: legacy-forums.php:384 bp-activity-subscription-main.php:123
+msgid "Mute"
+msgstr "Zet e-mail uit voor"
+
+#: legacy-forums.php:385
+msgid "You are following this topic. Click to stop getting email updates"
+msgstr ""
+"Je volgt dit onderwerp via e-mail. Klik om e-mailberichten te stoppen bij "
+"nieuwe berichten"
+
+#: legacy-forums.php:391
+msgid "This conversation is muted. Click to follow it"
+msgstr "Dit volgen via e-mail is niet ingesteld. Klik om te volgen"
+
+#: legacy-forums.php:395
+msgid "this topic"
+msgstr "dit onderwerp"
+
+#: legacy-forums.php:414
+msgid "Email"
+msgstr "E-mail"
+
+#: bp-activity-subscription.php:37
+msgid ""
+"Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  "
+"If you are still using BuddyPress 1.2 and you don't plan on upgrading, use "
+"<a href='%s'>BP Group Email Subscription v3.6.2 instead</a>."
 msgstr ""
 
-#: ../bp-activity-subscription-digest.php:70
-#, php-format
+#: bp-activity-subscription.php:40
+msgid ""
+"BuddyPress Group Email Subscription requires the BP Groups and Activity "
+"components. Please <a href=\"%s\">activate them</a> to use this plugin."
+msgstr ""
+
+#: bp-activity-subscription-main.php:72
+msgid "Email Options"
+msgstr "E-mailinstellingen"
+
+#: bp-activity-subscription-main.php:125
+msgid "Error"
+msgstr "Fout"
+
+#: bp-activity-subscription-digest.php:128
 msgid ""
 "You have received this message because you are subscribed to receive a "
 "digest of activity in some of your groups on %s."
 msgstr ""
 "Je hebt dit bericht ontvangen omdat je bent ingeschreven om de activiteiten "
-"van enkele van je groepen op %s per e-mail te ontvangen."
+"van enkele van je groepen op de %s per e-mail te ontvangen."
 
-#: ../bp-activity-subscription-digest.php:174
+#: bp-activity-subscription-digest.php:148
 msgid "at"
-msgstr "op"
+msgstr "op de"
 
-#: ../bp-activity-subscription-digest.php:198
-#, php-format
+#: bp-activity-subscription-digest.php:189
 msgid "(%s items)"
 msgstr "(%s items)"
 
-#: ../bp-activity-subscription-digest.php:216
-#: ../bp-activity-subscription-digest.php:259
+#: bp-activity-subscription-digest.php:204
+#: bp-activity-subscription-digest.php:258
 msgid "Group Summary"
 msgstr "Groepssamenvatting"
 
-#: ../bp-activity-subscription-digest.php:226
+#: bp-activity-subscription-digest.php:214
 msgid ""
 "How to follow a topic: to get email updates for a specific topic, click the "
 "topic title - then on the webpage click the <i>Follow this topic</i> button. "
@@ -221,8 +238,7 @@ msgstr ""
 "vervolgens op de knop <i>Volg dit bericht</ i>. (Als de knop niet getoond "
 "wordt, is het nodig om eerst in te loggen)."
 
-#: ../bp-activity-subscription-digest.php:231
-#, php-format
+#: bp-activity-subscription-digest.php:219
 msgid ""
 "To disable these notifications per group please login and go to: %s where "
 "you can change your email settings for each group."
@@ -230,542 +246,71 @@ msgstr ""
 "Om deze notificaties uit te schakelen, login en ga naar: %s waar je de e-"
 "mailinstellingen voor elke groep kunt aanpassen."
 
-#: ../bp-activity-subscription-digest.php:231 ../screen-user-settings.php:93
+#: bp-activity-subscription-digest.php:219 screen-user-settings.php:117
 msgid "My Groups"
 msgstr "Mijn groepen"
 
-#: ../bp-activity-subscription-digest.php:235
+#: bp-activity-subscription-digest.php:223
 msgid "Disable these notifications for all my groups at once."
 msgstr "Schakel de notificaties voor al mijn groepen in een keer uit."
 
-#: ../bp-activity-subscription-digest.php:325
+#: bp-activity-subscription-digest.php:325
 msgid "Your daily digest of group activity"
 msgstr "De dagelijkse verwerking van groepsactiviteiten"
 
-#: ../bp-activity-subscription-digest.php:327
+#: bp-activity-subscription-digest.php:327
 msgid "Your weekly summary of group topics"
-msgstr "De wekelijkse samenvattingen van groepsonderwerpen"
+msgstr "De wekelijkse samenvatting van groepsonderwerpen"
 
-#: ../bp-activity-subscription-digest.php:401
+#: bp-activity-subscription-digest.php:396
 msgid "DAILY DIGEST:"
 msgstr "Dagelijks overzicht:"
 
-#: ../bp-activity-subscription-digest.php:403
+#: bp-activity-subscription-digest.php:398
 msgid "WEEKLY DIGEST:"
 msgstr "Wekelijks overzicht:"
 
-#: ../bp-activity-subscription-digest.php:439
-#, php-format
+#: bp-activity-subscription-digest.php:460
 msgid "Group: %s"
 msgstr "Groep: %s"
 
-#: ../bp-activity-subscription-digest.php:441
-#, php-format
+#: bp-activity-subscription-digest.php:462
 msgid "Group: %s weekly summary"
 msgstr "Groep: %s wekelijkse samenvatting"
 
-#: ../bp-activity-subscription-digest.php:446
+#: bp-activity-subscription-digest.php:467
 msgid "To disable these notifications for this group click "
-msgstr "Om de notificaties voor deze groep uit te schakelen klik "
+msgstr "Om de notificaties voor deze groep uit te schakelen klik op "
 
-#: ../bp-activity-subscription-digest.php:446
+#: bp-activity-subscription-digest.php:467
 msgid "unsubscribe"
 msgstr "uitschrijven"
 
-#: ../bp-activity-subscription-digest.php:447
+#: bp-activity-subscription-digest.php:468
 msgid "change "
-msgstr "wijzig "
+msgstr "om te wijzigen klik op "
 
-#: ../bp-activity-subscription-digest.php:447
+#: bp-activity-subscription-digest.php:468
 msgid "email options"
 msgstr "e-mailinstellingen"
 
-#: ../bp-activity-subscription-digest.php:514
-#, php-format
+#: bp-activity-subscription-digest.php:545
 msgid "at %s, %s"
 msgstr "om %s, %s"
 
-#: ../bp-activity-subscription-digest.php:528
+#: bp-activity-subscription-digest.php:559
 msgid "View"
-msgstr "Bekijk"
+msgstr "Bekijken"
 
-#: ../bp-activity-subscription-digest.php:709
+#: bp-activity-subscription-digest.php:758
 msgid "Once Weekly"
 msgstr "Eenmaal per week"
 
-#: ../bp-activity-subscription-functions.php:21
-#, php-format
-msgid "To disable all notifications for this group, click: %s"
-msgstr "Om alle notificaties voor deze groep uit te schakelen, klik: %s"
-
-#: ../bp-activity-subscription-functions.php:24
-#, php-format
-msgid "Or to disable notifications for *all* your groups, click: %s"
-msgstr "Of om notificaties uit te schakelen voor *al* je groepen, klik: %s"
-
-#: ../bp-activity-subscription-functions.php:135
-msgid "in the group"
-msgstr "voor deze groep"
-
-#: ../bp-activity-subscription-functions.php:208
-#, php-format
-msgid ""
-"%1$s\n"
-"\n"
-"To view or reply, log in and go to:\n"
-"%2$s\n"
-"\n"
-"---------------------\n"
-msgstr ""
-"%s\n"
-"\n"
-"Om dit onderwerp te bekijken of erop te reageren, login en ga naar: \n"
-"%s\n"
-"\n"
-"---------------------\n"
-
-#: ../bp-activity-subscription-functions.php:217
-#, php-format
-msgid ""
-"%1$s\n"
-"\n"
-"\"%2$s\"\n"
-"\n"
-"To view or reply, log in and go to:\n"
-"%3$s\n"
-"\n"
-"---------------------\n"
-msgstr ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"Om dit onderwerp te bekijken, of erop te reageren, login en ga naar:\n"
-"%s\n"
-"\n"
-"---------------------\n"
-
-#: ../bp-activity-subscription-functions.php:312 ../legacy-forums.php:192
-msgid "You are currently receiving notifications for your own posts."
-msgstr "Je ontvang notificaties over onderwerpen die je bent gestart."
-
-#: ../bp-activity-subscription-functions.php:314 ../legacy-forums.php:193
-#: ../legacy-forums.php:247 ../legacy-forums.php:261 ../legacy-forums.php:275
-#, php-format
-msgid "To disable these notifications please log in and go to: %s"
-msgstr "Om deze notificaties uit te schakelen, login en ga naar: %s"
-
-#: ../bp-activity-subscription-functions.php:315
-#: ../bp-activity-subscription-functions.php:805 ../legacy-forums.php:194
-msgid ""
-"Once you are logged in, uncheck \"Receive notifications of your own posts?\"."
-msgstr "Notificaties van jouw eigen berichten ontvangen?"
-
-#: ../bp-activity-subscription-functions.php:335
-#, php-format
-msgid "Your email setting for this group is: %s"
-msgstr "Je e-mailinstelling voor deze groep is: %s"
-
-#: ../bp-activity-subscription-functions.php:341 ../legacy-forums.php:209
-#: ../legacy-forums.php:233
-#, php-format
-msgid ""
-"To change your email setting for this group, please log in and go to: %s"
-msgstr ""
-"Om je e-mailinstellingen voor deze groep te wijzigen, login en ga naar: %s"
-
-#: ../bp-activity-subscription-functions.php:567
-#: ../bp-activity-subscription-functions.php:582
-#: ../bp-activity-subscription-functions.php:612
-msgid "[{{{site.name}}}] {{{ges.subject}}}"
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:570
-msgid ""
-"{{{ges.action}}}:\n"
-"\n"
-"<blockquote>{{{usermessage}}}</blockquote>\n"
-"&ndash;\n"
-"<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up "
-"on the conversation.\n"
-"{{{ges.email-setting-description}}}"
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:573
-msgid ""
-"{{{ges.action}}}:\n"
-"\n"
-"\"{{{usermessage}}}\"\n"
-"\n"
-"Go to the discussion to reply or catch up on the conversation:\n"
-"{{{thread.url}}}\n"
-"\n"
-"----\n"
-"\n"
-"{{{ges.email-setting-description}}}\n"
-"\n"
-"{{{ges.email-setting-links}}}"
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:575
-msgid ""
-"A member created a group activity entry. Used by the Group Email "
-"Subscription plugin during immediate sendouts."
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:585
-msgid ""
-"{{{ges.digest-summary}}}{{{usermessage}}}\n"
-"&ndash;\n"
-"You have received this message because you are subscribed to receive a "
-"digest of activity in some of your groups on {{site.name}}."
-msgstr ""
-"{{{ges.digest-summary}}}{{{usermessage}}}\n"
-"&ndash;\n"
-"Je hebt dit bericht ontvangen omdat je bent ingeschreven om een samenvatting "
-"van de activiteiten van enkele van je groepen per e-mail te ontvangen."
-
-#: ../bp-activity-subscription-functions.php:588
-msgid ""
-"{{{ges.digest-summary}}}\n"
-"\n"
-"{{{usermessage}}}\n"
-"\n"
-"----\n"
-"\n"
-"You have received this message because you are subscribed to receive a "
-"digest of activity in some of your groups on {{{site.name}}}.\n"
-"\n"
-"To disable these notifications per group, please login and [visit your "
-"groups page]({{{ges.settings-link}}}) where you can manage your email "
-"settings for each group."
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:590
-msgid ""
-"An email digest is sent to a member. Used by the Group Email Subscription "
-"plugin during daily or weekly digest sendouts."
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:597
-msgid ""
-"[{{{site.name}}}] {{{ges.subject}}} - from the group \"{{{group.name}}}\""
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:600
-msgid ""
-"This is a notice from the group {{{group.link}}}:\n"
-"\n"
-"{{{usermessage}}}\n"
-"\n"
-"&ndash;\n"
-"<strong>Please note:</strong> admin notices are sent to everyone in the "
-"group and cannot be disabled.\n"
-"If you feel this service is being misused please speak to the website "
-"administrator."
-msgstr ""
-"Opm.: Mededelingen van de beheerder worden naar iedereen in de groep "
-"verzonden en kunnen niet uitgeschakeld worden. \n"
-"Heb je het gevoel dat deze dienst misbruikt wordt, neem dan contact op met "
-"de website beheerder."
-
-#: ../bp-activity-subscription-functions.php:603
-msgid ""
-"This is a notice from the group \"{{{group.name}}}\":\n"
-"\n"
-"\"{{{usermessage}}}\"\n"
-"\n"
-"----\n"
-"\n"
-"Please note: admin notices are sent to everyone in the group and cannot be "
-"disabled.\n"
-"\n"
-"If you feel this service is being misused please speak to the website "
-"administrator.\n"
-"\n"
-"To visit the group homepage, click on the link below:\n"
-"{{{group.url}}}"
-msgstr ""
-"Opm.: Mededelingen van de beheerder worden naar iedereen in de groep "
-"verzonden en kunnen niet uitgeschakeld worden. \n"
-"Heb je het gevoel dat deze dienst misbruikt wordt, neem dan contact op met "
-"de website beheerder."
-
-#: ../bp-activity-subscription-functions.php:605
-msgid ""
-"An email notice is sent by a group administrator to all members of the "
-"group. Used by the Group Email Subscription plugin."
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:616
-msgid ""
-"A welcome email is sent to new members of a group. Used by the Group Email "
-"Subscription plugin."
-msgstr ""
-
-#: ../bp-activity-subscription-functions.php:816
-msgid "To change your email settings for this group only, click on this link"
-msgstr ""
-"Om je e-mailinstellingen voor deze groep te wijzigen, login en ga naar: %s"
-
-#: ../bp-activity-subscription-functions.php:822
-msgid "To disable all notifications for this group, click on this link"
-msgstr "Om alle notificaties voor deze groep uit te schakelen, klik op: %s"
-
-#: ../bp-activity-subscription-functions.php:829
-msgid "To disable notifications from all your groups, click on this link"
-msgstr "Of om notificaties uit te schakelen voor *al* je groepen, klik op: %s"
-
-#: ../bp-activity-subscription-functions.php:841
-msgid "Once you are logged in, change your email settings for each group."
-msgstr ""
-"Om deze notificaties uit te schakelen, login en ga naar: %s waar je de e-"
-"mailinstellingen voor elke groep kunt aanpassen."
-
-#: ../bp-activity-subscription-functions.php:1126
-#: ../bp-activity-subscription-functions.php:1424
-#: ../screen-notifications.php:31 ../screen.php:53
-msgid "No Email"
-msgstr "Geen e-mail"
-
-#: ../bp-activity-subscription-functions.php:1128 ../screen.php:54
-msgid "Weekly Summary"
-msgstr "Wekelijkse samenvatting"
-
-#: ../bp-activity-subscription-functions.php:1130 ../screen.php:55
-msgid "Daily Digest"
-msgstr "Dagelijkse verwerking"
-
-#: ../bp-activity-subscription-functions.php:1132
-#: ../bp-activity-subscription-functions.php:1429 ../screen.php:58
-msgid "New Topics"
-msgstr "Nieuwe onderwerpen"
-
-#: ../bp-activity-subscription-functions.php:1134
-#: ../bp-activity-subscription-functions.php:1432
-#: ../screen-notifications.php:53 ../screen.php:61
-msgid "All Email"
-msgstr "Alle e-mail"
-
-#: ../bp-activity-subscription-functions.php:1422 ../screen.php:98
-msgid "Email status:"
-msgstr "E-mailstatus:"
-
-#: ../bp-activity-subscription-functions.php:1423
-msgid "Change to:"
-msgstr "Wijzig naar:"
-
-#: ../bp-activity-subscription-functions.php:1425
-msgid "Weekly"
-msgstr "Wekelijks"
-
-#: ../bp-activity-subscription-functions.php:1426
-msgid "Daily"
-msgstr "Dagelijks"
-
-#: ../bp-activity-subscription-functions.php:1489
-msgid "You have been unsubscribed from all groups notifications."
-msgstr "Je bent uitgeschreven van alle groepsnotificaties."
-
-#: ../bp-activity-subscription-functions.php:1491
-msgid "This user's has been unsubscribed from all groups notifications."
-msgstr "Deze gebruiker is uitgeschreven voor alle groepsnotificaties."
-
-#: ../bp-activity-subscription-functions.php:1519
-#, php-format
-msgid ""
-"Your unsubscription was successful. You will no longer receive email "
-"notifications from the group %s."
-msgstr ""
-"Je uitschrijving is succesvol. Je ontvangt niet langer e-mailnofiticaties "
-"van de groep %s."
-
-#: ../bp-activity-subscription-functions.php:1521
-#: ../bp-activity-subscription-functions.php:1534
-#, php-format
-msgid "<a href=\"%1$s\">Continue to %2$s</a>"
-msgstr "<a href=\"%1$s\">Ga door naar %2$s</a>"
-
-#: ../bp-activity-subscription-functions.php:1532
-msgid ""
-"Your unsubscription was successful. You will no longer receive email "
-"notifications from any of your groups."
-msgstr ""
-"Je uitschrijving is succesvol. Je ontvangt niet langer e-mailnotificaties "
-"van jouw groepen."
-
-#: ../bp-activity-subscription-functions.php:1544
-msgid "Unsubscribe from all groups notifications"
-msgstr "Uitschrijven voor alle groepsnotificaties"
-
-#: ../bp-activity-subscription-functions.php:1558
-msgid "Unsubscribe"
-msgstr "Uitschrijven"
-
-#: ../bp-activity-subscription-functions.php:1563
-msgid "Do you really want to unsubscribe from all groups notifications?"
-msgstr ""
-"Weet je zeker dat je jezelf uit wilt schrijven voor alle groepsnotificaties?"
-
-#: ../bp-activity-subscription-functions.php:1568
-msgid "Yes, unsubscribe from all my groups"
-msgstr "Ja, schrijf me uit bij al mijn groepen"
-
-#: ../bp-activity-subscription-functions.php:1569
-msgid "No, close"
-msgstr "Nee, sluiten"
-
-#: ../bp-activity-subscription-functions.php:1624
-#, php-format
-msgid "To disable emails from all your groups at once click: %s"
-msgstr "Om in een keer e-mails uit te schakelen van al jouw groepen klik: %s"
-
-#: ../bp-activity-subscription-functions.php:1735
-msgid "This post has attachments:"
-msgstr "Dit bericht heeft bijlagen:"
-
-#: ../bp-activity-subscription-main.php:42
-#: ../bp-activity-subscription-main.php:107
-msgid "Email Options"
-msgstr "E-mailinstellingen"
-
-#: ../bp-activity-subscription-main.php:93 ../legacy-forums.php:384
-msgid "Mute"
-msgstr "Zet e-mail uit voor"
-
-#: ../bp-activity-subscription-main.php:94 ../legacy-forums.php:380
-msgid "Follow"
-msgstr "Zet e-mail aan voor"
-
-#: ../bp-activity-subscription-main.php:95
-msgid "Error"
-msgstr "Fout"
-
-#: ../bp-activity-subscription.php:35
-#, php-format
-msgid ""
-"Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  "
-"If you are still using BuddyPress 1.2 and you don't plan on upgrading, use "
-"<a href='%s'>BP Group Email Subscription v3.6.2 instead</a>."
-msgstr ""
-
-#: ../legacy-forums.php:80
-#, php-format
-msgid "%s started the forum topic \"%s\" in the group \"%s\""
-msgstr "%s is het forumonderwerp \"%s\" gestart in de groep \"%s\""
-
-#: ../legacy-forums.php:91
-#, php-format
-msgid "%s replied to the forum topic \"%s\" in the group \"%s\""
-msgstr "%s heeft gereageerd op het forumonderwerp \"%s\" in de groep \"%s\""
-
-#: ../legacy-forums.php:116
-msgid "To view or reply to this topic, go to:"
-msgstr "Om het onderwerp te tonen of erop te reageren, ga naar:"
-
-#: ../legacy-forums.php:120
-msgid "To view or reply to this topic, log in and go to:"
-msgstr "Om dit onderwerp te tonen of erop te reageren, log in en ga naar:"
-
-#: ../legacy-forums.php:124
-#, php-format
-msgid ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"%s\n"
-"%s\n"
-"\n"
-"---------------------\n"
-msgstr ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"%s\n"
-"%s\n"
-"\n"
-"---------------------\n"
-
-#: ../legacy-forums.php:201 ../legacy-forums.php:232
-msgid "Your email setting for this group is: "
-msgstr "Je e-mailinstelling voor deze groep is: "
-
-#: ../legacy-forums.php:205
-msgid ""
-", therefore you won't receive replies to this topic. To get them, click the "
-"link to view this topic on the web then click the 'Follow this topic' button."
-msgstr ""
-", dus je ontvangt geen reacties op dit onderwerp. Om deze te ontvangen, klik "
-"dan op bovenstaande link en vervolgens op de knop 'Dit onderwerp via e-mail "
-"volgen'."
-
-#: ../legacy-forums.php:248
-msgid ""
-"Once you are logged in, click on the \"Mute this topic\" button to "
-"unsubscribe from the forum thread."
-msgstr ""
-"Als je ingelogd bent, klik op de knop \"E-mail uitschakelen voor dit bericht."
-"\" om je uit te schrijven voor een forumonderwerp."
-
-#: ../legacy-forums.php:260
-msgid ""
-"You are currently receiving notifications to topics that you have started."
-msgstr "Je ontvang notificaties over onderwerpen die je bent gestart."
-
-#: ../legacy-forums.php:262
-msgid ""
-"Once you are logged in, uncheck \"A member replies in a forum topic you've "
-"started\"."
-msgstr ""
-"Als je ingelogd bent, vink \"Een lid reageerde op een forumonderwerp dat je "
-"gestart bent.\" uit."
-
-#: ../legacy-forums.php:274
-msgid ""
-"You are currently receiving notifications to topics that you have replied in."
-msgstr "Je ontvangt notificaties van onderwerpen waarop je gereageerd hebt."
-
-#: ../legacy-forums.php:276
-msgid ""
-"Once you are logged in, uncheck \"A member replies after you in a forum topic"
-"\"."
-msgstr ""
-"Als je ingelogd bent, vink \"Een lid reageerde na jou in een forumonderwerp."
-"\" uit."
-
-#: ../legacy-forums.php:381
-msgid ""
-"You are not following this topic. Click to follow it and get email updates "
-"for new posts"
-msgstr ""
-"Je volgt dit onderwerp niet via e-mail. Klik om het onderwerp te volgen en e-"
-"mail te ontvangen bij nieuwe berichten"
-
-#: ../legacy-forums.php:385
-msgid "You are following this topic. Click to stop getting email updates"
-msgstr ""
-"Je volgt dit onderwerp via e-mail. Klik om e-mailberichten te stoppen bij "
-"nieuwe berichten"
-
-#: ../legacy-forums.php:391
-msgid "This conversation is muted. Click to follow it"
-msgstr "Dit volgen via e-mail is niet ingesteld. Klik om te volgen"
-
-#: ../legacy-forums.php:395
-msgid "this topic"
-msgstr "dit onderwerp"
-
-#: ../legacy-forums.php:414
-msgid "Email"
-msgstr "E-mail"
-
-#: ../screen-admin.php:11
+#: screen-admin.php:11
 msgid "Email Subscription Defaults"
 msgstr "Standaard e-mailinschrijving"
 
-#: ../screen-admin.php:12
+#: screen-admin.php:12
 msgid ""
 "When new users join this group, their default email notification settings "
 "will be:"
@@ -773,19 +318,19 @@ msgstr ""
 "Als nieuwe gebruikers toetreden tot deze groep, worden hun "
 "standaardinstellingen voor e-mailnotificatie:"
 
-#: ../screen-admin.php:15
+#: screen-admin.php:15
 msgid "No Email (users will read this group on the web - good for any group)"
 msgstr ""
 "Geen e-mail (gebruikers lezen de groepsactiviteiten op het web - goed voor "
 "elke groep - de standaard)"
 
-#: ../screen-admin.php:17
+#: screen-admin.php:17
 msgid "Weekly Summary Email (the week's topics - good for large groups)"
 msgstr ""
 "Wekelijkse e-mail met een samenvatting (de onderwerpen worden wekelijks "
 "verzonden - goed voor grote groepen)"
 
-#: ../screen-admin.php:19
+#: screen-admin.php:19
 msgid ""
 "Daily Digest Email (all daily activity bundles in one email - good for "
 "medium-size groups)"
@@ -793,7 +338,7 @@ msgstr ""
 "Dagelijkse e-mail (de activiteiten worden dagelijks gebundeld in &#233;&#233;"
 "n e-mail - goed voor gemiddeld grote groepen)"
 
-#: ../screen-admin.php:23
+#: screen-admin.php:23
 msgid ""
 "New Topics Email (new topics are sent as they arrive, but not replies - good "
 "for small groups)"
@@ -802,7 +347,7 @@ msgstr ""
 "geplaatst zijn, reacties op onderwerpen worden niet verzonden - goed voor "
 "kleinere groepen)"
 
-#: ../screen-admin.php:27
+#: screen-admin.php:27
 msgid ""
 "All Email (send emails about everything - recommended only for working "
 "groups)"
@@ -810,11 +355,11 @@ msgstr ""
 "Alle e-mail (verzend e-mail over alle activiteiten binnen de groep, zodra "
 "deze geplaatst zijn - aanbevolen voor actieve werkgroepen)"
 
-#: ../screen-admin.php:54
+#: screen-admin.php:54
 msgid "User email status changed successfully"
 msgstr "De e-mailstatus is met succes gewijzigd"
 
-#: ../screen-admin.php:73
+#: screen-admin.php:73
 msgid ""
 "Site Admin Only: update email subscription settings for ALL members to the "
 "default:"
@@ -822,30 +367,29 @@ msgstr ""
 "Alleen voor de sitebeheerder: bijwerken inschrijvingsinstellingen voor ALLE "
 "leden naar de standaard:"
 
-#: ../screen-admin.php:73
+#: screen-admin.php:73
 msgid "Warning: this is not reversible so use with caution."
 msgstr "Waarschuwing: dit is onomkeerbaar, dus voorzichtigheid geboden!"
 
-#: ../screen-admin.php:73
+#: screen-admin.php:73
 msgid "Make it so!"
 msgstr "Doe het zo!"
 
-#: ../screen-admin.php:100
+#: screen-admin.php:100
 msgid "All user email status's changed successfully"
 msgstr "E-mailstatus van alle gebruikers is met succes gewijzigd"
 
-#: ../screen-admin.php:141
+#: screen-admin.php:148
 msgid "The email notice was not sent. Please enter email content."
 msgstr ""
 "De e-mailnotificatie is niet verstuurd. Vul a.u.b. de inhoud van de e-mail "
 "in."
 
-#: ../screen-admin.php:154
+#: screen-admin.php:162
 msgid " - sent from the group "
 msgstr " - verzonden van de groep "
 
-#: ../screen-admin.php:161
-#, php-format
+#: screen-admin.php:168 bp-activity-subscription-functions.php:693
 msgid ""
 "This is a notice from the group '%s':\n"
 "\n"
@@ -867,7 +411,7 @@ msgstr ""
 "\n"
 "---------------------\n"
 
-#: ../screen-admin.php:172
+#: screen-admin.php:180 bp-activity-subscription-functions.php:705
 msgid ""
 "Please note: admin notices are sent to everyone in the group and cannot be "
 "disabled.\n"
@@ -879,170 +423,506 @@ msgstr ""
 "Heb je het gevoel dat deze dienst misbruikt wordt, neem dan contact op met "
 "de websitebeheerder."
 
-#: ../screen-admin.php:190
+#: screen-admin.php:216
 msgid "The email notice was sent successfully."
 msgstr "De e-mail is met succes verzonden."
 
-#: ../screen-admin.php:215
+#: screen-admin.php:238
 msgid "The welcome email option has been saved."
 msgstr "De optie voor de welkomstmail is opgeslagen."
 
-#: ../screen-notifications.php:23
-msgid "Email Subscription Options"
-msgstr "<br>Inschrijving voor e-mails"
+#: bp-activity-subscription-functions.php:21
+msgid "To disable all notifications for this group, click: %s"
+msgstr "Om alle notificaties voor deze groep uit te schakelen, klik: %s"
 
-#: ../screen-notifications.php:28
-msgid "How do you want to read this group?"
+#: bp-activity-subscription-functions.php:24
+msgid "Or to disable notifications for *all* your groups, click: %s"
+msgstr "Of om notificaties uit te schakelen voor *al* je groepen, klik: %s"
+
+#: bp-activity-subscription-functions.php:308
+#: bp-activity-subscription-functions.php:611
+msgid ""
+"%1$s\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%2$s\n"
+"\n"
+"---------------------\n"
 msgstr ""
-"Hoe wil je op de hoogte gehouden worden bij nieuwe activiteiten van deze "
-"groep?"
+"%s\n"
+"\n"
+"Om dit onderwerp te bekijken of erop te reageren, login en ga naar: \n"
+"%s\n"
+"\n"
+"---------------------\n"
 
-#: ../screen-notifications.php:32 ../screen.php:53
-msgid "I will read this group on the web"
-msgstr "Ik lees over deze groep op het web"
+#: bp-activity-subscription-functions.php:317
+#: bp-activity-subscription-functions.php:620
+msgid ""
+"%1$s\n"
+"\n"
+"\"%2$s\"\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"Om dit onderwerp te bekijken, of erop te reageren, login en ga naar:\n"
+"%s\n"
+"\n"
+"---------------------\n"
 
-#: ../screen-notifications.php:36
-msgid "Weekly Summary Email"
+#: bp-activity-subscription-functions.php:472
+#: bp-activity-subscription-functions.php:669
+msgid "Your email setting for this group is: %s"
+msgstr "Je e-mailinstelling voor deze groep is: %s"
+
+#: bp-activity-subscription-functions.php:588
+msgid "in the group"
+msgstr "voor deze groep"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:909
+#: bp-activity-subscription-functions.php:924
+#: bp-activity-subscription-functions.php:954
+msgid "[{{{site.name}}}] {{{ges.subject}}}"
+msgstr "[{{{site.name}}}] {{{ges.subject}}}"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:912
+msgid ""
+"{{{ges.action}}}:\n"
+"\n"
+"<blockquote>{{{usermessage}}}</blockquote>\n"
+"&ndash;\n"
+"<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up "
+"on the conversation.\n"
+"{{{ges.email-setting-description}}}"
+msgstr ""
+"{{{ges.action}}}:\n"
+"\n"
+"<blockquote>{{{usermessage}}}</blockquote>\n"
+"&ndash;\n"
+"<a href=\"{{{thread.url}}}\">Ga naar de discussie</a> om te antwoorden of om "
+"je op de hoogte te stellen van de conversatie.\n"
+"{{{ges.email-setting-description}}}"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:915
+msgid ""
+"{{{ges.action}}}:\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"Go to the discussion to reply or catch up on the conversation:\n"
+"{{{thread.url}}}\n"
+"\n"
+"----\n"
+"\n"
+"{{{ges.email-setting-description}}}\n"
+"\n"
+"{{{ges.email-setting-links}}}"
+msgstr ""
+"{{{ges.action}}}:\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"Ga naar de discussie om te antwoorden of om je op de hoogte te stellen van "
+"de conversatie:\n"
+"{{{thread.url}}}\n"
+"\n"
+"----\n"
+"\n"
+"{{{ges.email-setting-description}}}\n"
+"\n"
+"{{{ges.email-setting-links}}}"
+
+#: bp-activity-subscription-functions.php:917
+msgid ""
+"A member created a group activity entry. Used by the Group Email "
+"Subscription plugin during immediate sendouts."
+msgstr ""
+"Een lid ceëerde een groepsactiviteit. Gebruikt door de Group Email "
+"Subscription plugin tijdens onmiddelijke verzending."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:927
+msgid ""
+"{{{ges.digest-summary}}}{{{usermessage}}}\n"
+"&ndash;\n"
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on {{site.name}}."
+msgstr ""
+"{{{ges.digest-summary}}}{{{usermessage}}}\n"
+"&ndash;\n"
+"Je hebt dit bericht ontvangen omdat je bent ingeschreven om een samenvatting "
+"van de activiteiten van enkele van je groepen op de {{site.name}} te "
+"ontvangen."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:930
+msgid ""
+"{{{ges.digest-summary}}}\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"----\n"
+"\n"
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on {{{site.name}}}.\n"
+"\n"
+"To disable these notifications per group, please login and [visit your "
+"groups page]({{{ges.settings-link}}}) where you can manage your email "
+"settings for each group."
+msgstr ""
+"{{{ges.digest-summary}}}\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"----\n"
+"\n"
+"Je hebt dit bericht ontvangen omdat je bent ingeschreven om een samenvatting "
+"van de activiteiten van enkele van je groepen op de {{site.name}} te "
+"ontvangen.\n"
+"\n"
+"Om deze notificaties per groep uit te schakelen, login en [bezoek je "
+"groepspagina] ({{{ges.settings-link}}}) waar je de e-mailinstellingen voor "
+"elke groep kunt instellen."
+
+#: bp-activity-subscription-functions.php:932
+msgid ""
+"An email digest is sent to a member. Used by the Group Email Subscription "
+"plugin during daily or weekly digest sendouts."
+msgstr ""
+"Een samenvatting is per e-mail verstuurd naar een lid. Gebruikt door de "
+"Group Email Subscription plugin tijdens het dagelijks of wekelijks versturen "
+"van samenvattingen."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:939
+msgid ""
+"[{{{site.name}}}] {{{ges.subject}}} - from the group \"{{{group.name}}}\""
+msgstr ""
+"[{{{site.name}}}] {{{ges.subject}}} - van de groep \"{{{group.name}}}\""
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:942
+msgid ""
+"This is a notice from the group {{{group.link}}}:\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"&ndash;\n"
+"<strong>Please note:</strong> admin notices are sent to everyone in the "
+"group and cannot be disabled.\n"
+"If you feel this service is being misused please speak to the website "
+"administrator."
+msgstr ""
+"Dit is een bericht van de groep {{{group.link}}}:\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"&ndash;\n"
+"Opm.: Mededelingen van de beheerder worden naar iedereen in de groep "
+"verzonden en kunnen niet uitgeschakeld worden. \n"
+"Heb je het gevoel dat deze dienst misbruikt wordt, neem dan contact op met "
+"de sitebeheerder."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:945
+msgid ""
+"This is a notice from the group \"{{{group.name}}}\":\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"----\n"
+"\n"
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"\n"
+"If you feel this service is being misused please speak to the website "
+"administrator.\n"
+"\n"
+"To visit the group homepage, click on the link below:\n"
+"{{{group.url}}}"
+msgstr ""
+"Dit is een bericht van de groep \"{{{group.name}}}\":\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"----\n"
+"\n"
+"Opm.: Mededelingen van de beheerder worden naar iedereen in de groep "
+"verzonden en kunnen niet uitgeschakeld worden. \n"
+"\n"
+"Heb je het gevoel dat deze dienst misbruikt wordt, neem dan contact op met "
+"de sitebeheerder.\n"
+"\n"
+"Klik op onderstaande link om de thuispagina van de groep te bekijken:\n"
+"{{{group.url}}}"
+
+#: bp-activity-subscription-functions.php:947
+msgid ""
+"An email notice is sent by a group administrator to all members of the "
+"group. Used by the Group Email Subscription plugin."
+msgstr ""
+"Een bericht is verstuurd door de groepsbeheerder aan alle leden van de "
+"groep. Gebruikt door de Group Email Subscription plugin."
+
+#: bp-activity-subscription-functions.php:958
+msgid ""
+"A welcome email is sent to new members of a group. Used by the Group Email "
+"Subscription plugin."
+msgstr ""
+"Een welkomstmail is verstuurd naar een nieuw lid van een groep. Gebruikt "
+"door de Group Email Subscription plugin."
+
+#: bp-activity-subscription-functions.php:1148
+#: bp-activity-subscription-functions.php:1184
+msgid "Change email settings"
+msgstr "E-mailinstellingen aanpassen"
+
+#: bp-activity-subscription-functions.php:1158
+msgid "To change your email settings for this group only, click on this link"
+msgstr ""
+"Om je e-mailinstellingen voor deze groep te wijzigen, login en ga naar: %s"
+
+#: bp-activity-subscription-functions.php:1159
+msgid "Change group email Settings"
+msgstr "Individuele instellingen groepsmail aanpassen"
+
+#: bp-activity-subscription-functions.php:1164
+msgid "To disable all notifications for this group, click on this link"
+msgstr "Om alle notificaties voor deze groep uit te schakelen, klik op: %s"
+
+#: bp-activity-subscription-functions.php:1165
+msgid "Unsubscribe from this group"
+msgstr "Schrijf me uit bij deze groep"
+
+#: bp-activity-subscription-functions.php:1171
+msgid "To disable notifications from all your groups, click on this link"
+msgstr "Of om notificaties uit te schakelen voor *al* je groepen, klik op: %s"
+
+#: bp-activity-subscription-functions.php:1172
+msgid "Unsubscribe from all groups"
+msgstr "Schrijf me uit bij al mijn groepen"
+
+#: bp-activity-subscription-functions.php:1183
+msgid "Once you are logged in, change your email settings for each group."
+msgstr ""
+"Om deze notificaties uit te schakelen, login en ga naar: %s waar je de e-"
+"mailinstellingen voor elke groep kunt aanpassen."
+
+#: bp-activity-subscription-functions.php:1581
+#: bp-activity-subscription-functions.php:1931 screen.php:53
+#: screen-notifications.php:31
+msgid "No Email"
+msgstr "Geen e-mail"
+
+#: bp-activity-subscription-functions.php:1583 screen.php:54
+msgid "Weekly Summary"
 msgstr "Wekelijkse samenvatting"
 
-#: ../screen-notifications.php:37
-msgid "Get a summary of new topics each week"
-msgstr "Ik wil een wekelijkse samenvatting van nieuwe onderwerpen ontvangen"
+#: bp-activity-subscription-functions.php:1585 screen.php:55
+msgid "Daily Digest"
+msgstr "Dagelijkse verwerking"
 
-#: ../screen-notifications.php:41
-msgid "Daily Digest Email"
-msgstr "Dagelijkse samenvatting"
-
-#: ../screen-notifications.php:42
-msgid "Get all the day's activity bundled into a single email"
-msgstr ""
-"Ik wil dagelijks &#233;&#233;n e-mail ontvangen met alle activiteiten van "
-"deze groep daarin gebundeld"
-
-#: ../screen-notifications.php:47
-msgid "New Topics Email"
+#: bp-activity-subscription-functions.php:1587
+#: bp-activity-subscription-functions.php:1936 screen.php:58
+msgid "New Topics"
 msgstr "Nieuwe onderwerpen"
 
-#: ../screen-notifications.php:48
-msgid "Send new topics as they arrive (but don't send replies)"
-msgstr ""
-"Verzend alle nieuwe onderwerpen zodra deze geplaatst worden (maar stuur geen "
-"reacties)"
+#: bp-activity-subscription-functions.php:1589
+#: bp-activity-subscription-functions.php:1939 screen.php:61
+#: screen-notifications.php:53
+msgid "All Email"
+msgstr "Alle e-mail"
 
-#: ../screen-notifications.php:54 ../screen.php:61
-msgid "Send all group activity as it arrives"
-msgstr "Verzend alle groepsactiviteiten zodra ze geplaatst worden"
+#: bp-activity-subscription-functions.php:1929 screen.php:98
+msgid "Email status:"
+msgstr "E-mailstatus:"
 
-#: ../screen-notifications.php:60
+#: bp-activity-subscription-functions.php:1930
+msgid "Change to:"
+msgstr "Wijzig naar:"
+
+#: bp-activity-subscription-functions.php:1932
+msgid "Weekly"
+msgstr "Wekelijks"
+
+#: bp-activity-subscription-functions.php:1933
+msgid "Daily"
+msgstr "Dagelijks"
+
+#: bp-activity-subscription-functions.php:1996
+msgid "You have been unsubscribed from all groups notifications."
+msgstr "Je bent uitgeschreven van alle groepsnotificaties."
+
+#: bp-activity-subscription-functions.php:1998
+msgid "This user's has been unsubscribed from all groups notifications."
+msgstr "Deze gebruiker is uitgeschreven voor alle groepsnotificaties."
+
+#. translators: Continue to "SITE NAME or GROUP NAME"
+#: bp-activity-subscription-functions.php:2021
+msgid "Continue to %s"
+msgstr "Ga verder tot %s"
+
+#: bp-activity-subscription-functions.php:2037
+msgid "There was a problem unsubscribing you from the group."
+msgstr "Er was een probleem om je uit te schrijven bij deze groep"
+
+#: bp-activity-subscription-functions.php:2042
 msgid ""
-"Note: Normally, you receive email notifications for topics you start or "
-"comment on. This can be changed at"
+"Your unsubscription was successful. You will no longer receive email "
+"notifications from the group %s."
 msgstr ""
-"Opm.: Normaal ontvang je e-mail bij onderwerpen die je gestart bent, of waar "
-"je op gereageerd hebt. Dit kan worden gewijzigd op"
+"Je uitschrijving is succesvol. Je ontvangt niet langer e-mailnofiticaties "
+"van de groep %s."
 
-#: ../screen-notifications.php:60
-msgid "email notifications"
-msgstr "e-mailnotificaties"
+#: bp-activity-subscription-functions.php:2052
+msgid "There was a problem unsubscribing you from all of your groups."
+msgstr "Er was een probleem om je uit te schrijven bij al je groepen"
 
-#: ../screen-notifications.php:88
-#, php-format
-msgid "Your email notifications are set to %s for this group."
-msgstr "Je e-mailnotificaties zijn ingesteld op %s voor deze groep."
-
-#: ../screen-user-settings.php:23
-msgid "Group Forum"
-msgstr "Groepsforum"
-
-#: ../screen-user-settings.php:24
-msgid "Yes"
-msgstr "Ja"
-
-#: ../screen-user-settings.php:25
-msgid "No"
-msgstr "Nee"
-
-#: ../screen-user-settings.php:47
-msgid "A member replies in a forum topic you've started"
-msgstr "Een lid reageerde op een forumonderwerp dat je gestart bent"
-
-#: ../screen-user-settings.php:54
-msgid "A member replies after you in a forum topic"
-msgstr "Een lid reageerde na jou op een forumonderwerp"
-
-#: ../screen-user-settings.php:63
-msgid "Receive notifications of your own posts?"
-msgstr "Notificaties ontvangen van jouw eigen berichten?"
-
-#: ../screen-user-settings.php:85
-msgid "Individual Group Email Settings"
-msgstr "Individuele instellingen groepsmail"
-
-#: ../screen-user-settings.php:93
-#, php-format
+#: bp-activity-subscription-functions.php:2057
 msgid ""
-"To change the email notification settings for your groups, go to %s and "
-"click \"Change\" for each group."
+"Your unsubscription was successful. You will no longer receive email "
+"notifications from any of your groups."
 msgstr ""
-"Ga, om de e-mailinstellingen voor je groepen te wijzigen, naar %s en klik op "
-"\"wijzig\" voor iedere groep."
+"Je uitschrijving is succesvol. Je ontvangt niet langer e-mailnotificaties "
+"van jouw groepen."
 
-#: ../screen-user-settings.php:96
-msgid "Or set all your group's email options to No Email"
-msgstr "Of stel voor alle groepen de e-mailopties in op Geen email"
+#: bp-activity-subscription-functions.php:2073
+msgid "Unsubscribe from group notifications"
+msgstr "Uitschrijven voor alle groepsnotificaties"
 
-#: ../screen.php:31
+#: bp-activity-subscription-functions.php:2087
+msgid "Unsubscribe"
+msgstr "Uitschrijven"
+
+#: bp-activity-subscription-functions.php:2095
+msgid ""
+"Do you really want to unsubscribe from all notifications for the group, %s?"
+msgstr ""
+"Weet je zeker dat je jezelf uit wilt schrijven voor alle notificaties voor "
+"de groep %s?"
+
+#: bp-activity-subscription-functions.php:2099
+msgid "Yes, unsubscribe from this group"
+msgstr "Ja, schrijf me uit bij deze groep"
+
+#: bp-activity-subscription-functions.php:2100
+msgid "No, close"
+msgstr "Nee, sluiten"
+
+#: bp-activity-subscription-functions.php:2106
+msgid "Do you really want to unsubscribe from all groups notifications?"
+msgstr ""
+"Weet je zeker dat je jezelf uit wilt schrijven voor alle groepsnotificaties?"
+
+#: bp-activity-subscription-functions.php:2110
+msgid "Yes, unsubscribe from all my groups"
+msgstr "Ja, schrijf me uit bij al mijn groepen"
+
+#: bp-activity-subscription-functions.php:2167
+msgid "To disable emails from all your groups at once click: %s"
+msgstr "Om in een keer e-mails uit te schakelen van al jouw groepen klik: %s"
+
+#: bp-activity-subscription-functions.php:2278
+msgid "This post has attachments:"
+msgstr "Dit bericht heeft bijlagen:"
+
+#: screen.php:31
 msgid "Your email status is "
 msgstr "Je e-mailstatus is "
 
-#: ../screen.php:32
+#: screen.php:32
 msgid "change"
 msgstr "wijzig"
 
-#: ../screen.php:38
+#: screen.php:38
 msgid "Get email updates"
 msgstr "E-mailupdates"
 
-#: ../screen.php:49
+#: screen.php:49
 msgid "Change your email subscription options for this group"
 msgstr "Wijzig je e-mailinschrijvingsinstellingen voor deze groep"
 
-#: ../screen.php:54
+#: screen.php:53 screen-notifications.php:32
+msgid "I will read this group on the web"
+msgstr "Ik lees over deze groep op het web"
+
+#: screen.php:54
 msgid "Get a summary of topics each"
 msgstr "Een samenvatting van onderwerpen elke"
 
-#: ../screen.php:55
+#: screen.php:55
 msgid "Get the day's activity bundled into one email"
 msgstr ""
 "Ik wil dagelijks &#233;&#233;n e-mail met alle activiteiten van deze groep "
 "daarin gebundeld"
 
-#: ../screen.php:58
+#: screen.php:58
 msgid "Send new topics as they arrive (but no replies)"
 msgstr ""
 "Verzend alle nieuwe onderwerpen zodra deze geplaatst worden (maar stuur geen "
 "reacties)"
 
-#: ../screen.php:62
+#: screen.php:61 screen-notifications.php:54
+msgid "Send all group activity as it arrives"
+msgstr "Verzend alle groepsactiviteiten zodra ze geplaatst worden"
+
+#: screen.php:62
 msgid "close"
 msgstr "Sluit"
 
-#: ../screen.php:83
+#: screen.php:83
 msgid "You successfully joined the group. Your group email status is: "
 msgstr "Je bent met succes toegevoegd aan de groep. Je e-mailstatus is: "
 
-#: ../templates/groups/single/admin/ges-email-notice.php:1
+#: templates/groups/single/admin/ges-welcome-email.php:4
+msgid "Welcome Email"
+msgstr "Welkomstmail"
+
+#: templates/groups/single/admin/ges-welcome-email.php:5
+msgid "Send an email when a new member join the group."
+msgstr ""
+"Verzend  een e-mail als een nieuwe gebruiker zich aansluit bij een groep."
+
+#: templates/groups/single/admin/ges-welcome-email.php:10
+msgid "Enable welcome email"
+msgstr "Activeer welkomstmail"
+
+#: templates/groups/single/admin/ges-welcome-email.php:15
+#: templates/groups/single/admin/ges-email-notice.php:15
+msgid "Email Subject:"
+msgstr "Onderwerp:"
+
+#: templates/groups/single/admin/ges-welcome-email.php:20
+#: templates/groups/single/admin/ges-email-notice.php:20
+msgid "Email Content:"
+msgstr "Inhoud:"
+
+#: templates/groups/single/admin/ges-welcome-email.php:25
+msgid "Save"
+msgstr "Opslaan"
+
+#: templates/groups/single/admin/ges-email-notice.php:10
 msgid "Send an email notice to everyone in the group"
 msgstr "Verzend  een e-mail naar iedereen in deze groep"
 
-#: ../templates/groups/single/admin/ges-email-notice.php:2
+#: templates/groups/single/admin/ges-email-notice.php:11
 msgid ""
 "You can use the form below to send an email notice to all group members."
 msgstr ""
 "Je kunt het onderstaande formulier gebruiken om een e-mail te verzenden naar "
 "alle groepsleden."
 
-#: ../templates/groups/single/admin/ges-email-notice.php:3
+#: templates/groups/single/admin/ges-email-notice.php:12
 msgid ""
 "Everyone in the group will receive the email -- regardless of their email "
 "settings -- so use with caution"
@@ -1050,36 +930,334 @@ msgstr ""
 "Iedereen in de groep zal de e-mail ontvangen -- ongeacht hun e-"
 "mailinstellingen -- dus wees voorzichtig"
 
-#: ../templates/groups/single/admin/ges-email-notice.php:6
-#: ../templates/groups/single/admin/ges-welcome-email.php:15
-msgid "Email Subject:"
-msgstr "Onderwerp:"
-
-#: ../templates/groups/single/admin/ges-email-notice.php:11
-#: ../templates/groups/single/admin/ges-welcome-email.php:20
-msgid "Email Content:"
-msgstr "Inhoud:"
-
-#: ../templates/groups/single/admin/ges-email-notice.php:16
+#: templates/groups/single/admin/ges-email-notice.php:27
 msgid "Email this notice to everyone in the group"
 msgstr "Verzenden"
 
-#: ../templates/groups/single/admin/ges-welcome-email.php:4
-msgid "Welcome Email"
-msgstr "Welkomstmail"
+#: screen-notifications.php:23
+msgid "Email Subscription Options"
+msgstr "<br>Inschrijving voor e-mails"
 
-#: ../templates/groups/single/admin/ges-welcome-email.php:5
-msgid "Send an email when a new member join the group."
+#: screen-notifications.php:28
+msgid "How do you want to read this group?"
 msgstr ""
-"Verzend  een e-mail als een nieuwe gebruiker zich aansluit bij een groep."
+"Hoe wil je op de hoogte gehouden worden bij nieuwe activiteiten van deze "
+"groep?"
 
-#: ../templates/groups/single/admin/ges-welcome-email.php:10
-msgid "Enable welcome email"
-msgstr "Activeer welkomstmail"
+#: screen-notifications.php:36
+msgid "Weekly Summary Email"
+msgstr "Wekelijkse samenvatting"
 
-#: ../templates/groups/single/admin/ges-welcome-email.php:25
-msgid "Save"
-msgstr "Opslaan"
+#: screen-notifications.php:37
+msgid "Get a summary of new topics each week"
+msgstr "Ik wil een wekelijkse samenvatting van nieuwe onderwerpen ontvangen"
+
+#: screen-notifications.php:41
+msgid "Daily Digest Email"
+msgstr "Dagelijkse samenvatting"
+
+#: screen-notifications.php:42
+msgid "Get all the day's activity bundled into a single email"
+msgstr ""
+"Ik wil dagelijks &#233;&#233;n e-mail ontvangen met alle activiteiten van "
+"deze groep daarin gebundeld"
+
+#: screen-notifications.php:47
+msgid "New Topics Email"
+msgstr "Nieuwe onderwerpen"
+
+#: screen-notifications.php:48
+msgid "Send new topics as they arrive (but don't send replies)"
+msgstr ""
+"Verzend alle nieuwe onderwerpen zodra deze geplaatst worden (maar stuur geen "
+"reacties)"
+
+#: screen-notifications.php:57 admin.php:286
+msgid "Save Settings"
+msgstr "Instellingen opslaan"
+
+#: screen-notifications.php:60
+msgid ""
+"Note: Normally, you receive email notifications for topics you start or "
+"comment on. This can be changed at"
+msgstr ""
+"Opm.: Normaal ontvang je e-mail bij onderwerpen die je gestart bent, of waar "
+"je op gereageerd hebt. Dit kan worden gewijzigd op"
+
+#: screen-notifications.php:60
+msgid "email notifications"
+msgstr "e-mailnotificaties"
+
+#: screen-notifications.php:88
+msgid "Your email notifications are set to %s for this group."
+msgstr "Je e-mailnotificaties zijn ingesteld op %s voor deze groep."
+
+#: admin.php:47
+msgid "BP Group Email Options"
+msgstr "E-mailinstellingen groep"
+
+#: admin.php:52
+msgid "Group Email Options"
+msgstr "E-mailinstellingen groep"
+
+#: admin.php:113
+msgid "Settings saved."
+msgstr "Instellingen opgeslagen."
+
+#: admin.php:126 admin.php:133 admin.php:143
+msgid "Complete!"
+msgstr "Klaar!"
+
+#: admin.php:136 admin.php:146
+msgid "In Progress"
+msgstr "In behandeling"
+
+#: admin.php:164
+msgid "Group Email Subscription Settings"
+msgstr "E-mailininstellingen groep"
+
+#: admin.php:168
+msgid "Migration Status"
+msgstr ""
+
+#: admin.php:169
+msgid ""
+"BuddyPress Group Email Subscription version 3.9 includes a number of "
+"important database migration routines."
+msgstr ""
+
+#: admin.php:172
+msgid "Create database tables"
+msgstr ""
+
+#: admin.php:173
+msgid "Migrate subscriptions"
+msgstr ""
+
+#: admin.php:174
+msgid "Migrate queued items"
+msgstr ""
+
+#: admin.php:184
+msgid ""
+"If you need to re-run or restart the migration process, you can do so with "
+"the following link:"
+msgstr ""
+
+#: admin.php:186
+msgid ""
+"Some migrations are currently in progress. Please reload this page in a few "
+"moments."
+msgstr ""
+
+#: admin.php:189
+msgid "Learn more about the 3.9 migration process."
+msgstr ""
+
+#: admin.php:216
+msgid "Digests & Summaries"
+msgstr "Verwerking en samenvattingen"
+
+#: admin.php:218
+msgid ""
+"View queued digest items</a></b> (in new window)<br>As admin, you can see "
+"what is currently in the email queue by adding ?sum=1 to your url. This will "
+"not fire the digest, it will just show you what is waiting to be sent."
+msgstr ""
+"Bekijk items in de wachtrij</a></b> (in een nieuw venster)<br>Als beheerder, "
+"kun je bekijken wat zich momenteel in de e-mailrij bevindt door ?sum=1 toe "
+"te voegen aan je url (internetadres). Er wordt geen actie ondernomen, alleen "
+"wat er in de wachtrij staat om verzonden te worden wordt getoond."
+
+#: admin.php:222
+msgid "<strong>Daily Digests</strong> should be sent at this time:"
+msgstr "<strong>Dagelijkse verwerking</strong> wordt verzonden om:"
+
+#: admin.php:239
+msgid "<strong>Weekly Summaries</strong> should be sent on:"
+msgstr "<strong>Wekelijkse samenvattingen</strong> worden verzonden op:"
+
+#: admin.php:254
+msgid ""
+"The server timezone is %s (%s); the current server time is %s (%s); and the "
+"day is %s."
+msgstr ""
+"De servertijdzone is %s (%s); de huidige servertijd is %s (%s); en het is "
+"vandaag %s."
+
+#: admin.php:258
+msgid "Global Unsubscribe Link"
+msgstr "Globale uitschrijflink"
+
+#: admin.php:259
+msgid ""
+"Add a link in the emails and on the notifications settings page allowing "
+"users to unsubscribe from all their groups at once:"
+msgstr ""
+"Voeg een link toe aan de e-mails en de notificatie-instellingenpagina zodat "
+"gebruikers zich in een keer uit kunnen schrijven voor al hun groepen:"
+
+#: admin.php:261 admin.php:270 admin.php:275
+msgid "yes"
+msgstr "ja"
+
+#: admin.php:262 admin.php:271 admin.php:276
+msgid "no"
+msgstr "nee"
+
+#: admin.php:267
+msgid "Group Admin Abilities"
+msgstr "Rechten groepsbeheerder"
+
+#: admin.php:268
+msgid ""
+"Allow group admins and mods to change members' email subscription settings: "
+msgstr ""
+"Laat groepsbeheerders en moderatoren de e-mailinstellingen van de leden "
+"wijzigen: "
+
+#: admin.php:273
+msgid ""
+"Allow group admins to override subscription settings and send an email to "
+"everyone in their group: "
+msgstr ""
+"Laat groepsbeheerders inschrijvingsinstellingen overschrijven en e-mails "
+"verzenden naar iedereen in hun groep: "
+
+#: admin.php:280
+msgid "Spam Prevention"
+msgstr "Spampreventie"
+
+#: admin.php:281
+msgid ""
+"To help protect against spam, you may wish to require a user to have been a "
+"member of the site for a certain amount of days before any group updates are "
+"emailed to the other group members. This is disabled by default."
+msgstr ""
+"Om je tegen spam van een nieuw lid te helpen beschermen. Misschien wil je "
+"wachten met een e-mailnotificatie van een groep tot het nieuwe lid een "
+"aantal dagen staat ingeschreven. Dit is standaard uitgeschakeld."
+
+#: admin.php:282
+msgid "Member must be registered for"
+msgstr "Een nieuw lid moet"
+
+#: admin.php:282
+msgid "days"
+msgstr ""
+" dagen geregistreerd zijn, voor je deze activiteitenmail van de groep "
+"ontvangt."
+
+#: admin.php:293
+msgid "If you enjoy using this plugin %s please rate it %s."
+msgstr "Vind je deze plugin nuttig, %sgeef een waardering%s."
+
+#: admin.php:294
+msgid "Please make a donation to the team to support ongoing development."
+msgstr ""
+"Doneer iets aan het ontwikkelteam van deze plugin, zodat ze de verdere "
+"ontwikkeling kunnen voortzetten."
+
+#: admin.php:434
+msgid ""
+"This email is handled by the Group Email Subscription plugin and uses "
+"customized tokens.  <a target=\"_blank\" href=\"%s\">Learn more about GES "
+"tokens on our wiki</a>."
+msgstr ""
+
+#: admin.php:510
+msgid ""
+"Some BuddyPress Group Email Subscription migration tasks have not "
+"successfully completed."
+msgstr ""
+
+#: admin.php:514
+msgid "Visit the BPGES settings page to fix this problem."
+msgstr ""
+
+#: screen-user-settings.php:22
+msgid "Item icon"
+msgstr ""
+
+#: screen-user-settings.php:23
+msgid "Group Forum"
+msgstr "Groepsforum"
+
+#: screen-user-settings.php:24
+msgid "Yes"
+msgstr "Ja"
+
+#: screen-user-settings.php:25
+msgid "No"
+msgstr "Nee"
+
+#: screen-user-settings.php:47
+msgid "A member replies in a forum topic you've started"
+msgstr "Een lid reageerde op een forumonderwerp dat je gestart bent"
+
+#: screen-user-settings.php:51 screen-user-settings.php:56
+#: screen-user-settings.php:66
+msgid "Yes, send email"
+msgstr "Ja, stuur een e-mail"
+
+#: screen-user-settings.php:62
+msgid "A member replies after you in a forum topic"
+msgstr "Een lid reageerde na jou op een forumonderwerp"
+
+#: screen-user-settings.php:71 screen-user-settings.php:83
+#: screen-user-settings.php:88
+msgid "No, do not send email"
+msgstr "Nee, stuur geen e-mail"
+
+#: screen-user-settings.php:79
+msgid "Receive notifications of your own posts?"
+msgstr "Notificaties ontvangen van jouw eigen berichten?"
+
+#: screen-user-settings.php:109
+msgid "Individual Group Email Settings"
+msgstr "Individuele instellingen groepsmail"
+
+#: screen-user-settings.php:117
+msgid ""
+"To change the email notification settings for your groups, go to %s and "
+"click \"Change\" for each group."
+msgstr ""
+"Ga, om de e-mailinstellingen voor je groepen te wijzigen, naar %s en klik op "
+"\"wijzig\" voor iedere groep."
+
+#: screen-user-settings.php:120
+msgid "Or set all your group's email options to No Email"
+msgstr "Of stel voor alle groepen de e-mailopties in op Geen email"
+
+#~ msgid "Monday"
+#~ msgstr "Maandag"
+
+#~ msgid "Tuesday"
+#~ msgstr "Dinsdag"
+
+#~ msgid "Wednesday"
+#~ msgstr "Woensdag"
+
+#~ msgid "Thursday"
+#~ msgstr "Donderdag"
+
+#~ msgid "Friday"
+#~ msgstr "Vrijdag"
+
+#~ msgid "Saturday"
+#~ msgstr "Zaterdag"
+
+#~ msgid "Sunday"
+#~ msgstr "Zondag"
+
+#~ msgid "Posted a Group Notice"
+#~ msgstr "Groepsbericht is verstuurd"
+
+#~ msgid "Every %d Minutes"
+#~ msgstr "Elke %d minuten"
+
+#~ msgid "<a href=\"%1$s\">Continue to %2$s</a>"
+#~ msgstr "<a href=\"%1$s\">Ga door naar %2$s</a>"
 
 #~ msgid "(%s replies)"
 #~ msgstr "(%s reacties)"
