@@ -193,11 +193,12 @@ If you feel this service is being misused please speak to the website administra
 
 		$activity_id = bp_activity_add(
 			array(
-				'component' => buddypress()->groups->id,
-				'type'      => 'bpges_notice',
-				'content'   => $notice,
-				'item_id'   => $group_id,
-				'action'    => $action,
+				'component'     => buddypress()->groups->id,
+				'type'          => 'bpges_notice',
+				'content'       => $notice,
+				'item_id'       => $group_id,
+				'action'        => $action,
+				'hide_sitewide' => 'public' !== $group->status,
 			)
 		);
 
