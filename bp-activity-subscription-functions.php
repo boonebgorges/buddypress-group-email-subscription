@@ -327,7 +327,7 @@ To view or reply, log in and go to:
 	}
 
 	// Use bbPress filtered post content and reapply GES filter... sigh.
-	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) ) {
+	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) || 'new_groupblog_post' === $activity_obj->type ) {
 		// Not in global cache? Query for post content.
 		if ( empty( $GLOBALS['bp']->ges_content ) ) {
 			$the_content = get_post_field( 'post_content', $activity_obj->secondary_item_id, 'raw' );
@@ -521,8 +521,8 @@ To view or reply, log in and go to:
 				// Remove tokens that we're not using.
 				unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
 
-				// If activity type is not a bbPress item, add activity KSES filter.
-				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+				// Add activity KSES filter if not bbPress or groupblog item.
+				if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 					add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 				}
 
@@ -535,7 +535,7 @@ To view or reply, log in and go to:
 				) );
 
 				// Revert!
-				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+				if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 					remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 				}
 			}
@@ -631,7 +631,7 @@ To view or reply, log in and go to:
 
 	// Use bbPress filtered post content and reapply GES filter... sigh.
 	$self_notify = false;
-	if ( 0 === strpos( $activity->type, 'bbp_' ) ) {
+	if ( 0 === strpos( $activity->type, 'bbp_' ) || 'new_groupblog_post' === $activity->type ) {
 		// Not in global cache? Query for post content.
 		if ( empty( $GLOBALS['bp']->ges_content ) ) {
 			$the_content = get_post_field( 'post_content', $activity->secondary_item_id, 'raw' );
@@ -747,8 +747,8 @@ If you feel this service is being misused please speak to the website administra
 		// Remove tokens that we're not using.
 		unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
 
-		// If activity type is not a bbPress item, add activity KSES filter.
-		if ( false === strpos( $activity->type, 'bbp_' ) ) {
+		// Add activity KSES filter if not bbPress or groupblog item.
+		if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 			add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		}
 
@@ -761,7 +761,7 @@ If you feel this service is being misused please speak to the website administra
 		) );
 
 		// Revert!
-		if ( false === strpos( $activity->type, 'bbp_' ) ) {
+		if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 			remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		}
 	}
