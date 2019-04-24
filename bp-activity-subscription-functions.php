@@ -1628,6 +1628,7 @@ function ass_unsubscribe_on_leave( $group_id, $user_id ){
  */
 function bpges_unsubscribe_on_membership_remove( BP_Groups_Member $membership ) {
 	ass_group_subscription( 'delete', $membership->user_id, $membership->group_id );
+	bpges_delete_queued_items_for_user_group( $membership->user_id, $membership->group_id );
 }
 add_action( 'groups_member_before_remove', 'bpges_unsubscribe_on_membership_remove' );
 
@@ -1641,6 +1642,7 @@ add_action( 'groups_member_before_remove', 'bpges_unsubscribe_on_membership_remo
  */
 function bpges_unsubscribe_on_membership_delete( $user_id, $group_id ) {
 	ass_group_subscription( 'delete', $user_id, $group_id );
+	bpges_delete_queued_items_for_user_group( $user_id, $group_id );
 }
 add_action( 'bp_groups_member_before_delete', 'bpges_unsubscribe_on_membership_delete', 10, 2 );
 
@@ -1657,9 +1659,35 @@ function bpges_unsubscribe_on_membership_ban( BP_Groups_Member $membership ) {
 	}
 
 	ass_group_subscription( 'delete', $membership->user_id, $membership->group_id );
+	bpges_delete_queued_items_for_user_group( $membership->user_id, $membership->group_id );
 }
 add_action( 'groups_member_before_save', 'bpges_unsubscribe_on_membership_ban' );
 
+/**
+ * Deletes all queued items for a user + group combo.
+ *
+ * @since 3.9.3
+ *
+ * @param int $user_id  ID of the user.
+ * @param int $group_id ID of the group.
+ */
+function bpges_delete_queued_items_for_user_group( $user_id, $group_id ) {
+	// Sanity check.
+	if ( ! $user_id || ! $group_id ) {
+		return;
+	}
+
+	$query = new BPGES_Queued_Item_Query( array(
+		'user_id'  => $user_id,
+		'group_id' => $group_id,
+	) );
+
+	$queued_ids = array_keys( $query->get_results() );
+	if ( empty( $queued_ids ) ) {
+		return;
+	}
+	BPGES_Queued_Item::bulk_delete( $queued_ids );
+}
 
 //
 //	!Default Group Subscription
