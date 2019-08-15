@@ -327,7 +327,7 @@ To view or reply, log in and go to:
 	}
 
 	// Use bbPress filtered post content and reapply GES filter... sigh.
-	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) ) {
+	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) || 'new_groupblog_post' === $activity_obj->type ) {
 		// Not in global cache? Query for post content.
 		if ( empty( $GLOBALS['bp']->ges_content ) ) {
 			$the_content = get_post_field( 'post_content', $activity_obj->secondary_item_id, 'raw' );
@@ -521,8 +521,8 @@ To view or reply, log in and go to:
 				// Remove tokens that we're not using.
 				unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
 
-				// If activity type is not a bbPress item, add activity KSES filter.
-				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+				// Add activity KSES filter if not bbPress or groupblog item.
+				if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 					add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 				}
 
@@ -535,7 +535,7 @@ To view or reply, log in and go to:
 				) );
 
 				// Revert!
-				if ( false === strpos( $activity_obj->type, 'bbp_' ) ) {
+				if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 					remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 				}
 			}
@@ -631,7 +631,7 @@ To view or reply, log in and go to:
 
 	// Use bbPress filtered post content and reapply GES filter... sigh.
 	$self_notify = false;
-	if ( 0 === strpos( $activity->type, 'bbp_' ) ) {
+	if ( 0 === strpos( $activity->type, 'bbp_' ) || 'new_groupblog_post' === $activity->type ) {
 		// Not in global cache? Query for post content.
 		if ( empty( $GLOBALS['bp']->ges_content ) ) {
 			$the_content = get_post_field( 'post_content', $activity->secondary_item_id, 'raw' );
@@ -747,8 +747,8 @@ If you feel this service is being misused please speak to the website administra
 		// Remove tokens that we're not using.
 		unset( $user_message_args['content'], $user_message_args['notice'], $user_message_args['message'], $user_message_args['settings_link'] );
 
-		// If activity type is not a bbPress item, add activity KSES filter.
-		if ( false === strpos( $activity->type, 'bbp_' ) ) {
+		// Add activity KSES filter if not bbPress or groupblog item.
+		if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 			add_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		}
 
@@ -761,7 +761,7 @@ If you feel this service is being misused please speak to the website administra
 		) );
 
 		// Revert!
-		if ( false === strpos( $activity->type, 'bbp_' ) ) {
+		if ( false === strpos( $activity->type, 'bbp_' ) && 'new_groupblog_post' !== $activity->type ) {
 			remove_filter( 'bp_email_set_content_html', 'bp_activity_filter_kses', 6 );
 		}
 	}
@@ -1628,6 +1628,7 @@ function ass_unsubscribe_on_leave( $group_id, $user_id ){
  */
 function bpges_unsubscribe_on_membership_remove( BP_Groups_Member $membership ) {
 	ass_group_subscription( 'delete', $membership->user_id, $membership->group_id );
+	bpges_delete_queued_items_for_user_group( $membership->user_id, $membership->group_id );
 }
 add_action( 'groups_member_before_remove', 'bpges_unsubscribe_on_membership_remove' );
 
@@ -1641,6 +1642,7 @@ add_action( 'groups_member_before_remove', 'bpges_unsubscribe_on_membership_remo
  */
 function bpges_unsubscribe_on_membership_delete( $user_id, $group_id ) {
 	ass_group_subscription( 'delete', $user_id, $group_id );
+	bpges_delete_queued_items_for_user_group( $user_id, $group_id );
 }
 add_action( 'bp_groups_member_before_delete', 'bpges_unsubscribe_on_membership_delete', 10, 2 );
 
@@ -1657,9 +1659,35 @@ function bpges_unsubscribe_on_membership_ban( BP_Groups_Member $membership ) {
 	}
 
 	ass_group_subscription( 'delete', $membership->user_id, $membership->group_id );
+	bpges_delete_queued_items_for_user_group( $membership->user_id, $membership->group_id );
 }
 add_action( 'groups_member_before_save', 'bpges_unsubscribe_on_membership_ban' );
 
+/**
+ * Deletes all queued items for a user + group combo.
+ *
+ * @since 3.9.3
+ *
+ * @param int $user_id  ID of the user.
+ * @param int $group_id ID of the group.
+ */
+function bpges_delete_queued_items_for_user_group( $user_id, $group_id ) {
+	// Sanity check.
+	if ( ! $user_id || ! $group_id ) {
+		return;
+	}
+
+	$query = new BPGES_Queued_Item_Query( array(
+		'user_id'  => $user_id,
+		'group_id' => $group_id,
+	) );
+
+	$queued_ids = array_keys( $query->get_results() );
+	if ( empty( $queued_ids ) ) {
+		return;
+	}
+	BPGES_Queued_Item::bulk_delete( $queued_ids );
+}
 
 //
 //	!Default Group Subscription

@@ -191,15 +191,19 @@ If you feel this service is being misused please speak to the website administra
 		$_a->user_id = bp_loggedin_user_id();
 		$action = bpges_format_activity_action_bpges_notice( '', $_a, $_subject );
 
+		// We must delay the sending of notifications so that we can save the 'subject' meta.
+		remove_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 		$activity_id = bp_activity_add(
 			array(
-				'component' => buddypress()->groups->id,
-				'type'      => 'bpges_notice',
-				'content'   => $notice,
-				'item_id'   => $group_id,
-				'action'    => $action,
+				'component'     => buddypress()->groups->id,
+				'type'          => 'bpges_notice',
+				'content'       => $notice,
+				'item_id'       => $group_id,
+				'action'        => $action,
+				'hide_sitewide' => 'public' !== $group->status,
 			)
 		);
+		add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
 
 		remove_filter( 'bp_ass_send_activity_notification_for_user', '__return_true' );
 		remove_filter( 'bp_ges_remove_to_digest_queue_for_user', '__return_false' );
@@ -210,6 +214,9 @@ If you feel this service is being misused please speak to the website administra
 
 		// Store subject for later use.
 		bp_activity_add_meta( $activity_id, 'bpges_notice_subject', $_subject );
+
+		$activity = new BP_Activity_Activity( $activity_id );
+		ass_group_notification_activity( $activity );
 
 		do_action( 'ass_admin_notice', $group_id, $_subject, $notice );
 

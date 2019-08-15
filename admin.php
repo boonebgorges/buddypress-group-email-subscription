@@ -11,8 +11,10 @@
  * @since 2.1b
  */
 function ass_admin_menu() {
+	$admin_cap = bpges_admin_menu_cap();
+
 	// Catch manual migration requests.
-	if ( current_user_can( 'manage_options' ) && ! empty( $_GET['page'] ) && 'ass_admin_options' === $_GET['page'] ) {
+	if ( current_user_can( $admin_cap ) && ! empty( $_GET['page'] ) && 'ass_admin_options' === $_GET['page'] ) {
 		if ( ! empty( $_GET['action'] ) && 'migrate_39' === $_GET['action'] ) {
 			check_admin_referer( 'bpges_migrate_39' );
 
@@ -38,6 +40,7 @@ function ass_admin_menu() {
 		// GES is network-activated, so show under Network Settings.
 		if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
 			$settings_page = 'settings.php';
+			$admin_cap     = 'manage_network_options';
 
 		// Everything else.
 		} else {
@@ -56,13 +59,37 @@ function ass_admin_menu() {
 		$settings_page,
 		$title,
 		$title,
-		'manage_options',
+		$admin_cap,
 		'ass_admin_options',
 		'ass_admin_options'
 	);
 }
 add_action( 'admin_menu', 'ass_admin_menu' );
 add_action( 'network_admin_menu', 'ass_admin_menu' );
+
+/**
+ * Gets the capability for managing BPGES admin options.
+ *
+ * @since 3.9.3
+ *
+ * @return string
+ */
+function bpges_admin_menu_cap() {
+	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
+		$admin_cap = 'manage_network_options';
+	} else {
+		$admin_cap = 'manage_options';
+	}
+
+	/**
+	 * Filters the capability for managing BPGES admin options.
+	 *
+	 * @since 3.9.3
+	 *
+	 * @param string $admin_cap
+	 */
+	return apply_filters( 'bpges_admin_menu_cap', $admin_cap );
+}
 
 /**
  * Gets the URL for the BPGES options panel.
@@ -485,7 +512,7 @@ function bpges_39_migration_status() {
  * @since 3.9.0
  */
 function bpges_39_migration_admin_notice() {
-	if ( ! current_user_can( 'manage_options' ) ) {
+	if ( ! current_user_can( bpges_admin_menu_cap() ) ) {
 		return;
 	}
 
