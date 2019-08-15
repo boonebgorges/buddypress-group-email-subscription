@@ -4,7 +4,7 @@ Description: Allow users to receive email notifications of group activity. Weekl
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 3.2
 Requires PHP: 5.3
-Tested up to: 5.1
+Tested up to: 5.2
 Stable tag: 3.9.2
 
 == Description ==
@@ -92,6 +92,14 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 3.9.3 =
+* Improvements to the way that the 3.9 update admin notice is shown on Multisite.
+* Improvements to user domain caching.
+* Improved data cleanup when a user leaves a group or when user account is deleted.
+* Improved behavior of email queue so that {ges.subject} tokens work properly in async send batches.
+* Ensure that bp-groupblog emails can be sent with HTML content.
+* Updated nl_NL translation.
 
 = 3.9.2 =
 * Improvements to CLI 3.9 migration tools.
