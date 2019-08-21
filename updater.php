@@ -45,6 +45,11 @@ class GES_Updater {
 	 * Update routine.
 	 */
 	protected function init() {
+		// Bail if BuddyPress isn't available.
+		if ( ! function_exists( 'bp_get_option' ) ) {
+			return;
+		}
+
 		$installed_date = (int) self::get_installed_revision_date();
 
 		// Sept 28, 2016 - Install email post types.
