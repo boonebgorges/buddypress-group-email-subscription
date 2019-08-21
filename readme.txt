@@ -5,7 +5,7 @@ Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifi
 Requires at least: 3.2
 Requires PHP: 5.3
 Tested up to: 5.2
-Stable tag: 3.9.2
+Stable tag: 3.9.4
 
 == Description ==
 
@@ -92,6 +92,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 3.9.4 =
+* Fix bug that could trigger fatal errors in some upgrade situations.
 
 = 3.9.3 =
 * Improvements to the way that the 3.9 update admin notice is shown on Multisite.
