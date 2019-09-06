@@ -556,7 +556,7 @@ function ass_digest_format_item( $item, $type ) {
 		$view_link = $item->primary_link;
 	}
 
-	$item_message .= ' - <a class="digest-item-view-link" href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'buddypress-group-email-subscription' ) . '</a>';
+	$item_message .= ' - <a ' . $ass_email_css['view_link'] . ' class="digest-item-view-link" href="' . ass_get_login_redirect_url( $view_link ) .'">' . __( 'View', 'buddypress-group-email-subscription' ) . '</a>';
 
 	$item_message .= "</div>\n\n";
 
@@ -930,6 +930,7 @@ function bpges_digest_css() {
 	$ass_email_css['item_action']  = 'style="color:#888;"';
 	$ass_email_css['item_date']    = 'style="font-size:85%; color:#bbb; margin-left:8px;"';
 	$ass_email_css['item_content'] = 'style="color:#333;"';
+	$ass_email_css['view_link']    = 'style="";'
 	$ass_email_css['item_weekly']  = 'style="color:#888; padding:4px 10px 0"'; // used in weekly in place of other item_ above
 	$ass_email_css['footer']       = 'class="ass-footer" style="margin:25px 0 0; padding-top:5px; border-top:1px #bbb solid;"';
 
