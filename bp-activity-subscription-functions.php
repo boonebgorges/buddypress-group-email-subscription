@@ -330,7 +330,17 @@ To view or reply, log in and go to:
 	if ( 0 === strpos( $activity_obj->type, 'bbp_' ) || 'new_groupblog_post' === $activity_obj->type ) {
 		// Not in global cache? Query for post content.
 		if ( empty( $GLOBALS['bp']->ges_content ) ) {
+			$switched = false;
+			if ( 'new_groupblog_post' === $activity_obj->type && function_exists( 'get_groupblog_blog_id' ) ) {
+				$switched = true;
+				switch_to_blog( get_groupblog_blog_id( $group->id ) );
+			}
+
 			$the_content = get_post_field( 'post_content', $activity_obj->secondary_item_id, 'raw' );
+
+			if ( true === $switched ) {
+				restore_current_blog();
+			}
 		} else {
 			$the_content = $GLOBALS['bp']->ges_content;
 			unset( $GLOBALS['bp']->ges_content );
@@ -634,7 +644,17 @@ To view or reply, log in and go to:
 	if ( 0 === strpos( $activity->type, 'bbp_' ) || 'new_groupblog_post' === $activity->type ) {
 		// Not in global cache? Query for post content.
 		if ( empty( $GLOBALS['bp']->ges_content ) ) {
+			$switched = false;
+			if ( 'new_groupblog_post' === $activity->type && function_exists( 'get_groupblog_blog_id' ) ) {
+				$switched = true;
+				switch_to_blog( get_groupblog_blog_id( $group_id ) );
+			}
+
 			$the_content = get_post_field( 'post_content', $activity->secondary_item_id, 'raw' );
+
+			if ( true === $switched ) {
+				restore_current_blog();
+			}
 		} else {
 			$the_content = $GLOBALS['bp']->ges_content;
 			unset( $GLOBALS['bp']->ges_content );
