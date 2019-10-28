@@ -93,6 +93,11 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 3.9.5 =
+* Fix bug that could cause incorrect information to be pulled for bp-groupblog activity items.
+* Fix bug that can cause empty upload directories to be created in some cases.
+* Improved stylability for View links in digests.
+
 = 3.9.4 =
 * Fix bug that could trigger fatal errors in some upgrade situations.
 
