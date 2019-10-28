@@ -26,7 +26,7 @@ define( 'GES_REVISION_DATE', '2019-08-21 16:00 UTC' );
  */
 function ass_loader() {
 	if ( ! defined( 'BPGES_DEBUG_LOG_PATH' ) ) {
-		$dir = wp_upload_dir();
+		$dir = wp_upload_dir( null, false );
 		define( 'BPGES_DEBUG_LOG_PATH', trailingslashit( $dir['basedir'] ) . 'bpges-debug.log' );
 	}
 
