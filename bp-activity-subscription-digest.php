@@ -124,9 +124,9 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	$blogname = get_blog_option( BP_ROOT_BLOG, 'blogname' );
 	$subject = apply_filters( 'ass_digest_subject', "$title [$blogname]", $blogname, $title, $type );
 
-	$footer = "\n\n<div class=\"digest-footer\" {$ass_email_css['footer']}>";
-	$footer .= sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'buddypress-group-email-subscription' ), $blogname );
+	$footer = sprintf( __( "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s.", 'buddypress-group-email-subscription' ), $blogname );
 	$footer = apply_filters( 'ass_digest_footer', $footer, $type );
+	$footer = "\n\n<div class=\"digest-footer\" {$ass_email_css['footer']}>$footer</div>";
 
 	// initialize some strings
 	$bp = buddypress();
@@ -146,7 +146,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	$group_activity_ids_pristine = $group_activity_ids;
 
 	$header = "<div class=\"digest-header\" {$ass_email_css['title']}>$title " . __('at', 'buddypress-group-email-subscription')." <a href='" . $bp->root_domain . "'>$blogname</a></div>\n\n";
-	$message = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
+	$body = apply_filters( 'ass_digest_header', $header, $title, $ass_email_css['title'] );
 
 	$sent_activity_ids = array();
 
@@ -201,20 +201,19 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 	// show group summary for digest, and follow help text for weekly summary
 	if ( 'dig' == $type ) {
-		$message .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'buddypress-group-email-subscription') . ":\n<ul class=\"digest-group-summaries\" {$ass_email_css['summary_ul']}>" .  $summary . "</ul>", $ass_email_css['summary_ul'], $summary );
+		$body .= apply_filters( 'ass_digest_summary_full', __( 'Group Summary', 'buddypress-group-email-subscription' ) . ":\n<ul class=\"digest-group-summaries\" {$ass_email_css['summary_ul']}>" . $summary . "", $ass_email_css['summary_ul'], $summary );
 	}
 
 	// the meat of the message which we generated above goes here
-	$message .= $activity_message;
 	$body .= $activity_message;
 
 	// user is subscribed to "New Topics"
 	// add follow help text only if bundled forums are enabled
 	if ( 'sum' == $type && class_exists( 'BP_Forums_Component' ) ) {
-		$message .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'buddypress-group-email-subscription' ) . "</div>\n", $ass_email_css['follow_topic'] );
+		$body .= apply_filters( 'ass_summary_follow_topic', "<div {$ass_email_css['follow_topic']}>" . __( "How to follow a topic: to get email updates for a specific topic, click the topic title – then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)", 'buddypress-group-email-subscription' ) . "</div>\n", $ass_email_css['follow_topic'] );
 	}
 
-	$message .= $footer;
+	$body .= $footer;
 
 	$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'buddypress-group-email-subscription' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'buddypress-group-email-subscription' ) . "</a>" );
 
@@ -223,12 +222,13 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 		$unsubscribe_message .= "\n\n<br><br><a class=\"digest-unsubscribe-link\" href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'buddypress-group-email-subscription' ) . '</a>';
 	}
 
-	$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
+	$unsubscribe_message = apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
+	$body .= "<div {$ass_email_css['change_email']}>$unsubscribe_message</div>";
 
-	$message .= "</div>";
+	$body .= "</div>";
 
 	if ( $is_preview ) {
-		echo $message;
+		echo $body;
 		return;
 	}
 
