@@ -846,6 +846,17 @@ function ass_send_email( $email_type, $to, $args ) {
 		do_action( 'bp_ges_before_bp_send_email', $email_type );
 
 		/**
+		 * Filters the email type that GES uses to send a BuddyPress email.
+		 *
+		 * @since 4.0.0
+		 *
+		 * @param string $email_type Current BP email post type.
+		 * @param array  $args       See bp_send_email()'s third argument for full documentation.
+		 * @param string $to		 Email recipient.
+		 */
+		$email_type = apply_filters( 'ass_send_email_email_type', $email_type, $args, $to );
+
+		/**
 		 * Filter the arguments before GES sends a BuddyPress email.
 		 *
 		 * @since 3.7.0
