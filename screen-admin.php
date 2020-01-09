@@ -177,8 +177,10 @@ To view this group log in and follow the link below:
 ---------------------
 ', 'buddypress-group-email-subscription' ), $group_name,  $notice, $group_link );
 
-		$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
-If you feel this service is being misused please speak to the website administrator.', 'buddypress-group-email-subscription' );
+		if ( bpges_force_immediate_admin_notice() ) {
+			$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
+	If you feel this service is being misused please speak to the website administrator.', 'buddypress-group-email-subscription' );
+		}
 
 		$user_ids = BP_Groups_Member::get_group_member_ids( $group_id );
 

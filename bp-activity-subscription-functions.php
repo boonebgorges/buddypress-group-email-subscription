@@ -206,6 +206,12 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 			$add_to_digest_queue = true;
 		}
 
+		// Check whether user preferences should be overridden for admin notices.
+		if ( 'bpges_notice' === $activity->type && bpges_force_immediate_admin_notice( $user_id, $activity, $group_id ) ) {
+			$send_immediately    = true;
+			$add_to_digest_queue = false;
+		}
+
 		/**
 		 * Filters whether a given user should receive immediate notification of the current activity.
 		 *
@@ -2345,6 +2351,36 @@ function ass_add_gd_bbpress_attachments_to_email_content( $content, $activity ) 
 	return $content . $attachment_message;
 }
 add_filter( 'bp_ass_activity_notification_content', 'ass_add_gd_bbpress_attachments_to_email_content', 100, 2 );
+
+/**
+ * Determines whether admin notices should be forced to 'immediate', overriding user preferences.
+ *
+ * If false, user notification preferences for the group will be respected.
+ *
+ * @since 4.0.0
+ *
+ * @param int                  $user_id  Optional. ID of the user.
+ * @param BP_Activity_Activity $activity Optional .Activity item.
+ * @param int                  $group_id Optional. ID of the group.
+ * @return bool
+ */
+function bpges_force_immediate_admin_notice( $user_id = null, $activity = null, $group_id = null ) {
+	$force = false;
+
+	/**
+	 * Filters whether admin notices should be forced to 'immediate', overriding user preferences.
+	 *
+	 * Please consider the implications of overriding user notification preferences before changing this toggle.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param bool                 $force    Whether to force 'immediate' email for the admin notice.
+	 * @param int                  $user_id  ID of the user.
+	 * @param BP_Activity_Activity $activity Activity item.
+	 * @param int                  $group_id ID of the group.
+	 */
+	return apply_filters( 'bpges_force_immediate_admin_notice', $force, $user_id, $activity, $group_id );
+}
 
 /**
  * Determine whether user should receive a notification of their own posts
