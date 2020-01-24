@@ -534,7 +534,7 @@ function ass_digest_format_item( $item, $type ) {
 //	$timestamp = strtotime( $item->date_recorded );
 
 	/* Because BuddyPress core set gmt = true, timezone must be added */
-	$timestamp = strtotime( $item->date_recorded ) +date('Z');
+	$timestamp = get_date_from_gmt( $item->date_recorded, 'U' );
 
 	$time_posted = date( get_option( 'time_format' ), $timestamp );
 	$date_posted = date( get_option( 'date_format' ), $timestamp );
