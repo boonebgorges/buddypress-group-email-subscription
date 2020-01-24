@@ -1364,6 +1364,9 @@ function ass_default_block_group_activity_types( $retval, $type, $activity ) {
 		// @todo in the future, it might be nice for admins to optionally get this message
 		case 'joined_group' :
 
+		// BP handles these notifications on its own.
+		case 'group_details_updated' :
+
 		case 'created_group' :
 			return false;
 
