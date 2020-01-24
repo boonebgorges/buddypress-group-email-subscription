@@ -518,7 +518,7 @@ function ass_digest_format_item( $item, $type ) {
 		$action_split = explode( ' in the group', ass_clean_subject_html( $item->action ) );
 	}
 
-	if ( $action_split[1] )
+	if ( isset( $action_split[1] ) )
 		$action = $action_split[0];
 	else
 		$action = $item->action;
