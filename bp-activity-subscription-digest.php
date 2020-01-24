@@ -182,7 +182,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 		) );
 		$group_name = $group->name;
 		$group_slug = $group->slug;
-		$group_permalink = bp_get_group_permalink( $group );
+		$group_permalink = ass_get_login_redirect_url( bp_get_group_permalink( $group ) );
 
 		// Might be nice here to link to anchor tags in the message.
 		if ( 'dig' == $type ) {
