@@ -306,7 +306,7 @@ function ass_generate_notification( $args = array() ) {
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $r['action'] . ' ' . $blogname, $r['action'], $blogname );
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', $r['content'], $activity_obj, $r['action'], $group );
-	$the_content = ass_clean_content( $the_content );
+	$the_content = ass_clean_content( $the_content, $activity_obj );
 
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
@@ -610,7 +610,7 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
 	$the_content = apply_filters( 'bp_ass_activity_notification_content', $activity->content, $activity, $action, $group );
-	$the_content = ass_clean_content( $the_content );
+	$the_content = ass_clean_content( $the_content, $activity );
 
 	/*
 	 * If it's an activity item, switch the activity permalink to the group homepage
@@ -1861,11 +1861,18 @@ function ass_get_group_admins_mods( $group_id ) {
  *   - convert HTML entities
  *
  * @uses apply_filters() Filter 'ass_clean_content' to modify our cleaning routine
- * @param string $content The email content
+ * @param string               $content  The email content
+ * @param BP_Activity_Activity $activity The activity object.
  * @return string $clean_content The email content, cleaned up for plaintext email
  */
-function ass_clean_content( $content ) {
-	return apply_filters( 'ass_clean_content', $content );
+function ass_clean_content( $content, $activity = null ) {
+	/**
+	 * Filter for "cleaning" BPGES email content.
+	 *
+	 * @param string               $content  Email content.
+	 * @param BP_Activity_Activity $activity Activity object.
+	 */
+	return apply_filters( 'ass_clean_content', $content, $activity );
 }
 
 // By default, we run content through these filters, which can be individually removed
