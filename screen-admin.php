@@ -90,7 +90,11 @@ function ass_manage_all_members_email_update() {
 			if ( !check_admin_referer( 'ass_change_all_email_sub' ) )
 				return false;
 
-			$result = BP_Groups_Member::get_all_for_group( bp_get_current_group_id(), 0, 0, 0 ); // set the last value to 1 to exclude admins
+			$result = groups_get_group_members( array(
+				'group_id' => bp_get_current_group_id(),
+				'per_page' => 0,
+				'exclude_admins_mods' => false
+			) );
 			$members = $result['members'];
 
 			foreach ( $members as $member ) {
