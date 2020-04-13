@@ -64,6 +64,19 @@ function bpges_process_digest_for_user( $user_id, $type, $timestamp, $is_preview
 
 	$items = $query->get_results();
 
+	/**
+	 * Filters the items to be included in a digest for a user.
+	 *
+	 * @since 3.9.5
+	 *
+	 * @param array  $items      Items returned by BPGES_Queued_Item_Query::get_results().
+	 * @param int    $user_id    ID of the user.
+	 * @param string $type       Digest type. 'sum' or 'dig'.
+	 * @param string $timestamp  Timestamp for the current digest run.
+	 * @param bool   $is_preview Whether this is a preview.
+	 */
+	$items = apply_filters( 'bpges_user_digest_items', $items, $user_id, $type, $timestamp, $is_preview );
+
 	// Sort by group.
 	$sorted_by_group = array();
 	foreach ( $items as $item ) {
