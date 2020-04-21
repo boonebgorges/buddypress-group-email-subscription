@@ -2290,10 +2290,9 @@ function ass_get_forum_type() {
 
 		$type = 'bbpress';
 
-	// check for BP's bundled forums
+	// check for BP's bundled legacy forums.
 	} else {
-		// BP's bundled forums aren't installed correctly, so stop!
-		if ( ! bp_is_active( 'forums' ) || ! bp_forums_is_installed_correctly() ) {
+		if ( ! bp_is_active( 'forums' ) ) {
 			return false;
 		}
 
