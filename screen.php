@@ -5,6 +5,49 @@
  * @since 3.7.0
  */
 
+/**
+ * Should we use the new options panel?
+ *
+ * @since 4.0.0
+ *
+ * @return bool
+ */
+function bpges_use_new_options_panel() {
+
+	/**
+	 * Whether to enable the new options panel.
+	 *
+	 * Those using the BP Nouveau template pack or the older bp-default theme
+	 * will use the new options panel by default. bp-legacy will not due to
+	 * layout issues, however can be forced to true with this filter. CSS
+	 * will need to adjusted manually though.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param bool $retval True for Nouveau or bp-default themes.
+	 */
+	$retval = apply_filters( 'bpges_use_new_options_panel', function_exists( 'bp_nouveau' ) || current_theme_supports( 'buddypress' ) );
+
+	return $retval;
+}
+
+/**
+ * Enqueues van11y-accessible-modal-tooltip-aria.
+ *
+ * Used for new options panel.
+ *
+ * @since 4.0.0
+ *
+ * @link https://github.com/nico3333fr/van11y-accessible-modal-tooltip-aria/blob/master/LICENSE
+ */
+add_action( 'bp_enqueue_scripts', function() {
+	if ( ! bpges_use_new_options_panel() ) {
+		return;
+	}
+
+	wp_enqueue_script( 'van11y-accessible-modal-tooltip-aria', 'https://cdn.rawgit.com/nico3333fr/van11y-accessible-modal-tooltip-aria/e3518090/dist/van11y-accessible-modal-tooltip-aria.min.js' );
+}, 9 );
+
 // this adds the ajax-based subscription option in the group header, or group directory
 function ass_group_subscribe_button() {
 	global $bp, $groups_template;
