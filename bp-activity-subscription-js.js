@@ -1,13 +1,11 @@
-jQuery(document).ready( function() {
-	var j = jQuery;
-
+jQuery(document).ready( function($) {
 	// topic follow/mute
-	j( document ).on("click", '.ass-topic-subscribe > a', function() {
-		it = j(this);
-		var theid = j(this).attr('id');
+	$( document ).on("click", '.ass-topic-subscribe > a', function() {
+		it = $(this);
+		var theid = $(this).attr('id');
 		var stheid = theid.split('-');
 
-		//j('.pagination .ajax-loader').toggle();
+		//$('.pagination .ajax-loader').toggle();
 
 		var data = {
 			action: 'ass_ajax',
@@ -19,7 +17,7 @@ jQuery(document).ready( function() {
 
 		// TODO: add ajax code to give status feedback that will fade out
 
-		j.post( ajaxurl, data, function( response ) {
+		$.post( ajaxurl, data, function( response ) {
 			if ( response == 'follow' ) {
 				var m = bp_ass.mute;
 				theid = theid.replace( 'follow', 'mute' );
@@ -30,24 +28,24 @@ jQuery(document).ready( function() {
 				var m = bp_ass.error;
 			}
 
-			j(it).html(m);
-			j(it).attr('id', theid);
-			j(it).attr('title', '');
+			$(it).html(m);
+			$(it).attr('id', theid);
+			$(it).attr('title', '');
 
-			//j('.pagination .ajax-loader').toggle();
+			//$('.pagination .ajax-loader').toggle();
 
 		});
 	});
 
 
 	// group subscription options
-	j( document ).on("click", '.group-sub', function() {
-		it = j(this);
-		var theid = j(this).attr('id');
+	$( document ).on("click", '.group-sub', function() {
+		it = $(this);
+		var theid = $(this).attr('id');
 		var stheid = theid.split('-');
 		group_id = stheid[1];
-		current = j( '#gsubstat-'+group_id ).html();
-		j('#gsubajaxload-'+group_id).toggle();
+		current = $( '#gsubstat-'+group_id ).html();
+		$('#gsubajaxload-'+group_id).toggle();
 
 		var data = {
 			action: 'ass_group_ajax',
@@ -56,43 +54,42 @@ jQuery(document).ready( function() {
 			//,_ajax_nonce: stheid[2]
 		};
 
-		j.post( ajaxurl, data, function( response ) {
-			status = j(it).html();
+		$.post( ajaxurl, data, function( response ) {
+			status = $(it).html();
 			if ( !current || current == 'No Email' ) {
-				j( '#gsublink-'+group_id ).html('change');
+				$( '#gsublink-'+group_id ).html('change');
 				//status = status + ' / ';
 			}
-			j( '#gsubstat-'+group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
-			j( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
-			j( '#gsubopt-'+group_id ).slideToggle('fast');
-			j( '#gsubajaxload-'+group_id ).toggle();
+			$( '#gsubstat-'+group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
+			$( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
+			$( '#gsubopt-'+group_id ).slideToggle('fast');
+			$( '#gsubajaxload-'+group_id ).toggle();
 		});
 
 	});
 
-	j( document ).on("click", '.group-subscription-options-link', function() {
-		stheid = j(this).attr('id').split('-');
+	$( document ).on("click", '.group-subscription-options-link', function() {
+		stheid = $(this).attr('id').split('-');
 		group_id = stheid[1];
-		j( '#gsubopt-'+group_id ).slideToggle('fast');
+		$( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 
-	j( document ).on("click", '.group-subscription-close', function() {
-		stheid = j(this).attr('id').split('-');
+	$( document ).on("click", '.group-subscription-close', function() {
+		stheid = $(this).attr('id').split('-');
 		group_id = stheid[1];
-		j( '#gsubopt-'+group_id ).slideToggle('fast');
+		$( '#gsubopt-'+group_id ).slideToggle('fast');
 	});
 
-	//j( document ).on("click", '.ass-settings-advanced-link', function() {
-	//	j( '.ass-settings-advanced' ).slideToggle('fast');
+	//$( document ).on("click", '.ass-settings-advanced-link', function() {
+	//	$( '.ass-settings-advanced' ).slideToggle('fast');
 	//});
 
 	// Toggle welcome email fields on group email options page
-	j( document ).on("change", '#ass-welcome-email-enabled', function() {
-		if ( j(this).prop('checked') ) {
-			j('.ass-welcome-email-field').show();
+	$( document ).on("change", '#ass-welcome-email-enabled', function() {
+		if ( $(this).prop('checked') ) {
+			$('.ass-welcome-email-field').show();
 		} else {
-			j('.ass-welcome-email-field').hide();
+			$('.ass-welcome-email-field').hide();
 		}
 	});
-
 });
