@@ -45,7 +45,10 @@ jQuery(document).ready( function($) {
 		var stheid = theid.split('-');
 		group_id = stheid[1];
 		current = $( '#gsubstat-'+group_id ).html();
-		$('#gsubajaxload-'+group_id).toggle();
+		$('#gsubajaxload-'+group_id).css('display','inline-block');
+
+		newBtn = $('button.js-tooltip[data-tooltip-content-id="ges-panel-' + group_id + '"]');
+		newBtn.hide();
 
 		var data = {
 			action: 'ass_group_ajax',
@@ -53,6 +56,8 @@ jQuery(document).ready( function($) {
 			group_id: stheid[1]
 			//,_ajax_nonce: stheid[2]
 		};
+
+		$( '#js-tooltip-close' ).click();
 
 		$.post( ajaxurl, data, function( response ) {
 			status = $(it).html();
@@ -63,7 +68,8 @@ jQuery(document).ready( function($) {
 			$( '#gsubstat-'+group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
 			$( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
 			$( '#gsubopt-'+group_id ).slideToggle('fast');
-			$( '#gsubajaxload-'+group_id ).toggle();
+			$( '#gsubajaxload-'+group_id ).hide();
+			newBtn.show();
 		});
 
 	});
