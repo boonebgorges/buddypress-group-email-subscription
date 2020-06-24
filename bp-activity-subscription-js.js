@@ -19,13 +19,14 @@ jQuery(document).ready( function($) {
 
 	// topic follow/mute
 	$( document ).on("click", '.ass-topic-subscribe > a', function() {
-		it = $(this);
-		var theid = $(this).attr('id');
-		var stheid = theid.split('-');
+		var it = $(this),
+			theid = $(this).attr('id'),
+			stheid = theid.split('-'),
+			data;
 
 		//$('.pagination .ajax-loader').toggle();
 
-		var data = {
+		data = {
 			action: 'ass_ajax',
 			a: stheid[0],
 			topic_id: stheid[1],
@@ -36,14 +37,16 @@ jQuery(document).ready( function($) {
 		// TODO: add ajax code to give status feedback that will fade out
 
 		$.post( ajaxurl, data, function( response ) {
+			var m, theid;
+
 			if ( response == 'follow' ) {
-				var m = bp_ass.mute;
+				m = bp_ass.mute;
 				theid = theid.replace( 'follow', 'mute' );
 			} else if ( response == 'mute' ) {
-				var m = bp_ass.follow;
+				m = bp_ass.follow;
 				theid = theid.replace( 'mute', 'follow' );
 			} else {
-				var m = bp_ass.error;
+				m = bp_ass.error;
 			}
 
 			$(it).html(m);
@@ -58,17 +61,18 @@ jQuery(document).ready( function($) {
 
 	// group subscription options
 	$( document ).on("click", '.group-sub', function() {
-		it = $(this);
-		var theid = $(this).attr('id');
-		var stheid = theid.split('-');
-		group_id = stheid[1];
-		current = $( '#gsubstat-'+group_id ).html();
-		$('#gsubajaxload-'+group_id).css('display','inline-block');
+		var it = $(this),
+			theid = $(this).attr('id'),
+			stheid = theid.split('-'),
+			group_id = stheid[1],
+			current = $( '#gsubstat-' + group_id ).html(),
+			newBtn = $('button.js-tooltip[data-tooltip-content-id="ges-panel-' + group_id + '"]'),
+			data;
 
-		newBtn = $('button.js-tooltip[data-tooltip-content-id="ges-panel-' + group_id + '"]');
+		$('#gsubajaxload-' + group_id).css('display','inline-block');
 		newBtn.hide();
 
-		var data = {
+		data = {
 			action: 'ass_group_ajax',
 			a: stheid[0],
 			group_id: stheid[1],
@@ -78,30 +82,32 @@ jQuery(document).ready( function($) {
 		$( '#js-tooltip-close' ).click();
 
 		$.post( ajaxurl, data, function( response ) {
-			status = $(it).html();
+			var status = $(it).html();
 			if ( !current || current == 'No Email' ) {
-				$( '#gsublink-'+group_id ).html('change');
+				$( '#gsublink-' + group_id ).html('change');
 				//status = status + ' / ';
 			}
-			$( '#gsubstat-'+group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
-			$( '#gsubstat-'+group_id ).addClass( 'gemail_icon' );
-			$( '#gsubopt-'+group_id ).slideToggle('fast');
-			$( '#gsubajaxload-'+group_id ).hide();
+			$( '#gsubstat-' + group_id ).html( status ); //add .animate({opacity: 1.0}, 2000) to slow things down for testing
+			$( '#gsubstat-' + group_id ).addClass( 'gemail_icon' );
+			$( '#gsubopt-' + group_id ).slideToggle('fast');
+			$( '#gsubajaxload-' + group_id ).hide();
 			newBtn.show();
 		});
 
 	});
 
 	$( document ).on("click", '.group-subscription-options-link', function() {
-		stheid = $(this).attr('id').split('-');
-		group_id = stheid[1];
-		$( '#gsubopt-'+group_id ).slideToggle('fast');
+		var stheid = $(this).attr('id').split('-'),
+			group_id = stheid[1];
+
+		$( '#gsubopt-' + group_id ).slideToggle('fast');
 	});
 
 	$( document ).on("click", '.group-subscription-close', function() {
-		stheid = $(this).attr('id').split('-');
-		group_id = stheid[1];
-		$( '#gsubopt-'+group_id ).slideToggle('fast');
+		var stheid = $(this).attr('id').split('-'),
+			group_id = stheid[1];
+
+		$( '#gsubopt-' + group_id ).slideToggle('fast');
 	});
 
 	//$( document ).on("click", '.ass-settings-advanced-link', function() {
