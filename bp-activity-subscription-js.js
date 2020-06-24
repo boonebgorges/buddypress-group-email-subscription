@@ -1,4 +1,22 @@
 jQuery(document).ready( function($) {
+	var groupRow = $( '#groups-list li' );
+
+	if ( groupRow.find( 'div.ges-panel' ).length ) {
+		repositionGESPanel();
+		$( window ).resize(function() {
+			repositionGESPanel();
+		});
+	}
+
+	// If positioned right, ensure panel is aligned right as well.
+	function repositionGESPanel() {
+		if ( 'right' === groupRow.find('div.action').css('float') || 'right' === groupRow.find('div.action, div.item-actions').css('text-align') ) {
+			groupRow.find('.group-subscription-div').addClass( 'ges-panel-right' );
+		} else {
+			groupRow.find('.group-subscription-div').removeClass( 'ges-panel-right' );
+		}
+	}
+
 	// topic follow/mute
 	$( document ).on("click", '.ass-topic-subscribe > a', function() {
 		it = $(this);

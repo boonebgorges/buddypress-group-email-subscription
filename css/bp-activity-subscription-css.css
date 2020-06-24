@@ -152,6 +152,11 @@ button.ges-change:hover {
 	z-index: 99999;
 }
 
+.ges-panel-right #js-dialogtooltip {
+	left: auto !important;
+	right: 0 !important;
+}
+
 .js-dialogtooltip #tooltip-title {
 	font-size: 1em;
 	margin-top: 0;
