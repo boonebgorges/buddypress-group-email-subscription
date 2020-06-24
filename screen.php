@@ -114,19 +114,22 @@ function ass_group_subscribe_button() {
 	</div>
 
 	<div id="<?php echo $container_id; ?>" style="display:none;" <?php echo $container_classes; ?>>
-		<a class="group-sub" id="no-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'No Email', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'I will read this group on the web', 'buddypress-group-email-subscription' ); ?><br>
-		<a class="group-sub" id="sum-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'Weekly Summary', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Get a summary of topics each', 'buddypress-group-email-subscription' ); ?> <?php echo ass_weekly_digest_week(); ?><br>
-		<a class="group-sub" id="dig-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'Daily Digest', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription' ); ?><br>
+		<div data-security="<?php echo wp_create_nonce( 'bpges-sub-' . $group->id ); ?>">
+			<a class="group-sub" id="no-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'No Email', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'I will read this group on the web', 'buddypress-group-email-subscription' ); ?><br>
+			<a class="group-sub" id="sum-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'Weekly Summary', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Get a summary of topics each', 'buddypress-group-email-subscription' ); ?> <?php echo ass_weekly_digest_week(); ?><br>
+			<a class="group-sub" id="dig-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'Daily Digest', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription' ); ?><br>
 
-		<?php if ( ass_get_forum_type() ) : ?>
-			<a class="group-sub" id="sub-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'New Topics', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription' ); ?><br>
-		<?php endif; ?>
+			<?php if ( ass_get_forum_type() ) : ?>
+				<a class="group-sub" id="sub-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'New Topics', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription' ); ?><br>
+			<?php endif; ?>
 
-		<a class="group-sub" id="supersub-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'All Email', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Send all group activity as it arrives', 'buddypress-group-email-subscription' ); ?>
+			<a class="group-sub" id="supersub-<?php echo $group->id; ?>" href="javascript:;"><?php esc_html_e( 'All Email', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Send all group activity as it arrives', 'buddypress-group-email-subscription' ); ?>
 
-		<?php if ( ! bpges_use_new_options_panel() ) : ?>
-			<br><a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php esc_html_e( 'Close', 'buddypress-group-email-subscription' ); ?></a>
-		<?php endif; ?>
+			<?php if ( ! bpges_use_new_options_panel() ) : ?>
+				<br><a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php esc_html_e( 'Close', 'buddypress-group-email-subscription' ); ?></a>
+			<?php endif; ?>
+
+		</div>
 	</div>
 
 	<?php

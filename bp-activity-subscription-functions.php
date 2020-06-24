@@ -1613,12 +1613,11 @@ function ass_subscribe_translate( $status ){
 
 // Handles AJAX request to subscribe/unsubscribe from group
 function ass_group_ajax_callback() {
-	global $bp;
-	//check_ajax_referer( "ass_group_subscribe" );
-
 	$action = $_POST['a'];
 	$user_id = bp_loggedin_user_id();
 	$group_id = $_POST['group_id'];
+
+	check_ajax_referer( "bpges-sub-{$group_id}" );
 
 	ass_group_subscription( $action, $user_id, $group_id );
 

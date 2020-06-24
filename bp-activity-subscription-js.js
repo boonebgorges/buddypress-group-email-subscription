@@ -53,8 +53,8 @@ jQuery(document).ready( function($) {
 		var data = {
 			action: 'ass_group_ajax',
 			a: stheid[0],
-			group_id: stheid[1]
-			//,_ajax_nonce: stheid[2]
+			group_id: stheid[1],
+			_ajax_nonce: it.parent().data( 'security' )
 		};
 
 		$( '#js-tooltip-close' ).click();
