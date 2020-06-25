@@ -117,3 +117,142 @@ h4.activity-subscription-settings-title {
 	font-size:11px;
 	color:#888;
 }
+
+/* NEW PANEL ********************************************************/
+
+button.ges-change {
+    font-size: 1em;
+    margin-bottom: 0;
+    margin-left: .4em;
+}
+
+button.ges-change,
+button.ges-change:hover {
+    padding: 3px 6px;
+}
+
+.ges-ajax-processing {
+	background:url(../../buddypress/bp-themes/bp-default/_inc/images/ajax-loader.gif) no-repeat top left;
+	display: none;
+	height: 16px;
+	line-height: 1;
+	margin-left: .4em;
+	vertical-align: middle;
+	width: 16px;
+}
+
+.group-subscription-div #js-dialogtooltip {
+	border: 2px solid #333;
+	border-radius: 4px;
+	padding: 1em;
+	width: max-content;
+	left: 0;
+	right: auto;
+	display: block;
+	z-index: 99999;
+}
+
+.ges-panel-right #js-dialogtooltip {
+	left: auto !important;
+	right: 0 !important;
+}
+
+.js-dialogtooltip #tooltip-title {
+	font-size: 1em;
+	margin-top: 0;
+	margin-bottom: .6em;
+}
+
+.js-dialogtooltip #tooltip-title:before {
+	display: none;
+}
+
+.js-dialogtooltip #tooltip-title,
+.group-email-tooltip #js-tooltip-content {
+	text-align: left;
+}
+
+.group-subscription-div #js-tooltip-close {
+	float: right;
+	font-size: 1em;
+	margin-top: 0;
+}
+
+#js-dialogtooltip button {
+	font-weight: bold;
+	line-height: 1;
+	margin-left: 4px;
+	padding: 3px 6px !important;
+}
+
+.group-email-tooltip a {
+	display: inline-block;
+	margin-bottom: .5em;
+	margin-right: .4em;
+	width: auto;
+}
+
+.group-email-tooltip :focus {
+	box-shadow: 0 0 5px rgba(69, 105, 185, 1);
+}
+
+.group-subscription-div {
+	position: relative;
+}
+
+body.bp-nouveau.groups:not(.single-item) .group-subscription-div {
+	position: initial;
+}
+
+body.bp-nouveau.groups:not(.single-item) .group-subscription-div #js-dialogtooltip {
+	left: 0;
+	right: 0;
+}
+
+@media screen and (max-width: 782px) {
+	body.bp-nouveau.groups #item-header-cover-image #item-header-content #js-dialogtooltip {
+		left: 0;
+		right: 0;
+	}
+}
+
+@media screen and (min-width: 46.8em) {
+	body.bp-nouveau.groups:not(.single-item) .group-subscription-div #js-dialogtooltip {
+		left: calc(150px + 5%);
+		right: auto;
+	}
+}
+
+/* fixes for older themes */
+
+body.bp-legacy #item-header-content .ges-panel {
+	position: absolute;
+}
+
+#bp-default #item-header-content .ges-panel,
+#infinity-base #item-header-content .ges-panel {
+	position: initial;
+}
+
+#bp-default #item-header-content .ges-panel #js-dialogtooltip {
+	left: 190px;
+}
+
+#infinity-base #item-header-content .ges-panel #js-dialogtooltip {
+	left: 30px;
+}
+
+body.bp-legacy:not(#bp-default):not(#infinity-base) #groups-list .ges-panel #js-dialogtooltip {
+	position: relative;
+}
+
+body.bp-legacy #buddypress div.action .ges-panel #js-dialogtooltip div {
+	clear: none;
+	float: none;
+	margin-bottom: 0;
+}
+
+body.bp-legacy #buddypress div.action .ges-panel #js-dialogtooltip a {
+	display: inline-block;
+	width: auto;
+}

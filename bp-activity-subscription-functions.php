@@ -1633,12 +1633,11 @@ function ass_subscribe_translate( $status ){
 
 // Handles AJAX request to subscribe/unsubscribe from group
 function ass_group_ajax_callback() {
-	global $bp;
-	//check_ajax_referer( "ass_group_subscribe" );
-
 	$action = $_POST['a'];
 	$user_id = bp_loggedin_user_id();
 	$group_id = $_POST['group_id'];
+
+	check_ajax_referer( "bpges-sub-{$group_id}" );
 
 	ass_group_subscription( $action, $user_id, $group_id );
 
@@ -2317,10 +2316,9 @@ function ass_get_forum_type() {
 
 		$type = 'bbpress';
 
-	// check for BP's bundled forums
+	// check for BP's bundled legacy forums.
 	} else {
-		// BP's bundled forums aren't installed correctly, so stop!
-		if ( ! bp_is_active( 'forums' ) || ! bp_forums_is_installed_correctly() ) {
+		if ( ! bp_is_active( 'forums' ) ) {
 			return false;
 		}
 

@@ -5,6 +5,49 @@
  * @since 3.7.0
  */
 
+/**
+ * Should we use the new options panel?
+ *
+ * @since 4.0.0
+ *
+ * @return bool
+ */
+function bpges_use_new_options_panel() {
+
+	/**
+	 * Whether to enable the new options panel.
+	 *
+	 * Those using the BP Nouveau template pack or the older bp-default theme
+	 * will use the new options panel by default. bp-legacy will not due to
+	 * layout issues, however can be forced to true with this filter. CSS
+	 * will need to adjusted manually though.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param bool $retval True for Nouveau or bp-default themes.
+	 */
+	$retval = apply_filters( 'bpges_use_new_options_panel', function_exists( 'bp_nouveau' ) || current_theme_supports( 'buddypress' ) );
+
+	return $retval;
+}
+
+/**
+ * Enqueues van11y-accessible-modal-tooltip-aria.
+ *
+ * Used for new options panel.
+ *
+ * @since 4.0.0
+ *
+ * @link https://github.com/nico3333fr/van11y-accessible-modal-tooltip-aria/blob/master/LICENSE
+ */
+add_action( 'bp_enqueue_scripts', function() {
+	if ( ! bpges_use_new_options_panel() ) {
+		return;
+	}
+
+	wp_enqueue_script( 'van11y-accessible-modal-tooltip-aria', 'https://cdn.rawgit.com/nico3333fr/van11y-accessible-modal-tooltip-aria/e3518090/dist/van11y-accessible-modal-tooltip-aria.min.js' );
+}, 9 );
+
 // this adds the ajax-based subscription option in the group header, or group directory
 function ass_group_subscribe_button() {
 	global $bp, $groups_template;
@@ -28,38 +71,68 @@ function ass_group_subscribe_button() {
 	if ( $group_status == 'no' )
 		$group_status = NULL;
 
-	$status_desc = __('Your email status is ', 'buddypress-group-email-subscription');
-	$link_text = __('change', 'buddypress-group-email-subscription');
-	$gemail_icon_class = ' gemail_icon';
-	$sep = '';
+	$status_desc = __( 'Your email status is ', 'buddypress-group-email-subscription' );
+	$link_text   = __( 'change', 'buddypress-group-email-subscription' );
 
-	if ( !$group_status ) {
+	$gemail_icon_class = ' gemail_icon';
+	$sep               = '';
+
+	if ( ! $group_status ) {
 		//$status_desc = '';
-		$link_text = __('Get email updates', 'buddypress-group-email-subscription');
+		$link_text         = __( 'Get email updates', 'buddypress-group-email-subscription' );
 		$gemail_icon_class = '';
-		$sep = '';
 	}
 
 	$status = ass_subscribe_translate( $group_status );
+
+	if ( bpges_use_new_options_panel() ) {
+		$container_id      = 'ges-panel-' . $group->id;
+		$container_classes = '';
+		$ajax_class        = 'ges-ajax-processing';
+	} else {
+		$container_id      = 'gsubopt-' . $group->id;
+		$container_classes = 'generic-button group-subscription-options';
+		$ajax_class        = 'ajax-loader';
+	}
+
+	$ges_panel_class = bpges_use_new_options_panel() && ! function_exists( 'bp_nouveau' ) ? 'ges-panel' : '';
+
 	?>
 
-	<div class="group-subscription-div">
-		<span class="group-subscription-status-desc"><?php echo $status_desc; ?></span>
-		<span class="group-subscription-status<?php echo $gemail_icon_class ?>" id="gsubstat-<?php echo $group->id; ?>"><?php echo $status; ?></span> <?php echo $sep; ?>
-		(<a class="group-subscription-options-link" id="gsublink-<?php echo $group->id; ?>" href="javascript:void(0);" title="<?php _e('Change your email subscription options for this group','buddypress-group-email-subscription');?>"><?php echo $link_text; ?></a>)
-		<span class="ajax-loader" id="gsubajaxload-<?php echo $group->id; ?>"></span>
-	</div>
-	<div class="generic-button group-subscription-options" id="gsubopt-<?php echo $group->id; ?>" style="display:none;">
-		<a class="group-sub" id="no-<?php echo $group->id; ?>"><?php _e('No Email', 'buddypress-group-email-subscription') ?></a> <?php _e('I will read this group on the web', 'buddypress-group-email-subscription') ?><br>
-		<a class="group-sub" id="sum-<?php echo $group->id; ?>"><?php _e('Weekly Summary', 'buddypress-group-email-subscription') ?></a> <?php _e('Get a summary of topics each', 'buddypress-group-email-subscription') ?> <?php echo ass_weekly_digest_week(); ?><br>
-		<a class="group-sub" id="dig-<?php echo $group->id; ?>"><?php _e('Daily Digest', 'buddypress-group-email-subscription') ?></a> <?php _e('Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription') ?><br>
+	<div class="group-subscription-div <?php echo esc_attr( $ges_panel_class ); ?>">
+		<span class="group-subscription-status-desc"><?php echo esc_html( $status_desc ); ?></span>
+		<span class="group-subscription-status<?php echo esc_attr( $gemail_icon_class ); ?>" id="gsubstat-<?php echo esc_attr( $group->id ); ?>"><?php echo esc_html( $status ); ?></span> <?php echo esc_html( $sep ); ?>
 
-		<?php if ( ass_get_forum_type() ) : ?>
-			<a class="group-sub" id="sub-<?php echo $group->id; ?>"><?php _e('New Topics', 'buddypress-group-email-subscription') ?></a> <?php _e('Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription') ?><br>
+		<?php if ( bpges_use_new_options_panel() ) : ?>
+
+			<button class="js-tooltip ges-change" id="gestoggle-<?php echo esc_attr( $group->id ); ?>" data-tooltip-content-id="ges-panel-<?php echo esc_attr( $group->id ); ?>" data-tooltip-prefix-class="group-email" data-tooltip-title="<?php esc_html_e( 'Change email subscription for this group', 'buddypress-group-email-subscription' ); ?>" data-tooltip-close-text="<?php esc_html_e( 'Close', 'buddypress-group-email-subscription' ); ?>" data-tooltip-close-title="<?php esc_html_e( 'Close this window', 'buddypress-group-email-subscription' ); ?>"><?php esc_html_e( 'Change', 'buddypress-group-email-subscription' ); ?></button>
+
+		<?php else : ?>
+
+			(<a class="group-subscription-options-link js-tooltip" id="gestoggle-<?php echo esc_attr( $group->id ); ?>" data-tooltip-content-id="ges-panel-<?php echo esc_attr( $group->id ); ?>" data-tooltip-prefix-class="group-email" data-tooltip-title="<?php esc_html_e( 'Change email subscription for this group', 'buddypress-group-email-subscription' ); ?>" data-tooltip-close-text="<?php esc_html_e( 'Close', 'buddypress-group-email-subscription' ); ?>" data-tooltip-close-title="<?php esc_html_e( 'Close this window', 'buddypress-group-email-subscription' ); ?>" href="javascript:void(0);"><?php echo esc_html( $link_text ); ?></a>)
+
 		<?php endif; ?>
 
-		<a class="group-sub" id="supersub-<?php echo $group->id; ?>"><?php _e('All Email', 'buddypress-group-email-subscription') ?></a> <?php _e('Send all group activity as it arrives', 'buddypress-group-email-subscription') ?><br>
-		<a class="group-subscription-close" id="gsubclose-<?php echo $group->id; ?>"><?php _e('close', 'buddypress-group-email-subscription') ?></a>
+		<span class="<?php echo esc_attr( $ajax_class ); ?>" id="gsubajaxload-<?php echo esc_attr( $group->id ); ?>"></span>
+	</div>
+
+	<div id="<?php echo esc_attr( $container_id ); ?>" style="display:none;" class="<?php echo esc_attr( $container_classes ); ?>">
+		<div data-security="<?php echo esc_attr( wp_create_nonce( 'bpges-sub-' . $group->id ) ); ?>">
+			<a class="group-sub" id="no-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php esc_html_e( 'No Email', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'I will read this group on the web', 'buddypress-group-email-subscription' ); ?><br>
+			<a class="group-sub" id="sum-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php esc_html_e( 'Weekly Summary', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Get a summary of topics each', 'buddypress-group-email-subscription' ); ?> <?php echo ass_weekly_digest_week(); ?><br>
+			<a class="group-sub" id="dig-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php esc_html_e( 'Daily Digest', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription' ); ?><br>
+
+			<?php if ( ass_get_forum_type() ) : ?>
+				<a class="group-sub" id="sub-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php esc_html_e( 'New Topics', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription' ); ?><br>
+			<?php endif; ?>
+
+			<a class="group-sub" id="supersub-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php esc_html_e( 'All Email', 'buddypress-group-email-subscription' ); ?></a> <?php esc_html_e( 'Send all group activity as it arrives', 'buddypress-group-email-subscription' ); ?>
+
+			<?php if ( ! bpges_use_new_options_panel() ) : ?>
+				<br><a class="group-subscription-close" id="gsubclose-<?php echo esc_attr( $group->id ); ?>"><?php esc_html_e( 'Close', 'buddypress-group-email-subscription' ); ?></a>
+			<?php endif; ?>
+
+		</div>
 	</div>
 
 	<?php
