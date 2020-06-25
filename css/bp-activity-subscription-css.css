@@ -209,6 +209,13 @@ body.bp-nouveau.groups:not(.single-item) .group-subscription-div #js-dialogtoolt
 	right: 0;
 }
 
+@media screen and (max-width: 782px) {
+	body.bp-nouveau.groups #item-header-cover-image #item-header-content #js-dialogtooltip {
+		left: 0;
+		right: 0;
+	}
+}
+
 @media screen and (min-width: 46.8em) {
 	body.bp-nouveau.groups:not(.single-item) .group-subscription-div #js-dialogtooltip {
 		left: calc(150px + 5%);
