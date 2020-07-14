@@ -10,7 +10,7 @@ function ass_default_subscription_settings_form() {
 	?>
 	<h4><?php _e('Email Subscription Defaults', 'buddypress-group-email-subscription'); ?></h4>
 	<p><?php _e('When new users join this group, their default email notification settings will be:', 'buddypress-group-email-subscription'); ?></p>
-	<div class="radio">
+	<div class="radio ass-email-subscriptions-options">
 		<label id="ass-email-type_no"><input type="radio" name="ass-default-subscription" value="no" <?php ass_default_subscription_settings( 'no' ) ?> />
 			<?php _e( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' ) ?></label>
 		<label id="ass-email-type_sum"><input type="radio" name="ass-default-subscription" value="sum" <?php ass_default_subscription_settings( 'sum' ) ?> />
