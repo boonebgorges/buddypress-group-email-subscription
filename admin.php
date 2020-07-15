@@ -384,6 +384,10 @@ add_action( 'bp_groups_admin_manage_member_row', 'ass_groups_admin_manage_member
  *                                Default: false.
  */
 function ass_install_emails( $post_exists_check = false ) {
+	if ( ! function_exists( 'ass_set_email_type' ) ) {
+		require_once( __DIR__ . '/bp-activity-subscription-functions.php' );
+	}
+
 	// No need to check if our post types exist.
 	if ( ! $post_exists_check ) {
 		ass_set_email_type( 'bp-ges-single', false );
