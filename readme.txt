@@ -93,9 +93,22 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
-= 3.9.5 =
+= 4.0.0 =
+* Overhaul markup for subscription settings panel, for better responsiveness and accessibility.
 * Fix bug that could cause incorrect information to be pulled for bp-groupblog activity items.
 * Fix bug that can cause empty upload directories to be created in some cases.
+* Allow BP email_type to be filtered.
+* Introduce `bpges_force_immediate_admin_notice()`, allowing plugins to force admin-sent emails to go out to all members regardles of their subscription setting.
+* Fix bug that caused duplicate notices in the case of updated group details.
+* Improved handling of local times when building digest.
+* Ensure that all non-public links in digest emails are wrapped in a login URL.
+* Add ability to modify content-cleanup routine on a per-activity basis.
+* Remove duplicate content filtering when sending admin notice.
+* Improved compatibility with latest versions of BuddyPress.
+* Add filter for just-in-time filtering of digest items on a per-user basis.
+* Remove legacy bp-forums function checks.
+* Improve CSS selectors in group settings radio buttons.
+* Some hardening against potential CSRF attacks.
 * Improved stylability for View links in digests.
 
 = 3.9.4 =
