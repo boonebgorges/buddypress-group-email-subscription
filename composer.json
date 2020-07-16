@@ -2,6 +2,7 @@
     "name": "boonebgorges/buddypress-group-email-subscription",
     "type": "wordpress-plugin",
     "license": "GPLv2",
+    "version": "4.0.0",
     "require": {
         "composer/installers": "~1.0"
     },
