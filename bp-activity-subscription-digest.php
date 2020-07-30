@@ -591,6 +591,9 @@ function ass_digest_filter( $item ) {
 	return $item;
 }
 
+// Run activity content in digests through wpautop for proper handling of line breaks.
+add_filter( 'ass_digest_content', 'wpautop' );
+
 // convert the email to plain text, and fancy it up a bit. these conversion only work in English, but it's ok.
 function ass_convert_html_to_plaintext( $message ) {
 	// convert view links to http:// links
