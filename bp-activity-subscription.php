@@ -65,7 +65,7 @@ add_action( 'bp_include', 'ass_loader' );
 function activitysub_textdomain() {
 	load_plugin_textdomain( 'buddypress-group-email-subscription', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
-add_action( 'init', 'activitysub_textdomain' );
+add_action( 'plugins_loaded', 'activitysub_textdomain' );
 
 /**
  * Activation hook.
