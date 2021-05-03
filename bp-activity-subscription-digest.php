@@ -544,13 +544,10 @@ function ass_digest_format_item( $item, $type ) {
 	$action = str_replace( ' posted on the discussion topic', ' posted on', $action );
 
 	/* Activity timestamp */
-//	$timestamp = strtotime( $item->date_recorded );
+	$timestamp = strtotime( $item->date_recorded );
 
-	/* Because BuddyPress core set gmt = true, timezone must be added */
-	$timestamp = get_date_from_gmt( $item->date_recorded, 'U' );
-
-	$time_posted = date( get_option( 'time_format' ), $timestamp );
-	$date_posted = date( get_option( 'date_format' ), $timestamp );
+	$time_posted = get_date_from_gmt( $item->date_recorded, get_option( 'time_format' ) );
+	$date_posted = get_date_from_gmt( $item->date_recorded, get_option( 'date_format' ) );
 
 	//$item_message = strip_tags( $action ) . ": \n";
 	$item_message =  "<div class=\"digest-item\" {$ass_email_css['item_div']}>";
