@@ -29,10 +29,10 @@ function ass_default_subscription_settings_form() {
 					<label id="ass-email-type_<?php echo $email_type; ?>">
 				<?php endif; ?>
 
-				<input type="radio" name="ass-default-subscription" value="<?php echo $email_type; ?>" <?php ass_default_subscription_settings( $email_type ); ?>>
+				<input type="radio" name="ass-default-subscription" id="ass-default-subscription_<?php echo $email_type; ?>" value="<?php echo $email_type; ?>" <?php ass_default_subscription_settings( $email_type ); ?>>
 
 				<?php if ( ! $wrap_labels ) : ?>
-					<label id="ass-email-type_<?php echo $email_type; ?>">
+					<label id="ass-email-type_<?php echo $email_type; ?>" for="ass-default-subscription_<?php echo $email_type; ?>">
 				<?php endif; ?>
 
 				<?php
