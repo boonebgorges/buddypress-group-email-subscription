@@ -146,6 +146,10 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	$summary = $activity_message = $body = '';
 
 	$userdata = new WP_User( $user_id );
+	if ( 0 === $userdata->ID ) {
+		return $group_activity_ids;
+	}
+
 	$to = $userdata->user_email;
 	$userdomain = bp_core_get_user_domain( $user_id );
 
@@ -209,7 +213,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 	// If there's nothing to send, skip this use.
 	if ( ! $has_group_activity ) {
-		return;
+		return $group_activity_ids;
 	}
 
 	// show group summary for digest, and follow help text for weekly summary
@@ -257,7 +261,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	 */
 	$send = apply_filters( 'bp_ges_send_digest_to_user', true, $user_id, $group_activity_ids, $message );
 	if ( ! $send ) {
-		return;
+		return $group_activity_ids;
 	}
 
 	// Sending time!
