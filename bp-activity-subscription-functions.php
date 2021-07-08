@@ -1703,6 +1703,33 @@ function bpges_unsubscribe_on_membership_ban( BP_Groups_Member $membership ) {
 add_action( 'groups_member_before_save', 'bpges_unsubscribe_on_membership_ban' );
 
 /**
+ * Remove queued items for deleted user.
+ *
+ * @param int $user_id ID of the deleted user.
+ *
+ * @since 4.0.0
+ */
+function bpges_delete_queued_items_for_deleted_user( $user_id ) {
+	$query = new BPGES_Queued_Item_Query(
+		array(
+			'user_id' => $user_id,
+		)
+	);
+
+	$queued_items_to_delete = array_map(
+		function( $item ) {
+			return $item->id;
+		},
+		$query->get_results()
+	);
+
+	if ( ! empty( $queued_items_to_delete ) ) {
+		BPGES_Queued_Item::bulk_delete( $queued_items_to_delete );
+	}
+}
+add_action( 'delete_user', 'bpges_delete_queued_items_for_deleted_user' );
+
+/**
  * Deletes all queued items for a user + group combo.
  *
  * @since 3.9.3
