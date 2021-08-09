@@ -1354,6 +1354,19 @@ function bpges_format_activity_action_bpges_notice( $action, $activity, $subject
  */
 function ass_default_block_group_activity_types( $retval, $type, $activity ) {
 
+	/*
+	 * Do not resend a previous bbPress forum item to the group.
+	 *
+	 * This can occur when unapproving a forum post and later, reapproving it.
+	 * We do this by checking the forum post's '_bbp_activity_id' meta entry.
+	 */
+	if ( 'bbp_topic_create' === $type || 'bbp_reply_create' === $type ) {
+		$prev_activity_id = get_post_meta( $activity->secondary_item_id, '_bbp_activity_id', true );
+		if ( ! empty( $prev_activity_id ) ) {
+			return false;
+		}
+	}
+
 	switch( $type ) {
 		/** ACTIVITY TYPES TO BLOCK **************************************/
 
