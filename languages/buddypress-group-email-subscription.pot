@@ -1,15 +1,15 @@
-# Copyright (C) 2020 Deryk Wenaus, boonebgorges, r-a-y
+# Copyright (C) 2021 Deryk Wenaus, boonebgorges, r-a-y
 # This file is distributed under the same license as the BuddyPress Group Email Subscription plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: BuddyPress Group Email Subscription 4.0.0\n"
+"Project-Id-Version: BuddyPress Group Email Subscription 4.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-email-subscription\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-07-16T13:41:12-05:00\n"
+"POT-Creation-Date: 2021-10-04T14:37:54-05:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: buddypress-group-email-subscription\n"
@@ -186,85 +186,85 @@ msgstr ""
 msgid "You have received this message because you are subscribed to receive a digest of activity in some of your groups on %s."
 msgstr ""
 
-#: bp-activity-subscription-digest.php:161
+#: bp-activity-subscription-digest.php:165
 msgid "at"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:202
+#: bp-activity-subscription-digest.php:206
 msgid "(%s items)"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:217
-#: bp-activity-subscription-digest.php:271
+#: bp-activity-subscription-digest.php:221
+#: bp-activity-subscription-digest.php:275
 msgid "Group Summary"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:227
+#: bp-activity-subscription-digest.php:231
 msgid "How to follow a topic: to get email updates for a specific topic, click the topic title - then on the webpage click the <i>Follow this topic</i> button. (If you don't see the button you need to login first.)"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:232
+#: bp-activity-subscription-digest.php:236
 msgid "To disable these notifications per group please login and go to: %s where you can change your email settings for each group."
 msgstr ""
 
-#: bp-activity-subscription-digest.php:232
+#: bp-activity-subscription-digest.php:236
 #: screen-user-settings.php:117
 msgid "My Groups"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:236
+#: bp-activity-subscription-digest.php:240
 msgid "Disable these notifications for all my groups at once."
 msgstr ""
 
-#: bp-activity-subscription-digest.php:338
+#: bp-activity-subscription-digest.php:342
 msgid "Your daily digest of group activity"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:340
+#: bp-activity-subscription-digest.php:344
 msgid "Your weekly summary of group topics"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:409
+#: bp-activity-subscription-digest.php:413
 msgid "DAILY DIGEST:"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:411
+#: bp-activity-subscription-digest.php:415
 msgid "WEEKLY DIGEST:"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:473
+#: bp-activity-subscription-digest.php:477
 msgid "Group: %s"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:475
+#: bp-activity-subscription-digest.php:479
 msgid "Group: %s weekly summary"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:480
+#: bp-activity-subscription-digest.php:484
 msgid "To disable these notifications for this group click "
 msgstr ""
 
-#: bp-activity-subscription-digest.php:480
+#: bp-activity-subscription-digest.php:484
 msgid "unsubscribe"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:481
+#: bp-activity-subscription-digest.php:485
 msgid "change "
 msgstr ""
 
-#: bp-activity-subscription-digest.php:481
+#: bp-activity-subscription-digest.php:485
 msgid "email options"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:558
+#: bp-activity-subscription-digest.php:559
 msgid "at %s, %s"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:572
+#: bp-activity-subscription-digest.php:573
 msgid "View"
 msgstr ""
 
-#: bp-activity-subscription-digest.php:771
+#: bp-activity-subscription-digest.php:775
 msgid "Once Weekly"
 msgstr ""
 
@@ -501,115 +501,115 @@ msgstr ""
 msgid "Once you are logged in, change your email settings for each group."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1621
-#: bp-activity-subscription-functions.php:2005
+#: bp-activity-subscription-functions.php:1634
+#: bp-activity-subscription-functions.php:2045
 #: screen-notifications.php:31
 #: screen.php:121
 msgid "No Email"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1623
+#: bp-activity-subscription-functions.php:1636
 #: screen.php:122
 msgid "Weekly Summary"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1625
+#: bp-activity-subscription-functions.php:1638
 #: screen.php:123
 msgid "Daily Digest"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1627
-#: bp-activity-subscription-functions.php:2010
+#: bp-activity-subscription-functions.php:1640
+#: bp-activity-subscription-functions.php:2050
 #: screen.php:126
 msgid "New Topics"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:1629
-#: bp-activity-subscription-functions.php:2013
+#: bp-activity-subscription-functions.php:1642
+#: bp-activity-subscription-functions.php:2053
 #: screen-notifications.php:53
 #: screen.php:129
 msgid "All Email"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2003
+#: bp-activity-subscription-functions.php:2043
 #: screen.php:171
 msgid "Email status:"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2004
+#: bp-activity-subscription-functions.php:2044
 msgid "Change to:"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2006
+#: bp-activity-subscription-functions.php:2046
 msgid "Weekly"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2007
+#: bp-activity-subscription-functions.php:2047
 msgid "Daily"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2070
+#: bp-activity-subscription-functions.php:2110
 msgid "You have been unsubscribed from all groups notifications."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2072
+#: bp-activity-subscription-functions.php:2112
 msgid "This user's has been unsubscribed from all groups notifications."
 msgstr ""
 
 #. translators: Continue to "SITE NAME or GROUP NAME"
-#: bp-activity-subscription-functions.php:2095
+#: bp-activity-subscription-functions.php:2135
 msgid "Continue to %s"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2111
+#: bp-activity-subscription-functions.php:2151
 msgid "There was a problem unsubscribing you from the group."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2116
+#: bp-activity-subscription-functions.php:2156
 msgid "Your unsubscription was successful. You will no longer receive email notifications from the group %s."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2126
+#: bp-activity-subscription-functions.php:2166
 msgid "There was a problem unsubscribing you from all of your groups."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2131
+#: bp-activity-subscription-functions.php:2171
 msgid "Your unsubscription was successful. You will no longer receive email notifications from any of your groups."
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2147
+#: bp-activity-subscription-functions.php:2187
 msgid "Unsubscribe from group notifications"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2161
+#: bp-activity-subscription-functions.php:2201
 msgid "Unsubscribe"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2169
+#: bp-activity-subscription-functions.php:2209
 msgid "Do you really want to unsubscribe from all notifications for the group, %s?"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2173
+#: bp-activity-subscription-functions.php:2213
 msgid "Yes, unsubscribe from this group"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2174
+#: bp-activity-subscription-functions.php:2214
 msgid "No, close"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2180
+#: bp-activity-subscription-functions.php:2220
 msgid "Do you really want to unsubscribe from all groups notifications?"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2184
+#: bp-activity-subscription-functions.php:2224
 msgid "Yes, unsubscribe from all my groups"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2241
+#: bp-activity-subscription-functions.php:2281
 msgid "To disable emails from all your groups at once click: %s"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2351
+#: bp-activity-subscription-functions.php:2391
 msgid "This post has attachments:"
 msgstr ""
 
