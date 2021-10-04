@@ -95,6 +95,7 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 = 4.0.1 =
 * Improved cleanup when a WP user is deleted.
+* Avoid duplicate notifications when a bbPress topic or reply is reapproved by the admin.
 * Timezone improvements.
 * Improved compatibility with jQuery 3.x.
 * Fix bug that could cause certain translatable strings not to be loaded in time.
