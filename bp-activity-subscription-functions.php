@@ -621,6 +621,9 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 		$link = $activity->primary_link;
 	}
 
+	// Filter link
+	$link = apply_filters( 'bpges_notification_link', $link, $activity );
+
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
 	if ( empty( $the_content ) ) {
