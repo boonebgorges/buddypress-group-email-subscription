@@ -38,7 +38,7 @@ TOPIC FOLLOW AND MUTE (only available with BuddyPress legacy discussion forums)
 Users who are not fully subscribed to a group (ie. maybe they are on digest) can choose to get immediate email updates for specific topic threads. Any subsequent replies to that thread will be emailed to them. In an opposite way, users who are fully subscribed to a group but want to stop getting emails from a specific (perhaps annoying) thread can choose to mute that topic.  bbPress plugin users can utilize the "Subscribe" / "Notify me of follow-up replies via email" option.
 
 ADMIN NOTIFICATION
-Group admins can send out an email to all group members from the group's admin section. The email will be sent to all group members regardless of subscription status. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
+Group admins can send out an email to all group members from the group's admin section. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
 
 GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
 Group admins can set the subscription level for existing users on the group's "Admin > Manage Members" page - either one by one or all at once.
