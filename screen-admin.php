@@ -13,9 +13,6 @@ function ass_default_subscription_settings_form() {
 	<div class="radio ass-email-subscriptions-options">
 		<?php
 
-		// Wrap labels?
-		$wrap_labels = apply_filters( 'bpges_wrap_input_labels', true );
-
 		// Go through email types
 		foreach ( [ 'no', 'sum', 'dig', 'sub', 'supersub' ] as $email_type ) :
 
@@ -25,36 +22,28 @@ function ass_default_subscription_settings_form() {
 				ass_get_forum_type()
 			) : ?>
 
-				<?php if ( $wrap_labels ) : ?>
-					<label id="ass-email-type_<?php echo $email_type; ?>">
-				<?php endif; ?>
-
 				<input type="radio" name="ass-default-subscription" id="ass-default-subscription_<?php echo $email_type; ?>" value="<?php echo $email_type; ?>" <?php ass_default_subscription_settings( $email_type ); ?>>
 
-				<?php if ( ! $wrap_labels ) : ?>
-					<label id="ass-email-type_<?php echo $email_type; ?>" for="ass-default-subscription_<?php echo $email_type; ?>">
-				<?php endif; ?>
-
-				<?php
-				switch ( $email_type ) :
-					case 'no':
-						_e( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' );
-						break;
-					case 'sum':
-						_e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'buddypress-group-email-subscription' );
-						break;
-					case 'dig':
-						_e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'buddypress-group-email-subscription' );
-						break;
-					case 'sub':
-						_e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'buddypress-group-email-subscription' );
-						break;
-					case 'supersub':
-						_e( 'All Email (send emails about everything - recommended only for working groups)', 'buddypress-group-email-subscription' );
-						break;
-				endswitch;
-				?>
-
+				<label id="ass-email-type_<?php echo $email_type; ?>" for="ass-default-subscription_<?php echo $email_type; ?>">
+					<?php
+					switch ( $email_type ) :
+						case 'no':
+							_e( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' );
+							break;
+						case 'sum':
+							_e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'buddypress-group-email-subscription' );
+							break;
+						case 'dig':
+							_e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'buddypress-group-email-subscription' );
+							break;
+						case 'sub':
+							_e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'buddypress-group-email-subscription' );
+							break;
+						case 'supersub':
+							_e( 'All Email (send emails about everything - recommended only for working groups)', 'buddypress-group-email-subscription' );
+							break;
+					endswitch;
+					?>
 				</label>
 
 			<?php endif;
