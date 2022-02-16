@@ -621,6 +621,9 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 		$link = $activity->primary_link;
 	}
 
+	// Filter link
+	$link = apply_filters( 'bpges_notification_link', $link, $activity );
+
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
 	if ( empty( $the_content ) ) {
@@ -813,6 +816,22 @@ If you feel this service is being misused please speak to the website administra
  *                       on the email delivery class you are using.
  */
 function ass_send_email( $email_type, $to, $args ) {
+
+	// Allow overriding of email 'from'
+	$from_name  = apply_filters( 'bpges_email_from_name', null );
+	$from_email = apply_filters( 'bpges_email_from_email', null );
+	if ( ! empty( $from_name ) || ! empty( $from_email ) ) :
+		if ( ! isset( $args[ 'from' ] ) ) :
+			$args[ 'from' ] = [];
+		endif;
+		if ( ! empty( $from_name ) ) :
+			$args[ 'from' ][ 'name' ]  = $from_name;
+		endif;
+		if ( ! empty( $from_email ) ) :
+			$args[ 'from' ][ 'email' ] = $from_email;
+		endif;
+	endif;
+
 	// BP 2.5+
 	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
 		// Unset array keys used for older BP installs.
@@ -2437,10 +2456,6 @@ function ass_weekly_digest_week() {
  * @since 3.8.0
  */
 function bpges_register_template_stack() {
-	if ( ! bp_is_group_admin_page() ) {
-		return;
-	}
-
 	bp_register_template_stack( function() {
 		return plugin_dir_path( __FILE__ ) . '/templates/';
 	}, 20 );
