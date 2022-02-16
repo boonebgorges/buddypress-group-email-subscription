@@ -11,7 +11,7 @@ $group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), $group
 ?>
 
 <div class="ass-email-type" id="ass-email-type_no">
-	<label for="ass_group_subscribe_no"><input type="radio" name="ass_group_subscribe" id="ass_group_subscribe_no" value="no" <?php if ( $group_status == "no" || $group_status == "un" || ! $group_status ) { echo 'checked="checked"'; } ?>><?php _e( 'No Email????', 'buddypress-group-email-subscription' ); ?></label>
+	<label for="ass_group_subscribe_no"><input type="radio" name="ass_group_subscribe" id="ass_group_subscribe_no" value="no" <?php if ( $group_status == "no" || $group_status == "un" || ! $group_status ) { echo 'checked="checked"'; } ?>><?php _e( 'No Email', 'buddypress-group-email-subscription' ); ?></label>
 	<div class="ass-email-explain"><?php _e( 'I will read this group on the web', 'buddypress-group-email-subscription' ); ?></div>
 </div>
 
