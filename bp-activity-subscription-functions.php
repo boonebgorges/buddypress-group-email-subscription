@@ -823,6 +823,7 @@ If you feel this service is being misused please speak to the website administra
  *                       on the email delivery class you are using.
  */
 function ass_send_email( $email_type, $to, $args ) {
+<<<<<<< HEAD
 	/**
 	 * Filters the 'from' name on outgoing emails.
 	 *
@@ -2525,10 +2526,6 @@ function ass_weekly_digest_week() {
  * @since 3.8.0
  */
 function bpges_register_template_stack() {
-	if ( ! bp_is_group_admin_page() ) {
-		return;
-	}
-
 	bp_register_template_stack( function() {
 		return plugin_dir_path( __FILE__ ) . '/templates/';
 	}, 20 );
