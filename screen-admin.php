@@ -11,46 +11,7 @@ function ass_default_subscription_settings_form() {
 	<h4><?php _e('Email Subscription Defaults', 'buddypress-group-email-subscription'); ?></h4>
 	<p><?php _e('When new users join this group, their default email notification settings will be:', 'buddypress-group-email-subscription'); ?></p>
 	<div class="radio ass-email-subscriptions-options">
-		<?php
-
-		// Go through email types
-		foreach ( [ 'no', 'sum', 'dig', 'sub', 'supersub' ] as $email_type ) :
-
-			// Any general checks for outputting options
-			if (
-				$email_type !== 'sub' ||
-				ass_get_forum_type()
-			) : ?>
-
-				<input type="radio" name="ass-default-subscription" id="ass-default-subscription_<?php echo $email_type; ?>" value="<?php echo $email_type; ?>" <?php ass_default_subscription_settings( $email_type ); ?>>
-
-				<label id="ass-email-type_<?php echo $email_type; ?>" for="ass-default-subscription_<?php echo $email_type; ?>">
-					<?php
-					switch ( $email_type ) :
-						case 'no':
-							_e( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' );
-							break;
-						case 'sum':
-							_e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'buddypress-group-email-subscription' );
-							break;
-						case 'dig':
-							_e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'buddypress-group-email-subscription' );
-							break;
-						case 'sub':
-							_e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'buddypress-group-email-subscription' );
-							break;
-						case 'supersub':
-							_e( 'All Email (send emails about everything - recommended only for working groups)', 'buddypress-group-email-subscription' );
-							break;
-					endswitch;
-					?>
-				</label>
-
-			<?php endif;
-
-		endforeach;
-
-		?>
+		<?php bp_get_template_part( 'bpges/subscription-options-admin' ); ?>
 	</div>
 	<hr />
 	<?php
