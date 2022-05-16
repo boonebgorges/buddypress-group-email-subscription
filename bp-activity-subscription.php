@@ -1,11 +1,13 @@
 <?php
 /*
-Plugin Name: BuddyPress Group Email Subscription
-Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
-Description: Allows group members to receive email notifications for group activity and forum posts instantly or as daily digest or weekly summary.
-Author: Deryk Wenaus, boonebgorges, r-a-y
-Revision Date: October 4, 2021
-Version: 4.0.1
+Plugin Name: BFC Group Email Subscription
+Plugin URI: https://github.com/ContextInstitute/bfc-group-email-subscription
+Forked from: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
+Original authors: Deryk Wenaus, boonebgorges, r-a-y
+Description: Allows group members to receive email notifications for group forum posts instantly or as daily digest or weekly summary.
+Author: Robert Gilman
+Revision Date: May 7, 2022
+Version: 1.0
 Text Domain: buddypress-group-email-subscription
 Domain Path: /languages
 */

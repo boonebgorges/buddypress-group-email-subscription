@@ -823,7 +823,7 @@ If you feel this service is being misused please speak to the website administra
  *                       on the email delivery class you are using.
  */
 function ass_send_email( $email_type, $to, $args ) {
-<<<<<<< HEAD
+// <<<<<<< HEAD
 	/**
 	 * Filters the 'from' name on outgoing emails.
 	 *
