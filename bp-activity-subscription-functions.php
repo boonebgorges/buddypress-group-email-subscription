@@ -606,6 +606,14 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 		$action = ass_clean_subject( $activity->action );
 	}
 
+	/**
+	 * Filters the activity action used when generating notifications.
+	 *
+	 * @param string $action
+	 * @param object $activity
+	 */
+	$action = apply_filters( 'bpges_activity_action', $action, $activity );
+
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
@@ -718,7 +726,7 @@ To view or reply, log in and go to:
 	$group_name = bp_get_group_name( $group );
 	$group_link = bp_get_group_permalink( $group );
 
-	$subject = strip_tags( stripslashes( $activity->action ) );
+	$subject = strip_tags( stripslashes( $action ) );
 
 	// bpges_notice is a special activity type and gets some overrides.
 	if ( 'bpges_notice' === $activity->type ) {
@@ -760,7 +768,7 @@ If you feel this service is being misused please speak to the website administra
 	// Send the email
 	if ( $user->user_email ) {
 		// Custom GES email tokens.
-		$user_message_args['ges.action']  = stripslashes( $activity->action ); // Unfiltered.
+		$user_message_args['ges.action']  = stripslashes( $action ); // Unfiltered.
 		$user_message_args['ges.subject'] = $subject; // Unfiltered.
 		$user_message_args['ges.email-setting-description'] = $email_setting_desc;
 		$user_message_args['ges.email-setting-links']       = $email_setting_links;
