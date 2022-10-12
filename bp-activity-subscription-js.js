@@ -60,7 +60,9 @@ jQuery(document).ready( function($) {
 
 
 	// group subscription options
-	$( document ).on("click", '.group-sub', function() {
+	$( document ).on("click", '.group-sub', function(e) {
+		e.preventDefault();
+
 		var it = $(this),
 			theid = $(this).attr('id'),
 			stheid = theid.split('-'),
