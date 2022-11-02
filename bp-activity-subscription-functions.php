@@ -601,23 +601,31 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	if ( 'activity_comment' === $activity->type ) { // if it's an group activity comment, reset to the proper group id and append the group name to the action
 		// this will need to be filtered for plugins manually adding group activity comments
 
-		$action   = ass_clean_subject( $activity->action ) . ' ' . __( 'in the group', 'buddypress-group-email-subscription' ) . ' ' . $group->name;
+		$action_for_subject_line = ass_clean_subject( $activity->action ) . ' ' . __( 'in the group', 'buddypress-group-email-subscription' ) . ' ' . $group->name;
 	} else {
-		$action = ass_clean_subject( $activity->action );
+		$action_for_subject_line = ass_clean_subject( $activity->action );
 	}
 
-	/**
-	 * Filters the activity action used when generating notifications.
-	 *
-	 * @param string $action
-	 * @param object $activity
-	 */
-	$action = apply_filters( 'bpges_activity_action', $action, $activity );
+	$activity_for_email_content = $activity->action;
+
+	if ( has_action( 'bpges_activity_action' ) ) {
+		/**
+		 * Filters the activity action used when generating notifications.
+		 *
+		 * @deprecated 4.1.0 Don't use this anymore. Instead use the separate filters for
+		 *                   subject lines versus email content.
+		 *
+		 * @param string $action
+		 * @param object $activity
+		 */
+		$action_for_subject_line  = apply_filters( 'bpges_activity_action', $action_for_subject_line, $activity );
+		$action_for_email_content = apply_filters( 'bpges_activity_action', $activity_for_email_content, $activity );
+	}
 
 	/* Subject & Content */
 	$blogname    = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
-	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action . ' ' . $blogname, $action, $blogname );
-	$the_content = apply_filters( 'bp_ass_activity_notification_content', $activity->content, $activity, $action, $group );
+	$subject     = apply_filters( 'bp_ass_activity_notification_subject', $action_for_subject_line . ' ' . $blogname, $action_for_subject_line, $blogname );
+	$the_content = apply_filters( 'bp_ass_activity_notification_content', $activity->content, $activity, $action_for_email_content, $group );
 	$the_content = ass_clean_content( $the_content, $activity );
 
 	/*
@@ -649,7 +657,7 @@ To view or reply, log in and go to:
 %2$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ), $action, $link );
+', 'buddypress-group-email-subscription' ), $action_for_email_content, $link );
 	} else {
 		$message = sprintf( __(
 '%1$s
@@ -660,7 +668,7 @@ To view or reply, log in and go to:
 %3$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ), $action, $the_content, $link );
+', 'buddypress-group-email-subscription' ), $action_for_email_content, $the_content, $link );
 	}
 
 	// Use bbPress filtered post content and reapply GES filter... sigh.
@@ -687,7 +695,7 @@ To view or reply, log in and go to:
 		// Apply bbPress KSES filter if it exists (sanity check!)
 		$the_content = ( true === function_exists( 'bbp_filter_kses' ) ) ? wp_unslash( bbp_filter_kses( $the_content ) ) : $the_content;
 
-		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity, $action, $group );
+		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity, $action_for_email_content, $group );
 
 		// Check for $self_notify status.
 		$self_notify = ass_self_post_notification( $user_id );
@@ -726,7 +734,7 @@ To view or reply, log in and go to:
 	$group_name = bp_get_group_name( $group );
 	$group_link = bp_get_group_permalink( $group );
 
-	$subject = strip_tags( stripslashes( $action ) );
+	$subject = strip_tags( stripslashes( $action_for_subject_line ) );
 
 	// bpges_notice is a special activity type and gets some overrides.
 	if ( 'bpges_notice' === $activity->type ) {
@@ -768,7 +776,7 @@ If you feel this service is being misused please speak to the website administra
 	// Send the email
 	if ( $user->user_email ) {
 		// Custom GES email tokens.
-		$user_message_args['ges.action']  = stripslashes( $action ); // Unfiltered.
+		$user_message_args['ges.action']  = stripslashes( $action_for_email_content ); // Unfiltered.
 		$user_message_args['ges.subject'] = $subject; // Unfiltered.
 		$user_message_args['ges.email-setting-description'] = $email_setting_desc;
 		$user_message_args['ges.email-setting-links']       = $email_setting_links;
