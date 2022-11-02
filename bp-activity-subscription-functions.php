@@ -637,6 +637,16 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 		$link = $activity->primary_link;
 	}
 
+	/**
+	 * Filters the activity action string used to build the notification email.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $action_for_email_content
+	 * @return string
+	 */
+	$subject = apply_filters( 'bpges_notification_activity_action', $action_for_email_content, $activity );
+
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
 	if ( empty( $the_content ) ) {
@@ -725,6 +735,16 @@ To view or reply, log in and go to:
 	$group_link = bp_get_group_permalink( $group );
 
 	$subject = strip_tags( stripslashes( $action_for_subject_line ) );
+
+	/**
+	 * Filters the subject line of immediate notifications.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $action_for_subject_line
+	 * @return string
+	 */
+	$subject = apply_filters( 'bpges_notification_subject', $subject, $activity );
 
 	// bpges_notice is a special activity type and gets some overrides.
 	if ( 'bpges_notice' === $activity->type ) {
