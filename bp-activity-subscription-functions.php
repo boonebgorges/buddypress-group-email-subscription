@@ -82,7 +82,7 @@ function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $
  * @param BP_Activity_Activity $activity Activity object.
  * @return string
  */
-function ass_group_notification_activity_content_before_save( $retval = '', BP_Activity_Activity $activity ) {
+function ass_group_notification_activity_content_before_save( $retval = '', BP_Activity_Activity $activity = null ) {
 	// If not bbPress content, bail.
 	if ( 0 !== strpos( $activity->type, 'bbp_' ) ) {
 		return $retval;
@@ -647,6 +647,16 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	 */
 	$subject = apply_filters( 'bpges_notification_activity_action', $action_for_email_content, $activity );
 
+	/**
+	 * Filters the activity link used to build the notification email.
+	 *
+	 * @since 4.0.2
+	 *
+	 * @param string               $link
+	 * @param BP_Activity_Activity $activity
+	 */
+	$link = apply_filters( 'bpges_notification_link', $link, $activity );
+
 	// If message has no content (as in the case of group joins, etc), we'll use a different
 	// $message template
 	if ( empty( $the_content ) ) {
@@ -849,6 +859,44 @@ If you feel this service is being misused please speak to the website administra
  *                       on the email delivery class you are using.
  */
 function ass_send_email( $email_type, $to, $args ) {
+	/**
+	 * Filters the 'from' name on outgoing emails.
+	 *
+	 * @since 4.0.2
+	 *
+	 * @param string $from_name  Default is null, which will use WP defaults.
+	 * @param string $email_type
+	 * @param string $to
+	 * @param array  $args
+	 */
+	$from_name  = apply_filters( 'bpges_email_from_name', null, $email_type, $to, $args );
+
+	/**
+	 * Filters the 'from' email address on outgoing emails.
+	 *
+	 * @since 4.0.2
+	 *
+	 * @param string $from_email  Default is null, which will use WP defaults.
+	 * @param string $email_type
+	 * @param string $to
+	 * @param array  $args
+	 */
+	$from_email = apply_filters( 'bpges_email_from_email', null, $email_type, $to, $args );
+
+	if ( ! empty( $from_name ) || ! empty( $from_email ) ) {
+		if ( ! isset( $args[ 'from' ] ) ) {
+			$args['from'] = [];
+		}
+
+		if ( ! empty( $from_name ) ) {
+			$args['from' ]['name'] = $from_name;
+		}
+
+		if ( ! empty( $from_email ) ) {
+			$args['from']['email'] = $from_email;
+		}
+	}
+
 	// BP 2.5+
 	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
 		// Unset array keys used for older BP installs.
@@ -1390,6 +1438,19 @@ function bpges_format_activity_action_bpges_notice( $action, $activity, $subject
  */
 function ass_default_block_group_activity_types( $retval, $type, $activity ) {
 
+	/*
+	 * Do not resend a previous bbPress forum item to the group.
+	 *
+	 * This can occur when unapproving a forum post and later, reapproving it.
+	 * We do this by checking the forum post's '_bbp_activity_id' meta entry.
+	 */
+	if ( 'bbp_topic_create' === $type || 'bbp_reply_create' === $type ) {
+		$prev_activity_id = get_post_meta( $activity->secondary_item_id, '_bbp_activity_id', true );
+		if ( ! empty( $prev_activity_id ) ) {
+			return false;
+		}
+	}
+
 	switch( $type ) {
 		/** ACTIVITY TYPES TO BLOCK **************************************/
 
@@ -1737,6 +1798,33 @@ function bpges_unsubscribe_on_membership_ban( BP_Groups_Member $membership ) {
 	bpges_delete_queued_items_for_user_group( $membership->user_id, $membership->group_id );
 }
 add_action( 'groups_member_before_save', 'bpges_unsubscribe_on_membership_ban' );
+
+/**
+ * Remove queued items for deleted user.
+ *
+ * @param int $user_id ID of the deleted user.
+ *
+ * @since 4.0.0
+ */
+function bpges_delete_queued_items_for_deleted_user( $user_id ) {
+	$query = new BPGES_Queued_Item_Query(
+		array(
+			'user_id' => $user_id,
+		)
+	);
+
+	$queued_items_to_delete = array_map(
+		function( $item ) {
+			return $item->id;
+		},
+		$query->get_results()
+	);
+
+	if ( ! empty( $queued_items_to_delete ) ) {
+		BPGES_Queued_Item::bulk_delete( $queued_items_to_delete );
+	}
+}
+add_action( 'delete_user', 'bpges_delete_queued_items_for_deleted_user' );
 
 /**
  * Deletes all queued items for a user + group combo.
@@ -2473,10 +2561,6 @@ function ass_weekly_digest_week() {
  * @since 3.8.0
  */
 function bpges_register_template_stack() {
-	if ( ! bp_is_group_admin_page() ) {
-		return;
-	}
-
 	bp_register_template_stack( function() {
 		return plugin_dir_path( __FILE__ ) . '/templates/';
 	}, 20 );

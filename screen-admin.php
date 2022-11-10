@@ -11,20 +11,7 @@ function ass_default_subscription_settings_form() {
 	<h4><?php _e('Email Subscription Defaults', 'buddypress-group-email-subscription'); ?></h4>
 	<p><?php _e('When new users join this group, their default email notification settings will be:', 'buddypress-group-email-subscription'); ?></p>
 	<div class="radio ass-email-subscriptions-options">
-		<label id="ass-email-type_no"><input type="radio" name="ass-default-subscription" value="no" <?php ass_default_subscription_settings( 'no' ) ?> />
-			<?php _e( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' ) ?></label>
-		<label id="ass-email-type_sum"><input type="radio" name="ass-default-subscription" value="sum" <?php ass_default_subscription_settings( 'sum' ) ?> />
-			<?php _e( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'buddypress-group-email-subscription' ) ?></label>
-		<label id="ass-email-type_dig"><input type="radio" name="ass-default-subscription" value="dig" <?php ass_default_subscription_settings( 'dig' ) ?> />
-			<?php _e( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'buddypress-group-email-subscription' ) ?></label>
-
-		<?php if ( ass_get_forum_type() ) : ?>
-			<label id="ass-email-type_sub"><input type="radio" name="ass-default-subscription" value="sub" <?php ass_default_subscription_settings( 'sub' ) ?> />
-			<?php _e( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'buddypress-group-email-subscription' ) ?></label>
-		<?php endif; ?>
-
-		<label id="ass-email-type_supersub"><input type="radio" name="ass-default-subscription" value="supersub" <?php ass_default_subscription_settings( 'supersub' ) ?> />
-			<?php _e( 'All Email (send emails about everything - recommended only for working groups)', 'buddypress-group-email-subscription' ) ?></label>
+		<?php bp_get_template_part( 'bpges/subscription-options-admin' ); ?>
 	</div>
 	<hr />
 	<?php

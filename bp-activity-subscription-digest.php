@@ -146,6 +146,10 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	$summary = $activity_message = $body = '';
 
 	$userdata = new WP_User( $user_id );
+	if ( 0 === $userdata->ID ) {
+		return $group_activity_ids;
+	}
+
 	$to = $userdata->user_email;
 	$userdomain = bp_core_get_user_domain( $user_id );
 
@@ -209,7 +213,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 	// If there's nothing to send, skip this use.
 	if ( ! $has_group_activity ) {
-		return;
+		return $group_activity_ids;
 	}
 
 	// show group summary for digest, and follow help text for weekly summary
@@ -257,7 +261,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	 */
 	$send = apply_filters( 'bp_ges_send_digest_to_user', true, $user_id, $group_activity_ids, $message );
 	if ( ! $send ) {
-		return;
+		return $group_activity_ids;
 	}
 
 	// Sending time!
@@ -544,13 +548,10 @@ function ass_digest_format_item( $item, $type ) {
 	$action = str_replace( ' posted on the discussion topic', ' posted on', $action );
 
 	/* Activity timestamp */
-//	$timestamp = strtotime( $item->date_recorded );
+	$timestamp = strtotime( $item->date_recorded );
 
-	/* Because BuddyPress core set gmt = true, timezone must be added */
-	$timestamp = get_date_from_gmt( $item->date_recorded, 'U' );
-
-	$time_posted = date( get_option( 'time_format' ), $timestamp );
-	$date_posted = date( get_option( 'date_format' ), $timestamp );
+	$time_posted = get_date_from_gmt( $item->date_recorded, get_option( 'time_format' ) );
+	$date_posted = get_date_from_gmt( $item->date_recorded, get_option( 'date_format' ) );
 
 	//$item_message = strip_tags( $action ) . ": \n";
 	$item_message =  "<div class=\"digest-item\" {$ass_email_css['item_div']}>";
@@ -590,6 +591,9 @@ function ass_digest_filter( $item ) {
 	$item = stripslashes( $item );
 	return $item;
 }
+
+// Run activity content in digests through wpautop for proper handling of line breaks.
+add_filter( 'ass_digest_content', 'wpautop' );
 
 // convert the email to plain text, and fancy it up a bit. these conversion only work in English, but it's ok.
 function ass_convert_html_to_plaintext( $message ) {

@@ -381,9 +381,9 @@ add_action( 'bp_groups_admin_manage_member_row', 'ass_groups_admin_manage_member
  * @since 3.7.0
  *
  * @param bool $post_exists_check Should we check to see if our email post types exist before installing?
- *                                Default: false.
+ *                                Default: true.
  */
-function ass_install_emails( $post_exists_check = false ) {
+function ass_install_emails( $post_exists_check = true ) {
 	if ( ! function_exists( 'ass_set_email_type' ) ) {
 		require_once( __DIR__ . '/bp-activity-subscription-functions.php' );
 	}

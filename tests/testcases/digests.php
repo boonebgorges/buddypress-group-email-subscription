@@ -290,6 +290,39 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 		$this->assertEmpty( $found_g2 );
 	}
 
+	public function test_deleted_user_should_delete_queued_items() {
+		$u = $this->factory->user->create();
+
+		$g = self::factory()->group->create();
+
+		// Create some activity items.
+		$activity_ids = self::factory()->activity->create_many(
+			2,
+			array(
+				'user_id'   => get_current_user_id(),
+				'component' => 'groups',
+				'type'      => 'activity_update',
+				'item_id'   => $g,
+			)
+		);
+
+		// Add activity items to digest for our user.
+		foreach( $activity_ids as $activity_id ) {
+			ass_queue_activity_item( $activity_id, $u, $g, 'sum' );
+		}
+
+		// Now, delete user.
+		wp_delete_user( $u );
+
+		// Queued items should no longer exist.
+		$query = new BPGES_Queued_Item_Query(
+			array(
+				'user_id' => $u,
+			)
+		);
+		$this->assertEmpty( $query->get_results() );
+	}
+
 	public function use_mockmailer() {
 		return 'GES_Mock_Mailer';
 	}

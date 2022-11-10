@@ -4,8 +4,8 @@ Description: Allow users to receive email notifications of group activity. Weekl
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 3.2
 Requires PHP: 5.3
-Tested up to: 5.5
-Stable tag: 4.0.0
+Tested up to: 6.0
+Stable tag: 4.0.3
 
 == Description ==
 
@@ -38,7 +38,7 @@ TOPIC FOLLOW AND MUTE (only available with BuddyPress legacy discussion forums)
 Users who are not fully subscribed to a group (ie. maybe they are on digest) can choose to get immediate email updates for specific topic threads. Any subsequent replies to that thread will be emailed to them. In an opposite way, users who are fully subscribed to a group but want to stop getting emails from a specific (perhaps annoying) thread can choose to mute that topic.  bbPress plugin users can utilize the "Subscribe" / "Notify me of follow-up replies via email" option.
 
 ADMIN NOTIFICATION
-Group admins can send out an email to all group members from the group's admin section. The email will be sent to all group members regardless of subscription status. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
+Group admins can send out an email to all group members from the group's admin section. This feature is helpful to quickly communicate to the whole group, but it should be used with caution.
 
 GROUP ADMINS CAN SET SUBSCRIPTION LEVEL
 Group admins can set the subscription level for existing users on the group's "Admin > Manage Members" page - either one by one or all at once.
@@ -92,6 +92,25 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 4.0.3 =
+* Improved PHP 8+ compatibility.
+* Improved handling of "action" strings when generating email text.
+* Improved handling of click events when using group-header subscription interface.
+
+= 4.0.2 =
+* Migrated subscription options markup to a template file that can be overridden in a child theme, for greater customizability.
+* Improved filters for values used when generating email text and sendng emails.
+* Fixed bug that caused BP email templates to be reinstalled during some upgrades.
+
+= 4.0.1 =
+* Improved cleanup when a WP user is deleted.
+* Avoid duplicate notifications when a bbPress topic or reply is reapproved by the admin.
+* Timezone improvements.
+* Improved compatibility with jQuery 3.x.
+* Fix bug that could cause certain translatable strings not to be loaded in time.
+* Improvements to avoid timeouts and other issues during async send batches.
+* Improved formatting for digest content.
 
 = 4.0.0 =
 * Overhaul markup for subscription settings panel, for better responsiveness and accessibility.

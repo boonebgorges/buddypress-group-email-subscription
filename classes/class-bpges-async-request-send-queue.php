@@ -30,6 +30,8 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 	 * @since 3.9.0
 	 */
 	public function __construct() {
+		$this->start_time = time();
+
 		/**
 		 * Filters the query URL for BPGES async requests.
 		 *
@@ -52,8 +54,6 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 		if ( ! isset( $_POST['type'] ) ) {
 			return;
 		}
-
-		$this->start_time = time();
 
 		$queue_type = wp_unslash( $_POST['type'] );
 
@@ -259,6 +259,11 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 		} else {
 			// Sensible default.
 			$max_execution_time = '30';
+		}
+
+		// There is no limit, which means that we can never exceed the limit.
+		if ( '0' === $max_execution_time ) {
+			return false;
 		}
 
 		$finish = $this->start_time + $max_execution_time;
