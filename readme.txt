@@ -93,6 +93,11 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 4.0.3 =
+* Improved PHP 8+ compatibility.
+* Improved handling of "action" strings when generating email text.
+* Improved handling of click events when using group-header subscription interface.
+
 = 4.0.2 =
 * Migrated subscription options markup to a template file that can be overridden in a child theme, for greater customizability.
 * Improved filters for values used when generating email text and sendng emails.
