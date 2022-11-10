@@ -5,7 +5,7 @@ Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifi
 Requires at least: 3.2
 Requires PHP: 5.3
 Tested up to: 6.0
-Stable tag: 4.0.2
+Stable tag: 4.0.3
 
 == Description ==
 
