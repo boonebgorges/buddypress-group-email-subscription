@@ -606,7 +606,7 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 		$action_for_subject_line = ass_clean_subject( $activity->action );
 	}
 
-	$activity_for_email_content = $activity->action;
+	$action_for_email_content = $activity->action;
 
 	if ( has_action( 'bpges_activity_action' ) ) {
 		/**
@@ -619,7 +619,7 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 		 * @param object $activity
 		 */
 		$action_for_subject_line  = apply_filters( 'bpges_activity_action', $action_for_subject_line, $activity );
-		$action_for_email_content = apply_filters( 'bpges_activity_action', $activity_for_email_content, $activity );
+		$action_for_email_content = apply_filters( 'bpges_activity_action', $action_for_email_content, $activity );
 	}
 
 	/* Subject & Content */
