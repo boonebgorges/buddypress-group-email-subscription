@@ -144,8 +144,10 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $activity->type );
 
 	// If we've gotten this far, record the activity item for each subscribed group member.
-	$to_queue = array();
+	$to_queue         = array();
+	$has_immediate    = false;
 	$subscribed_users = ass_get_subscriptions_for_group( $group_id );
+
 	foreach ( $subscribed_users as $user_id => $subscription_type ) {
 		$self_notify = false;
 
@@ -238,6 +240,8 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		$add_to_digest_queue = apply_filters( 'bp_ges_add_to_digest_queue_for_user', $add_to_digest_queue, $activity, $user_id, $subscription_type );
 
 		if ( $send_immediately ) {
+			$has_immediate = true;
+
 			$to_queue[] = array(
 				'user_id'       => $user_id,
 				'group_id'      => $group_id,
@@ -263,10 +267,12 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		BPGES_Queued_Item::bulk_insert( $to_queue );
 
 		// Trigger the batch process.
-		bpges_send_queue()->data( array(
-			'type'        => 'immediate',
-			'activity_id' => $activity->id,
-		) )->dispatch();
+		if ( $has_immediate ) {
+			bpges_send_queue()->data( array(
+				'type'        => 'immediate',
+				'activity_id' => $activity->id,
+			) )->dispatch();
+		}
 	}
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
