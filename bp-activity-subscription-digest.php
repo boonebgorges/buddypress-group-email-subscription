@@ -670,8 +670,10 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	$admin_email_filter = function( $admin_email ) {
 		global $phpmailer;
 
-		$phpmailer->Body    = "";
-		$phpmailer->AltBody = "";
+		if ( $phpmailer && is_object( $phpmailer ) ) {
+			$phpmailer->Body    = "";
+			$phpmailer->AltBody = "";
+		}
 
 		return $admin_email;
 	};
@@ -688,7 +690,9 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	// setup plain-text body
 	$message_plaintext = addslashes( $message_plaintext );
 	add_action( 'phpmailer_init', function( $phpmailer ) use ( $message_plaintext ) {
-		$phpmailer->AltBody = "'" . $message_plaintext . "'";
+		if ( $phpmailer && is_object( $phpmailer ) ) {
+			$phpmailer->AltBody = "'" . $message_plaintext . "'";
+		}
 	} );
 
 	// set content type as HTML
@@ -713,7 +717,9 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	// this is so subsequent calls to wp_mail() by other plugins will be clean
 	global $phpmailer;
 
-	$phpmailer->AltBody = "";
+	if ( $phpmailer && is_object( $phpmailer ) ) {
+		$phpmailer->AltBody = "";
+	}
 
 	return $result;
 }
