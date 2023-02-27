@@ -11,14 +11,19 @@
 
 /**
  * Returns an unsubscribe link to disable email notifications for a given group and/or all groups.
+ *
+ * @param int $user_id  WP user ID
+ * @param int $group_id BuddyPress group ID.
+ *
+ * @return string
  */
-function ass_group_unsubscribe_links( $user_id ) {
+function ass_group_unsubscribe_links( $user_id, $group_id = 0 ) {
 	global $bp;
 
 	//$settings_link = "{$bp->root_domain}/{$bp->groups->slug}/{$bp->groups->current_group->slug}/notifications/";
 	//$links = sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 
-	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id ) );
+	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, $group_id ) );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
 		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) );
@@ -492,7 +497,7 @@ To view or reply, log in and go to:
 				$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
 
 				$email_setting_links = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
-				$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+				$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id, $r[ 'group_id' ] );
 
 				$notice .= "\n" . $email_setting_links;
 			}
@@ -725,7 +730,7 @@ To view or reply, log in and go to:
 		$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
 
 		$email_setting_links = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
-		$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id );
+		$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id, $group_id );
 
 		$notice .= "\n" . $email_setting_links;
 	}
