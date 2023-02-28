@@ -20,10 +20,10 @@
 function ass_group_unsubscribe_links( $user_id, $group_id = 0 ) {
 	global $bp;
 
-	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, $group_id ) );
+	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'buddypress-group-email-subscription' ), esc_url( ass_get_group_unsubscribe_link_for_user( $user_id, $group_id ) ) );
 
 	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
-		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) );
+		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'buddypress-group-email-subscription' ), esc_url( ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) ) );
 	}
 
 	$links .= "\n";
@@ -69,7 +69,7 @@ function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $
 
 	$args['access_key'] = $access_key;
 
-	return esc_url( add_query_arg( $args, bp_core_get_user_domain( $user_id ) ) );
+	return add_query_arg( $args, bp_core_get_user_domain( $user_id ) );
 }
 
 /**
