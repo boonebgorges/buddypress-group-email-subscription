@@ -1385,7 +1385,7 @@ function bpges_register_activity_actions() {
 	bp_activity_set_action(
 		buddypress()->groups->id,
 		'bpges_notice',
-		__( 'Posted a Group Notice', 'buddypress-docs' ),
+		__( 'Posted a Group Notice', 'buddypress-group-email-subscription' ),
 		'bpges_format_activity_action_bpges_notice'
 	);
 }
