@@ -442,7 +442,14 @@ function ass_install_emails( $post_exists_check = true ) {
 		}
 	}
 }
-add_action( 'bp_core_install_emails', 'ass_install_emails' );
+
+// Install our emails if necessary.
+add_action(
+	'bp_core_install_emails',
+	function() {
+		ass_install_emails();
+	}
+);
 
 /**
  * Show admin notice when editing a BP email in the admin dashboard.
