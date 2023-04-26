@@ -808,9 +808,11 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 	}
 
 	// Custom BP root blog, so set up cron on BP sub-site.
+	$switched = false;
 	if ( 1 !== $blog_id ) {
 		switch_to_blog( $blog_id );
 		wp_clear_scheduled_hook( 'ass_digest_event' );
+		$switched = true;
 	}
 
 	wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
@@ -818,7 +820,9 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 	update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
 
 	// Restore current blog.
-	restore_current_blog();
+	if ( $switched ) {
+		restore_current_blog();
+	}
 }
 
 // Takes the numeral equivalent of a $day: 0 for Sunday, 1 for Monday, etc
