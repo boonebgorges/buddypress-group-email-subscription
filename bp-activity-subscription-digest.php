@@ -849,9 +849,11 @@ function ass_set_weekly_digest_time( $day ) {
 	}
 
 	// Custom BP root blog, so set up cron on BP sub-site.
+	$switched = false;
 	if ( 1 !== $blog_id ) {
 		switch_to_blog( $blog_id );
 		wp_clear_scheduled_hook( 'ass_digest_event_weekly' );
+		$switched = true;
 	}
 
 	wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
@@ -859,7 +861,9 @@ function ass_set_weekly_digest_time( $day ) {
 	update_option( 'ass_weekly_digest', $day );
 
 	// Restore current blog.
-	restore_current_blog();
+	if ( $switched ) {
+		restore_current_blog();
+	}
 }
 
 /*
