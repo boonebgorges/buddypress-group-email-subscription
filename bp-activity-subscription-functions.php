@@ -972,7 +972,7 @@ function ass_send_email( $email_type, $to, $args ) {
 			$headers[] = "From: \"{$args['from']['name']}\" <{$args['from']['email']}>";
 		}
 
-		$plaintext_content = ass_email_convert_html_to_plaintext( $args['content' );
+		$plaintext_content = ass_email_convert_html_to_plaintext( $args['content'] );
 
 		return wp_mail( $to, $args['subject'], $plaintext_content, $headers );
 	}
