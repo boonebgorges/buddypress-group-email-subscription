@@ -971,7 +971,10 @@ function ass_send_email( $email_type, $to, $args ) {
 		if ( isset( $args['from'] ) ) {
 			$headers[] = "From: \"{$args['from']['name']}\" <{$args['from']['email']}>";
 		}
-		return wp_mail( $to, $args['subject'], $args['content'], $headers );
+
+		$plaintext_content = ass_email_convert_html_to_plaintext( $args['content' );
+
+		return wp_mail( $to, $args['subject'], $plaintext_content, $headers );
 	}
 }
 
@@ -1989,7 +1992,6 @@ function ass_clean_content( $content, $activity = null ) {
 // By default, we run content through these filters, which can be individually removed
 add_filter( 'ass_clean_content', 'stripslashes', 2 );
 add_filter( 'ass_clean_content', 'strip_tags', 4 );
-add_filter( 'ass_clean_content', 'ass_convert_links', 6 );
 add_filter( 'ass_clean_content', 'ass_html_entity_decode', 8 );
 
 /**
