@@ -257,6 +257,28 @@ function ass_admin_options() {
 
 		<br>
 		<br>
+
+		<h3><?php esc_html_e( 'Default Group Settings', 'buddypress-group-email-subscription' ); ?></h3>
+
+		<p><?php esc_html_e( 'Use this setting to control the default subscription level for groups on this site. Note that this global default can be overridden on a per-group basis by the administrators of specific groups.', 'buddypress-group-email-subscription' ); ?></p>
+
+		<?php
+		$global_default = bpges_get_global_default_subscription();
+		$all_levels     = bpges_subscription_levels();
+		?>
+
+		<label for="global-default-subscription">
+			<?php esc_html_e( 'Global default subscription level', 'buddypress-group-email-subscription' ); ?>
+			<select name="global-default-subscription" id="global-default-subscription">
+				<?php foreach ( $all_levels as $level_slug => $level_data ) : ?>
+					<option value="<?php echo esc_attr( $level_slug ); ?>" <?php selected( $level_slug, $global_default ); ?>><?php echo esc_html( $level_data['label'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</label>
+
+		<br />
+		<br />
+
 		<h3><?php _e('Spam Prevention', 'buddypress-group-email-subscription'); ?></h3>
 			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'buddypress-group-email-subscription'); ?> </p>
 			<?php _e('Member must be registered for', 'buddypress-group-email-subscription'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo bp_get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'buddypress-group-email-subscription'); ?></p>
@@ -361,8 +383,16 @@ function ass_update_dashboard_settings() {
 	if ( $_POST['ass_registered_req'] != bp_get_option( 'ass_registered_req' ) )
 		bp_update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 
+	if ( ! empty( $_POST['global-default-subscription'] ) ) {
+		$global_default_raw = sanitize_text_field( wp_unslash( $_POST['global-default-subscription'] ) );
+
+		$all_levels = bpges_subscription_levels();
+		if ( isset( $all_levels[ $global_default_raw ] ) ) {
+			bp_update_option( 'bpges_global_default_subscription', $global_default_raw );
+		}
+	}
+
 	return true;
-	//echo '<pre>'; print_r( $_POST ); echo '</pre>';
 }
 
 /**

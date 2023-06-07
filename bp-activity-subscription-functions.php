@@ -1988,7 +1988,7 @@ add_action( 'groups_group_after_save', 'ass_save_default_subscription' );
  * @return string
  */
 function bpges_get_global_default_subscription() {
-	$default = 'supersub';
+	$default = bp_get_option( 'bpges_global_default_subscription', 'supersub' );
 
 	// Verify that the default exists.
 	$all_levels = bpges_subscription_levels();
@@ -2001,9 +2001,9 @@ function bpges_get_global_default_subscription() {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param string $level Default subscription level.
+	 * @param string $default Default subscription level.
 	 */
-	apply_filters( 'bpges_global_default_subscription', $level );
+	return apply_filters( 'bpges_global_default_subscription', $default );
 }
 
 /**
