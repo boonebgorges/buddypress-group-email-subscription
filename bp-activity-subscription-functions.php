@@ -1791,7 +1791,7 @@ function ass_subscribe_translate( $status ) {
 
 	$subscription_levels = bpges_subscription_levels();
 
-	if ( ! isset( $subscription_levels[ $status ]['label_short' ) ) {
+	if ( ! isset( $subscription_levels[ $status ]['label_short'] ) ) {
 		return '';
 	}
 
