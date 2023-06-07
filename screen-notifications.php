@@ -58,7 +58,8 @@ function ass_update_group_subscribe_settings() {
 
 			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
 
-			bp_core_add_message( sprintf( __( 'Your email notifications are set to %s for this group.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
+			// translators: name of the subscription level
+			bp_core_add_message( sprintf( __( 'Your email notifications for this group have been changed to: %s.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
 			bp_core_redirect( trailingslashit( bp_get_group_permalink( groups_get_current_group() ) . 'notifications' ) );
 		}
 	}
