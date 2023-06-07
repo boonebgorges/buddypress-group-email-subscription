@@ -1987,7 +1987,7 @@ add_action( 'groups_group_after_save', 'ass_save_default_subscription' );
  *
  * @return string
  */
-function ass_get_global_default_subscription() {
+function bpges_get_global_default_subscription() {
 	$default = 'supersub';
 
 	// Verify that the default exists.
@@ -2003,7 +2003,7 @@ function ass_get_global_default_subscription() {
 	 *
 	 * @param string $level Default subscription level.
 	 */
-	apply_filters( 'ass_global_default_subscription', $level );
+	apply_filters( 'bpges_global_default_subscription', $level );
 }
 
 /**
@@ -2035,7 +2035,7 @@ function ass_get_default_subscription( $group = false ) {
 		 * @param string $status   'supersub' by default.
 		 * @param int    $group_id ID of the group.
 		 */
-		$default_subscription = apply_filters( 'ass_default_subscription_level', ass_get_global_default_subscription(), $group_id );
+		$default_subscription = apply_filters( 'ass_default_subscription_level', bpges_get_global_default_subscription(), $group_id );
 	}
 
 	return apply_filters( 'ass_get_default_subscription', $default_subscription );
@@ -2259,7 +2259,7 @@ function ass_group_default_status( $group_id = false ) {
 	$status = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
 
 	if ( !$status ) {
-		$status = apply_filters( 'ass_default_subscription_level', ass_get_global_default_subscription(), $group_id );
+		$status = apply_filters( 'ass_default_subscription_level', bpges_get_global_default_subscription(), $group_id );
 	}
 
 	return apply_filters( 'ass_group_default_status', $status, $group_id );
