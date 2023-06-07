@@ -2195,15 +2195,20 @@ function ass_manage_members_email_status(  $user_id = '', $group = '' ) {
 	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
 	echo '<span class="ass_manage_members_links"> '.__('Email status:','buddypress-group-email-subscription').' ' . ass_subscribe_translate( $sub_type ) . '.';
 	echo ' &nbsp; '.__('Change to:','buddypress-group-email-subscription').' ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','buddypress-group-email-subscription').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','buddypress-group-email-subscription').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','buddypress-group-email-subscription').'</a> | ';
 
-	if ( ass_get_forum_type() ) {
-		echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','buddypress-group-email-subscription').'</a> | ';
+	$subscription_levels = bpges_subscription_levels();
+
+	$level_count = count( $subscription_levels );
+	$level_i     = 0;
+	foreach ( $subscription_levels as $level_slug => $level_data ) {
+		echo '<a href="' . esc_url( wp_nonce_url( $group_url . '/' . $level_slug . '/' . $user_id, 'ass_member_email_status' ) ) . '">' . esc_html( $level_data['label_short'] ) . '</a>';
+
+		++$level_i;
+		if ( $level_i < $level_count ) {
+			echo ' | ';
+		}
 	}
 
-	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','buddypress-group-email-subscription').'</a>';
 	echo '</span>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
