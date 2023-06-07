@@ -1778,20 +1778,24 @@ function bpges_subscription_levels() {
 	return apply_filters( 'bpges_subscription_levels', $levels );
 }
 
-// translate the short code subscription status into a nicer version
-function ass_subscribe_translate( $status ){
-	if ( $status == 'no' || !$status )
-		$output = __('No Email', 'buddypress-group-email-subscription');
-	elseif ( $status == 'sum' )
-		$output = __('Weekly Summary', 'buddypress-group-email-subscription');
-	elseif ( $status == 'dig' )
-		$output = __('Daily Digest', 'buddypress-group-email-subscription');
-	elseif ( $status == 'sub' )
-		$output = __('New Topics', 'buddypress-group-email-subscription');
-	elseif ( $status == 'supersub' )
-		$output = __('All Email', 'buddypress-group-email-subscription');
+/**
+ * Gets the label for a subscription level.
+ *
+ * @param string $status Level slug.
+ * @return string
+ */
+function ass_subscribe_translate( $status ) {
+	if ( ! $status ) {
+		$status = 'no';
+	}
 
-	return $output;
+	$subscription_levels = bpges_subscription_levels();
+
+	if ( ! isset( $subscription_levels[ $status ]['label_short' ) ) {
+		return '';
+	}
+
+	return $subscription_levels[ $status ]['label_short'];
 }
 
 // Handles AJAX request to subscribe/unsubscribe from group
