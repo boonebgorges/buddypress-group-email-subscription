@@ -1723,6 +1723,61 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	do_action( 'ass_group_subscription', $user_id, $group_id, $action );
 }
 
+/**
+ * Returns a list of subscription levels, with labels and information about each level.
+ *
+ * @since 4.1.0
+ *
+ * @return array
+ */
+function bpges_subscription_levels() {
+	$levels = [
+		'no'       => [
+			'label'             => __( 'No Email', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'No Email', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'I will read this group on the web', 'buddypress-group-email-subscription' ),
+		],
+		'sum'      => [
+			'label'             => __( 'Weekly Summary', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'Weekly', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Get a summary of topics each week', 'buddypress-group-email-subscription' ),
+		],
+		'dig'      => [
+			'label'             => __( 'Daily Digest', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'Daily', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription' ),
+		],
+		'sub'      => [
+			'label'             => __( 'New Topics', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'New Topics', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription' ),
+		],
+		'supersub' => [
+			'label'             => __( 'All Email', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'All Email', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'All Email (send emails about everything - recommended only for working groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Send all group activity as it arrives', 'buddypress-group-email-subscription' ),
+		],
+	];
+
+	if ( ! ass_get_forum_type() ) {
+		unset( $levels['sub'] );
+	}
+
+	/**
+	 * Filters the available subscription levels.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param array Array of subscription levels.
+	 */
+	return apply_filters( 'bpges_subscription_levels', $levels );
+}
+
 // translate the short code subscription status into a nicer version
 function ass_subscribe_translate( $status ){
 	if ( $status == 'no' || !$status )
