@@ -190,53 +190,6 @@ function ass_admin_options() {
 	<div class="wrap">
 		<h2><?php _e('Group Email Subscription Settings', 'buddypress-group-email-subscription'); ?></h2>
 
-		<?php if ( $is_legacy_installation ) : ?>
-			<div class="bpges-migration-tools">
-				<h3><?php esc_html_e( 'Migration Status', 'buddypress-group-email-subscription' ); ?></h3>
-				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines.', 'buddypress-group-email-subscription' ); ?></p>
-
-				<ol>
-					<li class="bpges-migration-step <?php echo esc_attr( $table_class ); ?>"><?php esc_html_e( 'Create database tables', 'buddypress-group-email-subscription' ); ?> <?php if ( $table_message ) : ?><em> - <?php echo esc_html( $table_message ); ?></em><?php endif; ?></li>
-					<li class="bpges-migration-step <?php echo esc_attr( $subs_class ); ?>"><?php esc_html_e( 'Migrate subscriptions', 'buddypress-group-email-subscription' ); ?> <?php if ( $subs_message ) : ?><em> - <?php echo esc_html( $subs_message ); ?></em><?php endif; ?></li>
-					<li class="bpges-migration-step <?php echo esc_attr( $queued_class ); ?>"><?php esc_html_e( 'Migrate queued items', 'buddypress-group-email-subscription' ); ?> <?php if ( $queued_message ) : ?><em> - <?php echo esc_html( $queued_message ); ?></em><?php endif; ?></li>
-				</ol>
-
-				<?php
-				$fix_link = bpges_get_admin_panel_url();
-				$fix_link = add_query_arg( 'action', 'migrate_39', $fix_link );
-				$fix_link = wp_nonce_url( $fix_link, 'bpges_migrate_39' );
-				?>
-
-				<?php if ( ! $status['subscription_migration_in_progress'] && ! $status['queued_items_migration_in_progress'] ) : ?>
-					<p><?php esc_html_e( 'If you need to re-run or restart the migration process, you can do so with the following link:', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Manually trigger the migration process.</a></p>
-				<?php else : ?>
-					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
-				<?php endif; ?>
-
-				<p><a href="https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Migrating-to-3.9.0"><?php esc_html_e( 'Learn more about the 3.9 migration process.', 'buddypress-group-email-subscription' ); ?></a></p>
-
-				<style type="text/css">
-					.bpges-migration-step:before {
-						font-family: "dashicons";
-						font-size: 2em;
-						margin-left: 8px;
-						vertical-align: middle;
-					}
-					.bpges-migration-step-success:before {
-						color: green;
-						content: "\f147";
-					}
-					.bpges-migration-step-failure:before {
-						color: red;
-						content: "\f158";
-					}
-					.bpges-migration-step-in-progress:before {
-						content: "\f469";
-					}
-				</style>
-			</div>
-		<?php endif; ?>
-
 		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 
@@ -304,6 +257,28 @@ function ass_admin_options() {
 
 		<br>
 		<br>
+
+		<h3><?php esc_html_e( 'Default Group Settings', 'buddypress-group-email-subscription' ); ?></h3>
+
+		<p><?php esc_html_e( 'Use this setting to control the default subscription level for groups on this site. Note that this global default can be overridden on a per-group basis by the administrators of specific groups.', 'buddypress-group-email-subscription' ); ?></p>
+
+		<?php
+		$global_default = bpges_get_global_default_subscription();
+		$all_levels     = bpges_subscription_levels();
+		?>
+
+		<label for="global-default-subscription">
+			<?php esc_html_e( 'Global default subscription level', 'buddypress-group-email-subscription' ); ?>
+			<select name="global-default-subscription" id="global-default-subscription">
+				<?php foreach ( $all_levels as $level_slug => $level_data ) : ?>
+					<option value="<?php echo esc_attr( $level_slug ); ?>" <?php selected( $level_slug, $global_default ); ?>><?php echo esc_html( $level_data['label'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</label>
+
+		<br />
+		<br />
+
 		<h3><?php _e('Spam Prevention', 'buddypress-group-email-subscription'); ?></h3>
 			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'buddypress-group-email-subscription'); ?> </p>
 			<?php _e('Member must be registered for', 'buddypress-group-email-subscription'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo bp_get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'buddypress-group-email-subscription'); ?></p>
@@ -314,6 +289,56 @@ function ass_admin_options() {
 			</p>
 
 		</form>
+
+		<?php if ( $is_legacy_installation ) : ?>
+			<hr />
+
+			<div class="bpges-migration-tools">
+				<h3><?php esc_html_e( 'Migration Status', 'buddypress-group-email-subscription' ); ?></h3>
+				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines.', 'buddypress-group-email-subscription' ); ?></p>
+
+				<ol>
+					<li class="bpges-migration-step <?php echo esc_attr( $table_class ); ?>"><?php esc_html_e( 'Create database tables', 'buddypress-group-email-subscription' ); ?> <?php if ( $table_message ) : ?><em> - <?php echo esc_html( $table_message ); ?></em><?php endif; ?></li>
+					<li class="bpges-migration-step <?php echo esc_attr( $subs_class ); ?>"><?php esc_html_e( 'Migrate subscriptions', 'buddypress-group-email-subscription' ); ?> <?php if ( $subs_message ) : ?><em> - <?php echo esc_html( $subs_message ); ?></em><?php endif; ?></li>
+					<li class="bpges-migration-step <?php echo esc_attr( $queued_class ); ?>"><?php esc_html_e( 'Migrate queued items', 'buddypress-group-email-subscription' ); ?> <?php if ( $queued_message ) : ?><em> - <?php echo esc_html( $queued_message ); ?></em><?php endif; ?></li>
+				</ol>
+
+				<?php
+				$fix_link = bpges_get_admin_panel_url();
+				$fix_link = add_query_arg( 'action', 'migrate_39', $fix_link );
+				$fix_link = wp_nonce_url( $fix_link, 'bpges_migrate_39' );
+				?>
+
+				<?php if ( ! $status['subscription_migration_in_progress'] && ! $status['queued_items_migration_in_progress'] ) : ?>
+					<p><?php esc_html_e( 'If you need to re-run or restart the migration process, you can do so with the following link:', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Manually trigger the migration process.</a></p>
+				<?php else : ?>
+					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
+				<?php endif; ?>
+
+				<p><a href="https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Migrating-to-3.9.0"><?php esc_html_e( 'Learn more about the 3.9 migration process.', 'buddypress-group-email-subscription' ); ?></a></p>
+
+				<style type="text/css">
+					.bpges-migration-step:before {
+						font-family: "dashicons";
+						font-size: 2em;
+						margin-left: 8px;
+						vertical-align: middle;
+					}
+					.bpges-migration-step-success:before {
+						color: green;
+						content: "\f147";
+					}
+					.bpges-migration-step-failure:before {
+						color: red;
+						content: "\f158";
+					}
+					.bpges-migration-step-in-progress:before {
+						content: "\f469";
+					}
+				</style>
+			</div>
+		<?php endif; ?>
+
 
 		<hr>
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
@@ -358,8 +383,16 @@ function ass_update_dashboard_settings() {
 	if ( $_POST['ass_registered_req'] != bp_get_option( 'ass_registered_req' ) )
 		bp_update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 
+	if ( ! empty( $_POST['global-default-subscription'] ) ) {
+		$global_default_raw = sanitize_text_field( wp_unslash( $_POST['global-default-subscription'] ) );
+
+		$all_levels = bpges_subscription_levels();
+		if ( isset( $all_levels[ $global_default_raw ] ) ) {
+			bp_update_option( 'bpges_global_default_subscription', $global_default_raw );
+		}
+	}
+
 	return true;
-	//echo '<pre>'; print_r( $_POST ); echo '</pre>';
 }
 
 /**
@@ -442,7 +475,14 @@ function ass_install_emails( $post_exists_check = true ) {
 		}
 	}
 }
-add_action( 'bp_core_install_emails', 'ass_install_emails' );
+
+// Install our emails if necessary.
+add_action(
+	'bp_core_install_emails',
+	function() {
+		ass_install_emails();
+	}
+);
 
 /**
  * Show admin notice when editing a BP email in the admin dashboard.

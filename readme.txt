@@ -4,8 +4,8 @@ Description: Allow users to receive email notifications of group activity. Weekl
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 3.2
 Requires PHP: 5.3
-Tested up to: 6.1
-Stable tag: 4.0.4
+Tested up to: 6.2
+Stable tag: 4.1.0
 
 == Description ==
 
@@ -92,6 +92,18 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 4.1.0 =
+* Introduced interface where site admin can set the global default subscription level.
+* Introduced new filters that make it easier to disable subscription levels globally.
+* Removed the stripping of links in user-generated portions of outgoing emails.
+* Internationalization improvements.
+* Adjustments to Dashboard panel to deemphasize legacy "migration" tasks.
+* Fixed bug that caused `restore_current_blog()` to be called when unavailable.
+* Improved the triggering of the immediate send queue, to avoid unnecessary runs.
+* Only install BPGES email templates if they don't exist. This prevents duplicates on update.
+* Improved the way that URLs are escaped when generating unsubscribe links.
+* Added `$group_id` parameter to `ass_group_unsubscribe_links()` that allow for greater customization.
 
 = 4.0.4 =
 * Fixed regression in 4.0.3 that caused activity action to be blank in outgoing emails.

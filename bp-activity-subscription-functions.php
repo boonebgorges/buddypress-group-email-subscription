@@ -69,7 +69,7 @@ function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $
 
 	$args['access_key'] = $access_key;
 
-	return esc_url( add_query_arg( $args, bp_core_get_user_domain( $user_id ) ) );
+	return add_query_arg( $args, bp_core_get_user_domain( $user_id ) );
 }
 
 /**
@@ -146,8 +146,10 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 	$this_activity_is_important = apply_filters( 'ass_this_activity_is_important', false, $activity->type );
 
 	// If we've gotten this far, record the activity item for each subscribed group member.
-	$to_queue = array();
+	$to_queue         = array();
+	$has_immediate    = false;
 	$subscribed_users = ass_get_subscriptions_for_group( $group_id );
+
 	foreach ( $subscribed_users as $user_id => $subscription_type ) {
 		$self_notify = false;
 
@@ -240,6 +242,8 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		$add_to_digest_queue = apply_filters( 'bp_ges_add_to_digest_queue_for_user', $add_to_digest_queue, $activity, $user_id, $subscription_type );
 
 		if ( $send_immediately ) {
+			$has_immediate = true;
+
 			$to_queue[] = array(
 				'user_id'       => $user_id,
 				'group_id'      => $group_id,
@@ -265,10 +269,12 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		BPGES_Queued_Item::bulk_insert( $to_queue );
 
 		// Trigger the batch process.
-		bpges_send_queue()->data( array(
-			'type'        => 'immediate',
-			'activity_id' => $activity->id,
-		) )->dispatch();
+		if ( $has_immediate ) {
+			bpges_send_queue()->data( array(
+				'type'        => 'immediate',
+				'activity_id' => $activity->id,
+			) )->dispatch();
+		}
 	}
 }
 add_action( 'bp_activity_after_save' , 'ass_group_notification_activity' , 50 );
@@ -640,6 +646,16 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	}
 
 	/**
+	 * Filters the activity action string used to build the notification email.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $action_for_email_content
+	 * @return string
+	 */
+	$subject = apply_filters( 'bpges_notification_activity_action', $action_for_email_content, $activity );
+
+	/**
 	 * Filters the activity link used to build the notification email.
 	 *
 	 * @since 4.0.2
@@ -737,6 +753,16 @@ To view or reply, log in and go to:
 	$group_link = bp_get_group_permalink( $group );
 
 	$subject = strip_tags( stripslashes( $action_for_subject_line ) );
+
+	/**
+	 * Filters the subject line of immediate notifications.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $action_for_subject_line
+	 * @return string
+	 */
+	$subject = apply_filters( 'bpges_notification_subject', $subject, $activity );
 
 	// bpges_notice is a special activity type and gets some overrides.
 	if ( 'bpges_notice' === $activity->type ) {
@@ -965,7 +991,10 @@ function ass_send_email( $email_type, $to, $args ) {
 		if ( isset( $args['from'] ) ) {
 			$headers[] = "From: \"{$args['from']['name']}\" <{$args['from']['email']}>";
 		}
-		return wp_mail( $to, $args['subject'], $args['content'], $headers );
+
+		$plaintext_content = ass_email_convert_html_to_plaintext( $args['content'] );
+
+		return wp_mail( $to, $args['subject'], $plaintext_content, $headers );
 	}
 }
 
@@ -1379,7 +1408,7 @@ function bpges_register_activity_actions() {
 	bp_activity_set_action(
 		buddypress()->groups->id,
 		'bpges_notice',
-		__( 'Posted a Group Notice', 'buddypress-docs' ),
+		__( 'Posted a Group Notice', 'buddypress-group-email-subscription' ),
 		'bpges_format_activity_action_bpges_notice'
 	);
 }
@@ -1694,20 +1723,79 @@ function ass_group_subscription( $action, $user_id, $group_id ) {
 	do_action( 'ass_group_subscription', $user_id, $group_id, $action );
 }
 
-// translate the short code subscription status into a nicer version
-function ass_subscribe_translate( $status ){
-	if ( $status == 'no' || !$status )
-		$output = __('No Email', 'buddypress-group-email-subscription');
-	elseif ( $status == 'sum' )
-		$output = __('Weekly Summary', 'buddypress-group-email-subscription');
-	elseif ( $status == 'dig' )
-		$output = __('Daily Digest', 'buddypress-group-email-subscription');
-	elseif ( $status == 'sub' )
-		$output = __('New Topics', 'buddypress-group-email-subscription');
-	elseif ( $status == 'supersub' )
-		$output = __('All Email', 'buddypress-group-email-subscription');
+/**
+ * Returns a list of subscription levels, with labels and information about each level.
+ *
+ * @since 4.1.0
+ *
+ * @return array
+ */
+function bpges_subscription_levels() {
+	$levels = [
+		'no'       => [
+			'label'             => __( 'No Email', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'No Email', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'No Email (users will read this group on the web - good for any group)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'I will read this group on the web', 'buddypress-group-email-subscription' ),
+		],
+		'sum'      => [
+			'label'             => __( 'Weekly Summary', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'Weekly', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'Weekly Summary Email (the week\'s topics - good for large groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Get a summary of topics each week', 'buddypress-group-email-subscription' ),
+		],
+		'dig'      => [
+			'label'             => __( 'Daily Digest', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'Daily', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'Daily Digest Email (all daily activity bundles in one email - good for medium-size groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Get the day\'s activity bundled into one email', 'buddypress-group-email-subscription' ),
+		],
+		'sub'      => [
+			'label'             => __( 'New Topics', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'New Topics', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'New Topics Email (new topics are sent as they arrive, but not replies - good for small groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Send new topics as they arrive (but no replies)', 'buddypress-group-email-subscription' ),
+		],
+		'supersub' => [
+			'label'             => __( 'All Email', 'buddypress-group-email-subscription' ),
+			'label_short'       => __( 'All Email', 'buddypress-group-email-subscription' ),
+			'description_admin' => __( 'All Email (send emails about everything - recommended only for working groups)', 'buddypress-group-email-subscription' ),
+			'description_user'  => __( 'Send all group activity as it arrives', 'buddypress-group-email-subscription' ),
+		],
+	];
 
-	return $output;
+	if ( ! ass_get_forum_type() ) {
+		unset( $levels['sub'] );
+	}
+
+	/**
+	 * Filters the available subscription levels.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param array Array of subscription levels.
+	 */
+	return apply_filters( 'bpges_subscription_levels', $levels );
+}
+
+/**
+ * Gets the label for a subscription level.
+ *
+ * @param string $status Level slug.
+ * @return string
+ */
+function ass_subscribe_translate( $status ) {
+	if ( ! $status ) {
+		$status = 'no';
+	}
+
+	$subscription_levels = bpges_subscription_levels();
+
+	if ( ! isset( $subscription_levels[ $status ]['label_short'] ) ) {
+		return '';
+	}
+
+	return $subscription_levels[ $status ]['label_short'];
 }
 
 // Handles AJAX request to subscribe/unsubscribe from group
@@ -1892,6 +1980,31 @@ function ass_save_default_subscription( $group ) {
 }
 add_action( 'groups_group_after_save', 'ass_save_default_subscription' );
 
+/**
+ * Gets the global default subscription level for the site.
+ *
+ * @since 4.1.0
+ *
+ * @return string
+ */
+function bpges_get_global_default_subscription() {
+	$default = bp_get_option( 'bpges_global_default_subscription', 'supersub' );
+
+	// Verify that the default exists.
+	$all_levels = bpges_subscription_levels();
+	if ( ! isset( $all_levels[ $default ] ) ) {
+		$default = array_keys( $all_levels )[0];
+	}
+
+	/**
+	 * Filters the global default subscription level for the site.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $default Default subscription level.
+	 */
+	return apply_filters( 'bpges_global_default_subscription', $default );
+}
 
 /**
  * Gets the default subscription settings for the group.
@@ -1922,7 +2035,7 @@ function ass_get_default_subscription( $group = false ) {
 		 * @param string $status   'supersub' by default.
 		 * @param int    $group_id ID of the group.
 		 */
-		$default_subscription = apply_filters( 'ass_default_subscription_level', 'supersub', $group_id );
+		$default_subscription = apply_filters( 'ass_default_subscription_level', bpges_get_global_default_subscription(), $group_id );
 	}
 
 	return apply_filters( 'ass_get_default_subscription', $default_subscription );
@@ -1983,7 +2096,6 @@ function ass_clean_content( $content, $activity = null ) {
 // By default, we run content through these filters, which can be individually removed
 add_filter( 'ass_clean_content', 'stripslashes', 2 );
 add_filter( 'ass_clean_content', 'strip_tags', 4 );
-add_filter( 'ass_clean_content', 'ass_convert_links', 6 );
 add_filter( 'ass_clean_content', 'ass_html_entity_decode', 8 );
 
 /**
@@ -2108,15 +2220,20 @@ function ass_manage_members_email_status(  $user_id = '', $group = '' ) {
 	$sub_type = ass_get_group_subscription_status( $user_id, $group->id );
 	echo '<span class="ass_manage_members_links"> '.__('Email status:','buddypress-group-email-subscription').' ' . ass_subscribe_translate( $sub_type ) . '.';
 	echo ' &nbsp; '.__('Change to:','buddypress-group-email-subscription').' ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/no/'.$user_id, 'ass_member_email_status' ) . '">'.__('No Email','buddypress-group-email-subscription').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/sum/'.$user_id, 'ass_member_email_status' ) . '">'.__('Weekly','buddypress-group-email-subscription').'</a> | ';
-	echo '<a href="' . wp_nonce_url( $group_url.'/dig/'.$user_id, 'ass_member_email_status' ) . '">'.__('Daily','buddypress-group-email-subscription').'</a> | ';
 
-	if ( ass_get_forum_type() ) {
-		echo '<a href="' . wp_nonce_url( $group_url.'/sub/'.$user_id, 'ass_member_email_status' ) . '">'.__('New Topics','buddypress-group-email-subscription').'</a> | ';
+	$subscription_levels = bpges_subscription_levels();
+
+	$level_count = count( $subscription_levels );
+	$level_i     = 0;
+	foreach ( $subscription_levels as $level_slug => $level_data ) {
+		echo '<a href="' . esc_url( wp_nonce_url( $group_url . '/' . $level_slug . '/' . $user_id, 'ass_member_email_status' ) ) . '">' . esc_html( $level_data['label_short'] ) . '</a>';
+
+		++$level_i;
+		if ( $level_i < $level_count ) {
+			echo ' | ';
+		}
 	}
 
-	echo '<a href="' . wp_nonce_url( $group_url.'/supersub/'.$user_id, 'ass_member_email_status' ) . '">'.__('All Email','buddypress-group-email-subscription').'</a>';
 	echo '</span>';
 }
 add_action( 'bp_group_manage_members_admin_item', 'ass_manage_members_email_status' );
@@ -2142,7 +2259,7 @@ function ass_group_default_status( $group_id = false ) {
 	$status = groups_get_groupmeta( $group_id, 'ass_default_subscription' );
 
 	if ( !$status ) {
-		$status = apply_filters( 'ass_default_subscription_level', 'supersub', $group_id );
+		$status = apply_filters( 'ass_default_subscription_level', bpges_get_global_default_subscription(), $group_id );
 	}
 
 	return apply_filters( 'ass_group_default_status', $status, $group_id );

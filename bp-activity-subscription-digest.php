@@ -670,8 +670,10 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	$admin_email_filter = function( $admin_email ) {
 		global $phpmailer;
 
-		$phpmailer->Body    = "";
-		$phpmailer->AltBody = "";
+		if ( $phpmailer && is_object( $phpmailer ) ) {
+			$phpmailer->Body    = "";
+			$phpmailer->AltBody = "";
+		}
 
 		return $admin_email;
 	};
@@ -688,7 +690,9 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	// setup plain-text body
 	$message_plaintext = addslashes( $message_plaintext );
 	add_action( 'phpmailer_init', function( $phpmailer ) use ( $message_plaintext ) {
-		$phpmailer->AltBody = "'" . $message_plaintext . "'";
+		if ( $phpmailer && is_object( $phpmailer ) ) {
+			$phpmailer->AltBody = "'" . $message_plaintext . "'";
+		}
 	} );
 
 	// set content type as HTML
@@ -713,7 +717,9 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	// this is so subsequent calls to wp_mail() by other plugins will be clean
 	global $phpmailer;
 
-	$phpmailer->AltBody = "";
+	if ( $phpmailer && is_object( $phpmailer ) ) {
+		$phpmailer->AltBody = "";
+	}
 
 	return $result;
 }
@@ -802,9 +808,11 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 	}
 
 	// Custom BP root blog, so set up cron on BP sub-site.
+	$switched = false;
 	if ( 1 !== $blog_id ) {
 		switch_to_blog( $blog_id );
 		wp_clear_scheduled_hook( 'ass_digest_event' );
+		$switched = true;
 	}
 
 	wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
@@ -812,7 +820,9 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 	update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
 
 	// Restore current blog.
-	restore_current_blog();
+	if ( $switched ) {
+		restore_current_blog();
+	}
 }
 
 // Takes the numeral equivalent of a $day: 0 for Sunday, 1 for Monday, etc
@@ -839,9 +849,11 @@ function ass_set_weekly_digest_time( $day ) {
 	}
 
 	// Custom BP root blog, so set up cron on BP sub-site.
+	$switched = false;
 	if ( 1 !== $blog_id ) {
 		switch_to_blog( $blog_id );
 		wp_clear_scheduled_hook( 'ass_digest_event_weekly' );
+		$switched = true;
 	}
 
 	wp_schedule_event( $next_weekly, 'weekly', 'ass_digest_event_weekly' );
@@ -849,7 +861,9 @@ function ass_set_weekly_digest_time( $day ) {
 	update_option( 'ass_weekly_digest', $day );
 
 	// Restore current blog.
-	restore_current_blog();
+	if ( $switched ) {
+		restore_current_blog();
+	}
 }
 
 /*
