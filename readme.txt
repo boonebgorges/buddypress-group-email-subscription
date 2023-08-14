@@ -5,7 +5,7 @@ Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifi
 Requires at least: 3.2
 Requires PHP: 5.3
 Tested up to: 6.2
-Stable tag: 4.1.0
+Stable tag: 4.1.1
 
 == Description ==
 
@@ -92,6 +92,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 4.1.1 =
+* Fixed bug introduced in 4.1.0 that broke AJAX subscription level changes.
 
 = 4.1.0 =
 * Introduced interface where site admin can set the global default subscription level.
