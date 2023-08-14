@@ -125,7 +125,7 @@ function ass_group_subscribe_button() {
 			$levels_count = count( $subscription_levels );
 			?>
 			<?php foreach ( $subscription_levels as $level_slug => $level_data ) : ?>
-				<a class="group-sub" id="<?php esc_attr( $level_slug ); ?>-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php echo esc_html( $level_data['label'] ); ?></a> <?php echo esc_html( $level_data['description_user'] ); ?>
+				<a class="group-sub" id="<?php echo esc_attr( $level_slug ); ?>-<?php echo esc_attr( $group->id ); ?>" href="javascript:;"><?php echo esc_html( $level_data['label'] ); ?></a> <?php echo esc_html( $level_data['description_user'] ); ?>
 				<?php
 				++$levels_i;
 
