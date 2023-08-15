@@ -106,7 +106,15 @@ add_filter( 'bp_activity_content_before_save', 'ass_group_notification_activity_
  * 'ass_block_group_activity_types' filter.
  */
 function ass_group_notification_activity( BP_Activity_Activity $activity ) {
-	if ( 'groups' !== $activity->component ) {
+	$is_group_activity_item = buddypress()->groups->id === $activity->component;
+
+	// Special handling for 'activity_comment' items.
+	if ( ! $is_group_activity_item && 'activity_comment' === $activity->type ) {
+		$root_activity          = new BP_Activity_Activity( $activity->item_id );
+		$is_group_activity_item = buddypress()->groups->id === $root_activity->component;
+	}
+
+	if ( ! $is_group_activity_item ) {
 		return;
 	}
 
