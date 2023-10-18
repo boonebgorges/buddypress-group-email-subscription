@@ -62,6 +62,11 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 		 * This is primarily for legacy support and must be translated internally
 		 * into the newer BP_Group_Extension parameter structure.
 		 *
+		 * @since 4.2.0 Returning the default value `true` will tell BP to show the tab
+		 *              only to members (the 'member' value for 'show_tab'). Returning
+		 *              `false` will tell BP to hide the tab from everyone (the 'noone'
+		 *              value for 'show_tab').
+		 *
 		 * @param bool $enable_nav_item Whether the nav item should be visible.
 		 */
 		$enable_nav_item = apply_filters( 'bp_group_email_subscription_enable_nav_item', true );
