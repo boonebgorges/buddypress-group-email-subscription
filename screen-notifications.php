@@ -16,6 +16,11 @@ function ass_group_subscribe_settings () {
 
 	$submit_link = bp_get_groups_action_link( 'notifications' );
 
+	$settings_link = bp_members_get_user_url(
+		$user_id,
+		bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) )
+	);
+
 	?>
 	<div id="ass-email-subscriptions-options-page">
 	<h3 class="activity-subscription-settings-title"><?php _e('Email Subscription Options', 'buddypress-group-email-subscription') ?></h3>
@@ -30,7 +35,7 @@ function ass_group_subscribe_settings () {
 	<input type="submit" value="<?php _e('Save Settings', 'buddypress-group-email-subscription') ?>" id="ass-save" name="ass-save" class="button-primary">
 
 	<?php if ( ass_get_forum_type() == 'buddypress' ) : ?>
-		<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription'); ?> <a href="<?php echo bp_loggedin_user_domain() . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'buddypress-group-email-subscription'); ?></a>.</p>
+		<p class="ass-sub-note"><?php _e( 'Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $settings_link ); ?>"><?php _e( 'email notifications', 'buddypress-group-email-subscription' ); ?></a>.</p>
 	<?php endif; ?>
 
 	</form>

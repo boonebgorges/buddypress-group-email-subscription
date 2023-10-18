@@ -63,7 +63,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			'item_id'   => $g1,
 			'user_id'   => $u1,
 			'component' => 'groups',
-			'action'    => '<a href="' . bp_core_get_user_domain( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
+			'action'    => '<a href="' . bp_members_get_user_url( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
 		) );
 
 		$this->factory->activity->create_many( 3, array(
@@ -71,7 +71,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			'item_id'   => $g2,
 			'user_id'   => $u1,
 			'component' => 'groups',
-			'action'    => '<a href="' . bp_core_get_user_domain( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
+			'action'    => '<a href="' . bp_members_get_user_url( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
 		) );
 
 		// Send digests.
@@ -106,7 +106,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			'item_id'   => $g1,
 			'user_id'   => $u1,
 			'component' => 'groups',
-			'action'    => '<a href="' . bp_core_get_user_domain( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
+			'action'    => '<a href="' . bp_members_get_user_url( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
 		) );
 
 		$this->factory->activity->create_many( 3, array(
@@ -114,7 +114,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			'item_id'   => $g2,
 			'user_id'   => $u1,
 			'component' => 'groups',
-			'action'    => '<a href="' . bp_core_get_user_domain( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
+			'action'    => '<a href="' . bp_members_get_user_url( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
 		) );
 
 		add_filter( 'bp_email_use_wp_mail', '__return_true' );
@@ -151,7 +151,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			'item_id'   => $g1,
 			'user_id'   => $u1,
 			'component' => 'groups',
-			'action'    => '<a href="' . bp_core_get_user_domain( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
+			'action'    => '<a href="' . bp_members_get_user_url( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
 		) );
 
 		$this->factory->activity->create_many( 3, array(
@@ -159,7 +159,7 @@ class BPGES_Tests_Digests extends BP_UnitTestCase {
 			'item_id'   => $g2,
 			'user_id'   => $u1,
 			'component' => 'groups',
-			'action'    => '<a href="' . bp_core_get_user_domain( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
+			'action'    => '<a href="' . bp_members_get_user_url( $u1 ). '" title="' . $name . '">' . $name . '</a> posted an update in the group <a href="http://localhost/groups/group/">Group</a>',
 		) );
 
 		// Send digests.

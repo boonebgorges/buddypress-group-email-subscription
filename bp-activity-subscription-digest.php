@@ -151,7 +151,13 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 	}
 
 	$to = $userdata->user_email;
-	$userdomain = bp_core_get_user_domain( $user_id );
+
+	$user_url = bp_members_get_user_url( $user_id );
+
+	$user_groups_url = bp_members_get_user_url(
+		$user_id,
+		bp_members_get_path_chunks( array( bp_get_groups_slug() ) )
+	);
 
 	// Keep an unfiltered copy of the activity IDs to be compared with sent items.
 	$group_activity_ids_unfiltered = $group_activity_ids;
@@ -233,14 +239,14 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 	$message .= $footer;
 
-	$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'buddypress-group-email-subscription' ), "<a href=\"{$userdomain}{$bp->groups->slug}/\">" . __( 'My Groups', 'buddypress-group-email-subscription' ) . "</a>" );
+	$unsubscribe_message = "\n\n" . sprintf( __( "To disable these notifications per group please login and go to: %s where you can change your email settings for each group.", 'buddypress-group-email-subscription' ), '<a href="' . esc_url( $user_groups_url ) . '">' . __( 'My Groups', 'buddypress-group-email-subscription' ) . "</a>" );
 
 	if ( bp_get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
-		$unsubscribe_link = "$userdomain?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
+		$unsubscribe_link = "$user_url?bpass-action=unsubscribe&access_key=" . md5( $user_id . 'unsubscribe' . wp_salt() );
 		$unsubscribe_message .= "\n\n<br><br><a class=\"digest-unsubscribe-link\" href=\"$unsubscribe_link\">" . __( 'Disable these notifications for all my groups at once.', 'buddypress-group-email-subscription' ) . '</a>';
 	}
 
-	$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $userdomain . $bp->groups->slug );
+	$message .= apply_filters( 'ass_digest_disable_notifications', $unsubscribe_message, $user_groups_url );
 
 	$message .= "</div>";
 
@@ -276,12 +282,12 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 		}
 
 		$user_message_args['ges.subject']       = $title;
-		$user_message_args['ges.settings-link'] = ass_get_login_redirect_url( "{$userdomain}{$bp->groups->slug}" );
+		$user_message_args['ges.settings-link'] = ass_get_login_redirect_url( $user_groups_url );
 		$user_message_args['subscription_type'] = $type;
 		$user_message_args['recipient.id']      = $user_id;
 
 		// Unused.
-		$user_message_args['poster.url']   = $userdomain;
+		$user_message_args['poster.url']   = $user_url;
 
 		// BP-specific tokens.
 		$user_message_args['usermessage'] = $body;
@@ -920,12 +926,14 @@ function ass_get_mass_userdata( $user_ids = array() ) {
  * Get user domain.
  *
  * Previously, this was a cached version of the bp_core_get_user_domain() check.
- * Since 3.9.0, it's a wrapper for that function.
+ *
+ * @since 3.9.0 Function is now a wrapper for the BP function.
+ * @since 4.1.2 Function is now a wrapper for the BP 12.0+ function bp_members_get_user_url().
  *
  * @param int $user_id
  */
 function ass_digest_get_user_domain( $user_id ) {
-	return bp_core_get_user_domain( $user_id );
+	return bp_members_get_user_url( $user_id );
 }
 
 // if the WP_Better_Emails plugin is installed, don't wrap the message with <html><body>$message</body></html>
