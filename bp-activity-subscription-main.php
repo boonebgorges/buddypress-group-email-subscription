@@ -1,18 +1,5 @@
 <?php
 
-// Determine the BP version. It's been historically difficult in this plugin, so provide
-// a fallback when not found
-if ( defined( 'BP_VERSION' ) ) {
-	$bpges_bp_version = (float) BP_VERSION;
-} else {
-	// Let's guess
-	if ( function_exists( 'bp_is_action_variable' ) ) {
-		$bpges_bp_version = (float) '1.5';
-	} else {
-		$bpges_bp_version = (float) '1.2.10';
-	}
-}
-
 if ( ! class_exists( 'WP_Background_Process' ) ) {
 	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
 }
