@@ -47,7 +47,10 @@ function ass_group_notification_forum_posts( $post_id ) {
 		) );
 	}
 
-	$primary_link = trailingslashit( bp_get_group_permalink( $group ) . 'forum/topic/' . $topic->topic_slug );
+	$primary_link = bp_get_group_url(
+		$group,
+		bp_groups_get_path_chunks( array( 'forum', 'topic', $topic->topic_slug ) )
+	);
 
 	$blogname = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 

@@ -205,7 +205,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 		) );
 		$group_name = $group->name;
 		$group_slug = $group->slug;
-		$group_permalink = ass_get_login_redirect_url( bp_get_group_permalink( $group ) );
+		$group_permalink = ass_get_login_redirect_url( bp_get_group_url( $group ) );
 
 		// Might be nice here to link to anchor tags in the message.
 		if ( 'dig' == $type ) {
@@ -471,7 +471,7 @@ function ass_digest_format_item_group( $group_id, $activity_ids, $type, $group_n
 
 	$ass_email_css = bpges_digest_css();
 
-	$group_permalink = bp_get_group_permalink( groups_get_group( array( 'group_id' => $group_id ) ) );
+	$group_permalink = bp_get_group_url( $group_id );
 	$group_name_link = '<a class="item-group-group-link" href="'.$group_permalink.'" name="'.$group_slug.'">'.$group_name.'</a>';
 
 	$userdomain = ass_digest_get_user_domain( $user_id );
