@@ -16,10 +16,7 @@ function ass_group_subscribe_settings () {
 
 	$submit_link = bp_get_groups_action_link( 'notifications' );
 
-	$settings_link = bp_members_get_user_url(
-		$user_id,
-		bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) )
-	);
+	$settings_link = bp_loggedin_user_url( bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) ) );
 
 	?>
 	<div id="ass-email-subscriptions-options-page">
@@ -65,7 +62,13 @@ function ass_update_group_subscribe_settings() {
 
 			// translators: name of the subscription level
 			bp_core_add_message( sprintf( __( 'Your email notifications for this group have been changed to: %s.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
-			bp_core_redirect( trailingslashit( bp_get_group_permalink( groups_get_current_group() ) . 'notifications' ) );
+
+			$redirect_url = bp_get_group_url(
+				groups_get_current_group(),
+				bp_groups_get_path_chunks( array( 'notifications' ) )
+			);
+
+			bp_core_redirect( $redirect_url );
 		}
 	}
 }
