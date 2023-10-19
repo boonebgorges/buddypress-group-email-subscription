@@ -504,7 +504,10 @@ To view or reply, log in and go to:
 
 			} else {
 
-				$settings_link = bp_get_group_url( $group, array( 'notifications' ) );
+				$settings_link = bp_get_group_url(
+					$group,
+					bp_groups_get_path_chunks( array( 'notifications' ) )
+				);
 				$settings_link = ass_get_login_redirect_url( $settings_link, $group_status );
 
 				$email_setting_string = __( 'Your email setting for this group is: %s', 'buddypress-group-email-subscription' );
