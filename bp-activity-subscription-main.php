@@ -18,11 +18,6 @@ if ( function_exists( 'bp_setup_forums' ) ) {
 	require_once( dirname( __FILE__ ) . '/legacy-forums.php' );
 }
 
-// Support for BP < 12.0.
-if ( version_compare( bp_get_version(), '12.0', '<' ) ) {
-	require_once( dirname( __FILE__ ) . '/buddypress-legacy-compat.php' );
-}
-
 // Core.
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
 require_once( dirname( __FILE__ ) . '/bp-activity-subscription-digest.php' );
