@@ -4,11 +4,19 @@
     "license": "GPLv2",
     "version": "4.0.0",
     "require": {
-        "composer/installers": "~1.0"
+        "composer/installers": "~1.0",
+        "hard-g/buddypress-12.0-url-polyfills": "dev-main"
     },
     "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
         "phpcompatibility/phpcompatibility-wp": "*",
-        "phpunit/phpunit": "^6"
+        "phpunit/phpunit": "^8",
+				"wp-coding-standards/wpcs": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
