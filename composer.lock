@@ -163,12 +163,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hard-g/buddypress-12.0-url-polyfills.git",
-                "reference": "bcf2718a4075f9412ba0c42277886660bb45b7ca"
+                "reference": "4fd42b3a13584fbff1beab3a40e84aad22a31b1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hard-g/buddypress-12.0-url-polyfills/zipball/bcf2718a4075f9412ba0c42277886660bb45b7ca",
-                "reference": "bcf2718a4075f9412ba0c42277886660bb45b7ca",
+                "url": "https://api.github.com/repos/hard-g/buddypress-12.0-url-polyfills/zipball/4fd42b3a13584fbff1beab3a40e84aad22a31b1e",
+                "reference": "4fd42b3a13584fbff1beab3a40e84aad22a31b1e",
                 "shasum": ""
             },
             "default-branch": true,
@@ -193,7 +193,7 @@
                 "issues": "https://github.com/hard-g/buddypress-12.0-url-polyfills/issues",
                 "source": "https://github.com/hard-g/buddypress-12.0-url-polyfills/tree/main"
             },
-            "time": "2023-10-19T21:50:42+00:00"
+            "time": "2023-10-20T15:20:48+00:00"
         }
     ],
     "packages-dev": [
