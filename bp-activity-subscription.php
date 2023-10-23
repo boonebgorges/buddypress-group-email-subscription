@@ -19,7 +19,7 @@ Domain Path: /languages
  */
 define( 'GES_REVISION_DATE', '2023-08-14 15:00 UTC' );
 
-require 'vendor/autoload.php';
+require __DIR__  . '/vendor/autoload.php';
 
 HardG\BuddyPress120URLPolyfills\Loader::init();
 
