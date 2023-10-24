@@ -163,12 +163,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hard-g/buddypress-12.0-url-polyfills.git",
-                "reference": "4fd42b3a13584fbff1beab3a40e84aad22a31b1e"
+                "reference": "4796efdbf4be3f790efb89006f1e4ddaf4ffd0db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hard-g/buddypress-12.0-url-polyfills/zipball/4fd42b3a13584fbff1beab3a40e84aad22a31b1e",
-                "reference": "4fd42b3a13584fbff1beab3a40e84aad22a31b1e",
+                "url": "https://api.github.com/repos/hard-g/buddypress-12.0-url-polyfills/zipball/4796efdbf4be3f790efb89006f1e4ddaf4ffd0db",
+                "reference": "4796efdbf4be3f790efb89006f1e4ddaf4ffd0db",
                 "shasum": ""
             },
             "default-branch": true,
@@ -191,9 +191,9 @@
             "description": "Polyfills for URL-related functions introduced in BuddyPress 12.0.",
             "support": {
                 "issues": "https://github.com/hard-g/buddypress-12.0-url-polyfills/issues",
-                "source": "https://github.com/hard-g/buddypress-12.0-url-polyfills/tree/main"
+                "source": "https://github.com/hard-g/buddypress-12.0-url-polyfills/tree/1.0.0"
             },
-            "time": "2023-10-20T15:20:48+00:00"
+            "time": "2023-10-20T15:55:47+00:00"
         }
     ],
     "packages-dev": [
@@ -2132,5 +2132,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
