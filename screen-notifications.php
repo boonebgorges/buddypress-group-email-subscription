@@ -16,6 +16,8 @@ function ass_group_subscribe_settings () {
 
 	$submit_link = bp_get_groups_action_link( 'notifications' );
 
+	$settings_link = bp_loggedin_user_url( bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) ) );
+
 	?>
 	<div id="ass-email-subscriptions-options-page">
 	<h3 class="activity-subscription-settings-title"><?php _e('Email Subscription Options', 'buddypress-group-email-subscription') ?></h3>
@@ -30,7 +32,7 @@ function ass_group_subscribe_settings () {
 	<input type="submit" value="<?php _e('Save Settings', 'buddypress-group-email-subscription') ?>" id="ass-save" name="ass-save" class="button-primary">
 
 	<?php if ( ass_get_forum_type() == 'buddypress' ) : ?>
-		<p class="ass-sub-note"><?php _e('Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription'); ?> <a href="<?php echo bp_loggedin_user_domain() . BP_SETTINGS_SLUG . '/notifications/' ?>"><?php _e('email notifications', 'buddypress-group-email-subscription'); ?></a>.</p>
+		<p class="ass-sub-note"><?php _e( 'Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $settings_link ); ?>"><?php _e( 'email notifications', 'buddypress-group-email-subscription' ); ?></a>.</p>
 	<?php endif; ?>
 
 	</form>
@@ -60,7 +62,13 @@ function ass_update_group_subscribe_settings() {
 
 			// translators: name of the subscription level
 			bp_core_add_message( sprintf( __( 'Your email notifications for this group have been changed to: %s.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
-			bp_core_redirect( trailingslashit( bp_get_group_permalink( groups_get_current_group() ) . 'notifications' ) );
+
+			$redirect_url = bp_get_group_url(
+				groups_get_current_group(),
+				bp_groups_get_path_chunks( array( 'notifications' ) )
+			);
+
+			bp_core_redirect( $redirect_url );
 		}
 	}
 }

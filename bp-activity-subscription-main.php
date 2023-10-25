@@ -1,18 +1,5 @@
 <?php
 
-// Determine the BP version. It's been historically difficult in this plugin, so provide
-// a fallback when not found
-if ( defined( 'BP_VERSION' ) ) {
-	$bpges_bp_version = (float) BP_VERSION;
-} else {
-	// Let's guess
-	if ( function_exists( 'bp_is_action_variable' ) ) {
-		$bpges_bp_version = (float) '1.5';
-	} else {
-		$bpges_bp_version = (float) '1.2.10';
-	}
-}
-
 if ( ! class_exists( 'WP_Background_Process' ) ) {
 	require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
 }
@@ -69,22 +56,40 @@ if ( defined( 'WP_CLI' ) ) {
 class Group_Activity_Subscription extends BP_Group_Extension {
 
 	public function __construct() {
-		$this->name = __('Email Options', 'buddypress-group-email-subscription');
-		$this->slug = 'notifications';
+		/**
+		 * Filter whether the nav item should be visible.
+		 *
+		 * This is primarily for legacy support and must be translated internally
+		 * into the newer BP_Group_Extension parameter structure.
+		 *
+		 * @since 4.2.0 Returning the default value `true` will tell BP to show the tab
+		 *              only to members (the 'member' value for 'show_tab'). Returning
+		 *              `false` will tell BP to hide the tab from everyone (the 'noone'
+		 *              value for 'show_tab').
+		 *
+		 * @param bool $enable_nav_item Whether the nav item should be visible.
+		 */
+		$enable_nav_item = apply_filters( 'bp_group_email_subscription_enable_nav_item', true );
 
-		// Only enable the notifications nav item if the user is a member of the group
-		if ( bp_is_group() && groups_is_user_member( bp_loggedin_user_id() , bp_get_current_group_id() )  ) {
-			$enable_nav_item = true;
-		} else {
-			$enable_nav_item = false;
-		}
+		$args = [
+			'slug'              => 'notifications',
+			'name'              => __( 'Email Options', 'buddypress-group-email-subscription' ),
+			'show_tab'          => $enable_nav_item ? 'member' : 'noone',
+			'nav_item_position' => 91,
+		];
 
-		$this->enable_nav_item = apply_filters( 'bp_group_email_subscription_enable_nav_item', $enable_nav_item );
-		$this->nav_item_position  = 91;
-		$this->enable_create_step = false;
+		$screens = [
+			'edit' => [
+				'enabled' => 'no' !== get_option( 'ass-admin-can-send-email' ),
+			],
+			'create' => [
+				'enabled' => false,
+			],
+		];
 
-		if ( get_option('ass-admin-can-send-email') == 'no' )
-			$this->enable_edit_item = false;
+		$args['screens'] = $screens;
+
+		parent::init( $args );
 
 		// hook in the css and js
 		add_action( 'wp_enqueue_scripts', array( &$this , 'add_settings_stylesheet' ) );
@@ -150,13 +155,11 @@ class Group_Activity_Subscription extends BP_Group_Extension {
 
 }
 
-// Install is using BP 1.5; need abstraction for BP 1.6.
-if ( $bpges_bp_version < 1.6 ) {
-	require_once( dirname( __FILE__ ) . '/1.6-abstraction.php' );
-}
-
 // Register our group extension.
-bp_register_group_extension( 'Group_Activity_Subscription' );
+function bpges_register_group_extension() {
+	bp_register_group_extension( 'Group_Activity_Subscription' );
+}
+add_action( 'bp_init', 'bpges_register_group_extension' );
 
 /**
  * Include files only if we're on a specific page.
