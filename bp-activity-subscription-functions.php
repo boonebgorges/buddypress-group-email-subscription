@@ -1068,10 +1068,10 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$html_content = __( "{{{ges.action}}}:\n\n<blockquote>{{{usermessage}}}</blockquote>\n&ndash;\n<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up on the conversation.\n{{{ges.email-setting-description}}}", 'buddypress-group-email-subscription' );
+				$html_content = __( "{{{ges.action}}}\n\n<blockquote>{{{usermessage}}}</blockquote>\n&ndash;\n<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up on the conversation.\n{{{ges.email-setting-description}}}", 'buddypress-group-email-subscription' );
 
 				/* translators: do not remove {} brackets or translate its contents. */
-				$plaintext_content = __( "{{{ges.action}}}:\n\n\"{{{usermessage}}}\"\n\nGo to the discussion to reply or catch up on the conversation:\n{{{thread.url}}}\n\n----\n\n{{{ges.email-setting-description}}}\n\n{{{ges.email-setting-links}}}", 'buddypress-group-email-subscription' );
+				$plaintext_content = __( "{{{ges.action}}}\n\n\"{{{usermessage}}}\"\n\nGo to the discussion to reply or catch up on the conversation:\n{{{thread.url}}}\n\n----\n\n{{{ges.email-setting-description}}}\n\n{{{ges.email-setting-links}}}", 'buddypress-group-email-subscription' );
 
 				$situation_desc = __( 'A member created a group activity entry. Used by the Group Email Subscription plugin during immediate sendouts.', 'buddypress-group-email-subscription' );
 
