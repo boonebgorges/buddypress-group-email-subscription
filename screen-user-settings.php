@@ -100,6 +100,8 @@ add_action( 'bp_notification_settings', 'ass_group_subscription_notification_set
 
 // Add a notice at end of email notification about how to change group email subscriptions
 function ass_add_notice_to_notifications_page() {
+	$user_groups_link = bp_loggedin_user_url( bp_members_get_path_chunks( array( bp_get_groups_slug() ) ) );
+
 ?>
 		<div id="group-email-settings">
 			<table class="notification-settings zebra">
@@ -114,7 +116,7 @@ function ass_add_notice_to_notifications_page() {
 					<tr>
 						<td>&nbsp;</td>
 						<td>
-							<p><?php printf( __('To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'buddypress-group-email-subscription' ), '<a href="'. bp_loggedin_user_domain() . trailingslashit( BP_GROUPS_SLUG ) . '">' . __( 'My Groups' ,'buddypress-group-email-subscription' ) . '</a>' ); ?></p>
+							<p><?php printf( __( 'To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'buddypress-group-email-subscription' ), '<a href="'. esc_url( $user_groups_link ) . '">' . __( 'My Groups' ,'buddypress-group-email-subscription' ) . '</a>' ); ?></p>
 
 							<?php if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) : ?>
 								<p><a href="<?php echo wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ); ?>"><?php _e( "Or set all your group's email options to No Email", 'buddypress-group-email-subscription' ); ?></a></p>

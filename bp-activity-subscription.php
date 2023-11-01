@@ -4,8 +4,8 @@ Plugin Name: BuddyPress Group Email Subscription
 Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
 Description: Allows group members to receive email notifications for group activity and forum posts instantly or as daily digest or weekly summary.
 Author: Deryk Wenaus, boonebgorges, r-a-y
-Revision Date: August 14, 2023
-Version: 4.1.1
+Revision Date: November 1, 2023
+Version: 4.2.1
 Text Domain: buddypress-group-email-subscription
 Domain Path: /languages
 */
@@ -17,7 +17,11 @@ Domain Path: /languages
  *
  * @var string Date string of last revision.
  */
-define( 'GES_REVISION_DATE', '2023-08-14 15:00 UTC' );
+define( 'GES_REVISION_DATE', '2023-11-01 19:00 UTC' );
+
+require __DIR__  . '/vendor/autoload.php';
+
+HardG\BuddyPress120URLPolyfills\Loader::init();
 
 /**
  * Main loader for the plugin.
@@ -33,8 +37,8 @@ function ass_loader() {
 	$error = '';
 
 	// Old BP.
-	if ( version_compare( BP_VERSION, '1.3', '<' ) ) {
-		$error = sprintf( __( "Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or higher.  If you are still using BuddyPress 1.2 and you don't plan on upgrading, use <a href='%s'>BP Group Email Subscription v3.6.2 instead</a>.", 'buddypress-group-email-subscription' ), 'https://downloads.wordpress.org/plugin/buddypress-group-email-subscription.3.6.1.zip' );
+	if ( version_compare( BP_VERSION, '2.1', '<' ) ) {
+		$error = __( 'BP Group Email Subscription v4.2.0 requires BuddyPress 2.1 or higher.', 'buddypress-group-email-subscription' );
 	} elseif ( ! bp_is_active( 'groups' ) || ! bp_is_active( 'activity' ) ) {
 		$admin_url = bp_get_admin_url( add_query_arg( array( 'page' => 'bp-components' ), 'admin.php' ) );
 		$error     = sprintf( __( 'BuddyPress Group Email Subscription requires the BP Groups and Activity components. Please <a href="%s">activate them</a> to use this plugin.', 'buddypress-group-email-subscription' ), esc_url( $admin_url ) );

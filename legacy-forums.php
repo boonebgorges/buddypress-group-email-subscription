@@ -47,7 +47,10 @@ function ass_group_notification_forum_posts( $post_id ) {
 		) );
 	}
 
-	$primary_link = trailingslashit( bp_get_group_permalink( $group ) . 'forum/topic/' . $topic->topic_slug );
+	$primary_link = bp_get_group_url(
+		$group,
+		bp_groups_get_path_chunks( array( 'forum', 'topic', $topic->topic_slug ) )
+	);
 
 	$blogname = '[' . get_blog_option( BP_ROOT_BLOG, 'blogname' ) . ']';
 
@@ -178,7 +181,12 @@ function ass_group_notification_forum_posts( $post_id ) {
 		$send_it = $notice = false;
 
 		// default settings link
-		$settings_link = ass_get_login_redirect_url( trailingslashit( bp_get_group_permalink( $group ) . 'notifications' ), 'legacy_forums_settings' );
+		$settings_link = bp_get_group_url(
+			$group,
+			bp_groups_get_path_chunks( array( 'notifications' ) )
+		);
+
+		$settings_link = ass_get_login_redirect_url( $settings_link, 'legacy_forums_settings' );
 
 		// Self-notification emails
 		if ( $self_notify === true ) {
@@ -186,7 +194,10 @@ function ass_group_notification_forum_posts( $post_id ) {
 			$group_status = 'self_notify';
 
 			// notification settings link
-			$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+			$settings_link = bp_members_get_user_url(
+				$user_id,
+				bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) )
+			);
 
 			// set notice
 			$notice  = __( 'You are currently receiving notifications for your own posts.', 'buddypress-group-email-subscription' );
@@ -254,7 +265,10 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$group_status = 'replies_to_my_topic';
 
 				// override settings link to user's notifications
-				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+				$settings_link = bp_members_get_user_url(
+					$user_id,
+					bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) )
+				);
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have started.', 'buddypress-group-email-subscription' );
@@ -268,7 +282,10 @@ function ass_group_notification_forum_posts( $post_id ) {
 				$group_status = 'replies_after_me_topic';
 
 				// override settings link to user's notifications
-				$settings_link = trailingslashit( bp_core_get_user_domain( $user_id ) . bp_get_settings_slug() ) . 'notifications/';
+				$settings_link = bp_members_get_user_url(
+					$user_id,
+					bp_members_get_path_chunks( array( bp_get_settings_slug(), 'notifications' ) )
+				);
 
 				// let's change the notice to accurately reflect that the user is receiving replies based on their settings
 				$notice  = __( 'You are currently receiving notifications to topics that you have replied in.', 'buddypress-group-email-subscription' );

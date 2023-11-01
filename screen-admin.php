@@ -39,7 +39,13 @@ function ass_manage_members_email_update() {
 
 			ass_group_subscription( $action, $user_id, bp_get_current_group_id() );
 			bp_core_add_message( __( 'User email status changed successfully', 'buddypress-group-email-subscription' ) );
-			bp_core_redirect( bp_get_group_permalink( $bp->groups->current_group ) . 'admin/manage-members/' );
+
+			$redirect_url = bp_get_group_manage_url(
+				bp_get_current_group_id(),
+				bp_groups_get_path_chunks( array( 'manage-members' ), 'manage' )
+			);
+
+			bp_core_redirect( $redirect_url );
 		}
 	}
 }
@@ -57,7 +63,12 @@ function ass_change_all_email_sub() {
 	if (! $default_email_sub = ass_get_default_subscription( $group ) )
 		$default_email_sub = 'no';
 
-	echo '<p><br>'.__('Site Admin Only: update email subscription settings for ALL members to the default:', 'buddypress-group-email-subscription').' <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  '.__('Warning: this is not reversible so use with caution.', 'buddypress-group-email-subscription').' <a href="' . wp_nonce_url( bp_get_group_permalink( $group ) . 'admin/manage-members/email-all/'. $default_email_sub, 'ass_change_all_email_sub' ) . '">'.__('Make it so!', 'buddypress-group-email-subscription').'</a></p>';
+	$url = bp_get_group_manage_url(
+		$group,
+		bp_groups_get_path_chunks( array( 'manage-members', 'email-all', $default_email_sub ) )
+	);
+
+	echo '<p><br>'.__('Site Admin Only: update email subscription settings for ALL members to the default:', 'buddypress-group-email-subscription').' <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  '.__('Warning: this is not reversible so use with caution.', 'buddypress-group-email-subscription').' <a href="' . wp_nonce_url( $url, 'ass_change_all_email_sub' ) . '">'.__('Make it so!', 'buddypress-group-email-subscription').'</a></p>';
 }
 add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
 
@@ -89,7 +100,13 @@ function ass_manage_all_members_email_update() {
 			}
 
 			bp_core_add_message( __( 'All user email status\'s changed successfully', 'buddypress-group-email-subscription' ) );
-			bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/manage-members/' );
+
+			$redirect_url = bp_get_group_manage_url(
+				bp_get_current_group_id(),
+				bp_groups_get_path_chunks( array( 'manage-members' ), 'manage' )
+			);
+
+			bp_core_redirect( $redirect_url );
 		}
 	}
 }
@@ -141,7 +158,7 @@ function ass_admin_notice() {
 		$group      = groups_get_current_group();
 		$group_id   = $group->id;
 		$group_name = bp_get_current_group_name();
-		$group_link = bp_get_group_permalink( $group );
+		$group_link = bp_get_group_url( $group );
 
 		if ( $group->status != 'public' ) {
 			$group_link = ass_get_login_redirect_url( $group_link, 'admin_notice' );
@@ -215,7 +232,12 @@ To view this group log in and follow the link below:
 		bp_core_add_message( __( 'The email notice was sent successfully.', 'buddypress-group-email-subscription' ) );
 	}
 
-	bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );
+	$redirect_url = bp_get_group_manage_url(
+		bp_get_current_group_id(),
+		bp_groups_get_path_chunks( array( 'notifications' ), 'manage' )
+	);
+
+	bp_core_redirect( $redirect_url );
 }
 add_action( 'bp_actions', 'ass_admin_notice', 1 );
 
@@ -235,7 +257,13 @@ function ass_save_welcome_email() {
 		groups_update_groupmeta( bp_get_current_group_id(), 'ass_welcome_email', $values );
 
 		bp_core_add_message( __( 'The welcome email option has been saved.', 'buddypress-group-email-subscription' ) );
-		bp_core_redirect( bp_get_group_permalink( groups_get_current_group() ) . 'admin/notifications/' );
+
+		$redirect_url = bp_get_group_manage_url(
+			bp_get_current_group_id(),
+			bp_groups_get_path_chunks( array( 'notifications' ), 'manage' )
+		);
+
+		bp_core_redirect( $redirect_url );
 	}
 }
 add_action( 'bp_actions', 'ass_save_welcome_email', 1 );
