@@ -5,7 +5,7 @@ Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifi
 Requires at least: 3.2
 Requires PHP: 5.3
 Tested up to: 6.4
-Stable tag: 4.2.0
+Stable tag: 4.2.1
 
 == Description ==
 
@@ -92,6 +92,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 4.2.1 =
+* Update BP 12.0 polyfills to fix some redirect issues.
 
 = 4.2.0 =
 * Compatibility with BuddyPress 12.0+ and its new system for building URLs using WP's Rewrites API.
