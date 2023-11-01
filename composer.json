@@ -5,7 +5,7 @@
     "version": "4.0.0",
     "require": {
         "composer/installers": "~1.0",
-        "hard-g/buddypress-12.0-url-polyfills": "dev-main"
+        "hard-g/buddypress-12.0-url-polyfills": "^1.0"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "*",

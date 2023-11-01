@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14033458cb906186d0822de540d0e6ca",
+    "content-hash": "9c1c50df670966e9d43b1cc726337da9",
     "packages": [
         {
             "name": "composer/installers",
@@ -159,19 +159,18 @@
         },
         {
             "name": "hard-g/buddypress-12.0-url-polyfills",
-            "version": "dev-main",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hard-g/buddypress-12.0-url-polyfills.git",
-                "reference": "4796efdbf4be3f790efb89006f1e4ddaf4ffd0db"
+                "reference": "e61685bec96f2673b6b225510eec8b74c3d6a2cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hard-g/buddypress-12.0-url-polyfills/zipball/4796efdbf4be3f790efb89006f1e4ddaf4ffd0db",
-                "reference": "4796efdbf4be3f790efb89006f1e4ddaf4ffd0db",
+                "url": "https://api.github.com/repos/hard-g/buddypress-12.0-url-polyfills/zipball/e61685bec96f2673b6b225510eec8b74c3d6a2cf",
+                "reference": "e61685bec96f2673b6b225510eec8b74c3d6a2cf",
                 "shasum": ""
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -191,9 +190,9 @@
             "description": "Polyfills for URL-related functions introduced in BuddyPress 12.0.",
             "support": {
                 "issues": "https://github.com/hard-g/buddypress-12.0-url-polyfills/issues",
-                "source": "https://github.com/hard-g/buddypress-12.0-url-polyfills/tree/1.0.0"
+                "source": "https://github.com/hard-g/buddypress-12.0-url-polyfills/tree/1.0.1"
             },
-            "time": "2023-10-20T15:55:47+00:00"
+            "time": "2023-10-30T23:18:59+00:00"
         }
     ],
     "packages-dev": [
@@ -2125,12 +2124,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "hard-g/buddypress-12.0-url-polyfills": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
