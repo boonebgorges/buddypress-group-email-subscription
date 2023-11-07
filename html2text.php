@@ -38,8 +38,10 @@ function convert_html_to_text($html) {
 
 	$html = fix_newlines($html);
 
+	$html_utf8 = mb_convert_encoding( $html, 'HTML-ENTITIES', 'UTF-8' );
+
 	$doc = new DOMDocument();
-	if (!$doc->loadHTML($html))
+	if ( ! $doc->loadHTML( '<?xml encoding="UTF-8">' . $html_utf8 ) )
 		throw new Html2TextException("Could not load HTML - badly formed?", $html);
 
 	$output = iterate_over_node($doc);
