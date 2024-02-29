@@ -93,6 +93,11 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 
 == Changelog ==
 
+= 4.2.2 =
+* Update BP 12.0 polyfills library for improved compatibility with older versions of BP and old forks.
+* Fix URL construction bug that caused the 'change all members' subscription level' link to be broken in some cases.
+* Improve encoding of characters in notification emails.
+
 = 4.2.1 =
 * Update BP 12.0 polyfills to fix some redirect issues.
 
