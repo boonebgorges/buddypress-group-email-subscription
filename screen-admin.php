@@ -65,7 +65,7 @@ function ass_change_all_email_sub() {
 
 	$url = bp_get_group_manage_url(
 		$group,
-		bp_groups_get_path_chunks( array( 'manage-members', 'email-all', $default_email_sub ) )
+		bp_groups_get_path_chunks( array( 'manage-members', 'email-all', $default_email_sub ), 'manage' )
 	);
 
 	echo '<p><br>'.__('Site Admin Only: update email subscription settings for ALL members to the default:', 'buddypress-group-email-subscription').' <i>' . ass_subscribe_translate( $default_email_sub ) . '</i>.  '.__('Warning: this is not reversible so use with caution.', 'buddypress-group-email-subscription').' <a href="' . wp_nonce_url( $url, 'ass_change_all_email_sub' ) . '">'.__('Make it so!', 'buddypress-group-email-subscription').'</a></p>';
@@ -76,7 +76,7 @@ add_action( 'bp_after_group_manage_members_admin', 'ass_change_all_email_sub' );
 function ass_manage_all_members_email_update() {
 	global $bp;
 
-	if ( bp_is_groups_component() && bp_is_action_variable( 'manage-members', 0 ) ) {
+	if ( bp_is_group() && bp_is_action_variable( 'manage-members', 0 ) ) {
 
 		if ( !is_super_admin() )
 			return false;
