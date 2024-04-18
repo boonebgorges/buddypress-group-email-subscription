@@ -1021,7 +1021,24 @@ function ass_send_email( $email_type, $to, $args ) {
 
 		$plaintext_content = ass_email_convert_html_to_plaintext( $args['content'] );
 
-		return wp_mail( $to, $args['subject'], $plaintext_content, $headers );
+		/**
+		 * Filters email content when sent via wp_mail().
+		 *
+		 * In some cases, BPGES may detect that `wp_mail()` is in use because of
+		 * a plugin that provides rich-text formatted email. In this case, users
+		 * may wish to force the HTML BPGES content through, rather than the
+		 * plaintext content.
+		 *
+		 * @since 4.2.3
+		 *
+		 * @param string $plaintext_content Converted-to-plaintext content.
+		 * @param string $original_content  Original BPGES message content.
+		 * @param string $to                To address.
+		 * @param array  $args              Args passed to function.
+		 */
+		$wp_mail_content = apply_filters( 'bpges_wp_mail_content', $plaintext_content, $args['content'], $to, $args );
+
+		return wp_mail( $to, $args['subject'], $wp_mail_content, $headers );
 	}
 }
 
