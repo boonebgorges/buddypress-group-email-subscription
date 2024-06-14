@@ -1405,6 +1405,35 @@ function bpges_delete_queued_items_for_activity_ids( $activity_ids ) {
 add_action( 'bp_activity_deleted_activities', 'bpges_delete_queued_items_for_activity_ids' );
 
 /**
+ * When a forum topic is deleted (trashed), Buddypress
+ * does not remove the corresponding activity from the activities table,
+ * but we still want to remove it from the digest.  Hence this code, which
+ * deletes queued items for activities relating to the specified post id.
+ * 
+ *
+ * @since ???
+ */
+function bpges_delete_queued_items_for_post_id( $post_id ) {
+  // get the activity id  for the post. (The "show_hidden" is important because by
+  // default bp_activity_get ignores activities with the "hide_sitewide" setting on, such
+  // as those in private groups!) 
+  $result = bp_activity_get(['show_hidden' => true, 'filter' => ['secondary_id' => $post_id]]);
+  foreach ( $result['activities'] as $activity ) {
+    // find the queued items for the activity and delete them.
+    $query = new bpges_queued_item_query( array(
+      'activity_id' => $activity->id,
+    ) );
+
+    $queued_ids = array_keys( $query->get_results() );
+    if ( empty( $queued_ids ) ) {
+      return;
+    }
+    bpges_queued_item::bulk_delete( $queued_ids );
+  }
+}
+add_action( 'wp_trash_post', 'bpges_delete_queued_items_for_post_id' );
+
+/**
  * Queue an activity item for sending.
  *
  * @since 3.9.0
