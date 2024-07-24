@@ -858,7 +858,7 @@ function ass_set_weekly_digest_time( $day ) {
 		$next_weekly = time() + 60;
 	}
 
-	while ( date( 'w', $next_weekly ) != $day ) {
+	while ( gmdate( 'w', $next_weekly ) !== $day ) {
 		$next_weekly += 86400;
 	}
 
