@@ -40,13 +40,23 @@ function bpges_use_new_options_panel() {
  *
  * @link https://github.com/nico3333fr/van11y-accessible-modal-tooltip-aria/blob/master/LICENSE
  */
-add_action( 'bp_enqueue_scripts', function() {
-	if ( ! bpges_use_new_options_panel() ) {
-		return;
-	}
+add_action(
+	'bp_enqueue_scripts',
+	function () {
+		if ( ! bpges_use_new_options_panel() ) {
+			return;
+		}
 
-	wp_enqueue_script( 'van11y-accessible-modal-tooltip-aria', 'https://cdn.rawgit.com/nico3333fr/van11y-accessible-modal-tooltip-aria/e3518090/dist/van11y-accessible-modal-tooltip-aria.min.js' );
-}, 9 );
+		wp_enqueue_script(
+			'van11y-accessible-modal-tooltip-aria',
+			'https://cdn.rawgit.com/nico3333fr/van11y-accessible-modal-tooltip-aria/e3518090/dist/van11y-accessible-modal-tooltip-aria.min.js',
+			[],
+			md5( GES_REVISION_DATE ),
+			true
+		);
+	},
+	9
+);
 
 // this adds the ajax-based subscription option in the group header, or group directory
 function ass_group_subscribe_button() {
