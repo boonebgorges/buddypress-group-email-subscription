@@ -2679,7 +2679,7 @@ function ass_get_forum_type() {
  */
 function ass_add_gd_bbpress_attachments_to_email_content( $content, $activity ) {
 	// No GD bbPress Attachments or not a bbPress item? Stop now!
-	if ( ! function_exists( 'd4p_get_post_attachments' ) || ! in_array( $activity->type, array( 'bbp_reply_create', 'bbp_topic_create' ) ) ) {
+	if ( ! function_exists( 'd4p_get_post_attachments' ) || ! in_array( $activity->type, array( 'bbp_reply_create', 'bbp_topic_create' ), true ) ) {
 		return $content;
 	}
 
