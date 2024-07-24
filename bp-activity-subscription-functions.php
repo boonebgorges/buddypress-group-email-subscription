@@ -2084,15 +2084,24 @@ function ass_default_subscription_settings( $setting ) {
 
 // Save the default group subscription setting in the group meta, if no, delete it
 function ass_save_default_subscription( $group ) {
+	if ( empty( $_POST['bpges-default-subscription-admin-nonce'] ) ) {
+		return;
+	}
+
+	check_admin_referer( 'bpges_default_subscription_admin', 'bpges-default-subscription-admin-nonce' );
+
 	$postval = isset( $_POST['ass-default-subscription'] ) ? sanitize_text_field( wp_unslash( $_POST['ass-default-subscription'] ) ) : '';
 
-	if ( $postval ) {
-		groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
+	$all_levels = bpges_subscription_levels();
+	if ( ! $postval || ! isset( $all_levels[ $postval ] ) ) {
+		return;
+	}
 
-		// during group creation, also save the sub level for the group creator
-		if ( 'group-settings' === bp_get_groups_current_create_step() ) {
-			ass_group_subscription( $postval, $group->creator_id, $group->id );
-		}
+	groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
+
+	// during group creation, also save the sub level for the group creator
+	if ( 'group-settings' === bp_get_groups_current_create_step() ) {
+		ass_group_subscription( $postval, $group->creator_id, $group->id );
 	}
 }
 add_action( 'groups_group_after_save', 'ass_save_default_subscription' );

@@ -14,3 +14,5 @@ $subscription_levels = bpges_subscription_levels();
 		<?php echo esc_html( $label_data['description_admin'] ); ?>
 	</label>
 <?php endforeach; ?>
+
+<?php wp_nonce_field( 'bpges_default_subscription_admin', 'bpges-default-subscription-admin-nonce', false ); ?>
