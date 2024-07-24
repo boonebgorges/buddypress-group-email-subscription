@@ -38,13 +38,13 @@ function ass_group_unsubscribe_links( $user_id, $group_id = 0 ) {
  *
  * @since 3.7.0
  *
- * @param  int  $user_id  WP user ID.
- * @param  int  $group_id BuddyPress group ID.
- * @param  bool $global   Should we use the global unsubscribe link? If 'false', we will use the
- *                        single group's unsubscribe link. Default: false.
+ * @param  int  $user_id    WP user ID.
+ * @param  int  $group_id   BuddyPress group ID.
+ * @param  bool $use_global Should we use the global unsubscribe link? If 'false', we will use the
+ *                          single group's unsubscribe link. Default: false.
  * @return string|bool URL for unsubscribe link on success; boolean false on failure.
  */
-function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $global = false ) {
+function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $use_global = false ) {
 	if ( empty( $user_id ) ) {
 		return false;
 	}
@@ -53,7 +53,7 @@ function ass_get_group_unsubscribe_link_for_user( $user_id = 0, $group_id = 0, $
 		'bpass-action' => 'unsubscribe',
 	);
 
-	if ( true === $global ) {
+	if ( true === $use_global ) {
 		// Use global unsubscribe link.
 		$access_key = md5( "{$user_id}unsubscribe" . wp_salt() );
 
