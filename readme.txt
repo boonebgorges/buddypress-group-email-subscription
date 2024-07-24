@@ -4,7 +4,7 @@ Description: Allow users to receive email notifications of group activity. Weekl
 Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifications, notification, subscribe, subscription, digest, summary
 Requires at least: 3.2
 Requires PHP: 5.3
-Tested up to: 6.4
+Tested up to: 6.6
 Stable tag: 4.2.2
 
 == Description ==
@@ -92,6 +92,11 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 4.2.3 =
+* Security hardening
+* Internal code improvements, including localization and accessibility improvements
+* New filter for content sent to `wp_mail()`.
 
 = 4.2.2 =
 * Update BP 12.0 polyfills library for improved compatibility with older versions of BP and old forks.
