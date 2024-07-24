@@ -2799,6 +2799,7 @@ function bpges_log( $message ) {
 		return;
 	}
 
+	// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	error_log( '[' . gmdate( 'd-M-Y H:i:s' ) . '] ' . $message . "\n", 3, BPGES_DEBUG_LOG_PATH );
 }
 
