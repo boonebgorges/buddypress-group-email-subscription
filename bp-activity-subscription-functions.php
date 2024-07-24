@@ -2165,7 +2165,9 @@ function ass_get_default_subscription( $group = false ) {
 // return array of users who match a usermeta value
 function ass_user_settings_array( $setting ) {
 	global $wpdb;
-	$results = $wpdb->get_results( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key LIKE '{$setting}'" );
+
+	$like    = '%' . $wpdb->esc_like( $setting ) . '%';
+	$results = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, meta_value FROM $wpdb->usermeta WHERE meta_key LIKE %s", $like ) );
 
 	$settings = array();
 
