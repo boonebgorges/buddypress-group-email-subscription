@@ -29,9 +29,9 @@ class BPGES_Subscription_Query {
 
 		$sql = array(
 			'select' => "SELECT * FROM $table_name",
-			'where' => array(),
+			'where'  => [],
 			'limits' => '',
-			'order' => ' ORDER BY id ASC',
+			'order'  => ' ORDER BY id ASC',
 		);
 
 		$user_id = $this->get( 'user_id' );
@@ -54,17 +54,6 @@ class BPGES_Subscription_Query {
 			$where = ' WHERE ' . implode( ' AND ', $sql['where'] );
 		}
 
-		/*
-		$page = $this->get( 'page' );
-		$per_page = $this->get( 'per_page' );
-		if ( $page && $per_page ) {
-			$page = intval( $page );
-			$per_page = intval( $per_page );
-			$start = ( $per_page * ( $page - 1 ) );
-			$sql['limits'] = " LIMIT $start, $per_page ";
-		}
-		*/
-
 		$query = $sql['select'] . $where . $sql['order'] . $sql['limits'];
 
 		$last_changed = wp_cache_get( 'last_changed', 'bpges_subscriptions' );
@@ -75,6 +64,7 @@ class BPGES_Subscription_Query {
 
 		$results = wp_cache_get( $cache_key, 'bpges_subscriptions' );
 		if ( false === $results ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$results = $wpdb->get_results( $query );
 			wp_cache_set( $cache_key, $results, 'bpges_subscriptions' );
 		}
