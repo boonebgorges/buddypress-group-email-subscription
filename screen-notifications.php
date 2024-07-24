@@ -6,13 +6,14 @@
  */
 
 // show group subscription settings on the notification page.
-function ass_group_subscribe_settings () {
+function ass_group_subscribe_settings() {
 	global $bp;
 
 	$group = groups_get_current_group();
 
-	if ( !is_user_logged_in() || !empty( $group->is_banned ) || !$group->is_member )
+	if ( ! is_user_logged_in() || ! empty( $group->is_banned ) || ! $group->is_member ) {
 		return false;
+	}
 
 	$submit_link = bp_get_groups_action_link( 'notifications' );
 
@@ -20,19 +21,19 @@ function ass_group_subscribe_settings () {
 
 	?>
 	<div id="ass-email-subscriptions-options-page">
-	<h3 class="activity-subscription-settings-title"><?php _e('Email Subscription Options', 'buddypress-group-email-subscription') ?></h3>
-	<form action="<?php echo $submit_link ?>" method="post">
-	<input type="hidden" name="ass_group_id" value="<?php echo $group->id; ?>"/>
+	<h3 class="activity-subscription-settings-title"><?php esc_html_e( 'Email Subscription Options', 'buddypress-group-email-subscription' ); ?></h3>
+	<form action="<?php echo esc_attr( $submit_link ); ?>" method="post">
+	<input type="hidden" name="ass_group_id" value="<?php echo esc_attr( $group->id ); ?>"/>
 	<?php wp_nonce_field( 'ass_subscribe' ); ?>
 
-	<b><?php _e('How do you want to read this group?', 'buddypress-group-email-subscription'); ?></b>
+	<b><?php esc_html_e( 'How do you want to read this group?', 'buddypress-group-email-subscription' ); ?></b>
 
 	<?php bp_get_template_part( 'bpges/subscription-options-group' ); ?>
 
-	<input type="submit" value="<?php _e('Save Settings', 'buddypress-group-email-subscription') ?>" id="ass-save" name="ass-save" class="button-primary">
+	<input type="submit" value="<?php esc_attr_e( 'Save Settings', 'buddypress-group-email-subscription' ); ?>" id="ass-save" name="ass-save" class="button-primary">
 
-	<?php if ( ass_get_forum_type() == 'buddypress' ) : ?>
-		<p class="ass-sub-note"><?php _e( 'Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $settings_link ); ?>"><?php _e( 'email notifications', 'buddypress-group-email-subscription' ); ?></a>.</p>
+	<?php if ( 'buddypress' === ass_get_forum_type() ) : ?>
+		<p class="ass-sub-note"><?php esc_html_e( 'Note: Normally, you receive email notifications for topics you start or comment on. This can be changed at', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $settings_link ); ?>"><?php esc_html_e( 'email notifications', 'buddypress-group-email-subscription' ); ?></a>.</p>
 	<?php endif; ?>
 
 	</form>
@@ -49,14 +50,13 @@ function ass_update_group_subscribe_settings() {
 		// If the edit form has been submitted, save the edited details
 		if ( isset( $_POST['ass-save'] ) ) {
 
-			//if ( !wp_verify_nonce( $nonce, 'ass_subscribe' ) ) die( 'A Security check failed' );
+			$user_id  = bp_loggedin_user_id();
+			$group_id = $_POST['ass_group_id'];
+			$action   = $_POST['ass_group_subscribe'];
 
-			$user_id = bp_loggedin_user_id();
-			$group_id = $_POST[ 'ass_group_id' ];
-			$action = $_POST[ 'ass_group_subscribe' ];
-
-			if ( !groups_is_user_member( $user_id, $group_id ) )
+			if ( ! groups_is_user_member( $user_id, $group_id ) ) {
 				return;
+			}
 
 			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
 
