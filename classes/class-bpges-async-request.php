@@ -8,7 +8,7 @@ class BPGES_Async_Request extends WP_Async_Request {
 	}
 
 	public function maybe_filter_http_request_args( $args, $url ) {
-		$query = parse_url( $url, PHP_URL_QUERY );
+		$query = wp_parse_url( $url, PHP_URL_QUERY );
 
 		if ( empty( $query ) ) {
 			return $args;
