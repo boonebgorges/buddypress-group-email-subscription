@@ -741,8 +741,9 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 function ass_digest_record_activity( $activity_id, $user_id, $group_id, $type = 'dig' ) {
 	global $bp;
 
-	if ( !$activity_id || !$user_id || !$group_id )
+	if ( ! $activity_id || ! $user_id || ! $group_id ) {
 		return;
+	}
 
 	/**
 	 * Prevent the addition of specific activity item IDs for specific users.
@@ -776,10 +777,12 @@ function bpges_get_digest_queue_for_user( $user_id, $type ) {
 
 	$user_id = (int) $user_id;
 
-	$query = new BPGES_Queued_Item_Query( array(
-		'user_id' => $user_id,
-		'type'    => $type,
-	) );
+	$query = new BPGES_Queued_Item_Query(
+		[
+			'user_id' => $user_id,
+			'type'    => $type,
+		]
+	);
 
 	$queue = array();
 	foreach ( $query->get_results() as $item ) {
@@ -790,8 +793,11 @@ function bpges_get_digest_queue_for_user( $user_id, $type ) {
 }
 
 function ass_cron_add_weekly( $schedules ) {
-	if ( !isset( $schedules[ 'weekly' ] ) ) {
-		$schedules['weekly'] = array( 'interval' => 604800, 'display' => __( 'Once Weekly', 'buddypress-group-email-subscription' ) );
+	if ( ! isset( $schedules['weekly'] ) ) {
+		$schedules['weekly'] = [
+			'interval' => 604800,
+			'display'  => __( 'Once Weekly', 'buddypress-group-email-subscription' ),
+		];
 	}
 	return $schedules;
 }
@@ -801,10 +807,11 @@ add_filter( 'cron_schedules', 'ass_cron_add_weekly' );
 
 function ass_set_daily_digest_time( $hours, $minutes ) {
 	$the_time = date( 'Y-m-d' ) . ' ' . $hours . ':' . $minutes;
+
 	$the_timestamp = strtotime( $the_time );
 
 	/* If the time has already passed today, the next run will be tomorrow */
-	$the_timestamp = ( $the_timestamp > time() ) ? $the_timestamp : (int)$the_timestamp + 86400;
+	$the_timestamp = ( $the_timestamp > time() ) ? $the_timestamp : (int) $the_timestamp + 86400;
 
 	/* Clear the old recurring event and set up a new one */
 	wp_clear_scheduled_hook( 'ass_digest_event' );
@@ -830,7 +837,13 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 
 	wp_schedule_event( $the_timestamp, 'daily', 'ass_digest_event' );
 
-	update_option( 'ass_digest_time', array( 'hours' => $hours, 'minutes' => $minutes ) );
+	update_option(
+		'ass_digest_time',
+		[
+			'hours'   => $hours,
+			'minutes' => $minutes,
+		]
+	);
 
 	// Restore current blog.
 	if ( $switched ) {
@@ -840,8 +853,10 @@ function ass_set_daily_digest_time( $hours, $minutes ) {
 
 // Takes the numeral equivalent of a $day: 0 for Sunday, 1 for Monday, etc
 function ass_set_weekly_digest_time( $day ) {
-	if ( !$next_weekly = wp_next_scheduled( 'ass_digest_event' ) )
+	$next_weekly = wp_next_scheduled( 'ass_digest_event' );
+	if ( ! $next_weekly ) {
 		$next_weekly = time() + 60;
+	}
 
 	while ( date( 'w', $next_weekly ) != $day ) {
 		$next_weekly += 86400;
@@ -899,8 +914,9 @@ add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
  * This is designed to avoid pinging the DB over and over in a foreach loop.
  */
 function ass_get_mass_userdata( $user_ids = array() ) {
-	if ( empty( $user_ids ) )
+	if ( empty( $user_ids ) ) {
 		return false;
+	}
 
 	global $wpdb;
 
@@ -914,13 +930,14 @@ function ass_get_mass_userdata( $user_ids = array() ) {
 			WHERE ID IN ({$in})
 	", ARRAY_A );
 
-	if ( empty( $results ) )
+	if ( empty( $results ) ) {
 		return false;
+	}
 
 	$users = array();
 
 	// setup associative array
-	foreach( (array) $results as $result ) {
+	foreach ( (array) $results as $result ) {
 		$users[ $result['ID'] ]['user_login']    = $result['user_login'];
 		$users[ $result['ID'] ]['user_nicename'] = $result['user_nicename'];
 		$users[ $result['ID'] ]['email']         = $result['user_email'];
@@ -945,11 +962,11 @@ function ass_digest_get_user_domain( $user_id ) {
 
 // if the WP_Better_Emails plugin is installed, don't wrap the message with <html><body>$message</body></html>
 function ass_digest_support_wp_better_emails( $message, $message_pre_html_wrap ) {
-    if ( class_exists( 'WP_Better_Emails' ) ) {
-        $message = $message_pre_html_wrap;
-    }
+	if ( class_exists( 'WP_Better_Emails' ) ) {
+		$message = $message_pre_html_wrap;
+	}
 
-    return $message;
+	return $message;
 }
 add_filter( 'ass_digest_message_html', 'ass_digest_support_wp_better_emails', 10, 2 );
 
@@ -968,7 +985,6 @@ function bpges_digest_css() {
 	$ass_email_css['title']        = 'style="font-size:130%; margin:0 0 25px 0;"';
 	$ass_email_css['summary']      = '';
 	$ass_email_css['summary_ul']   = 'style="margin:0; padding:0 0 5px; list-style-type:circle; list-style-position:inside;"';
-	//$ass_email_css['summary']    = 'style="display:list-item;"';
 	$ass_email_css['follow_topic'] = 'style="padding:15px 0 0; color: #888;clear:both;"';
 	$ass_email_css['group_title']  = 'style="font-size:120%; background-color:#F5F5F5; padding:3px; margin:20px 0 0; border-top: 1px #eee solid;"';
 	$ass_email_css['change_email'] = 'style="font-size:12px; margin-left:10px; color:#888;"';
@@ -982,9 +998,10 @@ function bpges_digest_css() {
 
 	// BP 2.5+ overrides.
 	if ( true === function_exists( 'bp_send_email' ) && true === ! apply_filters( 'bp_email_use_wp_mail', false ) ) {
-		$ass_email_css['summary_ul']  = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
-		$ass_email_css['item_action'] = $ass_email_css['item_content'] = '';
-		$ass_email_css['item_date']   = 'style="font-size:85%;"';
+		$ass_email_css['summary_ul']   = 'style="margin:0; padding:0 0 25px 15px; list-style-type:circle; list-style-position:inside;"';
+		$ass_email_css['item_action']  = '';
+		$ass_email_css['item_content'] = '';
+		$ass_email_css['item_date']    = 'style="font-size:85%;"';
 	}
 
 	/**
@@ -1010,6 +1027,7 @@ function bp_ges_activity_is_valid_for_digest( $activity_id, $digest_type, $user_
 	 * three digest-periods ago.
 	 */
 	$is_stale = false;
+
 	$default_stale_activity_period = 'dig' === $digest_type ? ( 3 * DAY_IN_SECONDS ) : ( 3 * WEEK_IN_SECONDS );
 
 	/**
