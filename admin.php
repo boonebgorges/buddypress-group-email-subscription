@@ -418,7 +418,7 @@ add_action( 'bp_groups_admin_manage_member_row', 'ass_groups_admin_manage_member
  */
 function ass_install_emails( $post_exists_check = true ) {
 	if ( ! function_exists( 'ass_set_email_type' ) ) {
-		require_once( __DIR__ . '/bp-activity-subscription-functions.php' );
+		require_once __DIR__ . '/bp-activity-subscription-functions.php';
 	}
 
 	// No need to check if our post types exist.
@@ -468,7 +468,7 @@ function ass_install_emails( $post_exists_check = true ) {
 
 		// Create posts with our email types.
 		if ( ! function_exists( 'ass_set_email_type' ) ) {
-			require_once( __DIR__ . '/bp-activity-subscription-functions.php' );
+			require_once __DIR__ . '/bp-activity-subscription-functions.php';
 		}
 		foreach ( $to_create as $email_type ) {
 			ass_set_email_type( $email_type, false );
@@ -596,7 +596,7 @@ add_action( 'admin_head', 'bpges_39_migration_admin_notice' );
 function bpges_install_subscription_table() {
 	global $wpdb;
 
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 	$sql             = array();
 	$charset_collate = $wpdb->get_charset_collate();
@@ -627,7 +627,7 @@ function bpges_install_subscription_table() {
 function bpges_install_queued_items_table() {
 	global $wpdb;
 
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 	$sql             = array();
 	$charset_collate = $wpdb->get_charset_collate();
@@ -749,15 +749,15 @@ function bpges_39_launch_legacy_subscription_migration() {
 	global $wpdb;
 
 	if ( ! class_exists( 'WP_Background_Process' ) ) {
-		require_once( __DIR__ . '/lib/wp-background-processing/wp-background-processing.php' );
+		require_once __DIR__ . '/lib/wp-background-processing/wp-background-processing.php';
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
-		require( __DIR__ . '/classes/class-bpges-async-request.php' );
+		require __DIR__ . '/classes/class-bpges-async-request.php';
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
-		require( __DIR__ . '/classes/class-bpges-async-request-subscription-migrate.php' );
+		require __DIR__ . '/classes/class-bpges-async-request-subscription-migrate.php';
 	}
 
 	$process = new BPGES_Async_Request_Subscription_Migrate();
@@ -773,15 +773,15 @@ function bpges_39_launch_legacy_digest_queue_migration() {
 	global $wpdb;
 
 	if ( ! class_exists( 'WP_Background_Process' ) ) {
-		require_once( __DIR__ . '/lib/wp-background-processing/wp-background-processing.php' );
+		require_once __DIR__ . '/lib/wp-background-processing/wp-background-processing.php';
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
-		require( __DIR__ . '/classes/class-bpges-async-request.php' );
+		require __DIR__ . '/classes/class-bpges-async-request.php';
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
-		require( __DIR__ . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+		require __DIR__ . '/classes/class-bpges-async-request-digest-queue-migrate.php';
 	}
 
 	$process = new BPGES_Async_Request_Digest_Queue_Migrate();
