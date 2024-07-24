@@ -1742,7 +1742,7 @@ function ass_get_login_redirect_url( $url = '', $context = '' ) {
 	$query_args = array(
 		'action'      => 'bpnoaccess',
 		'auth'        => 1,
-		'redirect_to' => apply_filters( 'ass_login_redirect_to', urlencode( $url ), $context ),
+		'redirect_to' => apply_filters( 'ass_login_redirect_to', rawurlencode( $url ), $context ),
 	);
 
 	$login_redirect_url = add_query_arg(
