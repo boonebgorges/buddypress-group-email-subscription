@@ -50,6 +50,9 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 	 * @since 3.9.0
 	 */
 	protected function handle() {
+		// Nonce verification is handled by the parent class.
+		// phpcs:disable WordPress.Security.NonceVerification
+
 		// Nothing to do.
 		if ( ! isset( $_POST['type'] ) ) {
 			return;
@@ -73,7 +76,8 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 				}
 
 				$timestamp = wp_unslash( $_POST['timestamp'] );
-				$type = wp_unslash( $_POST['type'] );
+				$type      = wp_unslash( $_POST['type'] );
+
 				if ( 'dig' !== $type && 'sum' !== $type ) {
 					return;
 				}
@@ -81,6 +85,8 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 				$this->handle_digest_queue( $type, $timestamp );
 			break;
 		}
+
+		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
 	/**
@@ -96,13 +102,16 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 		$total_for_activity = (int) bp_activity_get_meta( $activity_id, 'bpges_immediate_notification_count' );
 
 		$run = true;
+
 		$total_for_batch = 0;
 		do {
-			$query = new BPGES_Queued_Item_Query( array(
-				'activity_id' => $activity_id,
-				'per_page'    => 1,
-				'type'        => 'immediate',
-			) );
+			$query = new BPGES_Queued_Item_Query(
+				[
+					'activity_id' => $activity_id,
+					'per_page'    => 1,
+					'type'        => 'immediate',
+				]
+			);
 
 			$items = $query->get_results();
 
@@ -118,8 +127,8 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 			foreach ( $items as $item ) {
 				bpges_generate_notification( $item );
 				$item->delete();
-				$total_for_batch++;
-				$total_for_activity++;
+				++$total_for_batch;
+				++$total_for_activity;
 			}
 
 			if ( $this->time_exceeded() || $this->memory_exceeded() ) {
@@ -131,10 +140,12 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 
 		bp_activity_update_meta( $activity_id, 'bpges_immediate_notification_count', $total_for_activity );
 
-		bpges_send_queue()->data( array(
-			'type'        => 'immediate',
-			'activity_id' => $activity_id,
-		) )->dispatch();
+		bpges_send_queue()->data(
+			[
+				'type'        => 'immediate',
+				'activity_id' => $activity_id,
+			]
+		)->dispatch();
 	}
 
 	/**
@@ -148,10 +159,11 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 	protected function handle_digest_queue( $type, $timestamp ) {
 		bpges_log( "Beginning digest batch of type $type for timestamp $timestamp." );
 
-		$option_name = 'bpges_digest_count_' . $type . '_' . $timestamp;
+		$option_name   = 'bpges_digest_count_' . $type . '_' . $timestamp;
 		$total_for_run = (int) bp_get_option( $option_name, 0 );
 
 		$run = true;
+
 		$total_for_batch = 0;
 
 		$processed_usermeta_key = "bpges_processed_digest_{$type}_{$timestamp}";
@@ -174,8 +186,8 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 			update_user_meta( $user_id, $processed_usermeta_key, true );
 			bpges_process_digest_for_user( $user_id, $type, $timestamp );
 
-			$total_for_batch++;
-			$total_for_run++;
+			++$total_for_batch;
+			++$total_for_run;
 
 			if ( $this->time_exceeded() || $this->memory_exceeded() ) {
 				$run = false;
@@ -186,10 +198,12 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 
 		bp_update_option( $option_name, $total_for_run );
 
-		bpges_send_queue()->data( array(
-			'type'      => $type,
-			'timestamp' => $timestamp,
-		) )->dispatch();
+		bpges_send_queue()->data(
+			[
+				'type'      => $type,
+				'timestamp' => $timestamp,
+			]
+		)->dispatch();
 	}
 
 	/**
