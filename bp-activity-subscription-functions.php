@@ -2549,7 +2549,7 @@ function ass_user_unsubscribe_form() {
 
 			<form id="ass-unsubscribe-form" action="" method="POST">
 				<input type="hidden" name="group_id" value="<?php echo (int) $_GET['group']; ?>" />
-				<input type="submit" name="submit" value="<?php esc_html_e( 'Yes, unsubscribe from this group', 'buddypress-group-email-subscription' ); ?>" />
+				<input type="submit" name="submit" value="<?php esc_attr_e( 'Yes, unsubscribe from this group', 'buddypress-group-email-subscription' ); ?>" />
 				<a href="<?php echo esc_attr( site_url() ); ?>"><?php esc_html_e( 'No, close', 'buddypress-group-email-subscription' ); ?></a>
 				<?php wp_nonce_field( 'bp_ges_unsubscribe_group_' . (int) $_GET['group'] ); ?>
 			</form>
@@ -2560,8 +2560,8 @@ function ass_user_unsubscribe_form() {
 
 			<form id="ass-unsubscribe-form" action="" method="POST">
 				<input type="hidden" name="group_id" value="0" />
-				<input type="submit" name="submit" value="<?php _e( 'Yes, unsubscribe from all my groups', 'buddypress-group-email-subscription' ); ?>" />
-				<a href="<?php echo esc_attr( site_url() ); ?>"><?php _e( 'No, close' ); ?></a>
+				<input type="submit" name="submit" value="<?php esc_attr_e( 'Yes, unsubscribe from all my groups', 'buddypress-group-email-subscription' ); ?>" />
+				<a href="<?php echo esc_attr( site_url() ); ?>"><?php esc_html_e( 'No, close', 'buddypress-group-email-subscription' ); ?></a>
 				<?php wp_nonce_field( 'bp_ges_unsubscribe_group_all' ); ?>
 			</form>
 		<?php endif; ?>
