@@ -1,27 +1,4 @@
 <?php
-
-// for testing only
-//if you need to add this at the TOP of your wp-config.php file. (Here are the timezones http://us3.php.net/manual/en/timezones.php)
-//date_default_timezone_set('Asia/Tokyo');
-//date_default_timezone_set('America/New_York');
-
-
-/* This function was used for debugging the digest scheduling features */
-function ass_digest_schedule_print() {
-	print "<br />";
-	print "<br />";
-
-	$crons = _get_cron_array();
-	echo "<div style='background: #fff;'>";
-	$sched = wp_next_scheduled( 'ass_digest_event' );
-	echo "Scheduled: " . date( 'h:i', $sched );
-	$until = ( (int)$sched - time() ) / ( 60 * 60 );
-	echo " Until: " . $until . " hours";
-	echo "</div>";
-}
-//add_action( 'wp_head', 'ass_digest_schedule_print' );
-
-
 /* Digest-specific functions */
 
 /**
