@@ -2472,8 +2472,9 @@ function ass_user_unsubscribe_form() {
 			} else {
 				ass_unsubscribe_user( $user_id, (array) $group->id );
 
-				// translators: group link.
-				$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ),
+				$message = sprintf(
+					// translators: group link.
+					__( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ),
 					sprintf( '<a href="%1$s">%2$s</a>', esc_url( $link_href ), $link_text )
 				);
 			}
