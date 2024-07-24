@@ -5,7 +5,11 @@
  * @since 3.7.0
  */
 
-// adds forum notification options in the users settings->notifications page
+/**
+ * Adds forum notification options in the user settings->notifications page.
+ *
+ * @return void
+ */
 function ass_group_subscription_notification_settings() {
 	// get forum type
 	$forums = ass_get_forum_type();
@@ -15,36 +19,40 @@ function ass_group_subscription_notification_settings() {
 		return;
 	}
 
-?>
+	?>
+
 	<table class="notification-settings zebra" id="groups-subscription-notification-settings">
 	<thead>
 		<tr>
 			<th class="icon"><span class="bp-screen-reader-text"><?php esc_html_e( 'Item icon', 'buddypress-group-email-subscription' ); ?></span></th>
-			<th class="title"><?php _e( 'Group Forum', 'buddypress-group-email-subscription' ) ?></th>
-			<th class="yes"><?php _e( 'Yes', 'buddypress-group-email-subscription' ) ?></th>
-			<th class="no"><?php _e( 'No', 'buddypress-group-email-subscription' )?></th>
+			<th class="title"><?php esc_html_e( 'Group Forum', 'buddypress-group-email-subscription' ); ?></th>
+			<th class="yes"><?php esc_html_e( 'Yes', 'buddypress-group-email-subscription' ); ?></th>
+			<th class="no"><?php esc_html_e( 'No', 'buddypress-group-email-subscription' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
 
 	<?php
-		// only add the following options if BP's bundled forums are installed...
-		// @todo add back these options for bbPress if possible.
-	?>
 
-	<?php if ( $forums == 'buddypress' ) :
-		if ( ! $replies_to_topic = bp_get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true ) ) {
+	// only add the following options if BP's bundled forums are installed...
+	// @todo add back these options for bbPress if possible.
+
+	if ( 'buddypress' === $forums ) :
+		$replies_to_topic = bp_get_user_meta( bp_displayed_user_id(), 'ass_replies_to_my_topic', true );
+		if ( ! $replies_to_topic ) {
 			$replies_to_topic = 'yes';
 		}
 
-		if ( ! $replies_after_me = bp_get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true ) ) {
+		$replies_after_me = bp_get_user_meta( bp_displayed_user_id(), 'ass_replies_after_me_topic', true );
+		if ( ! $replies_after_me ) {
 			$replies_after_me = 'yes';
 		}
-	?>
+
+		?>
 
 		<tr>
 			<td></td>
-			<td><?php _e( 'A member replies in a forum topic you\'ve started', 'buddypress-group-email-subscription' ) ?></td>
+			<td><?php esc_html_e( 'A member replies in a forum topic you\'ve started', 'buddypress-group-email-subscription' ); ?></td>
 
 			<td class="yes">
 				<input type="radio" name="notifications[ass_replies_to_my_topic]" id="notification-ass-replies-to-my-topic-yes" value="yes" <?php checked( $replies_to_topic, 'yes', true ); ?>/>
@@ -59,7 +67,7 @@ function ass_group_subscription_notification_settings() {
 
 		<tr>
 			<td></td>
-			<td><?php _e( 'A member replies after you in a forum topic', 'buddypress-group-email-subscription' ) ?></td>
+			<td><?php esc_html_e( 'A member replies after you in a forum topic', 'buddypress-group-email-subscription' ); ?></td>
 
 			<td class="yes">
 				<input type="radio" name="notifications[ass_replies_after_me_topic]" id="notification-ass-replies-after-me-yes" value="yes" <?php checked( $replies_after_me, 'yes', true ); ?>/>
@@ -76,7 +84,7 @@ function ass_group_subscription_notification_settings() {
 
 		<tr>
 			<td></td>
-			<td><?php _e( 'Receive notifications of your own posts?', 'buddypress-group-email-subscription' ) ?></td>
+			<td><?php esc_html_e( 'Receive notifications of your own posts?', 'buddypress-group-email-subscription' ); ?></td>
 
 			<td class="yes">
 				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-yes" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
@@ -93,22 +101,25 @@ function ass_group_subscription_notification_settings() {
 		</tbody>
 	</table>
 
-
-<?php
+	<?php
 }
 add_action( 'bp_notification_settings', 'ass_group_subscription_notification_settings' );
 
-// Add a notice at end of email notification about how to change group email subscriptions
+/**
+ * Adds a notice at end of email notifictaion about how to change group email subscriptions.
+ *
+ * @return void
+ */
 function ass_add_notice_to_notifications_page() {
 	$user_groups_link = bp_loggedin_user_url( bp_members_get_path_chunks( array( bp_get_groups_slug() ) ) );
 
-?>
+	?>
 		<div id="group-email-settings">
 			<table class="notification-settings zebra">
 				<thead>
 					<tr>
 						<th class="icon">&nbsp;</th>
-						<th class="title"><?php _e( 'Individual Group Email Settings', 'buddypress-group-email-subscription' ); ?></th>
+						<th class="title"><?php esc_html_e( 'Individual Group Email Settings', 'buddypress-group-email-subscription' ); ?></th>
 					</tr>
 				</thead>
 
@@ -116,16 +127,17 @@ function ass_add_notice_to_notifications_page() {
 					<tr>
 						<td>&nbsp;</td>
 						<td>
-							<p><?php printf( __( 'To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'buddypress-group-email-subscription' ), '<a href="'. esc_url( $user_groups_link ) . '">' . __( 'My Groups' ,'buddypress-group-email-subscription' ) . '</a>' ); ?></p>
+							<?php // translators: 'My Groups' link ?>
+							<p><?php printf( esc_html__( 'To change the email notification settings for your groups, go to %s and click "Change" for each group.', 'buddypress-group-email-subscription' ), '<a href="' . esc_url( $user_groups_link ) . '">' . esc_html__( 'My Groups', 'buddypress-group-email-subscription' ) . '</a>' ); ?></p>
 
-							<?php if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) : ?>
-								<p><a href="<?php echo wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ); ?>"><?php _e( "Or set all your group's email options to No Email", 'buddypress-group-email-subscription' ); ?></a></p>
+							<?php if ( 'yes' === get_option( 'ass-global-unsubscribe-link' ) ) : ?>
+								<p><a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'ass_unsubscribe', 'all' ), 'ass_unsubscribe_all' ) ); ?>"><?php esc_html_e( "Or set all your group's email options to No Email", 'buddypress-group-email-subscription' ); ?></a></p>
 							<?php endif; ?>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
-<?php
+	<?php
 }
 add_action( 'bp_notification_settings', 'ass_add_notice_to_notifications_page', 9000 );
