@@ -2755,19 +2755,19 @@ function ass_self_post_notification( $user_id = false ) {
 function ass_weekly_digest_week() {
 	$ass_weekly_digest = get_option( 'ass_weekly_digest' );
 	if ( $ass_weekly_digest == 1 )
-		return __( 'Monday' );
+		return __( 'Monday', 'buddypress-group-email-subscription' );
 	elseif ( $ass_weekly_digest == 2 )
-		return __( 'Tuesday' );
+		return __( 'Tuesday', 'buddypress-group-email-subscription' );
 	elseif ( $ass_weekly_digest == 3 )
-		return __( 'Wednesday' );
+		return __( 'Wednesday', 'buddypress-group-email-subscription' );
 	elseif ( $ass_weekly_digest == 4 )
-		return __( 'Thursday' );
+		return __( 'Thursday', 'buddypress-group-email-subscription' );
 	elseif ( $ass_weekly_digest == 5 )
-		return __( 'Friday' );
+		return __( 'Friday', 'buddypress-group-email-subscription' );
 	elseif ( $ass_weekly_digest == 6 )
-		return __( 'Saturday' );
+		return __( 'Saturday', 'buddypress-group-email-subscription' );
 	elseif ( $ass_weekly_digest == 0 )
-		return __( 'Sunday' );
+		return __( 'Sunday', 'buddypress-group-email-subscription' );
 }
 
 /**
