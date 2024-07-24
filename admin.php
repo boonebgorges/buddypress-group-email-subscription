@@ -24,7 +24,7 @@ function ass_admin_menu() {
 				bpges_install_subscription_table();
 			} elseif ( ! $status['queued_items_table_created'] ) {
 				bpges_install_queued_items_table();
-			} elseif( ! $status['subscriptions_migrated'] ) {
+			} elseif ( ! $status['subscriptions_migrated'] ) {
 				bpges_39_launch_legacy_subscription_migration();
 			} elseif ( ! $status['queued_items_migrated'] ) {
 				bpges_39_launch_legacy_digest_queue_migration();
@@ -35,24 +35,25 @@ function ass_admin_menu() {
 		}
 	}
 
-	// BP 1.6+ deprecated the "BuddyPress" top-level menu item.
 	if ( function_exists( 'bp_version' ) ) {
-		// GES is network-activated, so show under Network Settings.
+		// BP 1.6+ deprecated the "BuddyPress" top-level menu item.
+
 		if ( is_multisite() && is_plugin_active_for_network( plugin_basename( __DIR__ . '/bp-activity-subscription.php' ) ) ) {
+			// GES is network-activated, so show under Network Settings.
 			$settings_page = 'settings.php';
 			$admin_cap     = 'manage_network_options';
 
-		// Everything else.
 		} else {
+			// Everything else.
 			$settings_page = 'options-general.php';
 		}
 
 		$title = __( 'BP Group Email Options', 'buddypress-group-email-subscription' );
 
-	// BP 1.5 - Keep using the top-level "BuddyPress" menu item.
 	} else {
+		// BP 1.5 - Keep using the top-level "BuddyPress" menu item.
 		$settings_page = 'bp-general-settings';
-		$title = __( 'Group Email Options', 'buddypress-group-email-subscription' );
+		$title         = __( 'Group Email Options', 'buddypress-group-email-subscription' );
 	}
 
 	add_submenu_page(
@@ -97,12 +98,12 @@ function bpges_admin_menu_cap() {
  * @since 3.9.0
  */
 function bpges_get_admin_panel_url() {
-	// GES is network-activated, so show under Network Settings.
 	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( __DIR__ ) . '/bp-activity-subscription.php' ) ) {
+		// GES is network-activated, so show under Network Settings.
 		$url = bp_get_admin_url( 'settings.php' );
 
-	// Everything else.
 	} else {
+		// Everything else.
 		$url = admin_url( 'options-general.php' );
 	}
 
@@ -121,6 +122,7 @@ function bpges_get_admin_panel_url() {
 function bpges_is_legacy_installation() {
 	global $wpdb, $bp;
 
+	// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	$is_legacy = $wpdb->get_var( "SELECT COUNT(*) FROM {$bp->groups->table_name_groupmeta} WHERE meta_key = 'ass_subscribed_users'" );
 
 	return (bool) $is_legacy;
@@ -130,14 +132,12 @@ function bpges_is_legacy_installation() {
  * Function to create the back end admin form.
  */
 function ass_admin_options() {
-	//print_r($_POST); die();
-
-	if ( !empty( $_POST ) ) {
+	if ( ! empty( $_POST ) ) {
 		if ( ass_update_dashboard_settings() ) {
 			?>
 
 			<div id="message" class="updated">
-				<p><?php _e( 'Settings saved.', 'buddypress-group-email-subscription' ) ?></p>
+				<p><?php esc_html_e( 'Settings saved.', 'buddypress-group-email-subscription' ); ?></p>
 			</div>
 
 			<?php
