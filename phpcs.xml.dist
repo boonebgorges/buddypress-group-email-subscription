@@ -17,6 +17,7 @@
 
 	<!-- Iterate over all PHP files by default -->
 	<file>.</file>
+	<exclude-pattern>*.css</exclude-pattern>
 
 	<!-- Exclude third-party libraries -->
 	<exclude-pattern>/lib/*</exclude-pattern>
