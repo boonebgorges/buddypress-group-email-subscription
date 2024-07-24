@@ -1499,9 +1499,11 @@ add_action( 'bp_activity_before_save', 'ass_group_activity_edits' );
  */
 function bpges_delete_queued_items_for_activity_ids( $activity_ids ) {
 	foreach ( $activity_ids as $activity_id ) {
-		$query = new BPGES_Queued_Item_Query( array(
-			'activity_id' => $activity_id,
-		) );
+		$query = new BPGES_Queued_Item_Query(
+			[
+				'activity_id' => $activity_id,
+			]
+		);
 
 		$queued_ids = array_keys( $query->get_results() );
 		if ( empty( $queued_ids ) ) {
