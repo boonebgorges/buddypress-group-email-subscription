@@ -574,7 +574,7 @@ To view or reply, log in and go to:
 			if ( $user->user_email ) {
 				// Custom GES email tokens.
 				$user_message_args['ges.action']  = stripslashes( $activity_obj->action ); // Unfiltered.
-				$user_message_args['ges.subject'] = strip_tags( stripslashes( $r['action'] ) ); // Unfiltered.
+				$user_message_args['ges.subject'] = wp_strip_all_tags( stripslashes( $r['action'] ) ); // Unfiltered.
 
 				$user_message_args['ges.email-setting-description'] = $email_setting_desc;
 				$user_message_args['ges.email-setting-links']       = $email_setting_links;
@@ -837,7 +837,7 @@ To view or reply, log in and go to:
 	$group_name = bp_get_group_name( $group );
 	$group_link = bp_get_group_url( $group );
 
-	$subject = strip_tags( stripslashes( $action_for_subject_line ) );
+	$subject = wp_strip_all_tags( stripslashes( $action_for_subject_line ) );
 
 	/**
 	 * Filters the subject line of immediate notifications.
