@@ -31,9 +31,9 @@ class BPGES_Queued_Item_Query {
 
 		$sql = array(
 			'select' => "SELECT * FROM $table_name",
-			'where' => array(),
+			'where'  => array(),
 			'limits' => '',
-			'order' => ' ORDER BY id ASC',
+			'order'  => ' ORDER BY id ASC',
 		);
 
 		$user_id = $this->get( 'user_id' );
@@ -73,10 +73,13 @@ class BPGES_Queued_Item_Query {
 			$per_page = intval( $per_page );
 
 			$start = ( $per_page * ( $page - 1 ) );
+
 			$sql['limits'] = " LIMIT $start, $per_page ";
 		}
 
 		$query = $sql['select'] . $where . $sql['order'] . $sql['limits'];
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results( $query );
 
 		$retval = array();
@@ -126,6 +129,8 @@ class BPGES_Queued_Item_Query {
 		}
 
 		$table_name = bp_core_get_table_prefix() . 'bpges_queued_items';
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$user_ids = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT user_id FROM {$table_name} WHERE type = %s AND date_recorded < %s AND user_id NOT IN ({$processed_user_ids}) LIMIT %d", $type, $timestamp, $count ) );
 
 		return array_map( 'intval', $user_ids );
