@@ -1342,7 +1342,7 @@ function ass_email_convert_html_to_plaintext( $content = '', $prop = 'content_pl
 	}
 
 	if ( false === function_exists( 'convert_html_to_text' ) ) {
-		require dirname( __FILE__ ) . '/html2text.php';
+		require __DIR__ . '/html2text.php';
 	}
 
 	// Suppress warnings when using DOMDocument.
