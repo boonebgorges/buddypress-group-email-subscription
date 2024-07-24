@@ -1529,7 +1529,7 @@ function ass_queue_activity_item( $activity_id, $user_id, $group_id, $type ) {
 	$queued_item->user_id       = $user_id;
 	$queued_item->group_id      = $group_id;
 	$queued_item->type          = $type;
-	$queued_item->date_recorded = date( 'Y-m-d H:i:s' );
+	$queued_item->date_recorded = gmdate( 'Y-m-d H:i:s' );
 
 	return $queued_item->save();
 }
