@@ -2436,6 +2436,9 @@ add_action( 'bp_actions', 'ass_user_unsubscribe_action' );
 
 // Form to confirm unsubscription from all groups
 function ass_user_unsubscribe_form() {
+	// No nonce checks are possible because the user is not logged in.
+	// The "access key" check is our authentication method.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	$action = isset( $_GET['bpass-action'] ) ? $_GET['bpass-action'] : '';
 
 	if ( 'unsubscribe' !== $action ) {
@@ -2447,8 +2450,12 @@ function ass_user_unsubscribe_form() {
 	}
 
 	$user_id    = bp_displayed_user_id();
-	$access_key = $_GET['access_key'];
+	$access_key = isset( $_GET['access_key'] ) ? sanitize_text_field( wp_unslash( $_GET['access_key'] ) ) : '';
 	$message    = '';
+
+	$is_submit = ! empty( $_POST['submit'] );
+	$group_id  = ! empty( $_POST['group_id'] ) ? (int) $_POST['group_id'] : 0;
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	/* translators: Continue to "SITE NAME or GROUP NAME" */
 	$link_label = esc_html__( 'Continue to %s', 'buddypress-group-email-subscription' );
@@ -2457,9 +2464,9 @@ function ass_user_unsubscribe_form() {
 
 	// Unsubscribe time.
 	if ( isset( $_POST['submit'] ) ) {
-		$group = groups_get_group( array( 'group_id' => $_POST['group_id'] ) );
+		$group = groups_get_group( array( 'group_id' => $group_id ) );
 
-		if ( ! empty( $_POST['group_id'] ) && ! empty( $group->id ) ) {
+		if ( ! empty( $group_id ) && ! empty( $group->id ) ) {
 			// Single group.
 			check_admin_referer( 'bp_ges_unsubscribe_group_' . $group->id );
 
