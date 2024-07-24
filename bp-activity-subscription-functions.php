@@ -2412,8 +2412,9 @@ function ass_unsubscribe_user( $user_id = 0, $groups = array() ) {
 
 // Process request for logged in user unsubscribing via link in notifications settings
 function ass_user_unsubscribe_action() {
-	if ( 'yes' !== get_option( 'ass-global-unsubscribe-link' ) || ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
+	if ( 'yes' !== get_option( 'ass-global-unsubscribe-link' ) || ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) ) {
 		return;
+	}
 
 	check_admin_referer( 'ass_unsubscribe_all' );
 
