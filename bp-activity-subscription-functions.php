@@ -2176,17 +2176,6 @@ function ass_user_settings_array( $setting ) {
 	return $settings;
 }
 
-/*
-// here lies a failed attempt ...
-// return array of users who are admins or mods in a specific group
-function ass_get_group_admins_mods( $group_id ) {
-	global $bp;
-	$results = $wpdb->get_results( "SELECT user_id, is_admin, is_mod FROM {$bp->groups->table_name_members} WHERE group_id = $group_id AND (is_admin = 1 OR is_mod = 1)", ARRAY_A );
-
-	return $results;
-}
-*/
-
 /**
  * Cleans up the email content
  *
