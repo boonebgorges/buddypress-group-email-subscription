@@ -12,6 +12,9 @@
 	<exclude-pattern>*.min.css</exclude-pattern>
 	<exclude-pattern>*.min.js</exclude-pattern>
 
+	<!-- Exclude tests directory. -->
+	<exclude-pattern>/tests/*</exclude-pattern>
+
 	<!-- Iterate over all PHP files by default -->
 	<file>.</file>
 
