@@ -435,6 +435,7 @@ add_action( 'bp_actions', 'ass_digest_fire_test' );
 function bpges_generate_digest_preview_for_type( $type ) {
 	$timestamp = gmdate( 'Y-m-d H:i:s' );
 
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['user_ids'] ) ) {
 		$user_ids = wp_parse_id_list( wp_unslash( $_GET['user_ids'] ) );
 	} else {
@@ -442,6 +443,7 @@ function bpges_generate_digest_preview_for_type( $type ) {
 
 		$user_ids = BPGES_Queued_Item_Query::get_users_with_pending_digest( $type, $count, $timestamp );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	foreach ( $user_ids as $user_id ) {
 		$user = new WP_User( $user_id );
