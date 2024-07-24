@@ -20,11 +20,11 @@ class GES_Updater {
 		if ( true === $skip_admin_check ) {
 			$this->init();
 
-		// Use admin check.
 		} else {
-			add_action( 'load-index.php',       array( $this, '_init' ) );
-			add_action( 'load-update-core.php', array( $this, '_init' ) );
-			add_action( 'load-plugins.php',     array( $this, '_init' ) );
+			// Use admin check.
+			add_action( 'load-index.php', array( $this, 'do_init' ) );
+			add_action( 'load-update-core.php', array( $this, 'do_init' ) );
+			add_action( 'load-plugins.php', array( $this, 'do_init' ) );
 		}
 	}
 
@@ -33,7 +33,7 @@ class GES_Updater {
 	 *
 	 * This is designed to prevent access to the main, protected init method.
 	 */
-	public function _init() {
+	public function do_init() {
 		if ( ! did_action( 'admin_init' ) ) {
 			return;
 		}
