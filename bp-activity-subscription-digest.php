@@ -37,9 +37,9 @@ function bpges_trigger_digest( $type ) {
 function bpges_process_digest_for_user( $user_id, $type, $timestamp, $is_preview = false ) {
 	$query = new BPGES_Queued_Item_Query(
 		[
-			'user_id'  => $user_id,
-			'type'     => $type,
-			'before'   => $timestamp,
+			'user_id' => $user_id,
+			'type'    => $type,
+			'before'  => $timestamp,
 		]
 	);
 
@@ -201,7 +201,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 		$group_permalink = esc_url( ass_get_login_redirect_url( bp_get_group_url( $group ) ) );
 
 		// Might be nice here to link to anchor tags in the message.
-		if ( 'dig' == $type ) {
+		if ( 'dig' === $type ) {
 			$summary .= apply_filters( 'ass_digest_summary', "<li class=\"digest-group-summary\" {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'buddypress-group-email-subscription' ), count( $activity_ids ) ) . "</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 		}
 
@@ -564,7 +564,7 @@ function ass_digest_format_item( $item, $type ) {
 
 	// activity content
 	if ( ! empty( $item->content ) ) {
-		$item_message .= "<br><span class=\"digest-item-content\" {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . "</span>";
+		$item_message .= "<br><span class=\"digest-item-content\" {$ass_email_css['item_content']}>" . apply_filters( 'ass_digest_content', $item->content, $item, $type ) . '</span>';
 	}
 
 	// view link
@@ -687,7 +687,7 @@ function ass_send_multipart_email( $to, $subject, $message_plaintext, $message )
 	};
 
 	$from_name        = addslashes( $from_name );
-	$from_name_filter = function ( $retval ) use ( $from_name ) {
+	$from_name_filter = function () use ( $from_name ) {
 		return $from_name;
 	};
 
@@ -806,7 +806,7 @@ add_filter( 'cron_schedules', 'ass_cron_add_weekly' );
 
 
 function ass_set_daily_digest_time( $hours, $minutes ) {
-	$the_time = date( 'Y-m-d' ) . ' ' . $hours . ':' . $minutes;
+	$the_time = gmdate( 'Y-m-d' ) . ' ' . $hours . ':' . $minutes;
 
 	$the_timestamp = strtotime( $the_time );
 
