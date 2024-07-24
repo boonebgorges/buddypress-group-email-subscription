@@ -132,6 +132,7 @@ function bpges_is_legacy_installation() {
  * Function to create the back end admin form.
  */
 function ass_admin_options() {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing
 	if ( ! empty( $_POST ) ) {
 		if ( ass_update_dashboard_settings() ) {
 			?>
@@ -199,7 +200,7 @@ function ass_admin_options() {
 		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 
-		<h3><?php esc_html_e( 'Digests & Summaries', 'buddypress-group-email-subscription' ) ?></h3>
+		<h3><?php esc_html_e( 'Digests & Summaries', 'buddypress-group-email-subscription' ); ?></h3>
 
 		<p><b><a href="<?php echo esc_url( get_bloginfo( 'url' ) ); ?>?sum=1" target="_blank"><?php echo wp_kses_post( __( 'View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.', 'buddypress-group-email-subscription' ) ); ?><br>
 		</p>
@@ -338,7 +339,7 @@ function ass_admin_options() {
 
 
 			<p class="submit">
-				<input type="submit" value="<?php _e( 'Save Settings', 'buddypress-group-email-subscription' ); ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
+				<input type="submit" value="<?php esc_html_e( 'Save Settings', 'buddypress-group-email-subscription' ); ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
 			</p>
 
 		</form>
@@ -444,19 +445,19 @@ function ass_update_dashboard_settings() {
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
 	}
 
-	if ( $_POST['ass-global-unsubscribe-link'] != bp_get_option( 'ass-global-unsubscribe-link' ) ) {
+	if ( bp_get_option( 'ass-global-unsubscribe-link' ) !== $_POST['ass-global-unsubscribe-link'] ) {
 		bp_update_option( 'ass-global-unsubscribe-link', $_POST['ass-global-unsubscribe-link'] );
 	}
 
-	if ( $_POST['ass-admin-can-edit-email'] != bp_get_option( 'ass-admin-can-edit-email' ) ) {
+	if ( bp_get_option( 'ass-admin-can-edit-email' ) !== $_POST['ass-admin-can-edit-email'] ) {
 		bp_update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );
 	}
 
-	if ( $_POST['ass-admin-can-send-email'] != bp_get_option( 'ass-admin-can-send-email' ) ) {
+	if ( bp_get_option( 'ass-admin-can-send-email' ) !== $_POST['ass-admin-can-send-email'] ) {
 		bp_update_option( 'ass-admin-can-send-email', $_POST['ass-admin-can-send-email'] );
 	}
 
-	if ( $_POST['ass_registered_req'] != bp_get_option( 'ass_registered_req' ) ) {
+	if ( bp_get_option( 'ass_registered_req' ) !== $_POST['ass_registered_req'] ) {
 		bp_update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
 	}
 
