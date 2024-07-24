@@ -131,7 +131,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		return;
 	}
 
-	if ( ! ass_registered_long_enough( $activity->user_id  ) ) {
+	if ( ! ass_registered_long_enough( $activity->user_id ) ) {
 		return;
 	}
 
@@ -193,7 +193,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 				$root_parent = new BP_Activity_Activity( $activity->item_id );
 
 				// Don't send the bp-ass notification if the user is subscribed through BP
-				if ( $user_id == $root_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+				if ( (int) $user_id == (int) $root_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 					continue;
 				}
 			}
@@ -291,7 +291,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		}
 	}
 }
-add_action( 'bp_activity_after_save', 'ass_group_notification_activity' , 50 );
+add_action( 'bp_activity_after_save', 'ass_group_notification_activity', 50 );
 
 /**
  * Generate and send a group notification.
@@ -338,20 +338,24 @@ function ass_generate_notification( $args = array() ) {
 	if ( empty( $the_content ) ) {
 		$message = sprintf(
 			// translators: 1. Action string; 2. Activity URL.
-			__( '%1$s
+			__(
+				'%1$s
 
 To view or reply, log in and go to:
 %2$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ),
+',
+				'buddypress-group-email-subscription'
+			),
 			$r['action'],
 			$r['link']
 		);
 	} else {
 		$message = sprintf(
 			// translators: 1. Action string; 2. Activity content; 3. Activity URL.
-			__( '%1$s
+			__(
+				'%1$s
 
 "%2$s"
 
@@ -359,7 +363,9 @@ To view or reply, log in and go to:
 %3$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ),
+',
+				'buddypress-group-email-subscription'
+			),
 			$r['action'],
 			$the_content,
 			$r['link']
@@ -720,20 +726,24 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	if ( empty( $the_content ) ) {
 		$message = sprintf(
 			// translators: 1. action; 2. link.
-			__( '%1$s
+			__(
+				'%1$s
 
 To view or reply, log in and go to:
 %2$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ),
+',
+				'buddypress-group-email-subscription'
+			),
 			$action_for_email_content,
 			$link
 		);
 	} else {
 		$message = sprintf(
 			// translators: 1. action; 2. content; 3. link.
-			__( '%1$s
+			__(
+				'%1$s
 
 "%2$s"
 
@@ -741,7 +751,9 @@ To view or reply, log in and go to:
 %3$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ),
+',
+				'buddypress-group-email-subscription'
+			),
 			$action_for_email_content,
 			$the_content,
 			$link
@@ -791,7 +803,8 @@ To view or reply, log in and go to:
 		$settings_link .= '#groups-subscription-notification-settings';
 
 		// set notice
-		$notice = $email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'buddypress-group-email-subscription' );
+		$email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'buddypress-group-email-subscription' );
+		$notice             = $email_setting_desc;
 
 		// translators: settings link.
 		$email_setting_links  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
@@ -844,7 +857,8 @@ To view or reply, log in and go to:
 
 		$message = sprintf(
 			// translators: 1. group name; 2. notice content; 3. group URL.
-			__( 'This is a notice from the group \'%1$s\':
+			__(
+				'This is a notice from the group \'%1$s\':
 
 "%2$s"
 
@@ -853,14 +867,19 @@ To view this group log in and follow the link below:
 %3$s
 
 ---------------------
-', 'buddypress-group-email-subscription' ),
+',
+				'buddypress-group-email-subscription'
+			),
 			$group_name,
 			$the_content,
 			bp_get_group_url( $group )
 		);
 
-		$message .= __( 'Please note: admin notices are sent to everyone in the group and cannot be disabled.
-If you feel this service is being misused please speak to the website administrator.', 'buddypress-group-email-subscription' );
+		$message .= __(
+			'Please note: admin notices are sent to everyone in the group and cannot be disabled.
+If you feel this service is being misused please speak to the website administrator.',
+			'buddypress-group-email-subscription'
+		);
 	}
 
 	$user_message_args = array(
@@ -1034,7 +1053,7 @@ function ass_send_email( $email_type, $to, $args ) {
 		 *
 		 * @param string $email_type Current BP email post type.
 		 * @param array  $args       See bp_send_email()'s third argument for full documentation.
-		 * @param string $to		 Email recipient.
+		 * @param string $to         Email recipient.
 		 */
 		$email_type = apply_filters( 'ass_send_email_email_type', $email_type, $args, $to );
 
@@ -1187,8 +1206,8 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 				/* translators: do not remove {} brackets or translate its contents. */
 				$post_title = __( '[{{{site.name}}}] {{{ges.subject}}}', 'buddypress-group-email-subscription' );
 
-				$plaintext_content = "{{{usermessage}}}";
-				$html_content      = "{{{usermessage}}}";
+				$plaintext_content = '{{{usermessage}}}';
+				$html_content      = '{{{usermessage}}}';
 
 				$situation_desc = __( 'A welcome email is sent to new members of a group. Used by the Group Email Subscription plugin.', 'buddypress-group-email-subscription' );
 
@@ -2065,14 +2084,14 @@ function ass_default_subscription_settings( $setting ) {
 
 // Save the default group subscription setting in the group meta, if no, delete it
 function ass_save_default_subscription( $group ) {
-	if ( isset( $_POST['ass-default-subscription'] ) && $postval = $_POST['ass-default-subscription'] ) {
-		if ( $postval ) {
-			groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
+	$postval = isset( $_POST['ass-default-subscription'] ) ? sanitize_text_field( wp_unslash( $_POST['ass-default-subscription'] ) ) : '';
 
-			// during group creation, also save the sub level for the group creator
-			if ( 'group-settings' === bp_get_groups_current_create_step() ) {
-				ass_group_subscription( $postval, $group->creator_id, $group->id );
-			}
+	if ( $postval ) {
+		groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
+
+		// during group creation, also save the sub level for the group creator
+		if ( 'group-settings' === bp_get_groups_current_create_step() ) {
+			ass_group_subscription( $postval, $group->creator_id, $group->id );
 		}
 	}
 }
@@ -2240,7 +2259,7 @@ function ass_clean_subject( $subject, $add_quotes = true ) {
 	if ( $add_quotes ) {
 		$subject_quotes = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
 		$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );
-		if ( $subject != $subject_quotes ) {
+		if ( $subject !== $subject_quotes ) {
 			$subject = preg_replace( '/ in the group /', '" in the group ', $subject_quotes );
 		}
 
@@ -2447,7 +2466,7 @@ function ass_user_unsubscribe_form() {
 			$link_href = bp_get_group_url( $group );
 			$link_text = bp_get_group_name( $group );
 
-			if ( $access_key !== md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) ) {
+			if ( md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) !== $access_key ) {
 				$message = esc_html__( 'There was a problem unsubscribing you from the group.', 'buddypress-group-email-subscription' );
 
 			} else {
@@ -2462,7 +2481,7 @@ function ass_user_unsubscribe_form() {
 			// All groups.
 			check_admin_referer( 'bp_ges_unsubscribe_group_all' );
 
-			if ( $access_key !== md5( $user_id . 'unsubscribe' . wp_salt() ) ) {
+			if ( md5( $user_id . 'unsubscribe' . wp_salt() ) !== $access_key ) {
 				$message = esc_html__( 'There was a problem unsubscribing you from all of your groups.', 'buddypress-group-email-subscription' );
 
 			} else {
