@@ -20,6 +20,7 @@
 
 	<!-- Exclude third-party libraries -->
 	<exclude-pattern>/lib/*</exclude-pattern>
+	<exclude-pattern>html2text.php</exclude-pattern>
 
 	<!-- Check for PHP cross-version compatibility. -->
 	<config name="testVersion" value="5.6-"/>
