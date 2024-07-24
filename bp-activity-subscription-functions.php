@@ -193,7 +193,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 				$root_parent = new BP_Activity_Activity( $activity->item_id );
 
 				// Don't send the bp-ass notification if the user is subscribed through BP
-				if ( (int) $user_id == (int) $root_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+				if ( (int) $user_id === (int) $root_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 					continue;
 				}
 			}
