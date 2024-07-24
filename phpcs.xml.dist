@@ -37,6 +37,14 @@
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BreakIndent" />
 	</rule>
 
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="bp_moderate" />
+			</property>
+		</properties>
+	</rule>
+
 	<rule ref="WordPress.WP.DeprecatedClasses">
 		<properties>
 			<property name="minimum_wp_version" value="3.2"/>
