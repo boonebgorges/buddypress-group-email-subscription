@@ -46,6 +46,7 @@ class BPGES_Async_Request_Subscription_Migrate extends BPGES_Async_Request {
 
 		$batch_count = 10;
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$group_ids = $wpdb->get_col( $wpdb->prepare( "SELECT gm.group_id FROM {$bp->groups->table_name_groupmeta} gm LEFT JOIN {$bp->groups->table_name_groupmeta} gm2 ON ( gm.group_id = gm2.group_id AND gm2.meta_key = '_ges_subscriptions_migrated' ) WHERE gm.meta_key = 'ass_subscribed_users' AND gm.meta_value IS NOT NULL AND gm2.meta_value IS NULL LIMIT %d", $batch_count ) );
 
 		if ( ! $group_ids ) {
@@ -56,7 +57,7 @@ class BPGES_Async_Request_Subscription_Migrate extends BPGES_Async_Request {
 
 			// The digest queue migration depends on this one, so we launch it from here.
 			if ( ! function_exists( 'bpges_39_launch_legacy_digest_queue_migration' ) ) {
-				require dirname( __FILE__ ) . '/../admin.php';
+				require __DIR__ . '/../admin.php';
 			}
 
 			bpges_39_launch_legacy_digest_queue_migration();
