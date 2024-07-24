@@ -924,11 +924,11 @@ function ass_get_mass_userdata( $user_ids = array() ) {
 	$in = implode( ',', wp_parse_id_list( $user_ids ) );
 
 	// get our results
-	$results = $wpdb->get_results( "
-		SELECT ID, user_login, user_nicename, user_email
-			FROM {$wpdb->users}
-			WHERE ID IN ({$in})
-	", ARRAY_A );
+	$results = $wpdb->get_results(
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		"SELECT ID, user_login, user_nicename, user_email FROM {$wpdb->users} WHERE ID IN ({$in})",
+		ARRAY_A
+	);
 
 	if ( empty( $results ) ) {
 		return false;
