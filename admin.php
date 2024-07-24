@@ -178,82 +178,133 @@ function ass_admin_options() {
 	}
 
 	//set the first time defaults
-	if ( !$ass_digest_time = bp_get_option( 'ass_digest_time' ) )
-		$ass_digest_time = array( 'hours' => '05', 'minutes' => '00' );
+	$ass_digest_time = bp_get_option( 'ass_digest_time' );
+	if ( ! $ass_digest_time ) {
+		$ass_digest_time = [
+			'hours'   => '05',
+			'minutes' => '00',
+		];
+	}
 
-	if ( !$ass_weekly_digest = bp_get_option( 'ass_weekly_digest' ) )
-//		$ass_weekly_digest = 5; // friday
+	$ass_weekly_digest = bp_get_option( 'ass_weekly_digest' );
+	if ( ! $ass_weekly_digest ) {
 		$ass_weekly_digest = 0; // sunday
+	}
 
-	$next = gmdate( "r", wp_next_scheduled( 'ass_digest_event' ) );
+	$next = gmdate( 'r', wp_next_scheduled( 'ass_digest_event' ) );
 	?>
 	<div class="wrap">
-		<h2><?php _e('Group Email Subscription Settings', 'buddypress-group-email-subscription'); ?></h2>
+		<h2><?php esc_html_e( 'Group Email Subscription Settings', 'buddypress-group-email-subscription' ); ?></h2>
 
 		<form id="ass-admin-settings-form" method="post" action="admin.php?page=ass_admin_options">
 		<?php wp_nonce_field( 'ass_admin_settings' ); ?>
 
-		<h3><?php _e( 'Digests & Summaries', 'buddypress-group-email-subscription' ) ?></h3>
+		<h3><?php esc_html_e( 'Digests & Summaries', 'buddypress-group-email-subscription' ) ?></h3>
 
-		<p><b><a href="<?php bloginfo('url') ?>?sum=1" target="_blank"><?php _e('View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.', 'buddypress-group-email-subscription') ?><br>
+		<p><b><a href="<?php echo esc_url( get_bloginfo( 'url' ) ); ?>?sum=1" target="_blank"><?php echo wp_kses_post( __( 'View queued digest items</a></b> (in new window)<br>As admin, you can see what is currently in the email queue by adding ?sum=1 to your url. This will not fire the digest, it will just show you what is waiting to be sent.', 'buddypress-group-email-subscription' ) ); ?><br>
 		</p>
 
 		<p>
-			<label for="ass_digest_time"><?php _e( '<strong>Daily Digests</strong> should be sent at this time:', 'buddypress-group-email-subscription' ) ?> </label>
+			<label for="ass_digest_time"><?php echo wp_kses_post( '<strong>Daily Digests</strong> should be sent at this time:', 'buddypress-group-email-subscription' ); ?> </label>
 			<select name="ass_digest_time[hours]" id="ass_digest_time[hours]">
-				<?php for( $i = 0; $i <= 23; $i++ ) : ?>
-					<?php if ( $i < 10 ) $i = '0' . $i ?>
-					<option value="<?php echo $i?>" <?php if ( $i == $ass_digest_time['hours'] ) : ?>selected="selected"<?php endif; ?>><?php echo $i ?></option>
+				<?php for ( $i = 0; $i <= 23; $i++ ) : ?>
+					<?php
+					if ( $i < 10 ) {
+						$i = '0' . $i;
+					}
+					?>
+
+					<option value="<?php echo esc_attr( $i ); ?>" <?php selected( $i, $ass_digest_time['hours'] ); ?>><?php echo esc_html( $i ); ?></option>
 				<?php endfor; ?>
 			</select>
 
 			<select name="ass_digest_time[minutes]" id="ass_digest_time[minutes]">
-				<?php for( $i = 0; $i <= 55; $i += 5 ) : ?>
-					<?php if ( $i < 10 ) $i = '0' . $i ?>
-					<option value="<?php echo $i?>" <?php if ( $i == $ass_digest_time['minutes'] ) : ?>selected="selected"<?php endif; ?>><?php echo $i ?></option>
+				<?php for ( $i = 0; $i <= 55; $i += 5 ) : ?>
+					<?php
+					if ( $i < 10 ) {
+						$i = '0' . $i;
+					}
+					?>
+
+					<option value="<?php echo esc_attr( $i ); ?>" <?php selected( $i, $ass_digest_time['minutes'] ); ?>><?php echo esc_html( $i ); ?></option>
 				<?php endfor; ?>
 			</select>
 		</p>
 
 		<p>
-			<label for="ass_weekly_digest"><?php _e( '<strong>Weekly Summaries</strong> should be sent on:', 'buddypress-group-email-subscription' ) ?> </label>
+			<label for="ass_weekly_digest"><?php echo wp_kses_post( '<strong>Weekly Summaries</strong> should be sent on:', 'buddypress-group-email-subscription' ); ?> </label>
 			<select name="ass_weekly_digest" id="ass_weekly_digest">
-				<?php /* disabling "no weekly digest" option for now because it will complicate the individual settings pages */ ?>
-				<?php /* <option value="No weekly digest" <?php if ( 'No weekly digest' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'No weekly digest', 'buddypress-group-email-subscription' ) ?></option> */ ?>
-				<option value="1" <?php if ( '1' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Monday' ) ?></option>
-				<option value="2" <?php if ( '2' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Tuesday' ) ?></option>
-				<option value="3" <?php if ( '3' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Wednesday' ) ?></option>
-				<option value="4" <?php if ( '4' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Thursday' ) ?></option>
-				<option value="5" <?php if ( '5' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Friday' ) ?></option>
-				<option value="6" <?php if ( '6' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Saturday' ) ?></option>
-				<option value="0" <?php if ( '0' == $ass_weekly_digest ) : ?>selected="selected"<?php endif; ?>><?php _e( 'Sunday' ) ?></option>
+				<option value="1" <?php selected( 1, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Monday', 'buddypress-group-email-subscription' ); ?></option>
+				<option value="2" <?php selected( 2, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Tuesday', 'buddypress-group-email-subscription' ); ?></option>
+				<option value="3" <?php selected( 3, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Wednesday', 'buddypress-group-email-subscription' ); ?></option>
+				<option value="4" <?php selected( 4, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Thursday', 'buddypress-group-email-subscription' ); ?></option>
+				<option value="5" <?php selected( 5, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Friday', 'buddypress-group-email-subscription' ); ?></option>
+				<option value="6" <?php selected( 6, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Saturday', 'buddypress-group-email-subscription' ); ?></option>
+				<option value="0" <?php selected( 0, (int) $ass_weekly_digest ); ?>><?php esc_html_e( 'Sunday', 'buddypress-group-email-subscription' ); ?></option>
 			</select>
 			<!-- (the summary will be sent one hour after the daily digests) -->
 		</p>
 
-		<p><i><?php $weekday = array( __("Sunday"), __("Monday"), __("Tuesday"), __("Wednesday"), __("Thursday"), __("Friday"), __("Saturday") ); echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'buddypress-group-email-subscription' ), gmdate( 'T' ), gmdate( 'e' ), gmdate( 'g:ia' ), gmdate( 'H:i' ), $weekday[gmdate( 'w' )] ) ?></i>
-		<br>
+		<p>
+			<i>
+				<?php
+				$weekday = [
+					__( 'Sunday', 'buddypress-group-email-subscription' ),
+					__( 'Monday', 'buddypress-group-email-subscription' ),
+					__( 'Tuesday', 'buddypress-group-email-subscription' ),
+					__( 'Wednesday', 'buddypress-group-email-subscription' ),
+					__( 'Thursday', 'buddypress-group-email-subscription' ),
+					__( 'Friday', 'buddypress-group-email-subscription' ),
+					__( 'Saturday', 'buddypress-group-email-subscription' ),
+				];
+
+				echo esc_html(
+					sprintf(
+						// translators: 1: server timezone, 2: server timezone abbreviation, 3: server time, 4: server time in 24-hour format, 5: day of the week.
+						__( 'The server timezone is %1$s (%2$s); the current server time is %3$s (%4$s); and the day is %5$s.', 'buddypress-group-email-subscription' ),
+						esc_html( gmdate( 'T' ) ),
+						esc_html( gmdate( 'e' ) ),
+						esc_html( gmdate( 'g:ia' ) ),
+						esc_html( gmdate( 'H:i' ) ),
+						esc_html( $weekday[ gmdate( 'w' ) ] )
+					)
+				);
+				?>
+			</i>
+		</p>
 		<br>
 
-		<h3><?php _e( 'Global Unsubscribe Link', 'buddypress-group-email-subscription' ); ?></h3>
-		<p><?php _e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'buddypress-group-email-subscription' ); ?>
-		<?php $global_unsubscribe_link = bp_get_option( 'ass-global-unsubscribe-link' ); ?>
-		<input<?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php _e( 'yes', 'buddypress-group-email-subscription' ); ?> &nbsp;
-		<input<?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php _e( 'no', 'buddypress-group-email-subscription' ); ?>
+		<h3><?php esc_html_e( 'Global Unsubscribe Link', 'buddypress-group-email-subscription' ); ?></h3>
+		<fieldset>
+		<legend><?php esc_html_e( 'Add a link in the emails and on the notifications settings page allowing users to unsubscribe from all their groups at once:', 'buddypress-group-email-subscription' ); ?></legend>
+			<?php $global_unsubscribe_link = bp_get_option( 'ass-global-unsubscribe-link' ); ?>
+			<label><input <?php checked( $global_unsubscribe_link, 'yes' ); ?> type="radio" name="ass-global-unsubscribe-link" value="yes"> <?php esc_html_e( 'yes', 'buddypress-group-email-subscription' ); ?></label> &nbsp;
+			<label><input <?php checked( $global_unsubscribe_link, '' ); ?> type="radio" name="ass-global-unsubscribe-link" value=""> <?php esc_html_e( 'no', 'buddypress-group-email-subscription' ); ?></label>
+		</fieldset>
 		<br />
 		<br />
 
+		<h3><?php esc_html_e( 'Group Admin Abilities', 'buddypress-group-email-subscription' ); ?></h3>
 
-		<h3><?php _e('Group Admin Abilities', 'buddypress-group-email-subscription'); ?></h3>
-		<p><?php _e('Allow group admins and mods to change members\' email subscription settings: ', 'buddypress-group-email-subscription'); ?>
-		<?php $admins_can_edit_status = bp_get_option('ass-admin-can-edit-email'); ?>
-		<input type="radio" name="ass-admin-can-edit-email" value="yes" <?php if ( $admins_can_edit_status == 'yes' || !$admins_can_edit_status ) echo 'checked="checked"'; ?>> <?php _e('yes', 'buddypress-group-email-subscription') ?> &nbsp;
-		<input type="radio" name="ass-admin-can-edit-email" value="no" <?php if ( $admins_can_edit_status == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'buddypress-group-email-subscription') ?>
+		<fieldset>
+			<legend><?php esc_html_e( 'Allow group admins and mods to change members\' email subscription settings: ', 'buddypress-group-email-subscription' ); ?></legend>
 
-		<p><?php _e('Allow group admins to override subscription settings and send an email to everyone in their group: ', 'buddypress-group-email-subscription'); ?>
-		<?php $admins_can_send_email = bp_get_option('ass-admin-can-send-email'); ?>
-		<input type="radio" name="ass-admin-can-send-email" value="yes" <?php if ( $admins_can_send_email == 'yes' || !$admins_can_send_email ) echo 'checked="checked"'; ?>> <?php _e('yes', 'buddypress-group-email-subscription') ?> &nbsp;
-		<input type="radio" name="ass-admin-can-send-email" value="no" <?php if ( $admins_can_send_email == 'no' ) echo 'checked="checked"'; ?>> <?php _e('no', 'buddypress-group-email-subscription') ?>
+			<?php $admins_can_edit_status = bp_get_option( 'ass-admin-can-edit-email' ); ?>
+
+			<label><input type="radio" name="ass-admin-can-edit-email" value="yes" <?php checked( 'yes' === $admins_can_edit_status || ! $admins_can_edit_status ); ?>> <?php esc_html_e( 'yes', 'buddypress-group-email-subscription' ); ?></label> &nbsp;
+			<label><input type="radio" name="ass-admin-can-edit-email" value="no" <?php checked( 'no' === $admins_can_edit_status ); ?>> <?php esc_html_e( 'no', 'buddypress-group-email-subscription' ); ?></label>
+		</fieldset>
+
+		<br />
+
+		<fieldset>
+			<legend><?php esc_html_e( 'Allow group admins to override subscription settings and send an email to everyone in their group: ', 'buddypress-group-email-subscription' ); ?></legend>
+
+			<?php $admins_can_send_email = bp_get_option( 'ass-admin-can-send-email' ); ?>
+
+			<label><input type="radio" name="ass-admin-can-send-email" value="yes" <?php checked( 'yes' === $admins_can_send_email || ! $admins_can_send_email ); ?>> <?php esc_html_e( 'yes', 'buddypress-group-email-subscription' ); ?></label> &nbsp;
+			<label><input type="radio" name="ass-admin-can-send-email" value="no" <?php checked( 'no' === $admins_can_send_email ); ?>> <?php esc_html_e( 'no', 'buddypress-group-email-subscription' ); ?></label>
+		</fieldset>
 
 		<br>
 		<br>
@@ -279,13 +330,15 @@ function ass_admin_options() {
 		<br />
 		<br />
 
-		<h3><?php _e('Spam Prevention', 'buddypress-group-email-subscription'); ?></h3>
-			<p><?php _e('To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'buddypress-group-email-subscription'); ?> </p>
-			<?php _e('Member must be registered for', 'buddypress-group-email-subscription'); ?><input type="text" size="1" name="ass_registered_req" value="<?php echo bp_get_option( 'ass_registered_req' ); ?>" style="text-align:center"/><?php _e('days', 'buddypress-group-email-subscription'); ?></p>
+		<h3><?php esc_html_e( 'Spam Prevention', 'buddypress-group-email-subscription' ); ?></h3>
+			<p><?php esc_html_e( 'To help protect against spam, you may wish to require a user to have been a member of the site for a certain amount of days before any group updates are emailed to the other group members. This is disabled by default.', 'buddypress-group-email-subscription' ); ?> </p>
+
+			<label for="ass_register_req"><?php esc_html_e( 'Minimum age (in days) of user account before users can send group updates:', 'buddypress-group-email-subscription' ); ?></label>
+			<input type="text" size="1" name="ass_registered_req" value="<?php echo esc_attr( bp_get_option( 'ass_registered_req' ) ); ?>" style="text-align:center"/>
 
 
 			<p class="submit">
-				<input type="submit" value="<?php _e('Save Settings', 'buddypress-group-email-subscription') ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
+				<input type="submit" value="<?php _e( 'Save Settings', 'buddypress-group-email-subscription' ); ?>" id="bp-admin-ass-submit" name="bp-admin-ass-submit" class="button-primary">
 			</p>
 
 		</form>
@@ -298,9 +351,26 @@ function ass_admin_options() {
 				<p><?php esc_html_e( 'BuddyPress Group Email Subscription version 3.9 includes a number of important database migration routines.', 'buddypress-group-email-subscription' ); ?></p>
 
 				<ol>
-					<li class="bpges-migration-step <?php echo esc_attr( $table_class ); ?>"><?php esc_html_e( 'Create database tables', 'buddypress-group-email-subscription' ); ?> <?php if ( $table_message ) : ?><em> - <?php echo esc_html( $table_message ); ?></em><?php endif; ?></li>
-					<li class="bpges-migration-step <?php echo esc_attr( $subs_class ); ?>"><?php esc_html_e( 'Migrate subscriptions', 'buddypress-group-email-subscription' ); ?> <?php if ( $subs_message ) : ?><em> - <?php echo esc_html( $subs_message ); ?></em><?php endif; ?></li>
-					<li class="bpges-migration-step <?php echo esc_attr( $queued_class ); ?>"><?php esc_html_e( 'Migrate queued items', 'buddypress-group-email-subscription' ); ?> <?php if ( $queued_message ) : ?><em> - <?php echo esc_html( $queued_message ); ?></em><?php endif; ?></li>
+					<li class="bpges-migration-step <?php echo esc_attr( $table_class ); ?>">
+						<?php esc_html_e( 'Create database tables', 'buddypress-group-email-subscription' ); ?>
+						<?php if ( $table_message ) : ?>
+							<em> - <?php echo esc_html( $table_message ); ?></em>
+						<?php endif; ?>
+					</li>
+
+					<li class="bpges-migration-step <?php echo esc_attr( $subs_class ); ?>">
+						<?php esc_html_e( 'Migrate subscriptions', 'buddypress-group-email-subscription' ); ?>
+						<?php if ( $subs_message ) : ?>
+							<em> - <?php echo esc_html( $subs_message ); ?></em>
+						<?php endif; ?>
+					</li>
+
+					<li class="bpges-migration-step <?php echo esc_attr( $queued_class ); ?>">
+						<?php esc_html_e( 'Migrate queued items', 'buddypress-group-email-subscription' ); ?>
+						<?php if ( $queued_message ) : ?>
+							<em> - <?php echo esc_html( $queued_message ); ?></em>
+						<?php endif; ?>
+					</li>
 				</ol>
 
 				<?php
