@@ -1913,11 +1913,12 @@ function ass_subscribe_translate( $status ) {
 
 // Handles AJAX request to subscribe/unsubscribe from group
 function ass_group_ajax_callback() {
-	$action   = $_POST['a'];
-	$user_id  = bp_loggedin_user_id();
-	$group_id = $_POST['group_id'];
+	$group_id = isset( $_POST['group_id'] ) ? (int) $_POST['group_id'] : 0;
 
 	check_ajax_referer( "bpges-sub-{$group_id}" );
+
+	$action  = sanitize_text_field( wp_unslash( $_POST['a'] ) );
+	$user_id = bp_loggedin_user_id();
 
 	ass_group_subscription( $action, $user_id, $group_id );
 
