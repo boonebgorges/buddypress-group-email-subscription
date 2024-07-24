@@ -38,7 +38,7 @@ function ass_admin_menu() {
 	// BP 1.6+ deprecated the "BuddyPress" top-level menu item.
 	if ( function_exists( 'bp_version' ) ) {
 		// GES is network-activated, so show under Network Settings.
-		if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
+		if ( is_multisite() && is_plugin_active_for_network( plugin_basename( __DIR__ . '/bp-activity-subscription.php' ) ) ) {
 			$settings_page = 'settings.php';
 			$admin_cap     = 'manage_network_options';
 
@@ -75,7 +75,7 @@ add_action( 'network_admin_menu', 'ass_admin_menu' );
  * @return string
  */
 function bpges_admin_menu_cap() {
-	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
+	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( __DIR__ ) . '/bp-activity-subscription.php' ) ) {
 		$admin_cap = 'manage_network_options';
 	} else {
 		$admin_cap = 'manage_options';
@@ -98,7 +98,7 @@ function bpges_admin_menu_cap() {
  */
 function bpges_get_admin_panel_url() {
 	// GES is network-activated, so show under Network Settings.
-	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( dirname( __FILE__ ) ) . '/bp-activity-subscription.php' ) ) {
+	if ( is_multisite() && is_plugin_active_for_network( plugin_basename( __DIR__ ) . '/bp-activity-subscription.php' ) ) {
 		$url = bp_get_admin_url( 'settings.php' );
 
 	// Everything else.
@@ -468,7 +468,7 @@ function ass_install_emails( $post_exists_check = true ) {
 
 		// Create posts with our email types.
 		if ( ! function_exists( 'ass_set_email_type' ) ) {
-			require_once( dirname( __FILE__ ) . '/bp-activity-subscription-functions.php' );
+			require_once( __DIR__ . '/bp-activity-subscription-functions.php' );
 		}
 		foreach ( $to_create as $email_type ) {
 			ass_set_email_type( $email_type, false );
@@ -749,15 +749,15 @@ function bpges_39_launch_legacy_subscription_migration() {
 	global $wpdb;
 
 	if ( ! class_exists( 'WP_Background_Process' ) ) {
-		require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+		require_once( __DIR__ . '/lib/wp-background-processing/wp-background-processing.php' );
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
-		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+		require( __DIR__ . '/classes/class-bpges-async-request.php' );
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request_Subscription_Migrate' ) ) {
-		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-subscription-migrate.php' );
+		require( __DIR__ . '/classes/class-bpges-async-request-subscription-migrate.php' );
 	}
 
 	$process = new BPGES_Async_Request_Subscription_Migrate();
@@ -773,15 +773,15 @@ function bpges_39_launch_legacy_digest_queue_migration() {
 	global $wpdb;
 
 	if ( ! class_exists( 'WP_Background_Process' ) ) {
-		require_once( dirname( __FILE__ ) . '/lib/wp-background-processing/wp-background-processing.php' );
+		require_once( __DIR__ . '/lib/wp-background-processing/wp-background-processing.php' );
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request' ) ) {
-		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request.php' );
+		require( __DIR__ . '/classes/class-bpges-async-request.php' );
 	}
 
 	if ( ! class_exists( 'BPGES_Async_Request_Digest_Queue_Migrate' ) ) {
-		require( dirname( __FILE__ ) . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
+		require( __DIR__ . '/classes/class-bpges-async-request-digest-queue-migrate.php' );
 	}
 
 	$process = new BPGES_Async_Request_Digest_Queue_Migrate();
