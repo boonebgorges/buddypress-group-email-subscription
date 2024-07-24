@@ -15,6 +15,9 @@
 	<!-- Iterate over all PHP files by default -->
 	<file>.</file>
 
+	<!-- Exclude third-party libraries -->
+	<exclude-pattern>/lib/*</exclude-pattern>
+
 	<!-- Check for PHP cross-version compatibility. -->
 	<config name="testVersion" value="5.6-"/>
 	<rule ref="PHPCompatibilityWP" />
