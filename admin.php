@@ -380,7 +380,7 @@ function ass_admin_options() {
 				?>
 
 				<?php if ( ! $status['subscription_migration_in_progress'] && ! $status['queued_items_migration_in_progress'] ) : ?>
-					<p><?php esc_html_e( 'If you need to re-run or restart the migration process, you can do so with the following link:', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>">Manually trigger the migration process.</a></p>
+					<p><?php esc_html_e( 'If you need to re-run or restart the migration process, you can do so with the following link:', 'buddypress-group-email-subscription' ); ?> <a href="<?php echo esc_url( $fix_link ); ?>"><?php esc_html_e( 'Manually trigger the migration process.', 'buddypress-group-email-subscription' ); ?></a></p>
 				<?php else : ?>
 					<p><?php esc_html_e( 'Some migrations are currently in progress. Please reload this page in a few moments.', 'buddypress-group-email-subscription' ); ?></p>
 				<?php endif; ?>
@@ -412,12 +412,13 @@ function ass_admin_options() {
 
 		<hr>
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-		<?php echo sprintf( __('If you enjoy using this plugin %s please rate it %s.', 'buddypress-group-email-subscription'), '<a href="http://wordpress.org/extend/plugins/buddypress-group-email-subscription/" target="_blank">', '</a>'); ?><br>
-		<?php _e('Please make a donation to the team to support ongoing development.', 'buddypress-group-email-subscription'); ?><br>
-		<input type="hidden" name="cmd" value="_s-xclick">
-		<input type="hidden" name="hosted_button_id" value="PXD76LU2VQ5AS">
-		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-		<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+			<a href="https://wordpress.org/plugins/buddypress-group-email-subscription" target="_blank"><?php esc_html_e( 'If you enjoy using this plugin, please rate it.', 'buddypress-group-email-subscription' ); ?></a><br>
+			<?php esc_html_e( 'Please make a donation to the team to support ongoing development.', 'buddypress-group-email-subscription' ); ?><br>
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="PXD76LU2VQ5AS">
+			<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+		</form>
 
 	</div>
 	<?php
@@ -427,31 +428,37 @@ function ass_admin_options() {
  * Save the back-end admin settings.
  */
 function ass_update_dashboard_settings() {
-	if ( !check_admin_referer( 'ass_admin_settings' ) )
-		return;
+	check_admin_referer( 'ass_admin_settings' );
 
-	if ( !is_super_admin() )
+	if ( ! is_super_admin() ) {
 		return;
+	}
 
 	/* The daily digest time has been changed */
-	if ( $_POST['ass_digest_time'] )
+	if ( $_POST['ass_digest_time'] ) {
 		ass_set_daily_digest_time( $_POST['ass_digest_time']['hours'], $_POST['ass_digest_time']['minutes'] );
+	}
 
 	/* The weekly digest day has been changed */
-	if ( $_POST['ass_weekly_digest'] )
+	if ( $_POST['ass_weekly_digest'] ) {
 		ass_set_weekly_digest_time( $_POST['ass_weekly_digest'] );
+	}
 
-	if ( $_POST['ass-global-unsubscribe-link'] != bp_get_option( 'ass-global-unsubscribe-link' ) )
+	if ( $_POST['ass-global-unsubscribe-link'] != bp_get_option( 'ass-global-unsubscribe-link' ) ) {
 		bp_update_option( 'ass-global-unsubscribe-link', $_POST['ass-global-unsubscribe-link'] );
+	}
 
-	if ( $_POST['ass-admin-can-edit-email'] != bp_get_option( 'ass-admin-can-edit-email' ) )
+	if ( $_POST['ass-admin-can-edit-email'] != bp_get_option( 'ass-admin-can-edit-email' ) ) {
 		bp_update_option( 'ass-admin-can-edit-email', $_POST['ass-admin-can-edit-email'] );
+	}
 
-	if ( $_POST['ass-admin-can-send-email'] != bp_get_option( 'ass-admin-can-send-email' ) )
+	if ( $_POST['ass-admin-can-send-email'] != bp_get_option( 'ass-admin-can-send-email' ) ) {
 		bp_update_option( 'ass-admin-can-send-email', $_POST['ass-admin-can-send-email'] );
+	}
 
-	if ( $_POST['ass_registered_req'] != bp_get_option( 'ass_registered_req' ) )
+	if ( $_POST['ass_registered_req'] != bp_get_option( 'ass_registered_req' ) ) {
 		bp_update_option( 'ass_registered_req', $_POST['ass_registered_req'] );
+	}
 
 	if ( ! empty( $_POST['global-default-subscription'] ) ) {
 		$global_default_raw = sanitize_text_field( wp_unslash( $_POST['global-default-subscription'] ) );
@@ -491,35 +498,37 @@ function ass_install_emails( $post_exists_check = true ) {
 		require_once __DIR__ . '/bp-activity-subscription-functions.php';
 	}
 
-	// No need to check if our post types exist.
 	if ( ! $post_exists_check ) {
+		// No need to check if our post types exist.
 		ass_set_email_type( 'bp-ges-single', false );
 		ass_set_email_type( 'bp-ges-digest', false );
 		ass_set_email_type( 'bp-ges-notice', false );
 		ass_set_email_type( 'bp-ges-welcome', false );
 
-	// Only create email post types if they do not exist.
 	} else {
+		// Only create email post types if they do not exist.
 		switch_to_blog( bp_get_root_blog_id() );
 
 		$ges_types = array( 'bp-ges-single', 'bp-ges-digest', 'bp-ges-notice', 'bp-ges-welcome' );
 
 		// Try to fetch email posts with our taxonomy.
-		$emails = get_posts( array(
-			'fields'           => 'ids',
-			'post_status'      => 'publish',
-			'post_type'        => bp_get_email_post_type(),
-			'posts_per_page'   => 4,
-			'suppress_filters' => false,
-			'tax_query' => array(
-				'relation' => 'OR',
-				array(
-					'taxonomy' => bp_get_email_tax_type(),
-					'field'    => 'slug',
-					'terms'    => $ges_types,
+		$emails = get_posts(
+			[
+				'fields'           => 'ids',
+				'post_status'      => 'publish',
+				'post_type'        => bp_get_email_post_type(),
+				'posts_per_page'   => 4,
+				'suppress_filters' => false,
+				'tax_query'        => array(
+					'relation' => 'OR',
+					array(
+						'taxonomy' => bp_get_email_tax_type(),
+						'field'    => 'slug',
+						'terms'    => $ges_types,
+					),
 				),
-			),
-		) );
+			]
+		);
 
 		// See if our taxonomies are attached to our email posts.
 		$found = array();
@@ -549,7 +558,7 @@ function ass_install_emails( $post_exists_check = true ) {
 // Install our emails if necessary.
 add_action(
 	'bp_core_install_emails',
-	function() {
+	function () {
 		ass_install_emails();
 	}
 );
@@ -570,9 +579,10 @@ function ass_bp_email_admin_notice() {
 
 	// Output notice; hidden by default.
 	echo '<div id="bp-ges-notice" class="updated" style="display:none;">';
-	printf( '<p>%s</p>',
+	printf(
+		'<p>%s</p>',
 		sprintf(
-			__( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'buddypress-group-email-subscription' ),
+			wp_kses_post( 'This email is handled by the Group Email Subscription plugin and uses customized tokens.  <a target="_blank" href="%s">Learn more about GES tokens on our wiki</a>.', 'buddypress-group-email-subscription' ),
 			esc_url( 'https://github.com/boonebgorges/buddypress-group-email-subscription/wiki/Email-Tokens#tokens' )
 		)
 	);
@@ -593,7 +603,7 @@ jQuery( function( $ ) {
 
 EOD;
 
-	echo "<script type=\"text/javascript\">{$inline_js}</script>";
+	echo '<script type="text/javascript">' . esc_js( $inline_js ) . '</script>';
 }
 add_action( 'admin_head-post.php', 'ass_bp_email_admin_notice' );
 
@@ -607,15 +617,14 @@ add_action( 'admin_head-post.php', 'ass_bp_email_admin_notice' );
 function bpges_39_migration_status() {
 	global $wpdb;
 
-	$retval = array(
-		'subscription_table_created' => (bool) bp_get_option( '_ges_39_subscriptions_table_created' ),
-		'queued_items_table_created' => (bool) bp_get_option( '_ges_39_queued_items_table_created' ),
-		'subscriptions_migrated'     => (bool) bp_get_option( '_ges_39_subscriptions_migrated' ),
-		'queued_items_migrated'      => (bool) bp_get_option( '_ges_39_digest_queue_migrated' ),
-
+	$retval = [
+		'subscription_table_created'         => (bool) bp_get_option( '_ges_39_subscriptions_table_created' ),
+		'queued_items_table_created'         => (bool) bp_get_option( '_ges_39_queued_items_table_created' ),
+		'subscriptions_migrated'             => (bool) bp_get_option( '_ges_39_subscriptions_migrated' ),
+		'queued_items_migrated'              => (bool) bp_get_option( '_ges_39_digest_queue_migrated' ),
 		'subscription_migration_in_progress' => (bool) bp_get_option( '_ges_39_subscription_migration_in_progress' ),
 		'queued_items_migration_in_progress' => (bool) bp_get_option( '_ges_39_digest_queue_migration_in_progress' ),
-	);
+	];
 
 	return $retval;
 }
@@ -631,6 +640,7 @@ function bpges_39_migration_admin_notice() {
 	}
 
 	// Don't show on BPGES settings panel.
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['page'] ) && 'ass_admin_options' === $_GET['page'] ) {
 		return;
 	}
@@ -651,7 +661,7 @@ function bpges_39_migration_admin_notice() {
 	esc_html_e( 'Some BuddyPress Group Email Subscription migration tasks have not successfully completed.', 'buddypress-group-email-subscription' );
 	printf(
 		' <a href="%s">%s</a>',
-		bpges_get_admin_panel_url(),
+		esc_url( bpges_get_admin_panel_url() ),
 		esc_html__( 'Visit the BPGES settings page to fix this problem.', 'buddypress-group-email-subscription' )
 	);
 	echo '</p></div>';
@@ -684,7 +694,7 @@ function bpges_install_subscription_table() {
 
 	dbDelta( $sql );
 
-	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", "{$bp_prefix}bpges_subscriptions" ) ) ) {
+	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', "{$bp_prefix}bpges_subscriptions" ) ) ) {
 		bp_add_option( '_ges_39_subscriptions_table_created', 1 );
 	}
 }
@@ -719,7 +729,7 @@ function bpges_install_queued_items_table() {
 
 	dbDelta( $sql );
 
-	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", "{$bp_prefix}bpges_queued_items" ) ) ) {
+	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', "{$bp_prefix}bpges_queued_items" ) ) ) {
 		bp_add_option( '_ges_39_queued_items_table_created', 1 );
 	}
 }
@@ -736,10 +746,12 @@ function bpges_39_migrate_group_subscriptions( $group_id ) {
 
 	if ( is_array( $group_subscriptions ) ) {
 		foreach ( $group_subscriptions as $user_id => $type ) {
-			$query = new BPGES_Subscription_Query( array(
-				'user_id'  => $user_id,
-				'group_id' => $group_id,
-			) );
+			$query = new BPGES_Subscription_Query(
+				[
+					'user_id'  => $user_id,
+					'group_id' => $group_id,
+				]
+			);
 
 			$existing = $query->get_results();
 			if ( $existing ) {
@@ -748,10 +760,10 @@ function bpges_39_migrate_group_subscriptions( $group_id ) {
 				continue;
 			}
 
-			$subscription = new BPGES_Subscription();
-			$subscription->user_id = $user_id;
+			$subscription           = new BPGES_Subscription();
+			$subscription->user_id  = $user_id;
 			$subscription->group_id = $group_id;
-			$subscription->type = $type;
+			$subscription->type     = $type;
 			$subscription->save();
 		}
 	}
@@ -770,10 +782,12 @@ function bpges_39_migrate_user_queued_items( $user_id ) {
 	$user_queues = bp_get_user_meta( $user_id, 'ass_digest_items', true );
 	foreach ( $user_queues as $digest_type => $user_groups ) {
 		foreach ( $user_groups as $group_id => $activity_ids ) {
-			$query = new BPGES_Subscription_Query( array(
-				'user_id'  => $user_id,
-				'group_id' => $group_id,
-			) );
+			$query = new BPGES_Subscription_Query(
+				[
+					'user_id'  => $user_id,
+					'group_id' => $group_id,
+				]
+			);
 
 			$existing = $query->get_results();
 			if ( ! $existing ) {
