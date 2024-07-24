@@ -30,14 +30,14 @@ function ass_bbp_subscriptions( $retval ) {
 	// get group sub status
 	$group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), bp_get_current_group_id() );
 
-	// if group sub status is anything but "All Mail", let the member use bbP's
-	// native subscriptions - this emulates GES' old "Follow / Mute" functionality
-	if ( $group_status != 'supersub' ) {
+	if ( 'supersub' !== $group_status ) {
+		// if group sub status is anything but "All Mail", let the member use bbP's
+		// native subscriptions - this emulates GES' old "Follow / Mute" functionality
 		return true;
 
-	// the member's setting is "All Mail" so we shouldn't allow them to subscribe
-	// to prevent duplicates
 	} else {
+		// the member's setting is "All Mail" so we shouldn't allow them to subscribe
+		// to prevent duplicates
 		return false;
 	}
 }
@@ -51,21 +51,20 @@ add_filter( 'bbp_is_subscriptions_active', 'ass_bbp_subscriptions' );
  *              already subscribed to the group's "All Mail" option.
  */
 function ass_bbp_ready() {
-	/**
-	 * bbPress v2.5.4 changed how emails are sent out.
-	 *
-	 * They now send one BCC email to their subscribers, so we have to filter out
-	 * the topic subscribers before their email is sent.
-	 */
 	if ( version_compare( bbp_get_version(), '2.5.4' ) >= 0 ) {
-		add_filter( 'bbp_subscription_mail_title', 'ass_bbp_add_topic_subscribers_filter',    99 );
-		add_action( 'bbp_pre_notify_subscribers',  'ass_bbp_remove_topic_subscribers_filter', 0 );
+		/**
+		 * bbPress v2.5.4 changed how emails are sent out.
+		 *
+		 * They now send one BCC email to their subscribers, so we have to filter out
+		 * the topic subscribers before their email is sent.
+		 */
+		add_filter( 'bbp_subscription_mail_title', 'ass_bbp_add_topic_subscribers_filter', 99 );
+		add_action( 'bbp_pre_notify_subscribers', 'ass_bbp_remove_topic_subscribers_filter', 0 );
+		add_filter( 'bbp_forum_subscription_mail_title', 'ass_bbp_add_topic_subscribers_filter', 99 );
+		add_action( 'bbp_pre_notify_forum_subscribers', 'ass_bbp_remove_topic_subscribers_filter', 0 );
 
-		add_filter( 'bbp_forum_subscription_mail_title', 'ass_bbp_add_topic_subscribers_filter',    99 );
-		add_action( 'bbp_pre_notify_forum_subscribers',  'ass_bbp_remove_topic_subscribers_filter', 0 );
-
-	// bbPress <= v2.5.3
 	} else {
+		// bbPress <= v2.5.3
 		add_filter( 'bbp_subscription_mail_message', 'ass_bbp_disable_email', 10, 4 );
 	}
 }
@@ -97,11 +96,11 @@ function ass_bbp_remove_topic_subscribers( $retval = array() ) {
 
 	// loop through all bbP topic subscribers and check against group sub status
 	foreach ( $retval as $index => $user_id ) {
-		$user_subscription = isset( $group_user_subscriptions[$user_id] ) ? $group_user_subscriptions[$user_id] : false;
+		$user_subscription = isset( $group_user_subscriptions[ $user_id ] ) ? $group_user_subscriptions[ $user_id ] : false;
 
 		// if user's group status is "All Mail", remove user ID from topic subscribers
 		if ( 'supersub' === $user_subscription ) {
-			unset( $retval[$index] );
+			unset( $retval[ $index ] );
 		}
 	}
 
@@ -120,12 +119,12 @@ function ass_bbp_remove_topic_subscribers( $retval = array() ) {
  * @return string
  */
 function ass_bbp_add_topic_subscribers_filter( $retval ) {
-	// Add our filter to check topic subscribers.
 	if ( 'bbp_subscription_mail_title' === current_filter() ) {
+		// Add our filter to check topic subscribers.
 		add_filter( 'bbp_get_topic_subscribers', 'ass_bbp_remove_topic_subscribers' );
 
-	// For forum subscribers.
 	} else {
+		// For forum subscribers.
 		add_filter( 'bbp_get_forum_subscribers', 'ass_bbp_remove_topic_subscribers' );
 	}
 
@@ -141,12 +140,12 @@ function ass_bbp_add_topic_subscribers_filter( $retval ) {
  * @since 3.4.1
  */
 function ass_bbp_remove_topic_subscribers_filter() {
-	// Remove our filter to check topic subscribers.
 	if ( 'bbp_pre_notify_subscribers' === current_action() ) {
+		// Remove our filter to check topic subscribers.
 		remove_filter( 'bbp_get_topic_subscribers', 'ass_bbp_remove_topic_subscribers' );
 
-	// For forum subscribers.
 	} else {
+		// For forum subscribers.
 		remove_filter( 'bbp_get_forum_subscribers', 'ass_bbp_remove_topic_subscribers' );
 	}
 }
@@ -171,9 +170,9 @@ function ass_bbp_disable_email( $message, $reply_id, $topic_id, $user_id ) {
 
 	// if user's group sub status is "All Mail", stop bbP's email from sending
 	// by blanking out the message
-	if ( $group_status == 'supersub' ) {
+	if ( 'supersub' === $group_status ) {
 		return false;
 	}
-	
+
 	return $message;
 }
