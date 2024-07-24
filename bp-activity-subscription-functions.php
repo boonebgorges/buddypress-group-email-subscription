@@ -261,7 +261,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 				'group_id'      => $group_id,
 				'activity_id'   => $activity->id,
 				'type'          => 'immediate',
-				'date_recorded' => date( 'Y-m-d H:i:s' ),
+				'date_recorded' => gmdate( 'Y-m-d H:i:s' ),
 			];
 		}
 
@@ -271,7 +271,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 				'group_id'      => $group_id,
 				'activity_id'   => $activity->id,
 				'type'          => $subscription_type,
-				'date_recorded' => date( 'Y-m-d H:i:s' ),
+				'date_recorded' => gmdate( 'Y-m-d H:i:s' ),
 			];
 		}
 	}
