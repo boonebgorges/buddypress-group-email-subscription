@@ -87,12 +87,12 @@ function ass_group_subscription_notification_settings() {
 			<td><?php esc_html_e( 'Receive notifications of your own posts?', 'buddypress-group-email-subscription' ); ?></td>
 
 			<td class="yes">
-				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-yes" value="yes" <?php if ( ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
+				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-yes" value="yes" <?php checked( ass_self_post_notification( bp_displayed_user_id() ) ); ?> />
 				<label class="bp-screen-reader-text" for="notification-ass-self-post-yes"><?php esc_html_e( 'No, do not send email', 'buddypress-group-email-subscription' ); ?></label>
 			</td>
 
 			<td class="no">
-				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-no" value="no" <?php if ( !ass_self_post_notification( bp_displayed_user_id() ) ) { ?>checked="checked" <?php } ?>/>
+				<input type="radio" name="notifications[ass_self_post_notification]" id="notification-ass-self-post-no" value="no" <?php checked( ! ass_self_post_notification( bp_displayed_user_id() ) ); ?> />
 				<label class="bp-screen-reader-text" for="notification-ass-self-post-no"><?php esc_html_e( 'No, do not send email', 'buddypress-group-email-subscription' ); ?></label>
 			</td>
 		</tr>
