@@ -24,7 +24,8 @@ function ass_group_subscribe_settings() {
 	<h3 class="activity-subscription-settings-title"><?php esc_html_e( 'Email Subscription Options', 'buddypress-group-email-subscription' ); ?></h3>
 	<form action="<?php echo esc_attr( $submit_link ); ?>" method="post">
 	<input type="hidden" name="ass_group_id" value="<?php echo esc_attr( $group->id ); ?>"/>
-	<?php wp_nonce_field( 'ass_subscribe' ); ?>
+
+	<?php wp_nonce_field( 'bpges_subscribe', 'bpges-subscribe-nonce' ); ?>
 
 	<b><?php esc_html_e( 'How do you want to read this group?', 'buddypress-group-email-subscription' ); ?></b>
 
@@ -45,31 +46,42 @@ function ass_group_subscribe_settings() {
 function ass_update_group_subscribe_settings() {
 	global $bp;
 
-	if ( bp_is_groups_component() && bp_is_current_action( 'notifications' ) ) {
+	if ( ! bp_is_groups_component() || ! bp_is_current_action( 'notifications' ) ) {
+		return;
+	}
 
-		// If the edit form has been submitted, save the edited details
-		if ( isset( $_POST['ass-save'] ) ) {
+	if ( empty( $_POST['bpges-subscribe-nonce'] ) ) {
+		return;
+	}
 
-			$user_id  = bp_loggedin_user_id();
-			$group_id = $_POST['ass_group_id'];
-			$action   = $_POST['ass_group_subscribe'];
+	check_admin_referer( 'bpges_subscribe', 'bpges-subscribe-nonce' );
 
-			if ( ! groups_is_user_member( $user_id, $group_id ) ) {
-				return;
-			}
+	// If the edit form has been submitted, save the edited details
+	if ( isset( $_POST['ass-save'] ) ) {
 
-			ass_group_subscription( $action, $user_id, $group_id ); // save the settings
+		$user_id  = bp_loggedin_user_id();
+		$group_id = isset( $_POST['ass_group_id'] ) ? (int) $_POST['ass_group_id'] : 0;
+		$action   = isset( $_POST['ass_group_subscribe'] ) ? sanitize_text_field( wp_unslash( $_POST['ass_group_subscribe'] ) ) : '';
 
-			// translators: name of the subscription level
-			bp_core_add_message( sprintf( __( 'Your email notifications for this group have been changed to: %s.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
-
-			$redirect_url = bp_get_group_url(
-				groups_get_current_group(),
-				bp_groups_get_path_chunks( array( 'notifications' ) )
-			);
-
-			bp_core_redirect( $redirect_url );
+		if ( ! $group_id || ! $action ) {
+			return;
 		}
+
+		if ( ! groups_is_user_member( $user_id, $group_id ) ) {
+			return;
+		}
+
+		ass_group_subscription( $action, $user_id, $group_id ); // save the settings
+
+		// translators: name of the subscription level
+		bp_core_add_message( sprintf( __( 'Your email notifications for this group have been changed to: %s.', 'buddypress-group-email-subscription' ), ass_subscribe_translate( $action ) ) );
+
+		$redirect_url = bp_get_group_url(
+			groups_get_current_group(),
+			bp_groups_get_path_chunks( array( 'notifications' ) )
+		);
+
+		bp_core_redirect( $redirect_url );
 	}
 }
 add_action( 'bp_actions', 'ass_update_group_subscribe_settings' );
