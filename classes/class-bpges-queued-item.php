@@ -71,7 +71,10 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 
 		$table_name = self::get_table_name();
 		$values_sql = implode( ', ', $values );
+
 		$sql = "INSERT IGNORE INTO {$table_name} (user_id, group_id, activity_id, type, date_recorded) VALUES {$values_sql}";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		return $wpdb->query( $sql );
 	}
 
@@ -87,6 +90,8 @@ class BPGES_Queued_Item extends BPGES_Database_Object {
 
 		$parsed_ids = implode( ',', wp_parse_id_list( $ids ) );
 		$table_name = self::get_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return $wpdb->query( "DELETE FROM {$table_name} WHERE id IN ({$parsed_ids})" );
 	}
 }
