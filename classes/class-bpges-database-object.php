@@ -74,7 +74,7 @@ abstract class BPGES_Database_Object {
 	 * @return mixed
 	 */
 	public function __get( $key ) {
-		$cols = $this->get_columns();
+		$cols     = $this->get_columns();
 		$col_type = isset( $cols[ $key ] ) ? $cols[ $key ] : '%s';
 
 		if ( 'table_name' === $key ) {
@@ -99,7 +99,7 @@ abstract class BPGES_Database_Object {
 	 * @param mixed  $value Value.
 	 */
 	public function __set( $key, $value ) {
-		$cols = $this->get_columns();
+		$cols     = $this->get_columns();
 		$col_type = isset( $cols[ $key ] ) ? $cols[ $key ] : '%s';
 
 		if ( 'table_name' === $key ) {
@@ -140,6 +140,7 @@ abstract class BPGES_Database_Object {
 	protected function populate( $id ) {
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->table_name} WHERE id = %d", $id ) );
 
 		if ( ! $row ) {
@@ -163,10 +164,11 @@ abstract class BPGES_Database_Object {
 
 		$cols = $this->get_columns();
 
-		$data = $formats = array();
+		$data    = [];
+		$formats = [];
 		foreach ( $cols as $col => $col_type ) {
 			$data[ $col ] = $this->{$col};
-			$formats[] = $col_type;
+			$formats[]    = $col_type;
 		}
 
 		if ( $this->id ) {
@@ -187,7 +189,7 @@ abstract class BPGES_Database_Object {
 			);
 
 			if ( $inserted ) {
-				$retval = (int) $wpdb->insert_id;
+				$retval   = (int) $wpdb->insert_id;
 				$this->id = $retval;
 			} else {
 				$retval = false;
