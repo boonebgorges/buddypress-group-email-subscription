@@ -1691,11 +1691,7 @@ add_filter( 'ass_this_activity_is_important', 'ass_default_weekly_summary_activi
  * @uses bp_loggedin_user_id() To see if a user is logged in
  */
 function ass_login_redirector() {
-	// see if a redirect link was passed
-	if ( empty( $_GET['redirect_to'] ) ) {
-		return;
-	}
-
+	// phpcs:disable WordPress.Security.NonceVerification
 	// see if our special 'auth' variable was passed
 	if ( empty( $_GET['auth'] ) ) {
 		return;
@@ -1706,8 +1702,16 @@ function ass_login_redirector() {
 		return;
 	}
 
+	// see if a redirect link was passed
+	if ( empty( $_GET['redirect_to'] ) ) {
+		return;
+	}
+
+	$redirect_to = sanitize_text_field( wp_unslash( $_GET['redirect_to'] ) );
+	// phpcs:enable WordPress.Security.NonceVerification
+
 	// user is logged in, so let's redirect them to the content
-	wp_safe_redirect( esc_url_raw( $_GET['redirect_to'] ) );
+	wp_safe_redirect( esc_url_raw( $redirect_to ) );
 	exit;
 }
 add_action( 'login_init', 'ass_login_redirector', 1 );
