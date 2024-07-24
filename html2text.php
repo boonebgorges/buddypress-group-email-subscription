@@ -42,7 +42,7 @@ function convert_html_to_text($html) {
 
 	$doc = new DOMDocument();
 	if ( ! $doc->loadHTML( '<?xml encoding="UTF-8">' . $html_utf8 ) )
-		throw new Html2TextException("Could not load HTML - badly formed?", $html);
+		throw new Html2TextException("Could not load HTML - badly formed?", '');
 
 	$output = iterate_over_node($doc);
 
