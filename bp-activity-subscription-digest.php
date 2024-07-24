@@ -202,6 +202,7 @@ function bpges_generate_digest( $user_id, $type, $group_activity_ids, $is_previe
 
 		// Might be nice here to link to anchor tags in the message.
 		if ( 'dig' === $type ) {
+			// translators: number of items.
 			$summary .= apply_filters( 'ass_digest_summary', "<li class=\"digest-group-summary\" {$ass_email_css['summary']}><a href='{$group_permalink}'>$group_name</a> " . sprintf( __( '(%s items)', 'buddypress-group-email-subscription' ), count( $activity_ids ) ) . "</li>\n", $ass_email_css['summary'], $group_slug, $group_name, $activity_ids );
 		}
 
