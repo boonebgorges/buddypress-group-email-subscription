@@ -894,19 +894,6 @@ function ass_set_weekly_digest_time( $day ) {
 	}
 }
 
-/*
-// if in the future we want to do flexible schedules. this is how we could add the custom cron. Then we need to change the digest or summary to use this custom schedule.
-function ass_custom_digest_frequency( $schedules ) {
-    if( ( $freq = get_option(  'ass_digest_frequency' ) ) ) {
-        if( !isset( $schedules[$freq.'_hrs'] ) ) {
-            $schedules[$freq.'_hrs'] = array( 'interval' => $freq * 3600, 'display' => "Every $freq hours" );
-        }
-    }
-    return $schedules;
-}
-add_filter( 'cron_schedules', 'ass_custom_digest_frequency' );
-*/
-
 /**
  * Gets the user_login, user_nicename and email address for an array of user IDs
  * all in one fell swoop!
