@@ -185,7 +185,7 @@ function ass_admin_options() {
 //		$ass_weekly_digest = 5; // friday
 		$ass_weekly_digest = 0; // sunday
 
-	$next = date( "r", wp_next_scheduled( 'ass_digest_event' ) );
+	$next = gmdate( "r", wp_next_scheduled( 'ass_digest_event' ) );
 	?>
 	<div class="wrap">
 		<h2><?php _e('Group Email Subscription Settings', 'buddypress-group-email-subscription'); ?></h2>
@@ -231,7 +231,7 @@ function ass_admin_options() {
 			<!-- (the summary will be sent one hour after the daily digests) -->
 		</p>
 
-		<p><i><?php $weekday = array( __("Sunday"), __("Monday"), __("Tuesday"), __("Wednesday"), __("Thursday"), __("Friday"), __("Saturday") ); echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'buddypress-group-email-subscription' ), date( 'T' ), date( 'e' ), date( 'g:ia' ), date( 'H:i' ), $weekday[date( 'w' )] ) ?></i>
+		<p><i><?php $weekday = array( __("Sunday"), __("Monday"), __("Tuesday"), __("Wednesday"), __("Thursday"), __("Friday"), __("Saturday") ); echo sprintf( __( 'The server timezone is %s (%s); the current server time is %s (%s); and the day is %s.', 'buddypress-group-email-subscription' ), gmdate( 'T' ), gmdate( 'e' ), gmdate( 'g:ia' ), gmdate( 'H:i' ), $weekday[gmdate( 'w' )] ) ?></i>
 		<br>
 		<br>
 
@@ -726,7 +726,7 @@ function bpges_39_migrate_user_queued_items( $user_id ) {
 					'group_id'      => $group_id,
 					'activity_id'   => $activity_id,
 					'type'          => $digest_type,
-					'date_recorded' => date( 'Y-m-d H:i:s' ),
+					'date_recorded' => gmdate( 'Y-m-d H:i:s' ),
 				);
 			}
 
