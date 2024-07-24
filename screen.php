@@ -62,24 +62,26 @@ add_action(
 function ass_group_subscribe_button() {
 	global $bp, $groups_template;
 
-	if( ! empty( $groups_template ) ) {
+	if ( ! empty( $groups_template ) ) {
 		$group =& $groups_template->group;
-	}
-	else {
+	} else {
 		$group = groups_get_current_group();
 	}
 
-	if ( !is_user_logged_in() || !empty( $group->is_banned ) || !$group->is_member )
+	if ( ! is_user_logged_in() || ! empty( $group->is_banned ) || ! $group->is_member ) {
 		return;
+	}
 
 	// if we're looking at someone elses list of groups hide the subscription
-	if ( bp_displayed_user_id() && ( bp_loggedin_user_id() != bp_displayed_user_id() ) )
+	if ( bp_displayed_user_id() && ( bp_loggedin_user_id() !== bp_displayed_user_id() ) ) {
 		return;
+	}
 
 	$group_status = ass_get_group_subscription_status( bp_loggedin_user_id(), $group->id );
 
-	if ( $group_status == 'no' )
-		$group_status = NULL;
+	if ( 'no' === $group_status ) {
+		$group_status = null;
+	}
 
 	$status_desc = __( 'Your email status is ', 'buddypress-group-email-subscription' );
 	$link_text   = __( 'change', 'buddypress-group-email-subscription' );
@@ -88,7 +90,6 @@ function ass_group_subscribe_button() {
 	$sep               = '';
 
 	if ( ! $group_status ) {
-		//$status_desc = '';
 		$link_text         = __( 'Get email updates', 'buddypress-group-email-subscription' );
 		$gemail_icon_class = '';
 	}
@@ -154,38 +155,40 @@ function ass_group_subscribe_button() {
 
 	<?php
 }
-add_action ( 'bp_group_header_meta', 'ass_group_subscribe_button' );
-add_action ( 'bp_directory_groups_actions', 'ass_group_subscribe_button' );
-//add_action ( 'bp_directory_groups_item', 'ass_group_subscribe_button' );  //useful to put in different location with css abs pos
+add_action( 'bp_group_header_meta', 'ass_group_subscribe_button' );
+add_action( 'bp_directory_groups_actions', 'ass_group_subscribe_button' );
 
 // give the user a notice if they are default subscribed to this group (does not work for invites or requests)
 function ass_join_group_message( $group_id, $user_id ) {
 	global $bp;
 
-	if ( $user_id != bp_loggedin_user_id()  )
+	if ( bp_loggedin_user_id() !== (int) $user_id ) {
 		return;
+	}
 
 	$status = apply_filters( 'ass_default_subscription_level', groups_get_groupmeta( $group_id, 'ass_default_subscription' ), $group_id );
 
-	if ( !$status )
+	if ( ! $status ) {
 		$status = 'no';
+	}
 
 	bp_core_add_message( __( 'You successfully joined the group. Your group email status is: ', 'buddypress-group-email-subscription' ) . ass_subscribe_translate( $status ) );
-
 }
 add_action( 'groups_join_group', 'ass_join_group_message', 1, 2 );
 
 // show group email subscription status on group member pages (for admins and mods only)
-function ass_show_subscription_status_in_member_list( $user_id='' ) {
+function ass_show_subscription_status_in_member_list( $user_id = '' ) {
 	global $bp, $members_template;
 
 	$group_id = bp_get_current_group_id();
 
-	if ( groups_is_user_admin( bp_loggedin_user_id() , $group_id ) || groups_is_user_mod( bp_loggedin_user_id() , $group_id ) || is_super_admin() ) {
-		if ( !$user_id )
+	if ( groups_is_user_admin( bp_loggedin_user_id(), $group_id ) || groups_is_user_mod( bp_loggedin_user_id(), $group_id ) || is_super_admin() ) {
+		if ( ! $user_id ) {
 			$user_id = $members_template->member->user_id;
+		}
+
 		$sub_type = ass_get_group_subscription_status( $user_id, $group_id );
-		echo '<div class="ass_members_status">'.__('Email status:','buddypress-group-email-subscription'). ' ' . ass_subscribe_translate( $sub_type ) . '</div>';
+		echo '<div class="ass_members_status">' . esc_html__( 'Email status:', 'buddypress-group-email-subscription' ) . ' ' . esc_html( ass_subscribe_translate( $sub_type ) ) . '</div>';
 	}
 }
 add_action( 'bp_group_members_list_item_action', 'ass_show_subscription_status_in_member_list', 100 );
