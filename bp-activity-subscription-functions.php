@@ -22,7 +22,7 @@ function ass_group_unsubscribe_links( $user_id, $group_id = 0 ) {
 
 	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, $group_id ) );
 
-	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+	if ( 'yes' === get_option( 'ass-global-unsubscribe-link' ) ) {
 		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) );
 	}
 
@@ -163,7 +163,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 		$self_notify = false;
 
 		// Does the author want updates of their own forum posts?
-		if ( $activity->type == 'bbp_topic_create' || $activity->type == 'bbp_reply_create' ) {
+		if ( 'bbp_topic_create' === $activity->type || 'bbp_reply_create' === $activity->type ) {
 			if ( $user_id === $activity->user_id ) {
 				$self_notify = ass_self_post_notification( $user_id );
 
@@ -172,7 +172,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 					continue;
 				}
 			}
-		} elseif ( 'activity_comment' == $activity->type ) {
+		} elseif ( 'activity_comment' === $activity->type ) {
 			/*
 			 * If this is an activity comment, and the $user_id is the user
 			 * who is being replied to, check to make sure that the user
@@ -182,7 +182,7 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 			$immediate_parent = new BP_Activity_Activity( $activity->secondary_item_id );
 
 			// Don't send the bp-ass notification if the user is subscribed through BP
-			if ( $user_id == $immediate_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+			if ( (int) $user_id === (int) $immediate_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 				continue;
 			}
 
@@ -410,9 +410,9 @@ To view or reply, log in and go to:
 			continue;
 		}
 
-		if ( $activity_obj->type == 'bbp_topic_create' || $activity_obj->type == 'bbp_reply_create' ) {
+		if ( 'bbp_topic_create' === $activity_obj->type || 'bbp_reply_create' === $activity_obj->type ) {
 			// Does the author want updates of their own forum posts?
-			if ( $user_id == $r['sender_id'] ) {
+			if ( (int) $user_id === (int) $r['sender_id'] ) {
 				$self_notify = ass_self_post_notification( $user_id );
 
 				// Author does not want notifications of their own posts
@@ -420,7 +420,7 @@ To view or reply, log in and go to:
 					continue;
 				}
 			}
-		} elseif ( 'activity_comment' == $activity_obj->type ) {
+		} elseif ( 'activity_comment' === $activity_obj->type ) {
 			/*
 			 * If this is an activity comment, and the $user_id is the user
 			 * who is being replied to, check to make sure that the user
@@ -431,16 +431,16 @@ To view or reply, log in and go to:
 			$immediate_parent = new BP_Activity_Activity( $activity_obj->secondary_item_id );
 
 			// Don't send the bp-ass notification if the user is subscribed through BP
-			if ( $user_id == $immediate_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+			if ( (int) $user_id === (int) $immediate_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 				continue;
 			}
 
 			// We only need to check the root parent if it's different from the immediate parent.
-			if ( $activity_obj->secondary_item_id != $activity_obj->item_id ) {
+			if ( (int) $activity_obj->secondary_item_id !== (int) $activity_obj->item_id ) {
 				$root_parent = new BP_Activity_Activity( $activity_obj->item_id );
 
 				// Don't send the bp-ass notification if the user is subscribed through BP
-				if ( $user_id == $root_parent->user_id && 'no' != bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
+				if ( (int) $user_id === (int) $root_parent->user_id && 'no' !== bp_get_user_meta( $user_id, 'notification_activity_new_reply', true ) ) {
 					continue;
 				}
 			}
@@ -683,6 +683,7 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	 * rather than the user's homepage.
 	 */
 	$link = bp_get_group_url( $group );
+	// phpcs:ignore WordPress.PHP.YodaConditions
 	if ( $activity->primary_link && $activity->primary_link !== bp_members_get_user_url( $activity->user_id ) ) {
 		$link = $activity->primary_link;
 	}
@@ -1111,7 +1112,7 @@ function ass_set_email_type( $email_type, $term_check = true ) {
 		$term = 0;
 	}
 
-	if ( true === $term_check && $term !== 0 && $term !== null ) {
+	if ( true === $term_check && 0 !== $term && null !== $term ) {
 		// Term already exists so don't do anything.
 		if ( true === $switched ) {
 			restore_current_blog();
@@ -1263,7 +1264,7 @@ function ass_email_set_from_during_token_addition( $retval, $tokens, BP_Email $e
  * @return string
  */
 function ass_email_strip_trailing_breaklines( $content = '', $prop = '', $transform = '' ) {
-	if ( $transform !== 'add-content' ) {
+	if ( 'add-content' !== $transform ) {
 		return $content;
 	}
 
@@ -1395,7 +1396,7 @@ function ass_bp_email_footer_html_unsubscribe_links() {
 				esc_html__( 'Unsubscribe from this group', 'buddypress-group-email-subscription' )
 			);
 
-			if ( 'yes' == get_option( 'ass-global-unsubscribe-link' ) ) {
+			if ( 'yes' === get_option( 'ass-global-unsubscribe-link' ) ) {
 				$footer_links[] = sprintf(
 					$link_format,
 					$tokens['ges.unsubscribe-global'],
@@ -1444,8 +1445,9 @@ function ass_group_activity_edits( $activity ) {
 	}
 
 	// if the activity doesn't match the groups component, stop now
-	if ( $activity->component != 'groups' )
+	if ( 'groups' !== $activity->component ) {
 		return;
+	}
 
 	// if the activity ID already exists, this means this is an edit
 	// we don't want GES to send emails for edits!
@@ -2041,9 +2043,9 @@ add_action( 'groups_member_after_save', 'ass_set_default_subscription', 20, 1 );
 function ass_default_subscription_settings( $setting ) {
 	$stored_setting = ass_get_default_subscription();
 
-	if ( $setting == $stored_setting ) {
+	if ( $setting === $stored_setting ) {
 		echo ' checked="checked"';
-	} else if ( $setting == 'no' && ! $stored_setting ) {
+	} elseif ( 'no' === $setting && ! $stored_setting ) {
 		echo ' checked="checked"';
 	}
 }
@@ -2055,7 +2057,7 @@ function ass_save_default_subscription( $group ) {
 			groups_update_groupmeta( $group->id, 'ass_default_subscription', $postval );
 
 			// during group creation, also save the sub level for the group creator
-			if ( 'group-settings' == bp_get_groups_current_create_step() ) {
+			if ( 'group-settings' === bp_get_groups_current_create_step() ) {
 				ass_group_subscription( $postval, $group->creator_id, $group->id );
 			}
 		}
@@ -2222,7 +2224,7 @@ function ass_clean_subject( $subject, $add_quotes = true ) {
 
 	// this feature of adding quotes only happens in english installs
 	// and is not that useful in the HTML digest
-	if ( $add_quotes === true ) {
+	if ( $add_quotes ) {
 		$subject_quotes = preg_replace( '/posted on the forum topic /', 'posted on the forum topic "', $subject );
 		$subject_quotes = preg_replace( '/started the forum topic /', 'started the forum topic "', $subject_quotes );
 		if ( $subject != $subject_quotes ) {
@@ -2278,7 +2280,7 @@ function ass_manage_members_email_status( $user_id = '', $group = '' ) {
 	global $members_template, $groups_template;
 
 	// if group admins / mods cannot manage email subscription settings, stop now!
-	if ( get_option( 'ass-admin-can-edit-email' ) == 'no' ) {
+	if ( 'no' === get_option( 'ass-admin-can-edit-email' ) ) {
 		return;
 	}
 
@@ -2378,7 +2380,7 @@ function ass_unsubscribe_user( $user_id = 0, $groups = array() ) {
 
 // Process request for logged in user unsubscribing via link in notifications settings
 function ass_user_unsubscribe_action() {
-	if ( get_option( 'ass-global-unsubscribe-link' ) != 'yes' || ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
+	if ( 'yes' !== get_option( 'ass-global-unsubscribe-link' ) || ! bp_is_settings_component() || ! isset( $_GET['ass_unsubscribe'] ) )
 		return;
 
 	check_admin_referer( 'ass_unsubscribe_all' );
@@ -2408,7 +2410,7 @@ function ass_user_unsubscribe_form() {
 		return;
 	}
 
-	if ( empty( $_GET['group'] ) && get_option( 'ass-global-unsubscribe-link' ) != 'yes' ) {
+	if ( empty( $_GET['group'] ) && 'yes' !== get_option( 'ass-global-unsubscribe-link' ) ) {
 		return;
 	}
 
@@ -2432,7 +2434,7 @@ function ass_user_unsubscribe_form() {
 			$link_href = bp_get_group_url( $group );
 			$link_text = bp_get_group_name( $group );
 
-			if ( $access_key != md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) ) {
+			if ( $access_key !== md5( "{$group->id}{$user_id}unsubscribe" . wp_salt() ) ) {
 				$message = esc_html__( 'There was a problem unsubscribing you from the group.', 'buddypress-group-email-subscription' );
 
 			} else {
@@ -2446,7 +2448,7 @@ function ass_user_unsubscribe_form() {
 			// All groups.
 			check_admin_referer( 'bp_ges_unsubscribe_group_all' );
 
-			if ( $access_key != md5( $user_id . 'unsubscribe' . wp_salt() ) ) {
+			if ( $access_key !== md5( $user_id . 'unsubscribe' . wp_salt() ) ) {
 				$message = esc_html__( 'There was a problem unsubscribing you from all of your groups.', 'buddypress-group-email-subscription' );
 
 			} else {
@@ -2554,18 +2556,18 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 
 	$welcome_email_enabled = isset( $welcome_email['enabled'] ) ? $welcome_email['enabled'] : 'no';
 
-	if ( 'no' == $welcome_email_enabled ) {
+	if ( 'no' === $welcome_email_enabled ) {
 		return;
 	}
 
 	$subject = ass_clean_subject( $welcome_email['subject'], false );
 	$message = ass_clean_content( $welcome_email['content'] );
 
-	if ( ! $user->user_email || 'yes' != $welcome_email_enabled || empty( $message ) ) {
+	if ( ! $user->user_email || 'yes' !== $welcome_email_enabled || empty( $message ) ) {
 		return;
 	}
 
-	if ( get_option( 'ass-global-unsubscribe-link' ) == 'yes' ) {
+	if ( 'yes' === get_option( 'ass-global-unsubscribe-link' ) ) {
 		$global_link = bp_members_get_url( $user_id ) . '?bpass-action=unsubscribe&access_key=' . md5( "{$user_id}unsubscribe" . wp_salt() );
 
 		$message .= "\n\n---------------------\n";
@@ -2747,7 +2749,7 @@ function ass_self_post_notification( $user_id = false ) {
 
 	$meta = bp_get_user_meta( $user_id, 'ass_self_post_notification', true );
 
-	$self_notify = $meta == 'yes' ? true : false;
+	$self_notify = 'yes' === $meta ? true : false;
 
 	return apply_filters( 'ass_self_post_notification', $self_notify, $meta, $user_id );
 }
