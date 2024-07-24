@@ -20,9 +20,11 @@
 function ass_group_unsubscribe_links( $user_id, $group_id = 0 ) {
 	global $bp;
 
+	// translators: group unsubscribe link for user.
 	$links = sprintf( __( 'To disable all notifications for this group, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, $group_id ) );
 
 	if ( 'yes' === get_option( 'ass-global-unsubscribe-link' ) ) {
+		// translators: global unsubscribe link for user.
 		$links .= "\n\n" . sprintf( __( 'Or to disable notifications for *all* your groups, click: %s', 'buddypress-group-email-subscription' ), ass_get_group_unsubscribe_link_for_user( $user_id, 0, true ) );
 	}
 
@@ -335,6 +337,7 @@ function ass_generate_notification( $args = array() ) {
 	// $message template
 	if ( empty( $the_content ) ) {
 		$message = sprintf(
+			// translators: 1. Action string; 2. Activity URL.
 			__( '%1$s
 
 To view or reply, log in and go to:
@@ -347,6 +350,7 @@ To view or reply, log in and go to:
 		);
 	} else {
 		$message = sprintf(
+			// translators: 1. Action string; 2. Activity content; 3. Activity URL.
 			__( '%1$s
 
 "%2$s"
@@ -514,6 +518,7 @@ To view or reply, log in and go to:
 				$email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'buddypress-group-email-subscription' );
 				$notice             = $email_setting_desc;
 
+				// translators: settings link.
 				$email_setting_links  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 				$email_setting_links .= "\n\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'buddypress-group-email-subscription' );
 
@@ -527,12 +532,14 @@ To view or reply, log in and go to:
 				);
 				$settings_link = ass_get_login_redirect_url( $settings_link, $group_status );
 
+				// translators: email subscription setting for user.
 				$email_setting_string = __( 'Your email setting for this group is: %s', 'buddypress-group-email-subscription' );
 				$group_status_string  = ass_subscribe_translate( $group_status );
 
 				$notice             = sprintf( $email_setting_string, $group_status_string );
 				$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
 
+				// translators: settings link.
 				$email_setting_links  = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 				$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id, $r['group_id'] );
 
@@ -712,6 +719,7 @@ function bpges_generate_notification( BPGES_Queued_Item $queued_item ) {
 	// $message template
 	if ( empty( $the_content ) ) {
 		$message = sprintf(
+			// translators: 1. action; 2. link.
 			__( '%1$s
 
 To view or reply, log in and go to:
@@ -724,6 +732,7 @@ To view or reply, log in and go to:
 		);
 	} else {
 		$message = sprintf(
+			// translators: 1. action; 2. content; 3. link.
 			__( '%1$s
 
 "%2$s"
@@ -784,6 +793,7 @@ To view or reply, log in and go to:
 		// set notice
 		$notice = $email_setting_desc = __( 'You are currently receiving notifications for your own posts.', 'buddypress-group-email-subscription' );
 
+		// translators: settings link.
 		$email_setting_links  = sprintf( __( 'To disable these notifications please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 		$email_setting_links .= "\n\n" . __( 'Once you are logged in, uncheck "Receive notifications of your own posts?".', 'buddypress-group-email-subscription' );
 
@@ -796,12 +806,14 @@ To view or reply, log in and go to:
 
 		$settings_link = ass_get_login_redirect_url( $settings_link, $group_status );
 
+		// translators: email subscription setting.
 		$email_setting_string = __( 'Your email setting for this group is: %s', 'buddypress-group-email-subscription' );
 		$group_status_string  = ass_subscribe_translate( $group_status );
 
 		$notice             = sprintf( $email_setting_string, $group_status_string );
 		$email_setting_desc = sprintf( $email_setting_string, '<strong> ' . $group_status_string . '</strong>' );
 
+		// translators: settings link.
 		$email_setting_links  = sprintf( __( 'To change your email setting for this group, please log in and go to: %s', 'buddypress-group-email-subscription' ), $settings_link );
 		$email_setting_links .= "\n\n" . ass_group_unsubscribe_links( $user_id, $group_id );
 
@@ -831,14 +843,14 @@ To view or reply, log in and go to:
 		$subject = bp_activity_get_meta( $activity_id, 'bpges_notice_subject', true );
 
 		$message = sprintf(
-			__(
-'This is a notice from the group \'%s\':
+			// translators: 1. group name; 2. notice content; 3. group URL.
+			__( 'This is a notice from the group \'%1$s\':
 
-"%s"
+"%2$s"
 
 
 To view this group log in and follow the link below:
-%s
+%3$s
 
 ---------------------
 ', 'buddypress-group-email-subscription' ),
@@ -2440,6 +2452,7 @@ function ass_user_unsubscribe_form() {
 			} else {
 				ass_unsubscribe_user( $user_id, (array) $group->id );
 
+				// translators: group link.
 				$message = sprintf( __( 'Your unsubscription was successful. You will no longer receive email notifications from the group %s.', 'buddypress-group-email-subscription' ),
 					sprintf( '<a href="%1$s">%2$s</a>', esc_url( $link_href ), $link_text )
 				);
@@ -2495,6 +2508,7 @@ function ass_user_unsubscribe_form() {
 			$group = groups_get_group( array( 'group_id' => $_GET['group'] ) );
 			?>
 
+			<?php /* translators: group link */ ?>
 			<p><?php printf( __( 'Do you really want to unsubscribe from all notifications for the group, %s?', 'buddypress-group-email-subscription' ), '<a href="' . bp_get_group_url( $group ) . '">' . bp_get_group_name( $group ) . '</a>' ); ?></p>
 
 			<form id="ass-unsubscribe-form" action="" method="POST">
@@ -2571,6 +2585,7 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 		$global_link = bp_members_get_url( $user_id ) . '?bpass-action=unsubscribe&access_key=' . md5( "{$user_id}unsubscribe" . wp_salt() );
 
 		$message .= "\n\n---------------------\n";
+		// translators: Global unsubscribe link.
 		$message .= sprintf( __( 'To disable emails from all your groups at once click: %s', 'buddypress-group-email-subscription' ), $global_link );
 	}
 
