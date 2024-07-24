@@ -24,7 +24,7 @@ class BPGES_Command extends WP_CLI_Command {
 		global $wpdb;
 
 		if ( ! function_exists( 'bpges_39_migrate_group_subscriptions' ) ) {
-			require_once dirname( dirname( __FILE__ ) ) . '/admin.php';
+			require_once BPGES_PLUGIN_DIR . '/admin.php';
 		}
 
 		$in_progress = bp_get_option( '_ges_39_subscription_migration_in_progress' );
@@ -77,7 +77,7 @@ class BPGES_Command extends WP_CLI_Command {
 		global $wpdb;
 
 		if ( ! function_exists( 'bpges_39_migrate_user_queued_items' ) ) {
-			require_once dirname( dirname( __FILE__ ) ) . '/admin.php';
+			require_once BPGES_PLUGIN_DIR . '/admin.php';
 		}
 
 		$in_progress = bp_get_option( '_ges_39_digest_queue_migration_in_progress' );
