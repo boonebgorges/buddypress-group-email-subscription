@@ -2753,21 +2753,23 @@ function ass_self_post_notification( $user_id = false ) {
 }
 
 function ass_weekly_digest_week() {
-	$ass_weekly_digest = get_option( 'ass_weekly_digest' );
-	if ( $ass_weekly_digest == 1 )
+	$ass_weekly_digest = (int) get_option( 'ass_weekly_digest' );
+
+	if ( 1 === $ass_weekly_digest ) {
 		return __( 'Monday', 'buddypress-group-email-subscription' );
-	elseif ( $ass_weekly_digest == 2 )
+	} elseif ( 2 === $ass_weekly_digest ) {
 		return __( 'Tuesday', 'buddypress-group-email-subscription' );
-	elseif ( $ass_weekly_digest == 3 )
+	} elseif ( 3 === $ass_weekly_digest ) {
 		return __( 'Wednesday', 'buddypress-group-email-subscription' );
-	elseif ( $ass_weekly_digest == 4 )
+	} elseif ( 4 === $ass_weekly_digest ) {
 		return __( 'Thursday', 'buddypress-group-email-subscription' );
-	elseif ( $ass_weekly_digest == 5 )
+	} elseif ( 5 === $ass_weekly_digest ) {
 		return __( 'Friday', 'buddypress-group-email-subscription' );
-	elseif ( $ass_weekly_digest == 6 )
+	} elseif ( 6 === $ass_weekly_digest ) {
 		return __( 'Saturday', 'buddypress-group-email-subscription' );
-	elseif ( $ass_weekly_digest == 0 )
+	} elseif ( 0 === $ass_weekly_digest ) {
 		return __( 'Sunday', 'buddypress-group-email-subscription' );
+	}
 }
 
 /**
