@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the BuddyPress Group Email Subscription plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: BuddyPress Group Email Subscription 4.2.3\n"
+"Project-Id-Version: BuddyPress Group Email Subscription 4.2.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-email-subscription\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-07-24T16:19:00-05:00\n"
+"POT-Creation-Date: 2024-10-04T09:33:00-05:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: buddypress-group-email-subscription\n"
@@ -67,43 +67,43 @@ msgstr ""
 
 #: admin.php:238
 #: admin.php:254
-#: bp-activity-subscription-functions.php:2812
+#: bp-activity-subscription-functions.php:2815
 msgid "Monday"
 msgstr ""
 
 #: admin.php:239
 #: admin.php:255
-#: bp-activity-subscription-functions.php:2814
+#: bp-activity-subscription-functions.php:2817
 msgid "Tuesday"
 msgstr ""
 
 #: admin.php:240
 #: admin.php:256
-#: bp-activity-subscription-functions.php:2816
+#: bp-activity-subscription-functions.php:2819
 msgid "Wednesday"
 msgstr ""
 
 #: admin.php:241
 #: admin.php:257
-#: bp-activity-subscription-functions.php:2818
+#: bp-activity-subscription-functions.php:2821
 msgid "Thursday"
 msgstr ""
 
 #: admin.php:242
 #: admin.php:258
-#: bp-activity-subscription-functions.php:2820
+#: bp-activity-subscription-functions.php:2823
 msgid "Friday"
 msgstr ""
 
 #: admin.php:243
 #: admin.php:259
-#: bp-activity-subscription-functions.php:2822
+#: bp-activity-subscription-functions.php:2825
 msgid "Saturday"
 msgstr ""
 
 #: admin.php:244
 #: admin.php:253
-#: bp-activity-subscription-functions.php:2824
+#: bp-activity-subscription-functions.php:2827
 msgid "Sunday"
 msgstr ""
 
@@ -711,7 +711,7 @@ msgstr ""
 msgid "To disable emails from all your groups at once click: %s"
 msgstr ""
 
-#: bp-activity-subscription-functions.php:2742
+#: bp-activity-subscription-functions.php:2745
 msgid "This post has attachments:"
 msgstr ""
 
