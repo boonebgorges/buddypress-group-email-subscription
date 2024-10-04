@@ -2647,11 +2647,14 @@ function ass_send_welcome_email( $group_id, $user_id ) {
 		$user->user_email,
 		[
 			'tokens'  => [
+				'group.link'             => sprintf( '<a href="%s">%s</a>', esc_url( $group_link ), esc_html( $group_name ) ),
 				'group.name'             => $group_name,
 				'group.url'              => esc_url( $group_link ),
 				'group.id'               => $group_id,
 				'recipient.id'           => $user->ID,
 				'subscription_type'      => 'sub',
+				'usermessage'            => stripslashes( $welcome_email['content'] ),
+				'ges.subject'            => stripslashes( strip_tags( $welcome_email['subject'] ) ),
 				'ges.settings-link'      => ass_get_login_redirect_url( $group_settings_link, 'welcome' ),
 				'ges.unsubscribe'        => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id ),
 				'ges.unsubscribe-global' => ass_get_group_unsubscribe_link_for_user( $user->ID, $group_id, true ),
