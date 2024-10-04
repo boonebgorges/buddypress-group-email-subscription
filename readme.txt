@@ -5,7 +5,7 @@ Tags: buddypress, bp, activities, activity, groups, group, emails, email, notifi
 Requires at least: 3.2
 Requires PHP: 5.3
 Tested up to: 6.6
-Stable tag: 4.2.2
+Stable tag: 4.2.4
 
 == Description ==
 
@@ -92,6 +92,9 @@ For bug reports or to add patches or translation files, please visit the [GES Gi
 7. Admin Settings
 
 == Changelog ==
+
+= 4.2.4 =
+* Fix regression in 4.2.3 that caused certain tokens not to be replaced in Welcome emails.
 
 = 4.2.3 =
 * Security hardening

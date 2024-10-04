@@ -4,8 +4,8 @@ Plugin Name: BuddyPress Group Email Subscription
 Plugin URI: http://wordpress.org/extend/plugins/buddypress-group-email-subscription/
 Description: Allows group members to receive email notifications for group activity and forum posts instantly or as daily digest or weekly summary.
 Author: Deryk Wenaus, boonebgorges, r-a-y
-Revision Date: July 24, 2024
-Version: 4.2.3
+Revision Date: October 4, 2024
+Version: 4.2.4
 Text Domain: buddypress-group-email-subscription
 Domain Path: /languages
 */
@@ -17,7 +17,7 @@ Domain Path: /languages
  *
  * @var string Date string of last revision.
  */
-define( 'GES_REVISION_DATE', '2024-03-24 22:00 UTC' );
+define( 'GES_REVISION_DATE', '2024-10-04 16:00 UTC' );
 
 define( 'BPGES_PLUGIN_DIR', __DIR__ );
 
