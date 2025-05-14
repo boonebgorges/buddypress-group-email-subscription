@@ -1,122 +1,115 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: BuddyPress Group Email Subscription\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/tag/buddypress-group-email-"
-"subscription\n"
-"POT-Creation-Date: 2012-05-18 13:04:15+00:00\n"
-"PO-Revision-Date: Tue Mar 08 2016 11:39:15 GMT+0100 (CET)\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/buddypress-group-"
+"email-subscription\n"
+"POT-Creation-Date: 2023-10-25T12:50:57-05:00\n"
+"PO-Revision-Date: 2025-05-13 16:28+0200\n"
 "Last-Translator: Kotaro <joachimhappel@gmail.com>\n"
 "Language-Team: Thorsten Wollenhoefer <thorsten.wollenhoefer@gmail.com>\n"
-"Language: German\n"
-"Plural-Forms: nplurals=2; plural=n != 1\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: _:1;gettext:1;dgettext:2;ngettext:1,2;dngettext:2,3;"
 "__:1;_e:1;_c:1;_n:1,2;_n_noop:1,2;_nc:1,2;__ngettext:1,2;__ngettext_noop:1,2;"
 "_x:1,2c;_ex:1,2c;_nx:1,2,4c;_nx_noop:1,2,3c;_n_js:1,2;_nx_js:1,2,3c;"
 "esc_attr__:1;esc_html__:1;esc_attr_e:1;esc_html_e:1;esc_attr_x:1,2c;"
 "esc_html_x:1,2c;comments_number_link:2,3;t:1;st:1;trans:1;transChoice:1,2\n"
-"X-Poedit-Basepath: /Volumes/Macintosh HD/Users/deryk/Sites/bp/wp-"
-"content/plugins/buddypress-group-email-subscription/\n"
-"X-Generator: Loco - https://localise.biz/\n"
+"X-Poedit-Basepath: /Volumes/Macintosh HD/Users/deryk/Sites/bp/wp-content/"
+"plugins/buddypress-group-email-subscription\n"
+"X-Generator: Poedit 3.5\n"
+"X-Loco-Target-Locale: de_DE\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Loco-Target-Locale: de_DE"
 
-msgid " - sent from the group "
-msgstr "- gesendet von der Gruppe"
+#. Plugin Name of the plugin
+msgid "BuddyPress Group Email Subscription"
+msgstr "Gruppen E-Mail Abonnement Einstellungen"
 
+#. Plugin URI of the plugin
 msgid ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"To view or reply to this topic, log in and go to:\n"
-"%s\n"
-"\n"
-"---------------------\n"
+"http://wordpress.org/extend/plugins/buddypress-group-email-subscription/"
 msgstr ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"Um dieses Thema anzuzeigen oder darauf zu antworten, bitte einloggen auf:\n"
-"%s\n"
-"\n"
-"---------------------\n"
+"http://wordpress.org/extend/plugins/buddypress-group-email-subscription/"
 
+#. Description of the plugin
 msgid ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"To view or reply, log in and go to:\n"
-"%s\n"
-"\n"
-"---------------------\n"
+"Allows group members to receive email notifications for group activity and "
+"forum posts instantly or as daily digest or weekly summary."
 msgstr ""
-"%s\n"
-"\n"
-"\"%s\"\n"
-"\n"
-"Um es dir anzusehen oder darauf zu antworten:\n"
-"%s\n"
-"\n"
-"---------------------\n"
+"Ermöglicht es Gruppenmitgliedern, E-Mail-Benachrichtigungen über "
+"Gruppenaktivitäten und Forenbeiträge sofort oder als tägliche "
+"Zusammenfassung oder wöchentliche Zusammenfassung zu erhalten."
 
+#. Author of the plugin
+msgid "Deryk Wenaus, boonebgorges, r-a-y"
+msgstr "Deryk Wenaus, boonebgorges, r-a-y"
+
+#: admin.php:50
+msgid "BP Group Email Options"
+msgstr "Gruppen E-Mail Optionen"
+
+#: admin.php:55
+msgid "Group Email Options"
+msgstr "Gruppen E-Mail Optionen"
+
+#: admin.php:140
+msgid "Settings saved."
+msgstr "Einstellungen gespeichert."
+
+#: admin.php:153 admin.php:160 admin.php:170
+msgid "Complete!"
+msgstr "Fertig!"
+
+#: admin.php:163 admin.php:173
+msgid "In Progress"
+msgstr "In Verarbeitung"
+
+#: admin.php:191
+msgid "Group Email Subscription Settings"
+msgstr "Gruppen E-Mail Abonnement Einstellungen"
+
+#: admin.php:196
+msgid "Digests & Summaries"
+msgstr "Übersichten & Zusammenfassungen"
+
+#: admin.php:198
 msgid ""
-"%s\n"
-"\n"
-"To view or reply, log in and go to:\n"
-"%s\n"
-"\n"
-"---------------------\n"
+"View queued digest items</a></b> (in new window)<br>As admin, you can see "
+"what is currently in the email queue by adding ?sum=1 to your url. This will "
+"not fire the digest, it will just show you what is waiting to be sent."
 msgstr ""
-"%s\n"
-"\n"
-"Um es anzusehen oder darauf zu antworten, bitte einloggen und gehe zu:\n"
-"%s\n"
-"\n"
-"---------------------\n"
+"Zeige angesammelte Übersichtsobjekte</a></b> (in einem neuen Fenster)<br>Als "
+"Admin kannst du sehen was momentan in der Warteliste steht indem du ?sum=1 "
+"der URL hinzufügst. Das wird die Übersicht nicht versenden, sondern dir nur "
+"zeigen was wartet um versendet zu werden."
 
-msgid "%s replied to the forum topic \"%s\" in the group \"%s\""
-msgstr "%s antwortete auf das Forumthema \"%s\" in der Gruppe \"%s\""
-
-msgid "%s started the forum topic \"%s\" in the group \"%s\""
-msgstr "%s startete das Forumthema \"%s\" in der Gruupe \"%s\""
-
-msgid "(%s items)"
-msgstr "(%s Objekte)"
-
-msgid "(%s replies)"
-msgstr "(%s Antworten)"
-
-msgid ""
-", therefore you won't receive replies to this topic. To get them, click the "
-"link to view this topic on the web then click the 'Follow this topic' button."
-msgstr ""
-", deswegen wirst du keine Antworten auf dieses Thema erhalten. Um sie zu "
-"erhalten, klicke auf den Link um dieses Thema anzuzeigen und dann klicke auf "
-"die <i>Follow this Topic</i> Schaltfläche."
-
-msgid "<a href=\"%1$s\">Continue to %2$s</a>"
-msgstr "<a href=\"%1$s\">Weiter zu %2$s</a>"
-
+#: admin.php:202
 msgid "<strong>Daily Digests</strong> should be sent at this time:"
 msgstr ""
 "<strong>Tägliche Übersichten</strong> sollen um diese Uhrzeit versendet "
 "werden:"
 
+#: admin.php:219
 msgid "<strong>Weekly Summaries</strong> should be sent on:"
-msgstr "<strong>Wöchentlich Zusammenfasssungen</strong> sollen gesendet werden am:"
+msgstr ""
+"<strong>Wöchentlich Zusammenfasssungen</strong> sollen gesendet werden am:"
 
-msgid "A member replies after you in a forum topic"
-msgstr "Ein Mitglied antwortet nach dir in einem Forum-Thema"
+#: admin.php:234
+msgid ""
+"The server timezone is %s (%s); the current server time is %s (%s); and the "
+"day is %s."
+msgstr ""
+"Die Server Zeitzone ist %s (%s); die momentane Server-Zeit ist %s (%s); und "
+"der Tag ist %s."
 
-msgid "A member replies in a forum topic you've started"
-msgstr "Ein Mitglied antwortet in einem Forum-Thema, das du eröffnet hast"
+#: admin.php:238
+msgid "Global Unsubscribe Link"
+msgstr "Globaler Abmelde-Link"
 
+#: admin.php:239
 msgid ""
 "Add a link in the emails and on the notifications settings page allowing "
 "users to unsubscribe from all their groups at once:"
@@ -125,150 +118,178 @@ msgstr ""
 "hinzu, was es den Benutzern erlaubt, sich von allen Gruppen auf einmal "
 "abzumelden:"
 
-msgid "All Email"
-msgstr "Alle Aktivitäten"
+#: admin.php:241 admin.php:250 admin.php:255
+msgid "yes"
+msgstr "Ja"
 
+#: admin.php:242 admin.php:251 admin.php:256
+msgid "no"
+msgstr "Nein"
+
+#: admin.php:247
+msgid "Group Admin Abilities"
+msgstr "Gruppen Admin Fähigkeiten"
+
+#: admin.php:248
 msgid ""
-"All Email (send emails about everything - recommended only for working "
-"groups)"
-msgstr ""
-"Alle Aktivitäten (sofortige E-Mails für alle Aktivitäten - gut für "
-"Arbeitsgruppen)"
-
-msgid "All user email status's changed successfully"
-msgstr "E-Mail Benachrichtigung für alle Mitglieder erfolgreich geändert."
-
-msgid "Allow group admins and mods to change members' email subscription settings: "
+"Allow group admins and mods to change members' email subscription settings: "
 msgstr ""
 "Erlaube Gruppenadmins und Moderatoren die Benachrichtigungseinstellungen der "
-"Mitglieder zu ändern:"
+"Mitglieder zu ändern: "
 
+#: admin.php:253
 msgid ""
 "Allow group admins to override subscription settings and send an email to "
 "everyone in their group: "
 msgstr ""
 "Erlaube Gruppenadmins die Abonnementeinstellungen zu überschreiben und E-"
-"Mails an jeden in der Gruppe zu versenden:"
+"Mails an jeden in der Gruppe zu versenden: "
 
-msgid "Change to:"
-msgstr "Ändern zu:"
+#: admin.php:261
+msgid "Default Group Settings"
+msgstr "Individuelle Gruppen-Email-Einstellungen"
 
-msgid "Change your email subscription options for this group"
-msgstr "Ändere deine E-Mail-Abonnement Optionen für diese Gruppe"
-
-msgid "DAILY DIGEST:"
-msgstr "TÄGLICHE ZUSAMMENFASSUNG:"
-
-msgid "Daily"
-msgstr "Täglich"
-
-msgid "Daily Digest"
-msgstr "Tägliche Übersicht"
-
-msgid "Daily Digest Email"
-msgstr "Tägliche Übersicht"
-
+#: admin.php:263
 msgid ""
-"Daily Digest Email (all daily activity bundles in one email - good for "
-"medium-size groups)"
+"Use this setting to control the default subscription level for groups on "
+"this site. Note that this global default can be overridden on a per-group "
+"basis by the administrators of specific groups."
 msgstr ""
-"Tägliche Übersicht (alle Aktivitäten des Tages in einer E-Mail - gut für "
-"mittelgroße Gruppen)"
+"Verwenden Sie diese Einstellung, um die Standardabonnementebene für Gruppen "
+"auf dieser Site zu steuern. Beachten Sie, dass diese globale "
+"Standardeinstellung von den Administratoren bestimmter Gruppen für jede "
+"einzelne Gruppe außer Kraft gesetzt werden kann."
 
-msgid "Digests & Summaries"
-msgstr "Übersichten & Zusammenfassungen"
+#: admin.php:271
+msgid "Global default subscription level"
+msgstr "Globale Standardabonnementebene"
 
-msgid "Disable these notifications for all my groups at once."
-msgstr "Um diese Benachrichtigungen für alle Gruppen auf einmal zu deaktivieren."
+#: admin.php:282
+msgid "Spam Prevention"
+msgstr "Spam-Schutz"
 
-msgid "Do you really want to unsubscribe from all groups notifications?"
-msgstr "Möchtest Du wirklich von allen Gruppenbenachrichtigungen abgemeldet werden?"
-
-msgid "Email"
-msgstr "E-Mail"
-
-msgid "Email Content:"
-msgstr "E-Mail Inhalt"
-
-msgid "Email Options"
-msgstr "E-Mail Optionen"
-
-msgid "Email Subject:"
-msgstr "E-Mail Betreff:"
-
-msgid "Email Subscription Defaults"
-msgstr "E-Mail-Abonnement Standard:"
-
-msgid "Email Subscription Options"
-msgstr "E-Mail-Abonnement Optionen"
-
-msgid "Email status:"
-msgstr "E-Mail Status:"
-
-msgid "Email this notice to everyone in the group"
-msgstr "Schicke diese E-Mail an jeden in der Gruppe"
-
-msgid "Enable welcome email"
-msgstr "Aktiviere die Willkommens-Email"
-
-msgid "Error"
-msgstr "Fehler"
-
+#: admin.php:283
 msgid ""
-"Everyone in the group will receive the email -- regardless of their email "
-"settings -- so use with caution"
+"To help protect against spam, you may wish to require a user to have been a "
+"member of the site for a certain amount of days before any group updates are "
+"emailed to the other group members. This is disabled by default."
 msgstr ""
-"Jeder in der Gruppe wird die E-Mail empfangen -- unabhängig seiner "
-"Einstellungen --"
+"Um vor Spam zu schützen, möchtest du vielleicht, dass Benutzer einen "
+"bestimmte Anzahl von Tagen bereits Mitglied sind, bevor irgendwelche ihrer "
+"Gruppeaktivitäten an die anderen Mitglieder verschickt werden. Dies ist "
+"standardmäßig deaktiviert."
 
-msgid "Follow"
-msgstr "Verfolgen"
+#: admin.php:284
+msgid "Member must be registered for"
+msgstr "Mitglied muss registriert sein seit"
 
-msgid "Friday"
-msgstr "Freitag"
+#: admin.php:284
+msgid "days"
+msgstr "Tagen"
 
-msgid "Get a summary of new topics each week"
-msgstr "Erhalte jede Woche eine Zusammenfassung der neuen Themen"
+#: admin.php:288 screen-notifications.php:32
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
 
-msgid "Get a summary of topics each"
-msgstr "Erhalte eine Zusammenfassung jede Woche am"
+#: admin.php:297
+msgid "Migration Status"
+msgstr "Übertragungsstatus"
 
-msgid "Get all the day's activity bundled into a single email"
-msgstr "Erhalte die Aktivitäten eines Tages zusammengefasst in einer einzigen E-Mail"
+#: admin.php:298
+msgid ""
+"BuddyPress Group Email Subscription version 3.9 includes a number of "
+"important database migration routines."
+msgstr ""
+"BuddyPress Group Email Subscription Version 3.9 enthält eine Reihe von "
+"wichtigen Datenbank-Migration Routinen."
 
-msgid "Get email updates"
-msgstr "Erhalte E-Mail Updates"
+#: admin.php:301
+msgid "Create database tables"
+msgstr "Erstelle Datenbanktabellen"
 
-msgid "Get the day's activity bundled into one email"
-msgstr "Erhalte die täglichen Aktivitäten in einer E-Mail zusammengefasst"
+#: admin.php:302
+msgid "Migrate subscriptions"
+msgstr "Übertrage Abonnementen"
 
-msgid "Global Unsubscribe Link"
-msgstr "Globaler Abmelde-Link"
+#: admin.php:303
+msgid "Migrate queued items"
+msgstr "Übertrage Warteschlangendatensätze"
 
-msgid "Group Admin Abilities"
-msgstr "Gruppen Admin Fähigkeiten"
+#: admin.php:313
+msgid ""
+"If you need to re-run or restart the migration process, you can do so with "
+"the following link:"
+msgstr ""
+"Wenn Sie den Migrationsprozess erneut durchführen oder neu starten müssen, "
+"können Sie dies über den folgenden Link tun:"
 
-msgid "Group Email Options"
-msgstr "Gruppen E-Mail Optionen"
+#: admin.php:315
+msgid ""
+"Some migrations are currently in progress. Please reload this page in a few "
+"moments."
+msgstr ""
+"Einige Migrationen sind derzeit im Gange. Bitte laden Sie diese Seite in "
+"wenigen Augenblicken neu."
 
-msgid "Group Email Subscription Settings"
-msgstr "Gruppen E-Mail Abonnement Einstellungen"
+#: admin.php:318
+msgid "Learn more about the 3.9 migration process."
+msgstr "Erfahren Sie mehr über den 3.9-Migrationsprozess."
 
-msgid "Group Forum"
-msgstr "Gruppen Forum"
+#: admin.php:345
+msgid "If you enjoy using this plugin %s please rate it %s."
+msgstr "Wenn dir diese Plugin %s gefällt, bewerte es %s."
 
+#: admin.php:346
+msgid "Please make a donation to the team to support ongoing development."
+msgstr ""
+"Bitte gib eine Spende für das Team ab um eine fortwährende Entwicklung zu "
+"unterstützen."
+
+#: admin.php:505
+msgid ""
+"This email is handled by the Group Email Subscription plugin and uses "
+"customized tokens.  <a target=\"_blank\" href=\"%s\">Learn more about GES "
+"tokens on our wiki</a>."
+msgstr ""
+"Diese E-Mail wird über das Plugin für Gruppen-E-Mail-Abonnements abgewickelt "
+"und verwendet benutzerdefinierte Token.  <a target=„_blank“ "
+"href=„%s“>Erfahren Sie mehr über GES-Tokens in unserem Wiki</a>."
+
+#: admin.php:581
+msgid ""
+"Some BuddyPress Group Email Subscription migration tasks have not "
+"successfully completed."
+msgstr ""
+"Einige BuddyPress Group Email Subscription Migrationsaufgaben wurden nicht "
+"erfolgreich abgeschlossen."
+
+#: admin.php:585
+msgid "Visit the BPGES settings page to fix this problem."
+msgstr ""
+"Besuchen Sie die BPGES-Einstellungsseite, um dieses Problem zu beheben."
+
+#: bp-activity-subscription-digest.php:141
+msgid ""
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on %s."
+msgstr ""
+"Du erhältst diese Nachricht, weil du eine Zusammenfassung bestimmter "
+"Gruppenaktivitäten auf %s abonniert hast."
+
+#: bp-activity-subscription-digest.php:171
+msgid "at"
+msgstr "bei"
+
+#: bp-activity-subscription-digest.php:212
+msgid "(%s items)"
+msgstr "(%s Objekte)"
+
+#: bp-activity-subscription-digest.php:227
+#: bp-activity-subscription-digest.php:281
 msgid "Group Summary"
 msgstr "Zusammenfassung der Gruppen"
 
-msgid "Group: %s"
-msgstr "Gruppe: %s"
-
-msgid "Group: %s weekly summary"
-msgstr "Gruppe: %s wöchentliche Zusammenfassung"
-
-msgid "How do you want to read this group?"
-msgstr "Wie möchtest du diese Gruppe verfolgen?"
-
+#: bp-activity-subscription-digest.php:237
 msgid ""
 "How to follow a topic: to get email updates for a specific topic, click the "
 "topic title - then on the webpage click the <i>Follow this topic</i> button. "
@@ -279,180 +300,166 @@ msgstr ""
 "verfolgen</i> Schaltfläche. (Wenn du die Schaltfläche nicht siehst, musst du "
 "dich zuerst einloggen)"
 
-msgid "I will read this group on the web"
-msgstr "Ich werde diese Gruppe nur im Web verfolgen"
+#: bp-activity-subscription-digest.php:242
+msgid ""
+"To disable these notifications per group please login and go to: %s where "
+"you can change your email settings for each group."
+msgstr ""
+"Um diese Benachrichtigungen abzuschalten, musst Du Dich einloggen und auf %s "
+"gehen, wo Du die Benachrichtigungseinstellungen für jede Gruppe ändern "
+"kannst."
 
-msgid "If you enjoy using this plugin %s please rate it %s."
-msgstr "Wenn dir diese Plugin %s gefällt, bewerte es %s."
-
-msgid "Individual Group Email Settings"
-msgstr "Individuelle Gruppen-Email-Einstellungen"
-
-msgid "Make it so!"
-msgstr "Tu es!"
-
-msgid "Member must be registered for"
-msgstr "Mitglied muss registriert sein seit"
-
-msgid "Monday"
-msgstr "Montag"
-
-msgid "Mute"
-msgstr "Lautlos"
-
+#: bp-activity-subscription-digest.php:242 screen-user-settings.php:119
 msgid "My Groups"
 msgstr "Meine Gruppen"
 
-msgid "New Topics"
-msgstr "Neue Themen"
-
-msgid "New Topics Email"
-msgstr "Benachrichtigung bei neuen Themen"
-
-msgid ""
-"New Topics Email (new topics are sent as they arrive, but not replies - good "
-"for small groups)"
+#: bp-activity-subscription-digest.php:246
+msgid "Disable these notifications for all my groups at once."
 msgstr ""
-"Neue Themen (Mitteilung über neue Themen, aber nicht über Antworten - gut "
-"für kleine Gruppen)"
+"Um diese Benachrichtigungen für alle Gruppen auf einmal zu deaktivieren."
 
-msgid "No"
-msgstr "Nein"
+#: bp-activity-subscription-digest.php:348
+msgid "Your daily digest of group activity"
+msgstr "Deine tägliche Zusammenfassung der Gruppenaktivität"
 
-msgid "No Email"
-msgstr "Keine E-Mail"
+#: bp-activity-subscription-digest.php:350
+msgid "Your weekly summary of group topics"
+msgstr "Deine wöchentliche Zusammenfassung der Gruppenthemen"
 
-msgid ""
-"No Email (users will read this group on the web - good for any group - the "
-"default)"
-msgstr ""
-"Keine E-Mails (Mitglieder werden diese Gruppe im Web verfolgen - gut für "
-"alle Gruppen - Standard)"
+#: bp-activity-subscription-digest.php:419
+msgid "DAILY DIGEST:"
+msgstr "TÄGLICHE ZUSAMMENFASSUNG:"
 
-msgid "No, close"
-msgstr "Nein, schließen"
+#: bp-activity-subscription-digest.php:421
+msgid "WEEKLY DIGEST:"
+msgstr "WÖCHENTLICHE ZUSAMMENFASSUNG:"
 
-msgid ""
-"Note: Normally, you receive email notifications for topics you start or "
-"comment on. This can be changed at"
-msgstr ""
-"Hinweise: Normalerweise erhältst du Benachrichtigungen für Forum-Themen, die "
-"du gestartet oder kommentiert hast. Das kannst du ändern unter"
+#: bp-activity-subscription-digest.php:483
+msgid "Group: %s"
+msgstr "Gruppe: %s"
 
+#: bp-activity-subscription-digest.php:485
+msgid "Group: %s weekly summary"
+msgstr "Gruppe: %s wöchentliche Zusammenfassung"
+
+#: bp-activity-subscription-digest.php:490
+msgid "To disable these notifications for this group click "
+msgstr "Um diese Benachrichtigungen für diese Gruppe zu deaktivieren klicke "
+
+#: bp-activity-subscription-digest.php:490
+msgid "unsubscribe"
+msgstr "Abonnement löschen"
+
+#: bp-activity-subscription-digest.php:491
+msgid "change "
+msgstr "ändern "
+
+#: bp-activity-subscription-digest.php:491
+msgid "email options"
+msgstr "E-Mail Optionen"
+
+#: bp-activity-subscription-digest.php:565
+msgid "at %s, %s"
+msgstr "auf %s, %s"
+
+#: bp-activity-subscription-digest.php:579
+msgid "View"
+msgstr "Anzeigen"
+
+#: bp-activity-subscription-digest.php:787
 msgid "Once Weekly"
 msgstr "Einmal wöchentlich"
 
-msgid ""
-"Once you are logged in, click on the \"Mute this topic\" button to unsubscribe "
-"from the forum thread."
+#: bp-activity-subscription-functions.php:23
+msgid "To disable all notifications for this group, click: %s"
 msgstr ""
-"Sobald Du Dich eingeloggt hast, klicke auf den \"Thema abbestellen (Mute this "
-"topic)\" Button, um das Abonnement des Forum-Threads zu stornieren."
+"Um diese Benachrichtigungen für diese Gruppe zu deaktivieren, klicke: %s"
 
-msgid ""
-"Once you are logged in, uncheck \"A member replies after you in a forum "
-"topic\"."
-msgstr ""
-"Sobald Du Dich eingeloggt hast, deaktiviere \"Ein Mitglied antwortet nach "
-"Ihnen zu einem Forum-Thema\"."
-
-msgid ""
-"Once you are logged in, uncheck \"A member replies in a forum topic you've "
-"started\"."
-msgstr ""
-"Sobald Du Dich eingeloggt hast, deaktiviere \"Ein Mitglied antwortet in einem "
-"Forum-Thema, das Du eröffnet hast\"."
-
-msgid "Or set all your group's email options to No Email"
-msgstr "Oder markiere in Deinen Gruppen-Email-Optionen \"keine Email\" (No Email)"
-
+#: bp-activity-subscription-functions.php:26
 msgid "Or to disable notifications for *all* your groups, click: %s"
 msgstr ""
 "Oder um Benachrichtigungen für *alle Ihre Gruppen* zu deaktivieren, klicke: "
 "%s"
 
-msgid "Please make a donation to the team to support ongoing development."
-msgstr ""
-"Bitte gib eine Spende für das Team ab um eine fortwährende Entwicklung zu "
-"unterstützen."
-
+#: bp-activity-subscription-functions.php:330
+#: bp-activity-subscription-functions.php:688
 msgid ""
-"Please note: admin notices are sent to everyone in the group and cannot be "
-"disabled.\n"
-"If you feel this service is being misused please speak to the website "
-"administrator."
+"%1$s\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%2$s\n"
+"\n"
+"---------------------\n"
 msgstr ""
-"Bitte beachte: Administrator-Mitteilungen werden an jeden in der Gruppe "
-"gesendet und können nicht abgeschaltet werden. \n"
-"Wenn Du glaubst, dass diese Funktion missbraucht wird, dann wende Dich bitte "
-"an den Administrator der Website."
+"%1$s\n"
+"\n"
+"Um es anzusehen oder darauf zu antworten, bitte einloggen und gehe zu:\n"
+"%2$s\n"
+"\n"
+"---------------------n\n"
 
-msgid "Receive notifications of your own posts?"
-msgstr "Erhalte Benachrichtigungen zu deinen eigenen Posts?"
-
-msgid "Saturday"
-msgstr "Samstag"
-
-msgid "Save"
-msgstr "Speichern"
-
-msgid "Save Settings"
-msgstr "Einstellungen speichern"
-
-msgid "Send all group activity as it arrives"
-msgstr "Erhalte sofortige Benachrichtigung über sämtliche Aktivitäten"
-
-msgid "Send an email notice to everyone in the group"
-msgstr "Sende eine E-Mail an jeden in der Gruppe"
-
-msgid "Send an email when a new member join the group."
-msgstr "Sendet eine Email, wenn ein neues Mitglied der Gruppe beigetreten ist."
-
-msgid "Send new topics as they arrive (but don't send replies)"
-msgstr ""
-"Erhalte Benachrichtigungen beim Start eines neuen Themas (allerdings nicht "
-"bei Antworten darauf)"
-
-msgid "Send new topics as they arrive (but no replies)"
-msgstr ""
-"Schicke Benachrichtigungen beim Start eines neuen Themas (allerdings nicht "
-"bei Antworten darauf)"
-
-msgid "Settings saved."
-msgstr "Einstellungen gespeichert."
-
+#: bp-activity-subscription-functions.php:339
+#: bp-activity-subscription-functions.php:697
 msgid ""
-"Site Admin Only: update email subscription settings for ALL members to the "
-"default:"
+"%1$s\n"
+"\n"
+"\"%2$s\"\n"
+"\n"
+"To view or reply, log in and go to:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
 msgstr ""
-"Nur für Administrator: E-Mail Benachrichtigungen für ALLE Mitglieder der "
-"Gruppe auf Standard setzen."
+"%1$s\n"
+"\n"
+"„%2$s“\n"
+"\n"
+"Um es dir anzusehen oder darauf zu antworten:\n"
+"%3$s\n"
+"\n"
+"---------------------\n"
 
-msgid "Spam Prevention"
-msgstr "Spam-Schutz"
+#: bp-activity-subscription-functions.php:498
+#: bp-activity-subscription-functions.php:752 legacy-forums.php:203
+msgid "You are currently receiving notifications for your own posts."
+msgstr ""
+"Du erhältst gegenwärtig Benachrichtigungen zu Themen, die Du begonnen hast."
 
-msgid "Sunday"
-msgstr "Sonntag"
+#: bp-activity-subscription-functions.php:500
+#: bp-activity-subscription-functions.php:754 legacy-forums.php:204
+#: legacy-forums.php:258 legacy-forums.php:275 legacy-forums.php:292
+msgid "To disable these notifications please log in and go to: %s"
+msgstr ""
+"Um diese Benachrichtigungen abzustellen log dich bitte ein und geh zu: %s"
 
-msgid "The email notice was sent not sent. Please enter email content."
-msgstr "Die Emailnachricht wurde nicht gesendet. Bitte gib für die Email Inhalt ein."
-
-msgid "The email notice was sent successfully."
-msgstr "Die E-Mail wurde erfolgreich gesendet."
-
+#: bp-activity-subscription-functions.php:501
+#: bp-activity-subscription-functions.php:755
+#: bp-activity-subscription-functions.php:1306 legacy-forums.php:205
 msgid ""
-"The server timezone is %s (%s); the current server time is %s (%s); and the "
-"day is %s."
+"Once you are logged in, uncheck \"Receive notifications of your own posts?\"."
 msgstr ""
-"Die Server Zeitzone ist %s (%s); die momentane Server-Zeit ist %s (%s); und "
-"der Tag ist %s."
+"Sobald Sie eingeloggt sind, deaktivieren Sie die Option „Benachrichtigungen "
+"über eigene Beiträge erhalten?“."
 
-msgid "The welcome email option has been saved."
-msgstr "Die Willkommen-Email-Option wurde gespeichert."
+#: bp-activity-subscription-functions.php:513
+#: bp-activity-subscription-functions.php:766
+msgid "Your email setting for this group is: %s"
+msgstr "Deine E-Mail-Einstellungen für diese Gruppe sind: %s"
 
-msgid "This conversation is muted. Click to follow it"
-msgstr "Diese Konversation ist auf lautlos gestellt. Klicke um sie zu verfolgen."
+#: bp-activity-subscription-functions.php:519
+#: bp-activity-subscription-functions.php:772 legacy-forums.php:220
+#: legacy-forums.php:244
+msgid ""
+"To change your email setting for this group, please log in and go to: %s"
+msgstr ""
+"Um die Email-Einstellungen für diese Gruppe zu ändern, logge Dich bitte ein "
+"und gehe zu: %s"
 
+#: bp-activity-subscription-functions.php:629
+msgid "in the group"
+msgstr "in der Gruppe"
+
+#: bp-activity-subscription-functions.php:800 screen-admin.php:175
 msgid ""
 "This is a notice from the group '%s':\n"
 "\n"
@@ -474,175 +481,375 @@ msgstr ""
 "\n"
 "---------------------\n"
 
+#: bp-activity-subscription-functions.php:812
+msgid ""
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"If you feel this service is being misused please speak to the website "
+"administrator."
+msgstr ""
+"Bitte beachte: Administrator-Mitteilungen werden an jeden in der Gruppe "
+"gesendet und können nicht abgeschaltet werden. \n"
+"Wenn Du glaubst, dass diese Funktion missbraucht wird, dann wende Dich bitte "
+"an den Administrator der Website."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1068
+#: bp-activity-subscription-functions.php:1083
+#: bp-activity-subscription-functions.php:1113
+msgid "[{{{site.name}}}] {{{ges.subject}}}"
+msgstr "[{{{site.name}}}] {{{ges.subject}}}"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1071
+msgid ""
+"{{{ges.action}}}\n"
+"\n"
+"<blockquote>{{{usermessage}}}</blockquote>\n"
+"&ndash;\n"
+"<a href=\"{{{thread.url}}}\">Go to the discussion</a> to reply or catch up "
+"on the conversation.\n"
+"{{{ges.email-setting-description}}}"
+msgstr ""
+"{{{ges.action}}}:\n"
+"\n"
+"<blockquote>{{{usermessage}}}</blockquote>\n"
+"&ndash;\n"
+"<a href=„{{{thread.url}}}“>Gehe zur Diskussion</a>, um zu antworten oder um "
+"dich über das Gespräch zu informieren.\n"
+"{{{ges.email-setting-description}}}"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1074
+msgid ""
+"{{{ges.action}}}\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"Go to the discussion to reply or catch up on the conversation:\n"
+"{{{thread.url}}}\n"
+"\n"
+"----\n"
+"\n"
+"{{{ges.email-setting-description}}}\n"
+"\n"
+"{{{ges.email-setting-links}}}"
+msgstr ""
+"{{{ges.action}}}:\n"
+"\n"
+"„{{{usermessage}}}“\n"
+"\n"
+"Gehen Sie zur Diskussion, um zu antworten oder sich über das Gespräch zu "
+"informieren:\n"
+"{{{thread.url}}}\n"
+"\n"
+"——\n"
+"\n"
+"{{{ges.email-setting-description}}}\n"
+"\n"
+"{{{ges.email-setting-links}}}"
+
+#: bp-activity-subscription-functions.php:1076
+msgid ""
+"A member created a group activity entry. Used by the Group Email "
+"Subscription plugin during immediate sendouts."
+msgstr ""
+"Ein Mitglied hat einen Gruppenaktivitätseintrag erstellt. Wird vom Gruppen-E-"
+"Mail-Abonnement-Plugin beim sofortigen Versenden verwendet."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1086
+msgid ""
+"{{{ges.digest-summary}}}{{{usermessage}}}\n"
+"&ndash;\n"
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on {{site.name}}."
+msgstr ""
+"{{{ges.digest-summary}}}{{{usermessage}}}\n"
+"&ndash;\n"
+"Du erhältst diese Nachricht, weil du eine Zusammenfassung bestimmter "
+"Gruppenaktivitäten auf {{site.name}} abonniert hast.."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1089
+msgid ""
+"{{{ges.digest-summary}}}\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"----\n"
+"\n"
+"You have received this message because you are subscribed to receive a "
+"digest of activity in some of your groups on {{{site.name}}}.\n"
+"\n"
+"To disable these notifications per group, please login and [visit your "
+"groups page]({{{ges.settings-link}}}) where you can manage your email "
+"settings for each group."
+msgstr ""
+"{{{ges.digest-summary}}}\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"——\n"
+"\n"
+"Du hast diese Nachricht erhalten, weil Du eine Zusammenfassung der "
+"Aktivitäten in einigen deiner Gruppen auf {{{site.name}}} haben möchtest.\n"
+"\n"
+"Um diese Benachrichtigungen pro Gruppe zu deaktivieren, melden dich bitte an "
+"und [besuchen deine Gruppenseite].({{{ges.settings-link}}}) Wo du deine E-"
+"Mail-Einstellungen für jede Gruppe verwalten kannst."
+
+#: bp-activity-subscription-functions.php:1091
+msgid ""
+"An email digest is sent to a member. Used by the Group Email Subscription "
+"plugin during daily or weekly digest sendouts."
+msgstr ""
+"Ein E-Mail-Digest wird an ein Mitglied gesendet. Wird vom Gruppen-E-Mail-"
+"Abonnement-Plugin bei täglichen oder wöchentlichen Digest-Sendungen "
+"verwendet."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1098
+msgid ""
+"[{{{site.name}}}] {{{ges.subject}}} - from the group \"{{{group.name}}}\""
+msgstr ""
+"[{{{site.name}}}] {{{ges.subject}}} - von der Gruppe „{{{group.name}}}“"
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1101
+msgid ""
+"This is a notice from the group {{{group.link}}}:\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"&ndash;\n"
+"<strong>Please note:</strong> admin notices are sent to everyone in the "
+"group and cannot be disabled.\n"
+"If you feel this service is being misused please speak to the website "
+"administrator."
+msgstr ""
+"Dies ist eine Mitteilung der Gruppe {{{group.link}}}:\n"
+"\n"
+"{{{usermessage}}}\n"
+"\n"
+"&ndash;\n"
+"<strong Bitte beachte::</strong> Administrator-Mitteilungen werden an jeden "
+"in der Gruppe gesendet und können nicht abgeschaltet werden. \n"
+"Wenn Du glaubst, dass diese Funktion missbraucht wird, dann wende Dich bitte "
+"an den Administrator der Website."
+
+#. translators: do not remove {} brackets or translate its contents.
+#: bp-activity-subscription-functions.php:1104
+msgid ""
+"This is a notice from the group \"{{{group.name}}}\":\n"
+"\n"
+"\"{{{usermessage}}}\"\n"
+"\n"
+"----\n"
+"\n"
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"\n"
+"If you feel this service is being misused please speak to the website "
+"administrator.\n"
+"\n"
+"To visit the group homepage, click on the link below:\n"
+"{{{group.url}}}"
+msgstr ""
+"This is a notice from the group „{{{group.name}}}“:\n"
+"\n"
+"„{{{usermessage}}}“\n"
+"\n"
+"——\n"
+"\n"
+"Bitte beachte: Administrator-Mitteilungen werden an jeden in der Gruppe "
+"gesendet und können nicht abgeschaltet werden. \n"
+"\n"
+"Wenn Du glaubst, dass diese Funktion missbraucht wird, dann wende Dich bitte "
+"an den Administrator der Website.\n"
+"\n"
+"Um die Homepage der Gruppe zu besuchen, klicken Sie auf den folgenden Link:\n"
+"{{{group.url}}}"
+
+#: bp-activity-subscription-functions.php:1106
+msgid ""
+"An email notice is sent by a group administrator to all members of the "
+"group. Used by the Group Email Subscription plugin."
+msgstr ""
+"Eine E-Mail-Benachrichtigung wird von einem Gruppenadministrator an alle "
+"Mitglieder der Gruppe gesendet. Wird vom Plugin „Group Email Subscription“ "
+"verwendet."
+
+#: bp-activity-subscription-functions.php:1117
+msgid ""
+"A welcome email is sent to new members of a group. Used by the Group Email "
+"Subscription plugin."
+msgstr ""
+"Eine Willkommens-E-Mail wird an neue Mitglieder einer Gruppe gesendet. Wird "
+"vom Plugin „Group Email Subscription“ verwendet."
+
+#: bp-activity-subscription-functions.php:1307
+#: bp-activity-subscription-functions.php:1343
+msgid "Change email settings"
+msgstr "E-Mail-Einstellungen ändern"
+
+#: bp-activity-subscription-functions.php:1317
+msgid "To change your email settings for this group only, click on this link"
+msgstr ""
+"Um Ihre E-Mail-Einstellungen nur für diese Gruppe zu ändern, klicken Sie auf "
+"diesen Link"
+
+#: bp-activity-subscription-functions.php:1318
+msgid "Change group email Settings"
+msgstr "Individuelle Gruppen-Email-Einstellungen"
+
+#: bp-activity-subscription-functions.php:1323
+msgid "To disable all notifications for this group, click on this link"
+msgstr ""
+"Um alle Benachrichtigungen für diese Gruppe zu deaktivieren, klicken Sie auf "
+"diesen Link"
+
+#: bp-activity-subscription-functions.php:1324
+msgid "Unsubscribe from this group"
+msgstr "Ja, Abonnements von all meinen Gruppen stornieren"
+
+#: bp-activity-subscription-functions.php:1330
+msgid "To disable notifications from all your groups, click on this link"
+msgstr ""
+"Um die Benachrichtigungen aller Ihrer Gruppen zu deaktivieren, klicken Sie "
+"auf diesen Link"
+
+#: bp-activity-subscription-functions.php:1331
+msgid "Unsubscribe from all groups"
+msgstr "Ja, Abonnements von all meinen Gruppen stornieren"
+
+#: bp-activity-subscription-functions.php:1342
+msgid "Once you are logged in, change your email settings for each group."
+msgstr ""
+"Sobald Sie eingeloggt sind, ändern Sie die E-Mail-Einstellungen für jede "
+"Gruppe."
+
+#: bp-activity-subscription-functions.php:1438
+msgid "Posted a Group Notice"
+msgstr "Veröffentlichung einer Gruppenmitteilung"
+
+#: bp-activity-subscription-functions.php:1763
+#: bp-activity-subscription-functions.php:1764
+msgid "No Email"
+msgstr "Keine E-Mail"
+
+#: bp-activity-subscription-functions.php:1765
+msgid "No Email (users will read this group on the web - good for any group)"
+msgstr ""
+"Keine E-Mail (Benutzer werden diese Gruppe im Internet lesen - gut für jede "
+"Gruppe)"
+
+#: bp-activity-subscription-functions.php:1766
+msgid "I will read this group on the web"
+msgstr "Ich werde diese Gruppe nur im Web verfolgen"
+
+#: bp-activity-subscription-functions.php:1769
+msgid "Weekly Summary"
+msgstr "Wöchentliche Zusammenfassung"
+
+#: bp-activity-subscription-functions.php:1770
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: bp-activity-subscription-functions.php:1771
+msgid "Weekly Summary Email (the week's topics - good for large groups)"
+msgstr ""
+"Wöchentliche Zusammenfassung (die Themen der Woche - gut für große Gruppen)"
+
+#: bp-activity-subscription-functions.php:1772
+msgid "Get a summary of topics each week"
+msgstr "Erhalte jede Woche eine Zusammenfassung der neuen Themen"
+
+#: bp-activity-subscription-functions.php:1775
+msgid "Daily Digest"
+msgstr "Tägliche Übersicht"
+
+#: bp-activity-subscription-functions.php:1776
+msgid "Daily"
+msgstr "Täglich"
+
+#: bp-activity-subscription-functions.php:1777
+msgid ""
+"Daily Digest Email (all daily activity bundles in one email - good for "
+"medium-size groups)"
+msgstr ""
+"Tägliche Übersicht (alle Aktivitäten des Tages in einer E-Mail - gut für "
+"mittelgroße Gruppen)"
+
+#: bp-activity-subscription-functions.php:1778
+msgid "Get the day's activity bundled into one email"
+msgstr "Erhalte die täglichen Aktivitäten in einer E-Mail zusammengefasst"
+
+#: bp-activity-subscription-functions.php:1781
+#: bp-activity-subscription-functions.php:1782
+msgid "New Topics"
+msgstr "Neue Themen"
+
+#: bp-activity-subscription-functions.php:1783
+msgid ""
+"New Topics Email (new topics are sent as they arrive, but not replies - good "
+"for small groups)"
+msgstr ""
+"Neue Themen (Mitteilung über neue Themen, aber nicht über Antworten - gut "
+"für kleine Gruppen)"
+
+#: bp-activity-subscription-functions.php:1784
+msgid "Send new topics as they arrive (but no replies)"
+msgstr ""
+"Schicke Benachrichtigungen beim Start eines neuen Themas (allerdings nicht "
+"bei Antworten darauf)"
+
+#: bp-activity-subscription-functions.php:1787
+#: bp-activity-subscription-functions.php:1788
+msgid "All Email"
+msgstr "Alle Aktivitäten"
+
+#: bp-activity-subscription-functions.php:1789
+msgid ""
+"All Email (send emails about everything - recommended only for working "
+"groups)"
+msgstr ""
+"Alle Aktivitäten (sofortige E-Mails für alle Aktivitäten - gut für "
+"Arbeitsgruppen)"
+
+#: bp-activity-subscription-functions.php:1790
+msgid "Send all group activity as it arrives"
+msgstr "Erhalte sofortige Benachrichtigung über sämtliche Aktivitäten"
+
+#: bp-activity-subscription-functions.php:2249 screen.php:178
+msgid "Email status:"
+msgstr "E-Mail Status:"
+
+#: bp-activity-subscription-functions.php:2250
+msgid "Change to:"
+msgstr "Ändern zu:"
+
+#: bp-activity-subscription-functions.php:2330
+msgid "You have been unsubscribed from all groups notifications."
+msgstr ""
+"Du wurdest von allen Abonnements zu Gruppenbenachrichtigungen abgemeldet."
+
+#: bp-activity-subscription-functions.php:2332
 msgid "This user's has been unsubscribed from all groups notifications."
 msgstr ""
 "Dieser Benutzer wurde von allen Abonnements zu Gruppenbenachrichtigungen "
 "abgemeldet."
 
-msgid "Thursday"
-msgstr "Donnerstag"
+#. translators: Continue to "SITE NAME or GROUP NAME"
+#: bp-activity-subscription-functions.php:2360
+msgid "Continue to %s"
+msgstr "Weiter zu %s"
 
-msgid ""
-"To change the email notification settings for your groups, go to %s and "
-"click \"Change\" for each group."
-msgstr ""
-"Um die Einstellungen für die Email-Benachrichtigungen Ihrer Gruppen zu "
-"ändern, gehe zu <b>%s</b> und klicke \"ändern\" für jede Gruppe."
+#: bp-activity-subscription-functions.php:2376
+msgid "There was a problem unsubscribing you from the group."
+msgstr "Es gab ein Problem bei der Abmeldung von der Gruppe."
 
-msgid "To change your email setting for this group, please log in and go to: %s"
-msgstr ""
-"Um die Email-Einstellungen für diese Gruppe zu ändern, logge Dich bitte ein "
-"und gehe zu: %s"
-
-msgid "To disable all notifications for this group, click: %s"
-msgstr "Um diese Benachrichtigungen für diese Gruppe zu deaktivieren, klicke: %s"
-
-msgid "To disable emails from all your groups at once click: %s"
-msgstr "Um Emails zu deaktivieren (alle Gruppen auf einmal), klicke: %s"
-
-msgid "To disable these notifications for this group click "
-msgstr "Um diese Benachrichtigungen für diese Gruppe zu deaktivieren klicke"
-
-msgid ""
-"To disable these notifications per group please login and go to: %s where "
-"you can change your email settings for each group."
-msgstr ""
-"Um diese Benachrichtigungen abzuschalten, musst Du Dich einloggen und auf %s "
-"gehen, wo Du die Benachrichtigungseinstellungen für jede Gruppe ändern "
-"kannst."
-
-msgid "To disable these notifications please log in and go to: %s"
-msgstr "Um diese Benachrichtigungen abzustellen log dich bitte ein und geh zu: %s"
-
-msgid ""
-"To help protect against spam, you may wish to require a user to have been a "
-"member of the site for a certain amount of days before any group updates are "
-"emailed to the other group members. This is disabled by default."
-msgstr ""
-"Um vor Spam zu schützen, möchtest du vielleicht, dass Benutzer einen "
-"bestimmte Anzahl von Tagen bereits Mitglied sind, bevor irgendwelche ihrer "
-"Gruppeaktivitäten an die anderen Mitglieder verschickt werden. Dies ist "
-"standardmäßig deaktiviert."
-
-msgid "Tuesday"
-msgstr "Dienstag"
-
-msgid "Unsubscribe"
-msgstr "Abbestellen"
-
-msgid "Unsubscribe from all groups notifications"
-msgstr "Von allen Gruppenbenachrichtigungen abmelden"
-
-msgid "User email status changed successfully"
-msgstr "E-Mail Status erfolgreich geändert"
-
-msgid "View"
-msgstr "Anzeigen"
-
-msgid ""
-"View queued digest items</a></b> (in new window)<br>As admin, you can see "
-"what is currently in the email queue by adding ?sum=1 to your url. This will "
-"not fire the digest, it will just show you what is waiting to be sent."
-msgstr ""
-"Zeige angesammelte Übersichtsobjekte</a></b> (in einem neuen Fenster)<br>Als "
-"Admin kannst du sehen was momentan in der Warteliste steht indem du ?sum=1 "
-"der URL hinzufügst. Das wird die Übersicht nicht versenden, sondern dir nur "
-"zeigen was wartet um versendet zu werden."
-
-msgid "WEEKLY DIGEST:"
-msgstr "WÖCHENTLICHE ZUSAMMENFASSUNG:"
-
-msgid "Warning: this is not reversible so use with caution."
-msgstr "Warnung: Diese Funktion ist nicht reversibel."
-
-msgid "Wednesday"
-msgstr "Mittwoch"
-
-msgid "Weekly"
-msgstr "Wöchentlich"
-
-msgid "Weekly Summary"
-msgstr "Wöchentliche Zusammenfassung"
-
-msgid "Weekly Summary Email"
-msgstr "Wöchentliche Zusammenfassung"
-
-msgid "Weekly Summary Email (the week's topics - good for large groups)"
-msgstr "Wöchentliche Zusammenfassung (die Themen der Woche - gut für große Gruppen)"
-
-msgid "Welcome Email"
-msgstr "Willkommens-Email"
-
-msgid ""
-"When new users join this group, their default email notification settings "
-"will be:"
-msgstr ""
-"Wenn neue Mitglieder dieser Gruppe beitreten, werden ihre Benachrichtigungs-"
-"Einstellungen standardmäßig sein:"
-
-msgid "Yes"
-msgstr "Ja"
-
-msgid "Yes, unsubscribe from all my groups"
-msgstr "Ja, Abonnements von all meinen Gruppen stornieren"
-
-msgid "You are currently receiving notifications to topics that you have replied in."
-msgstr ""
-"Du erhältst gegenwärtig Benachrichtigungen zu Themen, die Du beantwortet "
-"hast."
-
-msgid "You are currently receiving notifications to topics that you have started."
-msgstr "Du erhältst gegenwärtig Benachrichtigungen zu Themen, die Du begonnen hast."
-
-msgid "You are following this topic. Click to stop getting email updates"
-msgstr "Du verfolgst dieses Thema. Klicke um E-Mails über Updates zu stoppen."
-
-msgid ""
-"You are not following this topic. Click to follow it and get email updates "
-"for new posts"
-msgstr ""
-"Du verfolgst diese Thema nicht. Klicke um es zu verfolgen und bekomme E-Mail "
-"Updates bei neuen Einträgen."
-
-msgid "You can use the form below to send an email notice to all group members."
-msgstr ""
-"Du kannst das untenstehende Formular benutzen um eine E-Mail an alle "
-"Mitglieder der Gruppe zu senden."
-
-msgid "You have been unsubscribed from all groups notifications."
-msgstr "Du wurdest von allen Abonnements zu Gruppenbenachrichtigungen abgemeldet."
-
-msgid ""
-"You have received this message because you are subscribed to receive a "
-"digest of activity in some of your groups on %s."
-msgstr ""
-"Du erhältst diese Nachricht, weil du eine Zusammenfassung bestimmter "
-"Gruppenaktivitäten auf %s abonniert hast."
-
-msgid "You successfully joined the group. Your group email status is: "
-msgstr ""
-"Du hast dich erfolgreich der Gruppe angeschlossen. Deine Benachrichtigungs E-"
-"Mail Status ist:"
-
-msgid "Your daily digest of group activity"
-msgstr "Deine tägliche Zusammenfassung der Gruppenaktivität"
-
-msgid "Your email notifications are set to %s for this group."
-msgstr "Deine Email-Benachrichtigungen für diese Gruppe sind gesetzt auf %s."
-
-msgid "Your email setting for this group is: "
-msgstr "Deine E-Mail-Einstellungen für diese Gruppe sind: "
-
-msgid "Your email status is "
-msgstr "Dein E-Mail Status ist"
-
-msgid ""
-"Your unsubscription was successful. You will no longer receive email "
-"notifications from any of your groups."
-msgstr ""
-"Deine Abonnements wurden erfolgreich storniert, so dass Du nicht länger "
-"Email-Benachrichtigungen von allen Deinen Gruppen erhältst."
-
+#: bp-activity-subscription-functions.php:2381
 msgid ""
 "Your unsubscription was successful. You will no longer receive email "
 "notifications from the group %s."
@@ -650,44 +857,559 @@ msgstr ""
 "Dein Abonnement wurde erfolgreich storniert, so dass Du nicht länger Email-"
 "Benachrichtigungen von der Gruppe %s erhältst."
 
-msgid "Your weekly summary of group topics"
-msgstr "Deine wöchentliche Zusammenfassung der Gruppenthemen"
+#: bp-activity-subscription-functions.php:2391
+msgid "There was a problem unsubscribing you from all of your groups."
+msgstr ""
+"Es ist ein Problem aufgetreten, als Sie sich aus allen Ihren Gruppen "
+"abgemeldet haben."
 
-msgid "at"
-msgstr "bei"
+#: bp-activity-subscription-functions.php:2396
+msgid ""
+"Your unsubscription was successful. You will no longer receive email "
+"notifications from any of your groups."
+msgstr ""
+"Deine Abonnements wurden erfolgreich storniert, so dass Du nicht länger "
+"Email-Benachrichtigungen von allen Deinen Gruppen erhältst."
 
-msgid "at %s, %s"
-msgstr "auf %s, %s"
+#: bp-activity-subscription-functions.php:2412
+msgid "Unsubscribe from group notifications"
+msgstr "Von allen Gruppenbenachrichtigungen abmelden"
 
-msgid "change"
-msgstr "ändern"
+#: bp-activity-subscription-functions.php:2426
+msgid "Unsubscribe"
+msgstr "Abbestellen"
 
-msgid "change "
-msgstr "ändern"
+#: bp-activity-subscription-functions.php:2434
+msgid ""
+"Do you really want to unsubscribe from all notifications for the group, %s?"
+msgstr ""
+"Möchtest Du wirklich von allen Gruppenbenachrichtigungen abgemeldet werden?"
 
-msgid "close"
-msgstr "schließen"
+#: bp-activity-subscription-functions.php:2438
+msgid "Yes, unsubscribe from this group"
+msgstr "Ja, aus dieser Gruppe abmelden"
 
-msgid "days"
-msgstr "Tagen"
+#: bp-activity-subscription-functions.php:2439
+msgid "No, close"
+msgstr "Nein, schließen"
 
-msgid "email notifications"
-msgstr "E-Mail Benachrichtigungen"
+#: bp-activity-subscription-functions.php:2445
+msgid "Do you really want to unsubscribe from all groups notifications?"
+msgstr ""
+"Möchtest Du wirklich von allen Gruppenbenachrichtigungen abgemeldet werden?"
 
-msgid "email options"
+#: bp-activity-subscription-functions.php:2449
+msgid "Yes, unsubscribe from all my groups"
+msgstr "Ja, Abonnements von all meinen Gruppen stornieren"
+
+#: bp-activity-subscription-functions.php:2506
+msgid "To disable emails from all your groups at once click: %s"
+msgstr "Um Emails zu deaktivieren (alle Gruppen auf einmal), klicke: %s"
+
+#: bp-activity-subscription-functions.php:2621
+msgid "This post has attachments:"
+msgstr "This post has attachments:"
+
+#: bp-activity-subscription-main.php:76
+msgid "Email Options"
 msgstr "E-Mail Optionen"
 
-msgid "in the group"
-msgstr "in der Gruppe"
+#: bp-activity-subscription-main.php:128 legacy-forums.php:401
+msgid "Mute"
+msgstr "Lautlos"
 
-msgid "no"
-msgstr "Nein"
+#: bp-activity-subscription-main.php:129 legacy-forums.php:397
+msgid "Follow"
+msgstr "Verfolgen"
 
+#: bp-activity-subscription-main.php:130
+msgid "Error"
+msgstr "Fehler"
+
+#: bp-activity-subscription.php:41
+msgid "BP Group Email Subscription v4.2.0 requires BuddyPress 2.1 or higher."
+msgstr "BP Group Email Subscription v4.2.0 erwartet BuddyPress 2.1 oder neuer."
+
+#: bp-activity-subscription.php:44
+msgid ""
+"BuddyPress Group Email Subscription requires the BP Groups and Activity "
+"components. Please <a href=\"%s\">activate them</a> to use this plugin."
+msgstr ""
+"BuddyPress Group Email Subscription benötigt die BP Groups und Activity "
+"Komponenten. Bitte <a href=„%s“>aktiviere</a> es um dieses Plugin zu "
+"verwenden."
+
+#: legacy-forums.php:83
+msgid "%s started the forum topic \"%s\" in the group \"%s\""
+msgstr "%s startete das Forumthema \"%s\" in der Gruupe \"%s\""
+
+#: legacy-forums.php:94
+msgid "%s replied to the forum topic \"%s\" in the group \"%s\""
+msgstr "%s antwortete auf das Forumthema \"%s\" in der Gruppe \"%s\""
+
+#: legacy-forums.php:119
+msgid "To view or reply to this topic, go to:"
+msgstr ""
+"Um dieses Thema anzuzeigen oder darauf zu antworten, bitte einloggen auf:"
+
+#: legacy-forums.php:123
+msgid "To view or reply to this topic, log in and go to:"
+msgstr ""
+"Um dieses Thema anzuzeigen oder darauf zu antworten, bitte einloggen auf:"
+
+#: legacy-forums.php:127
+msgid ""
+"%s\n"
+"\n"
+"\"%s\"\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"---------------------\n"
+msgstr ""
+"%s\n"
+"\n"
+"„%s“\n"
+"\n"
+"%s\n"
+"%s\n"
+"\n"
+"——————————\n"
+
+#: legacy-forums.php:212 legacy-forums.php:243
+msgid "Your email setting for this group is: "
+msgstr "Deine E-Mail-Einstellungen für diese Gruppe sind: "
+
+#: legacy-forums.php:216
+msgid ""
+", therefore you won't receive replies to this topic. To get them, click the "
+"link to view this topic on the web then click the 'Follow this topic' button."
+msgstr ""
+", deswegen wirst du keine Antworten auf dieses Thema erhalten. Um sie zu "
+"erhalten, klicke auf den Link um dieses Thema anzuzeigen und dann klicke auf "
+"die <i>Follow this Topic</i> Schaltfläche."
+
+#: legacy-forums.php:259
+msgid ""
+"Once you are logged in, click on the \"Mute this topic\" button to "
+"unsubscribe from the forum thread."
+msgstr ""
+"Sobald Du Dich eingeloggt hast, klicke auf den \"Thema abbestellen (Mute "
+"this topic)\" Button, um das Abonnement des Forum-Threads zu stornieren."
+
+#: legacy-forums.php:274
+msgid ""
+"You are currently receiving notifications to topics that you have started."
+msgstr ""
+"Du erhältst gegenwärtig Benachrichtigungen zu Themen, die Du begonnen hast."
+
+#: legacy-forums.php:276
+msgid ""
+"Once you are logged in, uncheck \"A member replies in a forum topic you've "
+"started\"."
+msgstr ""
+"Sobald Du Dich eingeloggt hast, deaktiviere \"Ein Mitglied antwortet in "
+"einem Forum-Thema, das Du eröffnet hast\"."
+
+#: legacy-forums.php:291
+msgid ""
+"You are currently receiving notifications to topics that you have replied in."
+msgstr ""
+"Du erhältst gegenwärtig Benachrichtigungen zu Themen, die Du beantwortet "
+"hast."
+
+#: legacy-forums.php:293
+msgid ""
+"Once you are logged in, uncheck \"A member replies after you in a forum "
+"topic\"."
+msgstr ""
+"Sobald Du Dich eingeloggt hast, deaktiviere \"Ein Mitglied antwortet nach "
+"Ihnen zu einem Forum-Thema\"."
+
+#: legacy-forums.php:398
+msgid ""
+"You are not following this topic. Click to follow it and get email updates "
+"for new posts"
+msgstr ""
+"Du verfolgst diese Thema nicht. Klicke um es zu verfolgen und bekomme E-Mail "
+"Updates bei neuen Einträgen"
+
+#: legacy-forums.php:402
+msgid "You are following this topic. Click to stop getting email updates"
+msgstr "Du verfolgst dieses Thema. Klicke um E-Mails über Updates zu stoppen"
+
+#: legacy-forums.php:408
+msgid "This conversation is muted. Click to follow it"
+msgstr ""
+"Diese Konversation ist auf lautlos gestellt. Klicke um sie zu verfolgen"
+
+#: legacy-forums.php:412
 msgid "this topic"
 msgstr "diese Thema"
 
-msgid "unsubscribe"
-msgstr "Abonnement löschen"
+#: legacy-forums.php:431
+msgid "Email"
+msgstr "E-Mail"
 
-msgid "yes"
+#: screen-admin.php:11
+msgid "Email Subscription Defaults"
+msgstr "E-Mail-Abonnement Standard"
+
+#: screen-admin.php:12
+msgid ""
+"When new users join this group, their default email notification settings "
+"will be:"
+msgstr ""
+"Wenn neue Mitglieder dieser Gruppe beitreten, werden ihre Benachrichtigungs-"
+"Einstellungen standardmäßig sein:"
+
+#: screen-admin.php:41
+msgid "User email status changed successfully"
+msgstr "E-Mail Status erfolgreich geändert"
+
+#: screen-admin.php:71
+msgid ""
+"Site Admin Only: update email subscription settings for ALL members to the "
+"default:"
+msgstr ""
+"Nur für Administrator: E-Mail Benachrichtigungen für ALLE Mitglieder der "
+"Gruppe auf Standard setzen:"
+
+#: screen-admin.php:71
+msgid "Warning: this is not reversible so use with caution."
+msgstr "Warnung: Diese Funktion ist nicht reversibel."
+
+#: screen-admin.php:71
+msgid "Make it so!"
+msgstr "Tu es!"
+
+#: screen-admin.php:102
+msgid "All user email status's changed successfully"
+msgstr "E-Mail Benachrichtigung für alle Mitglieder erfolgreich geändert"
+
+#: screen-admin.php:156
+msgid "The email notice was not sent. Please enter email content."
+msgstr ""
+"Die Emailnachricht wurde nicht gesendet. Bitte gib für die Email Inhalt ein."
+
+#: screen-admin.php:170
+msgid " - sent from the group "
+msgstr " - gesendet von der Gruppe "
+
+#: screen-admin.php:188
+msgid ""
+"Please note: admin notices are sent to everyone in the group and cannot be "
+"disabled.\n"
+"\tIf you feel this service is being misused please speak to the website "
+"administrator."
+msgstr ""
+"Bitte beachte: Administrator-Mitteilungen werden an jeden in der Gruppe "
+"gesendet und können nicht abgeschaltet werden. \n"
+"Wenn Du glaubst, dass diese Funktion missbraucht wird, dann wende Dich bitte "
+"an den Administrator der Website."
+
+#: screen-admin.php:232
+msgid "The email notice was sent successfully."
+msgstr "Die E-Mail wurde erfolgreich gesendet."
+
+#: screen-admin.php:259
+msgid "The welcome email option has been saved."
+msgstr "Die Willkommen-Email-Option wurde gespeichert."
+
+#: screen-notifications.php:23
+msgid "Email Subscription Options"
+msgstr "E-Mail-Abonnement Optionen"
+
+#: screen-notifications.php:28
+msgid "How do you want to read this group?"
+msgstr "Wie möchtest du diese Gruppe verfolgen?"
+
+#: screen-notifications.php:35
+msgid ""
+"Note: Normally, you receive email notifications for topics you start or "
+"comment on. This can be changed at"
+msgstr ""
+"Hinweise: Normalerweise erhältst du Benachrichtigungen für Forum-Themen, die "
+"du gestartet oder kommentiert hast. Das kannst du ändern unter"
+
+#: screen-notifications.php:35
+msgid "email notifications"
+msgstr "E-Mail Benachrichtigungen"
+
+#. translators: name of the subscription level
+#: screen-notifications.php:64
+msgid "Your email notifications for this group have been changed to: %s."
+msgstr "Deine Email-Benachrichtigungen für diese Gruppe sind gesetzt auf %s."
+
+#: screen-user-settings.php:22
+msgid "Item icon"
+msgstr "Artikel-Symbol"
+
+#: screen-user-settings.php:23
+msgid "Group Forum"
+msgstr "Gruppen Forum"
+
+#: screen-user-settings.php:24
+msgid "Yes"
 msgstr "Ja"
+
+#: screen-user-settings.php:25
+msgid "No"
+msgstr "Nein"
+
+#: screen-user-settings.php:47
+msgid "A member replies in a forum topic you've started"
+msgstr "Ein Mitglied antwortet in einem Forum-Thema, das du eröffnet hast"
+
+#: screen-user-settings.php:51 screen-user-settings.php:56
+#: screen-user-settings.php:66
+msgid "Yes, send email"
+msgstr "Ja, sende EMail"
+
+#: screen-user-settings.php:62
+msgid "A member replies after you in a forum topic"
+msgstr "Ein Mitglied antwortet nach dir in einem Forum-Thema"
+
+#: screen-user-settings.php:71 screen-user-settings.php:83
+#: screen-user-settings.php:88
+msgid "No, do not send email"
+msgstr "Nein, sende die EMail nicht"
+
+#: screen-user-settings.php:79
+msgid "Receive notifications of your own posts?"
+msgstr "Erhalte Benachrichtigungen zu deinen eigenen Posts?"
+
+#: screen-user-settings.php:111
+msgid "Individual Group Email Settings"
+msgstr "Individuelle Gruppen-Email-Einstellungen"
+
+#: screen-user-settings.php:119
+msgid ""
+"To change the email notification settings for your groups, go to %s and "
+"click \"Change\" for each group."
+msgstr ""
+"Um die Einstellungen für die Email-Benachrichtigungen Ihrer Gruppen zu "
+"ändern, gehe zu <b>%s</b> und klicke \"ändern\" für jede Gruppe."
+
+#: screen-user-settings.php:122
+msgid "Or set all your group's email options to No Email"
+msgstr ""
+"Oder markiere in Deinen Gruppen-Email-Optionen \"keine Email\" (No Email)"
+
+#: screen.php:74
+msgid "Your email status is "
+msgstr "Dein E-Mail Status ist "
+
+#: screen.php:75
+msgid "change"
+msgstr "ändern"
+
+#: screen.php:82
+msgid "Get email updates"
+msgstr "Erhalte E-Mail Updates"
+
+#: screen.php:110 screen.php:114
+msgid "Change email subscription for this group"
+msgstr "Ändere deine E-Mail-Abonnement Optionen für diese Gruppe"
+
+#: screen.php:110 screen.php:114 screen.php:139
+msgid "Close"
+msgstr "Schließen"
+
+#: screen.php:110 screen.php:114
+msgid "Close this window"
+msgstr "Schließe das Fenster"
+
+#: screen.php:110
+msgid "Change"
+msgstr "Ändern"
+
+#: screen.php:163
+msgid "You successfully joined the group. Your group email status is: "
+msgstr ""
+"Du hast dich erfolgreich der Gruppe angeschlossen. Deine Benachrichtigungs-E-"
+"Mail-Status ist: "
+
+#: templates/groups/single/admin/ges-email-notice.php:10
+msgid "Send an email notice to everyone in the group"
+msgstr "Sende eine E-Mail an jeden in der Gruppe"
+
+#: templates/groups/single/admin/ges-email-notice.php:11
+msgid ""
+"You can use the form below to send an email notice to all group members."
+msgstr ""
+"Du kannst das untenstehende Formular benutzen um eine E-Mail an alle "
+"Mitglieder der Gruppe zu senden."
+
+#: templates/groups/single/admin/ges-email-notice.php:15
+msgid ""
+"Everyone in the group will receive the email -- regardless of their email "
+"settings -- so use with caution"
+msgstr ""
+"Jeder in der Gruppe wird die E-Mail empfangen -- unabhängig seiner "
+"Einstellungen --"
+
+#: templates/groups/single/admin/ges-email-notice.php:19
+#: templates/groups/single/admin/ges-welcome-email.php:15
+msgid "Email Subject:"
+msgstr "E-Mail Betreff:"
+
+#: templates/groups/single/admin/ges-email-notice.php:24
+#: templates/groups/single/admin/ges-welcome-email.php:20
+msgid "Email Content:"
+msgstr "E-Mail Inhalt:"
+
+#: templates/groups/single/admin/ges-email-notice.php:31
+msgid "Email this notice to everyone in the group"
+msgstr "Schicke diese E-Mail an jeden in der Gruppe"
+
+#: templates/groups/single/admin/ges-email-notice.php:31
+msgid "Send this notice"
+msgstr "Senden Sie diese Mitteilung"
+
+#: templates/groups/single/admin/ges-welcome-email.php:4
+msgid "Welcome Email"
+msgstr "Willkommens-Email"
+
+#: templates/groups/single/admin/ges-welcome-email.php:5
+msgid "Send an email when a new member join the group."
+msgstr "Sendet eine Email, wenn ein neues Mitglied der Gruppe beigetreten ist."
+
+#: templates/groups/single/admin/ges-welcome-email.php:10
+msgid "Enable welcome email"
+msgstr "Aktiviere die Willkommens-Email"
+
+#: templates/groups/single/admin/ges-welcome-email.php:25
+msgid "Save"
+msgstr "Speichern"
+
+#~ msgid "Monday"
+#~ msgstr "Montag"
+
+#~ msgid "Tuesday"
+#~ msgstr "Dienstag"
+
+#~ msgid "Wednesday"
+#~ msgstr "Mittwoch"
+
+#~ msgid "Thursday"
+#~ msgstr "Donnerstag"
+
+#~ msgid "Friday"
+#~ msgstr "Freitag"
+
+#~ msgid "Saturday"
+#~ msgstr "Samstag"
+
+#~ msgid "Sunday"
+#~ msgstr "Sonntag"
+
+#, php-format
+#~ msgid ""
+#~ "Hey! BP Group Email Subscription v3.7.0 requires BuddyPress 1.5 or "
+#~ "higher.  If you are still using BuddyPress 1.2 and you don't plan on "
+#~ "upgrading, use <a href='%s'>BP Group Email Subscription v3.6.2 instead</"
+#~ "a>."
+#~ msgstr ""
+#~ "Hey! BP Group Email Subscription v3.7.0 erwartet BuddyPress 1.5 oder "
+#~ "neuer.  Wenn Sie noch BuddyPress 1.2 verwenden und kein Upgrade planen, "
+#~ "verwenden Sie <a href=‚%s‘>BP Group Email Subscription v3.6.2 "
+#~ "stattdessen</a>."
+
+#, php-format
+#~ msgid "Every %d Minutes"
+#~ msgstr "Jede %d Minute(n)"
+
+#~ msgid "Weekly Summary Email"
+#~ msgstr "Wöchentliche Zusammenfassung"
+
+#~ msgid "Daily Digest Email"
+#~ msgstr "Tägliche Übersicht"
+
+#~ msgid "Get all the day's activity bundled into a single email"
+#~ msgstr ""
+#~ "Erhalte die Aktivitäten eines Tages zusammengefasst in einer einzigen E-"
+#~ "Mail"
+
+#~ msgid "New Topics Email"
+#~ msgstr "Benachrichtigung bei neuen Themen"
+
+#~ msgid "Send new topics as they arrive (but don't send replies)"
+#~ msgstr ""
+#~ "Erhalte Benachrichtigungen beim Start eines neuen Themas (allerdings "
+#~ "nicht bei Antworten darauf)"
+
+#~ msgid "Get a summary of topics each"
+#~ msgstr "Erhalte eine Zusammenfassung jede Woche am"
+
+#~ msgid "We can try to finish the migration at this time."
+#~ msgstr ""
+#~ "Wir können versuchen, die Migration zu diesem Zeitpunkt abzuschließen."
+
+#~ msgid "<a href=\"%1$s\">Continue to %2$s</a>"
+#~ msgstr "<a href=\"%1$s\">Weiter zu %2$s</a>"
+
+#~ msgid "(%s replies)"
+#~ msgstr "(%s Antworten)"
+
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "\"%s\"\n"
+#~ "\n"
+#~ "To view or reply to this topic, log in and go to:\n"
+#~ "%s\n"
+#~ "\n"
+#~ "---------------------\n"
+#~ msgstr ""
+#~ "%s\n"
+#~ "\n"
+#~ "\"%s\"\n"
+#~ "\n"
+#~ "Um dieses Thema anzuzeigen oder darauf zu antworten, bitte einloggen "
+#~ "auf:\n"
+#~ "%s\n"
+#~ "\n"
+#~ "---------------------\n"
+
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "To view or reply, log in and go to:\n"
+#~ "%s\n"
+#~ "\n"
+#~ "---------------------\n"
+#~ msgstr ""
+#~ "%s\n"
+#~ "\n"
+#~ "Um es anzusehen oder darauf zu antworten, bitte einloggen und gehe zu:\n"
+#~ "%s\n"
+#~ "\n"
+#~ "---------------------\n"
+
+#~ msgid ""
+#~ "%s\n"
+#~ "\n"
+#~ "\"%s\"\n"
+#~ "\n"
+#~ "To view or reply, log in and go to:\n"
+#~ "%s\n"
+#~ "\n"
+#~ "---------------------\n"
+#~ msgstr ""
+#~ "%s\n"
+#~ "\n"
+#~ "\"%s\"\n"
+#~ "\n"
+#~ "Um es dir anzusehen oder darauf zu antworten:\n"
+#~ "%s\n"
+#~ "\n"
+#~ "---------------------\n"
+
+#~ msgid ""
+#~ "No Email (users will read this group on the web - good for any group - "
+#~ "the default)"
+#~ msgstr ""
+#~ "Keine E-Mails (Mitglieder werden diese Gruppe im Web verfolgen - gut für "
+#~ "alle Gruppen - Standard)"
