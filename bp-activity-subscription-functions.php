@@ -164,6 +164,11 @@ function ass_group_notification_activity( BP_Activity_Activity $activity ) {
 	foreach ( $subscribed_users as $user_id => $subscription_type ) {
 		$self_notify = false;
 
+		// Email is set to 'No Email', so bail.
+		if ( 'no' === $subscription_type ) {
+			continue;
+		}
+
 		// Does the author want updates of their own forum posts?
 		if ( 'bbp_topic_create' === $activity->type || 'bbp_reply_create' === $activity->type ) {
 			if ( $user_id === $activity->user_id ) {
