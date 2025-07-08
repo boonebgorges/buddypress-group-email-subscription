@@ -787,13 +787,14 @@ To view or reply, log in and go to:
 		$the_content = apply_filters( 'bp_ass_activity_notification_content', $the_content, $activity, $action_for_email_content, $group );
 
 		// Check for $self_notify status.
-		$self_notify = ass_self_post_notification( $user_id );
-		if ( ! empty( $self_notify ) && (int) $activity->user_id === (int) $user_id ) {
-			$group_status = 'self_notify';
+		if ( (int) $activity->user_id === (int) $user_id ) {
+			$self_notify = ass_self_post_notification( $user_id );
 		}
 	}
 
 	if ( $self_notify ) {
+		$group_status = 'self_notify';
+
 		// notification settings link
 		$settings_link = bp_members_get_user_url(
 			$user_id,
