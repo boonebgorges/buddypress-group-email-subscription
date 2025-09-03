@@ -105,13 +105,21 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 
 		$total_for_batch = 0;
 		do {
-			$query = new BPGES_Queued_Item_Query(
+			/**
+			 * Filters the query args used to fetch queued items.
+			 *
+			 * @param array $query_args Query args.
+			 */
+			$query_args = apply_filters(
+				'bpges_immediate_queue_queued_items_query_args',
 				[
 					'activity_id' => $activity_id,
 					'per_page'    => 1,
 					'type'        => 'immediate',
 				]
-			);
+			);;
+
+			$query = new BPGES_Queued_Item_Query( $query_args );
 
 			$items = $query->get_results();
 
