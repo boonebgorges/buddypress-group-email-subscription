@@ -117,7 +117,7 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 					'per_page'    => 1,
 					'type'        => 'immediate',
 				]
-			);;
+			);
 
 			$query = new BPGES_Queued_Item_Query( $query_args );
 
