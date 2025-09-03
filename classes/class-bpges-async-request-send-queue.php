@@ -103,7 +103,17 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 
 		$run = true;
 
+		/**
+		 * Filters the maximum batch size for immediate notifications.
+		 *
+		 * @since 4.3.0
+		 *
+		 * @param int $batch_size The batch size. Default null. If null, no limit is applied.
+		 */
+		$batch_size = apply_filters( 'bpges_immediate_queue_batch_size', null );
+
 		$total_for_batch = 0;
+
 		do {
 			/**
 			 * Filters the query args used to fetch queued items.
@@ -137,6 +147,10 @@ class BPGES_Async_Request_Send_Queue extends BPGES_Async_Request {
 				$item->delete();
 				++$total_for_batch;
 				++$total_for_activity;
+			}
+
+			if ( ! is_null( $batch_size ) && $total_for_batch >= $batch_size ) {
+				$run = false;
 			}
 
 			if ( $this->time_exceeded() || $this->memory_exceeded() ) {
