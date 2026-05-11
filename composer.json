@@ -10,7 +10,7 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "phpcompatibility/phpcompatibility-wp": "*",
-        "phpunit/phpunit": "^8",
+        "phpunit/phpunit": "^12",
 				"wp-coding-standards/wpcs": "*"
     },
     "config": {
